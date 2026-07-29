@@ -1,0 +1,322 @@
+[
+  {
+    "id": "stale-closure",
+    "title": "The Counter That Lies (Stale Closure)",
+    "category": "hooks",
+    "difficulty": "Intermediate",
+    "tags": ["React", "Hooks", "useEffect", "Closures"],
+    "estimatedMinutes": 15,
+    "brief": "A counter component increments once from 0 to 1 and then freezes. Fix the stale closure bug.",
+    "symptoms": [
+      "Counter increments to 1 upon mount, then stops counting",
+      "Interval callback captures initial count state variable in stale scope closure",
+      "Console shows no runtime error"
+    ],
+    "brokenCode": "import { useState, useEffect } from 'react';\n\nexport function StaleCounter() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    const timer = setInterval(() => {\n      // ❌ Stale closure! count is always 0 inside this callback\n      setCount(count + 1);\n    }, 1000);\n\n    return () => clearInterval(timer);\n  }, []); // Empty dependency array prevents re-subscribing\n\n  return <div>Count: {count}</div>;\n}",
+    "fixedCode": "import { useState, useEffect } from 'react';\n\nexport function StaleCounter() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    const timer = setInterval(() => {\n      // ✅ Functional update receives the current latest state\n      setCount((prevCount) => prevCount + 1);\n    }, 1000);\n\n    return () => clearInterval(timer);\n  }, []);\n\n  return <div>Count: {count}</div>;\n}",
+    "hints": [
+      {
+        "title": "Analyze closure state capture",
+        "content": "The useEffect hook executes once on mount. The setInterval callback closes over the value of count at that moment (0)."
+      },
+      {
+        "title": "Functional State Updates",
+        "content": "Using setCount(prev => prev + 1) guarantees access to the current state without adding count to the dependency array."
+      }
+    ],
+    "explanation": "In React, functions created inside components capture state values from the render in which they were created. When an effect creates an interval with an empty dependency array, the interval callback always sees `count` as 0. Using functional state updates (`setCount(prev => prev + 1)`) passes the current state directly to the state updater, avoiding stale closures entirely.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "State Updater Functionality",
+        "description": "Verifies that state setter uses a functional callback rather than direct count variable reference."
+      },
+      {
+        "id": "tc-2",
+        "name": "Continuous Tick Execution",
+        "description": "Verifies counter increments beyond 1 after multiple interval ticks."
+      }
+    ],
+    "interactiveType": "counter_stale"
+  },
+  {
+    "id": "layout-shift",
+    "title": "The Jumping Hero Banner (CLS)",
+    "category": "css",
+    "difficulty": "Beginner",
+    "tags": ["CSS", "CLS", "Performance", "Aspect Ratio"],
+    "estimatedMinutes": 10,
+    "brief": "Dynamic hero banner images load asynchronously and push lower layout elements down abruptly, causing a bad CLS score.",
+    "symptoms": [
+      "Page layout shifts abruptly when image finishes downloading",
+      "Cumulative Layout Shift (CLS) score exceeds recommended 0.1 threshold",
+      "Buttons move unexpectedly under user mouse cursor"
+    ],
+    "brokenCode": "/* ❌ Broken CSS without width/height or aspect-ratio reservation */\n.hero-container {\n  width: 100%;\n}\n\n.hero-image {\n  width: 100%;\n  /* height is auto, zero height until image loads! */\n  height: auto; \n}",
+    "fixedCode": "/* ✅ Reserved height aspect-ratio prevents Cumulative Layout Shift */\n.hero-container {\n  width: 100%;\n  aspect-ratio: 16 / 9;\n  background-color: hsl(var(--muted));\n  overflow: hidden;\n  border-radius: 0.5rem;\n}\n\n.hero-image {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}",
+    "hints": [
+      {
+        "title": "Reserve dimensional aspect ratio",
+        "content": "Browsers require explicit dimension ratios or placeholders to calculate box sizes before media assets finish loading."
+      },
+      {
+        "title": "CSS aspect-ratio property",
+        "content": "Adding aspect-ratio: 16/9 with background fallback holds the exact layout space."
+      }
+    ],
+    "explanation": "When an <img> tag lacks explicit dimensions or an aspect-ratio container, the browser defaults its height to 0px until image metadata arrives. Once loaded, the browser reflows the entire page, shifting downstream content downwards. Reserving container dimensions using CSS `aspect-ratio` guarantees zero shift.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Zero Dimension Shift",
+        "description": "Checks if container height remains identical before and after image load."
+      },
+      {
+        "id": "tc-2",
+        "name": "Aspect Ratio Specification",
+        "description": "Ensures aspect-ratio or explicit height constraints are declared on the hero container."
+      }
+    ],
+    "interactiveType": "layout_shift"
+  },
+  {
+    "id": "memory-leak-listener",
+    "title": "The Slow Resizing Tab (Retained Event Listener)",
+    "category": "memory_leak",
+    "difficulty": "Advanced",
+    "tags": ["JavaScript", "Memory Leak", "Event Listeners", "Cleanup"],
+    "estimatedMinutes": 20,
+    "brief": "A window resize handler is registered inside useEffect without an unmount cleanup function, causing memory leaks.",
+    "symptoms": [
+      "Memory usage steadily climbs every time user navigates to the route",
+      "Multiple duplicate window resize handlers trigger simultaneously on resize",
+      "Unmounted component references remain trapped in memory heap"
+    ],
+    "brokenCode": "import { useState, useEffect } from 'react';\n\nexport function WindowTracker() {\n  const [width, setWidth] = useState(window.innerWidth);\n\n  useEffect(() => {\n    const handleResize = () => setWidth(window.innerWidth);\n    window.addEventListener('resize', handleResize);\n    // ❌ Missing cleanup function! Event listener remains attached to window\n  }, []);\n\n  return <div>Window width: {width}px</div>;\n}",
+    "fixedCode": "import { useState, useEffect } from 'react';\n\nexport function WindowTracker() {\n  const [width, setWidth] = useState(window.innerWidth);\n\n  useEffect(() => {\n    const handleResize = () => setWidth(window.innerWidth);\n    window.addEventListener('resize', handleResize);\n\n    // ✅ Cleanup function removes event listener on component unmount\n    return () => {\n      window.removeEventListener('resize', handleResize);\n    };\n  }, []);\n\n  return <div>Window width: {width}px</div>;\n}",
+    "hints": [
+      {
+        "title": "Effect Lifecycle Cleanups",
+        "content": "Return a function from useEffect to detach global window or document event listeners."
+      },
+      {
+        "title": "Reference equality for handlers",
+        "content": "Ensure the handleResize function reference passed to removeEventListener matches the exact one attached during addEventListener."
+      }
+    ],
+    "explanation": "Global objects like `window` outlive React component lifecycles. Adding an event listener to `window` inside `useEffect` creates a persistent reference to the component instance. Without removing the listener upon component unmount, garbage collection is prevented and listeners accumulate infinitely on subsequent mounts.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "EventListener Detachment",
+        "description": "Verifies that window.removeEventListener is invoked with matching handler on component unmount."
+      },
+      {
+        "id": "tc-2",
+        "name": "Heap Garbage Collection",
+        "description": "Confirms listener count resets to zero when navigating away."
+      }
+    ],
+    "interactiveType": "memory_leak"
+  },
+  {
+    "id": "network-race-condition",
+    "title": "Out-of-Order Search Results (Network Race)",
+    "category": "network",
+    "difficulty": "Intermediate",
+    "tags": ["Async", "Network", "Fetch", "AbortController"],
+    "estimatedMinutes": 20,
+    "brief": "Rapid search input displays stale results from earlier, slower network responses instead of the latest search query.",
+    "symptoms": [
+      "Typing 'React' shows results for 'Rea' because query 'Rea' took longer to respond",
+      "Network waterfall shows out-of-order response completions",
+      "UI search state mismatches actual input field value"
+    ],
+    "brokenCode": "import { useState, useEffect } from 'react';\n\nexport function SearchBox() {\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState([]);\n\n  useEffect(() => {\n    if (!query) return;\n    // ❌ Older requests can complete AFTER newer requests and overwrite state\n    fetch(`/api/search?q=${query}`)\n      .then(res => res.json())\n      .then(data => setResults(data));\n  }, [query]);\n\n  return (\n    <input value={query} onChange={e => setQuery(e.target.value)} />\n  );\n}",
+    "fixedCode": "import { useState, useEffect } from 'react';\n\nexport function SearchBox() {\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState([]);\n\n  useEffect(() => {\n    if (!query) return;\n    // ✅ Use AbortController to cancel previous inflight request\n    const controller = new AbortController();\n\n    fetch(`/api/search?q=${query}`, { signal: controller.signal })\n      .then(res => res.json())\n      .then(data => setResults(data))\n      .catch(err => {\n        if (err.name !== 'AbortError') console.error(err);\n      });\n\n    return () => controller.abort();\n  }, [query]);\n\n  return (\n    <input value={query} onChange={e => setQuery(e.target.value)} />\n  );\n}",
+    "hints": [
+      {
+        "title": "AbortController API",
+        "content": "Create an AbortController inside the effect and abort it in the effect cleanup return function."
+      },
+      {
+        "title": "Ignore AbortError",
+        "content": "Catch errors in fetch promise chain and filter out expected 'AbortError' exceptions."
+      }
+    ],
+    "explanation": "Network responses arrive asynchronously; latency varies per query. If a user types 'a' then 'ab', the request for 'a' may take 500ms while 'ab' takes 100ms. Without cancellation, response 'a' arrives last and overwrites response 'ab'. Using `AbortController` or boolean flags inside `useEffect` discards stale network responses.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Abort Signal Attachment",
+        "description": "Verifies AbortController signal is passed into fetch request options."
+      },
+      {
+        "id": "tc-2",
+        "name": "Inflight Abort Execution",
+        "description": "Verifies controller.abort() is called when query changes prior to completion."
+      }
+    ],
+    "interactiveType": "network_race"
+  },
+  {
+    "id": "a11y-missing-aria",
+    "title": "Unlabeled Icon Buttons & Focus Leak (Accessibility)",
+    "category": "a11y",
+    "difficulty": "Beginner",
+    "tags": ["Accessibility", "A11y", "ARIA", "Keyboard Navigation"],
+    "estimatedMinutes": 15,
+    "brief": "Icon-only buttons lack accessible names for screen readers, and custom popovers fail keyboard focus control.",
+    "symptoms": [
+      "Screen readers announce 'button' with no descriptive text",
+      "Keyboard Tab navigation bypasses active drawer controls",
+      "Fails WCAG 2.1 Name, Role, Value (4.1.2) compliance"
+    ],
+    "brokenCode": "/* ❌ Icon-only button with no screen reader label or aria-label */\n<button className=\"p-2 rounded-md hover:bg-accent\">\n  <TrashIcon className=\"h-4 w-4\" />\n</button>",
+    "fixedCode": "/* ✅ Accessible button with aria-label and visually hidden fallback text */\n<button \n  className=\"p-2 rounded-md hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring\"\n  aria-label=\"Delete item\"\n>\n  <TrashIcon className=\"h-4 w-4\" aria-hidden=\"true\" />\n  <span className=\"sr-only\">Delete item</span>\n</button>",
+    "hints": [
+      {
+        "title": "Provide accessible labels",
+        "content": "Use aria-label or sr-only span elements to give icon buttons an accessible text name."
+      },
+      {
+        "title": "Hide decorative SVG icons",
+        "content": "Mark SVG icons with aria-hidden='true' so screen readers don't read raw SVG path vectors."
+      }
+    ],
+    "explanation": "Screen reader users rely on accessible names generated from element text content, `aria-label`, or `aria-labelledby`. An icon-only `<button>` containing solely an `<svg>` tag has no text, causing screen readers to output uninformative names like 'button' or 'unlabeled'.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Accessible Name Check",
+        "description": "Verifies button element contains aria-label or .sr-only accessible text string."
+      },
+      {
+        "id": "tc-2",
+        "name": "Decorative Icon Suppression",
+        "description": "Verifies embedded SVG icons carry aria-hidden='true'."
+      }
+    ],
+    "interactiveType": "a11y_button"
+  },
+  {
+    "id": "excessive-re-renders",
+    "title": "The Laggy Product Data Grid (Unmemoized Callbacks)",
+    "category": "performance",
+    "difficulty": "Advanced",
+    "tags": ["React", "Performance", "useCallback", "React.memo"],
+    "estimatedMinutes": 25,
+    "brief": "Passing new object literals and unmemoized callbacks into list items causes 500+ child components to re-render on every keystroke.",
+    "symptoms": [
+      "Typing in filter search box produces noticeable keystroke latency (>100ms)",
+      "React DevTools Profiler shows all 500 list items re-rendering on every key press",
+      "CPU profiling indicates excessive reconciliation overhead"
+    ],
+    "brokenCode": "import { useState } from 'react';\n\nexport function ProductList({ items }) {\n  const [filter, setFilter] = useState('');\n\n  return (\n    <div>\n      <input value={filter} onChange={e => setFilter(e.target.value)} />\n      {items.map(item => (\n        // ❌ Passing new inline functions and style objects breaks React.memo!\n        <ProductCard \n          key={item.id}\n          item={item}\n          onSelect={() => console.log('Selected', item.id)}\n          style={{ padding: '8px' }}\n        />\n      ))}\n    </div>\n  );\n}",
+    "fixedCode": "import { useState, useCallback, useMemo } from 'react';\n\nexport function ProductList({ items }) {\n  const [filter, setFilter] = useState('');\n\n  // ✅ Stable callback memoization\n  const handleSelect = useCallback((id: string) => {\n    console.log('Selected', id);\n  }, []);\n\n  const filteredItems = useMemo(() => {\n    return items.filter(i => i.name.toLowerCase().includes(filter.toLowerCase()));\n  }, [items, filter]);\n\n  return (\n    <div>\n      <input value={filter} onChange={e => setFilter(e.target.value)} />\n      {filteredItems.map(item => (\n        <ProductCard \n          key={item.id}\n          item={item}\n          onSelect={handleSelect}\n        />\n      ))}\n    </div>\n  );\n}",
+    "hints": [
+      {
+        "title": "Reference equality in props",
+        "content": "Inline function expressions () => ... create a brand new function reference on every render, invalidating child memoization."
+      },
+      {
+        "title": "useCallback & useMemo",
+        "content": "Wrap event handlers in useCallback and derived filter calculations in useMemo."
+      }
+    ],
+    "explanation": "Components wrapped in `React.memo` skip rendering only if all props retain shallow equality (`===`). Passing inline object literals (`style={{...}}`) or inline callbacks (`() => ...`) creates fresh references on every parent render, forcing every child component to re-render unnecessarily.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Callback Reference Stability",
+        "description": "Confirms handler callback reference remains stable across filter state updates."
+      },
+      {
+        "id": "tc-2",
+        "name": "Re-render Threshold Optimization",
+        "description": "Verifies child component render count drops from 500+ to zero for unaffected rows."
+      }
+    ],
+    "interactiveType": "perf_renders"
+  },
+  {
+    "id": "cannot-read-property-map",
+    "title": "Cannot read properties of undefined (reading 'map')",
+    "category": "console_error",
+    "difficulty": "Beginner",
+    "tags": ["Console Error", "JavaScript", "Nullish Coalescing", "Optional Chaining"],
+    "estimatedMinutes": 10,
+    "brief": "Accessing array methods on asynchronous state before initial fetch completes triggers a blank screen runtime crash.",
+    "symptoms": [
+      "White screen crash on initial page load before API resolves",
+      "Uncaught TypeError: Cannot read properties of undefined (reading 'map')",
+      "App breaks unless state is initialized or guarded with optional chaining"
+    ],
+    "brokenCode": "import { useState, useEffect } from 'react';\n\nexport function UserList() {\n  // ❌ Initial state is undefined! data.map will throw TypeError on initial render\n  const [data, setData] = useState();\n\n  useEffect(() => {\n    fetch('/api/users')\n      .then(res => res.json())\n      .then(resData => setData(resData));\n  }, []);\n\n  return (\n    <ul>\n      {data.map(user => (\n        <li key={user.id}>{user.name}</li>\n      ))}\n    </ul>\n  );\n}",
+    "fixedCode": "import { useState, useEffect } from 'react';\n\nexport function UserList() {\n  // ✅ Option 1: Initialize state with an empty array []\n  const [data, setData] = useState<User[]>([]);\n  const [isLoading, setIsLoading] = useState(true);\n\n  useEffect(() => {\n    fetch('/api/users')\n      .then(res => res.json())\n      .then(resData => setData(resData))\n      .finally(() => setIsLoading(false));\n  }, []);\n\n  if (isLoading) return <div>Loading users...</div>;\n\n  return (\n    <ul>\n      {/* ✅ Option 2: Optional chaining guard data?.map */}\n      {(data ?? []).map(user => (\n        <li key={user.id}>{user.name}</li>\n      ))}\n    </ul>\n  );\n}",
+    "hints": [
+      {
+        "title": "Default state initialization",
+        "content": "Initialize array state with useState([]) or default parameter values."
+      },
+      {
+        "title": "Optional chaining & Nullish fallback",
+        "content": "Use (data ?? []).map(...) or data?.map(...) to safely evaluate potentially undefined data."
+      }
+    ],
+    "explanation": "React components render synchronously prior to asynchronous `useEffect` execution. When `useState()` is initialized without parameters, `data` is `undefined` on the first render pass. Calling `.map()` on `undefined` causes JavaScript to throw an uncaught `TypeError` and unmount the component tree.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Initial Render Guard",
+        "description": "Verifies component renders gracefully without error during initial loading phase."
+      },
+      {
+        "id": "tc-2",
+        "name": "Safe Collection Iteration",
+        "description": "Confirms array mapping succeeds safely when data arrives or is empty."
+      }
+    ],
+    "interactiveType": "console_null_map"
+  },
+  {
+    "id": "infinite-useeffect-loop",
+    "title": "Broken React App: The Uncapped Re-render Storm",
+    "category": "react_app",
+    "difficulty": "Intermediate",
+    "tags": ["React", "Hooks", "useEffect", "Infinite Loop"],
+    "estimatedMinutes": 15,
+    "brief": "Updating state directly inside an un-guarded useEffect dependency array creates an infinite render cycle that freezes the browser.",
+    "symptoms": [
+      "Browser tab freezes or crashes with 'Too many re-renders. React limits the number of renders'",
+      "CPU usage spikes to 100%",
+      "Network request spam or exponential state updates"
+    ],
+    "brokenCode": "import { useState, useEffect } from 'react';\n\nexport function AutoSync() {\n  const [settings, setSettings] = useState({ theme: 'dark', autoSave: true });\n\n  useEffect(() => {\n    // ❌ Creating a new object inside effect triggers re-render -> re-effect -> INFINITE LOOP!\n    setSettings({ ...settings, lastSynced: Date.now() });\n  }, [settings]);\n\n  return <div>Last synced: {settings.lastSynced}</div>;\n}",
+    "fixedCode": "import { useState, useEffect } from 'react';\n\nexport function AutoSync() {\n  const [settings, setSettings] = useState({ theme: 'dark', autoSave: true, lastSynced: null });\n\n  useEffect(() => {\n    // ✅ Only run sync interval or trigger update conditionally without settings in dependency array\n    const interval = setInterval(() => {\n      setSettings(prev => ({ ...prev, lastSynced: Date.now() }));\n    }, 10000);\n\n    return () => clearInterval(interval);\n  }, []); // Empty deps array prevents infinite state re-triggering\n\n  return <div>Last synced: {settings.lastSynced ?? 'Never'}</div>;\n}",
+    "hints": [
+      {
+        "title": "Dependency array mutation loop",
+        "content": "Updating a state variable inside useEffect while including that same variable in the dependency array causes an endless loop."
+      },
+      {
+        "title": "Functional updater & empty deps",
+        "content": "Use functional state updates setSettings(prev => ...) and remove the state object from the effect dependencies."
+      }
+    ],
+    "explanation": "Every time `setSettings` executes, React creates a new object reference. Because `settings` is listed in `useEffect`'s dependency array, React detects a change (`oldObject !== newObject`) and re-runs the effect immediately, triggering `setSettings` again in an infinite loop.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Bounded Render Cycle",
+        "description": "Verifies component render count remains stable and does not exceed maximum update depth."
+      },
+      {
+        "id": "tc-2",
+        "name": "Dependency Array Optimization",
+        "description": "Ensures state setters inside effects do not depend on mutated object references."
+      }
+    ],
+    "interactiveType": "hooks_infinite"
+  }
+]

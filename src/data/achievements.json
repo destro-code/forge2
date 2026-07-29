@@ -1,0 +1,56 @@
+[
+  {
+    "id": "first-lesson",
+    "title": "First Spark",
+    "description": "Complete your first lesson.",
+    "icon": "Sparkles",
+    "tier": "bronze",
+    "unlocked": true,
+    "unlockedAt": "2026-07-12"
+  },
+  {
+    "id": "week-streak",
+    "title": "Seven Days Strong",
+    "description": "Maintain a 7-day streak.",
+    "icon": "Flame",
+    "tier": "silver",
+    "unlocked": true,
+    "unlockedAt": "2026-07-20"
+  },
+  {
+    "id": "hundred-lessons",
+    "title": "Century Club",
+    "description": "Complete 100 lessons.",
+    "icon": "Trophy",
+    "tier": "gold",
+    "unlocked": false,
+    "progress": 0.42
+  },
+  {
+    "id": "interview-ready",
+    "title": "Interview Ready",
+    "description": "Pass 20 timed interview questions.",
+    "icon": "Briefcase",
+    "tier": "gold",
+    "unlocked": false,
+    "progress": 0.15
+  },
+  {
+    "id": "debug-master",
+    "title": "Bug Whisperer",
+    "description": "Solve 25 challenges in Debug Lab.",
+    "icon": "Bug",
+    "tier": "silver",
+    "unlocked": false,
+    "progress": 0.08
+  },
+  {
+    "id": "architect",
+    "title": "The Architect",
+    "description": "Finish every lesson in Frontend Architecture Lab.",
+    "icon": "Blocks",
+    "tier": "platinum",
+    "unlocked": false,
+    "progress": 0.05
+  }
+]

@@ -1,0 +1,627 @@
+[
+  {
+    "id": "component-library",
+    "title": "Design System & Component Library",
+    "subtitle": "Headless primitives, design tokens, compound components & docs package",
+    "description": "Architect a production-ready React component library with design tokens, CSS variables, Radix headless primitives, compound component patterns, and an interactive documentation portal.",
+    "overview": "In this project, you will build an enterprise-tier UI component library from the ground up. You will learn to isolate design tokens (colors, typography, spacing, shadows), create flexible compound component architectures (such as Modal, Dropdown Menu, Combobox), enforce keyboard accessibility (WCAG AA), and export an automated ESM/CJS build package with Storybook-style documentation.",
+    "category": "Design Systems",
+    "difficulty": "Intermediate",
+    "estimatedHours": 20,
+    "tags": ["React", "TypeScript", "Tailwind CSS", "Accessibility", "Design Tokens"],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Design Tokens & CSS Engine",
+        "description": "Define semantic color tokens, spacing scales, and dark mode CSS variables with automated TypeScript typing.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Define CSS custom properties for light & dark color modes",
+            "description": "Set up standard CSS variables in global stylesheet for primary, background, surface, muted, and destructive tokens.",
+            "hints": ["Use HSL or OKLCH values for smoother color contrast transitions."],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Create a type-safe token utility with class-variance-authority (cva)",
+            "description": "Implement variant resolution helpers for Button, Badge, and Card components.",
+            "hints": ["Use cva() to define intent, size, and state variants cleanly."],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t3",
+            "milestoneId": "m1",
+            "title": "Implement automatic theme provider context",
+            "description": "Create a React context to handle light, dark, and system preference switching seamlessly.",
+            "hints": [
+              "Listen to window.matchMedia('(prefers-color-scheme: dark)') for system mode."
+            ],
+            "estimatedMinutes": 75
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Atomic Primitives (Button, Input, Badge)",
+        "description": "Build foundational atomic UI controls with focus rings, disabled states, loading spinners, and ref forwarding.",
+        "estimatedMinutes": 240,
+        "tasks": [
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Build Button with React.forwardRef and loading state",
+            "description": "Ensure native button props, accessible aria-disabled, and smooth spinner replacement.",
+            "hints": ["Use React.ComponentPropsWithoutRef<'button'> for full prop pass-through."],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t5",
+            "milestoneId": "m2",
+            "title": "Build Input component with prefix/suffix slot support",
+            "description": "Allow icons or prefix buttons inside text input elements without layout shifts.",
+            "hints": ["Wrap the native input in a relative container for absolute icon overlays."],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t6",
+            "milestoneId": "m2",
+            "title": "Build Badge & Avatar primitives",
+            "description": "Support online/offline indicators, fallback initials, and image error handling.",
+            "hints": ["Handle broken image URL fallbacks using onError event state."],
+            "estimatedMinutes": 120
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Milestone 3: Compound Components (Dialog, Dropdown, Accordion)",
+        "description": "Master React compound component patterns with focus traps, portal rendering, and keyboard trap prevention.",
+        "estimatedMinutes": 360,
+        "tasks": [
+          {
+            "id": "t7",
+            "milestoneId": "m3",
+            "title": "Implement Dialog compound pattern (Dialog.Trigger, Dialog.Content)",
+            "description": "Render modal backdrop in a React Portal and handle Escape key dismissal.",
+            "hints": ["Use ReactDOM.createPortal to escape parent DOM overflow bounds."],
+            "estimatedMinutes": 120
+          },
+          {
+            "id": "t8",
+            "milestoneId": "m3",
+            "title": "Build keyboard-accessible Dropdown Menu",
+            "description": "Support ArrowUp/ArrowDown focus navigation and enter/space selection.",
+            "hints": ["Maintain an activeFocusedIndex state inside menu context."],
+            "estimatedMinutes": 120
+          },
+          {
+            "id": "t9",
+            "milestoneId": "m3",
+            "title": "Build Accordion component with single & multiple collapse modes",
+            "description": "Animate item height transitions gracefully with CSS grid or auto height.",
+            "hints": [
+              "Grid template rows transition (0fr -> 1fr) provides fluid height animation."
+            ],
+            "estimatedMinutes": 120
+          }
+        ]
+      },
+      {
+        "id": "m4",
+        "title": "Milestone 4: Interactive Documentation Portal & Package Export",
+        "description": "Create an interactive playground docs site with live code preview, prop tables, and npm build script.",
+        "estimatedMinutes": 300,
+        "tasks": [
+          {
+            "id": "t10",
+            "milestoneId": "m4",
+            "title": "Build interactive prop control inspector",
+            "description": "Allow developers to toggle variants, sizes, and disable states dynamically.",
+            "hints": ["Map component props directly to interactive control knobs."],
+            "estimatedMinutes": 150
+          },
+          {
+            "id": "t11",
+            "milestoneId": "m4",
+            "title": "Configure tsup/esbuild package export pipeline",
+            "description": "Generate both CJS and ESM build bundles with automatically extracted TypeScript declaration files.",
+            "hints": ["Set external: ['react', 'react-dom'] in tsup config."],
+            "estimatedMinutes": 150
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Keyboard Navigation & Focus Ring",
+        "category": "a11y",
+        "description": "All interactive elements are focusable via Tab key and feature high-contrast focus rings compliant with WCAG 2.1 AA."
+      },
+      {
+        "id": "ac2",
+        "title": "Compound Component React Context",
+        "category": "architecture",
+        "description": "Dialog and Accordion sub-components share state strictly via internal React context without prop drilling."
+      },
+      {
+        "id": "ac3",
+        "title": "Zero Bundle Bloat (Tree Shakeable)",
+        "category": "performance",
+        "description": "Exports cleanly formatted ESM modules allowing consumer apps to tree-shake unused primitives."
+      },
+      {
+        "id": "ac4",
+        "title": "100% Type Completeness",
+        "category": "functional",
+        "description": "Exported types provide full autocomplete for all variant values and HTML button/input attributes."
+      }
+    ],
+    "resources": [
+      {
+        "title": "Radix Primitives Design Philosophy",
+        "url": "https://www.radix-ui.com/docs/primitives/overview/introduction",
+        "type": "docs",
+        "description": "Learn how unstyled, accessible primitives form the backbone of modern frontend design systems."
+      },
+      {
+        "title": "W3C APG Design Patterns for Dialogs",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+        "type": "article",
+        "description": "Official accessibility patterns for modal focus management and keyboard trapping."
+      },
+      {
+        "title": "Class Variance Authority (CVA) GitHub Repo",
+        "url": "https://cva.style/docs",
+        "type": "starter",
+        "description": "Utility documentation for creating strongly-typed component variant APIs."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Architected an enterprise React design system with 15+ WCAG AA compliant compound components, reducing frontend design drift by 40%."
+      },
+      {
+        "category": "interview",
+        "bullet": "Explain how compound components (e.g., Dialog.Trigger + Dialog.Content) simplify consumer APIs while avoiding top-level prop explosion."
+      },
+      {
+        "category": "architecture",
+        "bullet": "Discuss the trade-offs between unstyled headless primitives vs styled component libraries in terms of long-term maintainability."
+      }
+    ]
+  },
+  {
+    "id": "kanban-board",
+    "title": "Real-time Collaborative Kanban Board",
+    "subtitle": "Drag and drop, optimistic updates, offline queue & multiplayer state",
+    "description": "Build a Trello-grade task board featuring drag-and-drop reordering, optimistic UI state updates, offline mutation queueing, and column analytics.",
+    "overview": "This project challenges you to handle complex UI state management. You will build fluid drag-and-drop column and card reordering, implement optimistic server updates with rollback on network errors, queue mutations offline via IndexedDB/LocalStorage, and handle real-time filter states.",
+    "category": "State Management",
+    "difficulty": "Advanced",
+    "estimatedHours": 30,
+    "tags": ["React", "DnD", "State Management", "Optimistic UI", "TypeScript"],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Multi-column Board Layout & State Model",
+        "description": "Design normalized state structures for columns, cards, assignees, and priority tags.",
+        "estimatedMinutes": 240,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Define normalized state schema for Board (columnsById, cardsById)",
+            "description": "Structure card IDs in column arrays to allow O(1) lookups and swift reordering.",
+            "hints": ["Avoid nested arrays inside cards to keep drag reorders immutable."],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Build responsive column grid layout",
+            "description": "Allow horizontal scrolling on smaller screens with sticky column headers.",
+            "hints": ["Use flex-shrink-0 for column containers in horizontal scroll views."],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t3",
+            "milestoneId": "m1",
+            "title": "Implement task creation modal & inline title editing",
+            "description": "Allow rapid inline task insertion directly at the top or bottom of any column.",
+            "hints": ["Auto-focus the inline input element on creation."],
+            "estimatedMinutes": 90
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Drag-and-Drop Reordering Engine",
+        "description": "Implement drag handles, drop zones, visual drop position indicators, and smooth animations.",
+        "estimatedMinutes": 360,
+        "tasks": [
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Set up drag sensors and drop target zones",
+            "description": "Handle card pickup, hover target calculation, and visual placeholder insertion.",
+            "hints": [
+              "Use HTML5 Drag and Drop or lightweight PointerEvents for mobile touch support."
+            ],
+            "estimatedMinutes": 120
+          },
+          {
+            "id": "t5",
+            "milestoneId": "m2",
+            "title": "Implement cross-column card movement algorithm",
+            "description": "Update source column card array and target column card array atomically.",
+            "hints": ["Ensure array splice operations produce fresh immutable object references."],
+            "estimatedMinutes": 120
+          },
+          {
+            "id": "t6",
+            "milestoneId": "m2",
+            "title": "Add smooth layout animations during card displacement",
+            "description": "Utilize FLIP (First, Last, Invert, Play) technique or Framer Motion layout transitions.",
+            "hints": [
+              "framer-motion layoutId attribute makes drag-and-drop displacement effortless."
+            ],
+            "estimatedMinutes": 120
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Milestone 3: Optimistic UI & Offline Mutation Queue",
+        "description": "Provide zero-latency card reordering with automatic rollback if server sync fails.",
+        "estimatedMinutes": 300,
+        "tasks": [
+          {
+            "id": "t7",
+            "milestoneId": "m3",
+            "title": "Implement optimistic state update hook with rollback state snapshot",
+            "description": "Instantly render new card order before triggering async network request.",
+            "hints": ["Save previous state in a ref before executing optimistic dispatch."],
+            "estimatedMinutes": 150
+          },
+          {
+            "id": "t8",
+            "milestoneId": "m3",
+            "title": "Build offline mutation queue with window.navigator.onLine recovery",
+            "description": "Store pending moves in LocalStorage when offline and replay them when network returns.",
+            "hints": ["Listen to window.addEventListener('online', syncQueue)."],
+            "estimatedMinutes": 150
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Sub-16ms Drag Performance",
+        "category": "performance",
+        "description": "Card drag interactions maintain 60 FPS without layout thrashing or unnecessary re-renders of non-dragged columns."
+      },
+      {
+        "id": "ac2",
+        "title": "Optimistic Rollback on Failure",
+        "category": "architecture",
+        "description": "Simulated network failure gracefully restores the card to its original position and displays a subtle error toast."
+      },
+      {
+        "id": "ac3",
+        "title": "Keyboard Accessibility for Reordering",
+        "category": "a11y",
+        "description": "Users can focus a card, press Space to pick up, and use Arrow keys to move between columns."
+      }
+    ],
+    "resources": [
+      {
+        "title": "Optimistic UI Patterns in React",
+        "url": "https://react.dev/reference/react/useOptimistic",
+        "type": "docs",
+        "description": "Official React documentation on handling instant client-side state transitions."
+      },
+      {
+        "title": "FLIP Animation Technique",
+        "url": "https://aerotwist.com/blog/flip-your-animations/",
+        "type": "article",
+        "description": "Paul Lewis's classic deep dive into high-performance DOM animations."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Engineered a high-performance React Kanban board with optimistic UI updates and offline mutation queueing, achieving sub-16ms drag frame rates."
+      },
+      {
+        "category": "interview",
+        "bullet": "Be ready to explain normalized state structures vs nested arrays when managing multi-level relational data in React."
+      }
+    ]
+  },
+  {
+    "id": "portfolio-site",
+    "title": "High-Performance Developer Portfolio",
+    "subtitle": "MDX engine, dark mode, view transitions & 100 Lighthouse score",
+    "description": "Build a Vercel-tier developer portfolio featuring MDX blog posts, smooth view transitions, responsive projects showcase, and perfect Lighthouse performance score.",
+    "overview": "Showcase your engineering mastery with a slick, fast developer portfolio. You will learn content pipeline structuring, dark mode with SSR flicker prevention, dynamic meta tag generation, syntax highlighting code blocks, and fast page transitions.",
+    "category": "Full-stack",
+    "difficulty": "Beginner",
+    "estimatedHours": 12,
+    "tags": ["React", "MDX", "Tailwind CSS", "SEO", "Performance"],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Hero & Responsive Navigation",
+        "description": "Design an elegant hero section with high-contrast typography, avatar framing, and social links.",
+        "estimatedMinutes": 120,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Build semantic header with sticky scroll blur effect",
+            "description": "Add backdrop-blur-md background to header on scroll.",
+            "hints": ["Use sticky top-0 z-50 with backdrop-blur-md."],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Craft Hero layout with animated availability badge",
+            "description": "Highlight current role, bio, and status indicator dot (e.g. 'Available for hire').",
+            "hints": ["Use relative flex ping animation for pulsing dot."],
+            "estimatedMinutes": 75
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Projects Gallery & Interactive Modal",
+        "description": "Display portfolio items in a responsive bento grid with tag filtering.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t3",
+            "milestoneId": "m2",
+            "title": "Build responsive Bento Grid project card layout",
+            "description": "Feature primary showcase projects in span-2 cards on desktop views.",
+            "hints": ["Use grid-cols-1 md:grid-cols-3 gap-4."],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Add project filter tabs (All, Full-stack, Mobile, Open Source)",
+            "description": "Animate active tab pill indicator with layoutId.",
+            "hints": ["Framer motion layoutId provides fluid tab sliding."],
+            "estimatedMinutes": 90
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Milestone 3: MDX Article Engine & Code Syntax Highlighting",
+        "description": "Render markdown/MDX articles with syntax highlighted code blocks and reading time calculation.",
+        "estimatedMinutes": 240,
+        "tasks": [
+          {
+            "id": "t5",
+            "milestoneId": "m3",
+            "title": "Implement estimated reading time calculation utility",
+            "description": "Calculate reading minutes based on 200 words-per-minute average.",
+            "hints": ["Strip HTML tags before splitting string by whitespace."],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t6",
+            "milestoneId": "m3",
+            "title": "Integrate code syntax highlighter with copy button",
+            "description": "Provide a copy-to-clipboard button on code blocks with brief checkmark feedback.",
+            "hints": ["Use navigator.clipboard.writeText with setTimeout fallback."],
+            "estimatedMinutes": 180
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Perfect 100 Lighthouse Score",
+        "category": "performance",
+        "description": "Passes performance, accessibility, best practices, and SEO audits with 95+ scores."
+      },
+      {
+        "id": "ac2",
+        "title": "Zero SSR Theme Flash",
+        "category": "architecture",
+        "description": "Dark mode theme loads instantly without a white flash on initial page refresh."
+      }
+    ],
+    "resources": [
+      {
+        "title": "Tailwind CSS Typography Plugin",
+        "url": "https://tailwindcss.com/docs/typography-plugin",
+        "type": "docs",
+        "description": "Guide for styling markdown content using prose classes."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Designed and deployed a modern developer portfolio achieving a 100 Lighthouse performance rating with custom MDX article engine."
+      }
+    ]
+  },
+  {
+    "id": "e-commerce-checkout",
+    "title": "Resilient E-Commerce Checkout Flow",
+    "subtitle": "Multi-step form, coupon validator, tax calculator & stripe mock",
+    "description": "Build a bulletproof multi-step checkout experience with client-side field validation, dynamic tax/shipping calculation, coupon state machine, and error fallback.",
+    "overview": "E-commerce checkout is where user conversion happens. In this project, you will model complex checkout state machines, handle step validation (Address -> Shipping -> Payment -> Confirmation), persist cart state across refreshes, and calculate taxes and promo codes in real time.",
+    "category": "State Management",
+    "difficulty": "Intermediate",
+    "estimatedHours": 18,
+    "tags": ["React", "Form Validation", "State Machine", "E-Commerce"],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Multi-Step Checkout State Machine",
+        "description": "Model checkout steps with deterministic transitions and step guard validation.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Create step progression bar with active & completed indicators",
+            "description": "Visual breadcrumb bar allowing users to click back to previously completed steps.",
+            "hints": ["Prevent forward jump unless previous steps are validated."],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Build Shipping Address form with auto-complete & validation",
+            "description": "Validate email, ZIP code pattern, and address line items in real time.",
+            "hints": ["Use Zod or custom regex validators for postal code formats."],
+            "estimatedMinutes": 120
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Order Summary & Coupon Code Engine",
+        "description": "Calculate subtotal, dynamic tax rates by postal zone, and promo code discounts.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t3",
+            "milestoneId": "m2",
+            "title": "Implement promo code validator with loading & error states",
+            "description": "Support percentage discount (e.g., 'FORGE20' -> 20% off) and fixed amount coupons.",
+            "hints": ["Display clear savings breakdown line item in order summary."],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Build responsive order breakdown drawer for mobile views",
+            "description": "Provide sticky collapsed summary banner at bottom of mobile viewports.",
+            "hints": ["Collapsible accordion drawer keeps mobile checkout clean."],
+            "estimatedMinutes": 90
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Deterministic Form Validation",
+        "category": "functional",
+        "description": "Users cannot proceed to Payment without resolving all field validation errors."
+      }
+    ],
+    "resources": [
+      {
+        "title": "Stripe Elements UX Best Practices",
+        "url": "https://stripe.com/docs/elements",
+        "type": "docs",
+        "description": "Official guidelines for building frictionless payment forms."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Architected a multi-step checkout state machine with real-time tax calculation and coupon validation, preventing invalid state submissions."
+      }
+    ]
+  },
+  {
+    "id": "ai-chat-workspace",
+    "title": "Multi-Model AI Chat & Document Workspace",
+    "subtitle": "Streaming LLM responses, Markdown rendering, message threads & document context",
+    "description": "Build an AI chat interface featuring real-time response streaming, code block syntax highlighting, conversation threads, model switching, and document context attachment.",
+    "overview": "Master building modern AI interfaces. You will handle chunked response streaming (SSE / ReadableStream), syntax-highlighted code output, system prompt configuration, context window token estimation, and thread persistence.",
+    "category": "Full-stack",
+    "difficulty": "Advanced",
+    "estimatedHours": 25,
+    "tags": ["React", "AI", "Streaming", "TypeScript", "Markdown"],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Streaming Chat UI & Auto-Scroll",
+        "description": "Build chat message list with smooth autoscroll anchored to bottom during stream generation.",
+        "estimatedMinutes": 240,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Implement auto-scroll to bottom with user manual override detection",
+            "description": "Pause auto-scroll if user scrolls up to read prior messages during stream.",
+            "hints": ["Compare scrollTop + clientHeight against scrollHeight."],
+            "estimatedMinutes": 120
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Render Markdown message content with code copy button",
+            "description": "Support bold, lists, inline code, and syntax highlighted blocks.",
+            "hints": ["Use react-markdown inside styled container wrappers."],
+            "estimatedMinutes": 120
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Thread Sidebar & Local History Persistence",
+        "description": "Store conversation threads in LocalStorage with title generation and deletion.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t3",
+            "milestoneId": "m2",
+            "title": "Build collateral sidebar with conversation search & filter",
+            "description": "Organize chat history by date groupings (Today, Yesterday, Last 7 Days).",
+            "hints": ["Group array of threads by date diff offset."],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Add Model selector dropdown (Gemini Flash, Gemini Pro, Custom)",
+            "description": "Allow switching model presets per conversation thread.",
+            "hints": ["Store selectedModelId in thread metadata."],
+            "estimatedMinutes": 90
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Jank-Free Streaming Rendering",
+        "category": "performance",
+        "description": "Renders high-frequency incoming message stream chunks without freezing UI or input fields."
+      }
+    ],
+    "resources": [
+      {
+        "title": "Google GenAI TypeScript SDK Documentation",
+        "url": "https://github.com/google/generative-ai-js",
+        "type": "docs",
+        "description": "Official SDK references for streaming model responses."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Developed a real-time AI workspace with chunked streaming responses, markdown code block rendering, and thread history management."
+      }
+    ]
+  }
+]

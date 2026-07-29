@@ -1,0 +1,32 @@
+[
+  {
+    "id": "fc1",
+    "front": "What is hoisting?",
+    "back": "JS moves declarations to the top of their scope. var is initialized as undefined; let/const are in the temporal dead zone until their declaration.",
+    "deck": "JavaScript"
+  },
+  {
+    "id": "fc2",
+    "front": "What is a pure function?",
+    "back": "Same input → same output, and no side effects.",
+    "deck": "JavaScript"
+  },
+  {
+    "id": "fc3",
+    "front": "What does React's key prop actually do?",
+    "back": "It tells React how to match children between renders so it can preserve state and DOM instead of unmounting/remounting.",
+    "deck": "React"
+  },
+  {
+    "id": "fc4",
+    "front": "Difference between position: absolute and fixed?",
+    "back": "absolute is positioned relative to the nearest positioned ancestor; fixed is positioned relative to the viewport.",
+    "deck": "CSS"
+  },
+  {
+    "id": "fc5",
+    "front": "TypeScript: any vs unknown?",
+    "back": "any opts out of the type system; unknown is a safe top type that requires narrowing before use.",
+    "deck": "TypeScript"
+  }
+]

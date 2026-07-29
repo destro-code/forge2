@@ -1,0 +1,217 @@
+[
+  {
+    "id": "closures-intro",
+    "topicId": "closures",
+    "title": "Closures, from scratch",
+    "description": "Build an intuition for closures by watching one form under your fingertips.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 18,
+    "mastery": "Learning",
+    "sections": [
+      { "type": "heading", "text": "What is a closure?" },
+      {
+        "type": "paragraph",
+        "text": "A closure is a function bundled together with references to its surrounding state — the lexical environment in which it was declared."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "Every function you write in JavaScript is technically a closure. The interesting question is what it closes over."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "code": "function counter() {\n  let count = 0;\n  return () => ++count;\n}\nconst next = counter();\nnext(); // 1\nnext(); // 2"
+      },
+      { "type": "heading", "text": "Common mistakes" },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Capturing a mutable loop variable with var creates a closure over the SAME binding. Use let."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "text": "Closures can retain memory. Avoid capturing large DOM nodes in long-lived callbacks."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex1",
+        "title": "Implement once()",
+        "brief": "Write once(fn) that calls fn only the first time and returns the cached result after."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q1",
+        "question": "What does a closure capture?",
+        "options": [
+          "Values by copy",
+          "References to variables in the enclosing scope",
+          "The prototype chain",
+          "The this binding"
+        ],
+        "correctIndex": 1,
+        "explanation": "Closures capture live bindings, not snapshotted values."
+      }
+    ],
+    "summary": "Closures pair a function with the environment where it was born. Master them and modules, memoization, and hooks click into place.",
+    "resources": [
+      {
+        "label": "MDN — Closures",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures"
+      }
+    ],
+    "interviewQuestions": [
+      "Explain closures to a junior engineer using an example.",
+      "How can closures cause memory leaks? How would you audit for them?"
+    ]
+  },
+  {
+    "id": "useeffect-mental-model",
+    "topicId": "useeffect",
+    "title": "A mental model for useEffect",
+    "description": "Effects synchronize your component to external systems — think in terms of setup and cleanup, not lifecycle.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 22,
+    "mastery": "Practicing",
+    "sections": [
+      { "type": "heading", "text": "Effects synchronize" },
+      {
+        "type": "paragraph",
+        "text": "Every render, React compares the deps array. If anything changed, it runs cleanup for the old effect and setup for the new one."
+      },
+      {
+        "type": "code",
+        "language": "tsx",
+        "code": "useEffect(() => {\n  const ctrl = new AbortController();\n  fetch(url, { signal: ctrl.signal }).then(setData);\n  return () => ctrl.abort();\n}, [url]);"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Empty deps arrays are almost never what you want when the effect uses props or state."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex1",
+        "title": "Room lights",
+        "brief": "Sync a Room prop to a chat server: connect on mount, reconnect on prop change, disconnect on unmount."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q1",
+        "question": "When does the cleanup function run?",
+        "options": [
+          "Only on unmount",
+          "Before every re-run of the effect and on unmount",
+          "After every render",
+          "Never in Strict Mode"
+        ],
+        "correctIndex": 1,
+        "explanation": "Cleanup runs before the next setup and on unmount."
+      }
+    ],
+    "summary": "Model effects as synchronization contracts. If you cannot describe the external system, you probably do not need an effect.",
+    "resources": [
+      {
+        "label": "You might not need an effect",
+        "url": "https://react.dev/learn/you-might-not-need-an-effect"
+      }
+    ],
+    "interviewQuestions": [
+      "When would you avoid useEffect entirely?",
+      "What does Strict Mode's double-invocation teach you about your effects?"
+    ]
+  },
+  {
+    "id": "flexbox-axes",
+    "topicId": "flexbox",
+    "title": "Thinking in axes",
+    "description": "Once you stop thinking in rows and columns and start thinking in main and cross axes, flex clicks.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 15,
+    "mastery": "Mastered",
+    "sections": [
+      {
+        "type": "paragraph",
+        "text": "Flexbox aligns children along a main axis and a cross axis. Change flex-direction and the axes rotate with it."
+      },
+      {
+        "type": "code",
+        "language": "css",
+        "code": ".row { display: flex; gap: 1rem; align-items: center; }\n.push { margin-left: auto; }"
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex1",
+        "title": "Nav bar",
+        "brief": "Build a nav bar with a logo, a link cluster, and a right-aligned CTA using only flex."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q1",
+        "question": "align-items aligns children along which axis?",
+        "options": ["Main", "Cross", "Depends on writing mode", "Neither"],
+        "correctIndex": 1,
+        "explanation": "align-items works on the cross axis; justify-content on the main axis."
+      }
+    ],
+    "summary": "Main + cross axis is the whole model. Everything else is defaults and gaps.",
+    "resources": [
+      {
+        "label": "A Complete Guide to Flexbox",
+        "url": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/"
+      }
+    ],
+    "interviewQuestions": ["When would you reach for grid over flex?"]
+  },
+  {
+    "id": "rendering-strategies-overview",
+    "topicId": "rendering-strategies",
+    "title": "CSR, SSR, SSG, ISR — and now streaming",
+    "description": "Trade-offs across rendering strategies and the questions that pick the winner.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 28,
+    "mastery": "Not Started",
+    "sections": [
+      {
+        "type": "paragraph",
+        "text": "The right rendering strategy is a function of freshness, personalization, cost and TTFB budget."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "Ask: who is this page for, how fresh must it be, and can the response be cached at the edge?"
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex1",
+        "title": "Pick a strategy",
+        "brief": "Choose a rendering strategy for a marketing home, a logged-in dashboard, and a product page."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q1",
+        "question": "Which strategy gives the best TTFB for anonymous, cacheable pages?",
+        "options": ["CSR", "SSR", "SSG at the edge", "ISR"],
+        "correctIndex": 2,
+        "explanation": "Prebuilt HTML served from the edge wins TTFB for anonymous cacheable content."
+      }
+    ],
+    "summary": "There is no single best. There is a best for this page, right now.",
+    "resources": [
+      {
+        "label": "Web.dev — Rendering on the web",
+        "url": "https://web.dev/articles/rendering-on-the-web"
+      }
+    ],
+    "interviewQuestions": ["Design the rendering strategy for a global e-commerce site."]
+  }
+]

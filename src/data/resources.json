@@ -1,0 +1,42 @@
+[
+  {
+    "id": "mdn",
+    "title": "MDN Web Docs",
+    "description": "The reference for the web platform.",
+    "url": "https://developer.mozilla.org",
+    "category": "Reference",
+    "type": "site"
+  },
+  {
+    "id": "react-docs",
+    "title": "React Docs (react.dev)",
+    "description": "The new React documentation with interactive examples.",
+    "url": "https://react.dev",
+    "category": "Reference",
+    "type": "site"
+  },
+  {
+    "id": "webdev",
+    "title": "web.dev",
+    "description": "Google's guides on performance, PWA and Core Web Vitals.",
+    "url": "https://web.dev",
+    "category": "Performance",
+    "type": "site"
+  },
+  {
+    "id": "typescript-handbook",
+    "title": "TypeScript Handbook",
+    "description": "Deep, canonical guide to the type system.",
+    "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+    "category": "Reference",
+    "type": "site"
+  },
+  {
+    "id": "wcag",
+    "title": "WCAG Quick Reference",
+    "description": "How to meet accessibility criteria, practically.",
+    "url": "https://www.w3.org/WAI/WCAG21/quickref/",
+    "category": "A11y",
+    "type": "site"
+  }
+]

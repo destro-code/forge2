@@ -1,0 +1,6 @@
+{
+  "name": "Frontend Mastery Path",
+  "description": "Interactive learning path and developer forge for frontend engineering mastery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

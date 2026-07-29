@@ -1,0 +1,174 @@
+[
+  {
+    "id": "js-fundamentals",
+    "title": "JavaScript & Engine Mastery",
+    "description": "Scope, coercion, async execution, closures, event loop ordering, and prototype chains.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 15,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "What does 'typeof null' evaluate to in JavaScript?",
+        "options": ["'null'", "'object'", "'undefined'", "'number'"],
+        "correctIndex": 1,
+        "explanation": "This is a historic JS bug. In original JS implementations, values were represented with type tags, and object's tag was 0. Since null was representation pointer NULL (0x00), typeof null evaluates to 'object'."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of the following statements create block-scoped declarations in JavaScript? (Select all that apply)",
+        "options": [
+          "let x = 10;",
+          "var y = 20;",
+          "const z = 30;",
+          "function foo() {} in strict mode block"
+        ],
+        "correctIndices": [0, 2, 3],
+        "explanation": "let and const are block-scoped. Function declarations inside block statements are also block-scoped in ES6 strict mode. var is function-scoped or globally scoped."
+      },
+      {
+        "id": "q3",
+        "type": "ordering",
+        "question": "Order the steps of the JavaScript Event Loop execution order when a microtask and macrotask are scheduled:",
+        "items": [
+          "Execute Call Stack synchronous code",
+          "Drain all Microtasks (Promises, process.nextTick)",
+          "Run next Macrotask (setTimeout / setInterval)",
+          "Perform DOM Rendering / Repaint if necessary"
+        ],
+        "correctOrder": [
+          "Execute Call Stack synchronous code",
+          "Drain all Microtasks (Promises, process.nextTick)",
+          "Perform DOM Rendering / Repaint if necessary",
+          "Run next Macrotask (setTimeout / setInterval)"
+        ],
+        "explanation": "The Event Loop executes synchronous stack frames first, then flushes ALL pending microtasks, updates the UI/DOM render if needed, and finally pops ONE macrotask from the task queue."
+      },
+      {
+        "id": "q4",
+        "type": "drag_drop",
+        "question": "Match the JavaScript features to their respective concepts:",
+        "pairs": [
+          {
+            "id": "p1",
+            "left": "Promise.all()",
+            "right": "Rejects immediately if any input promise rejects"
+          },
+          {
+            "id": "p2",
+            "left": "Promise.allSettled()",
+            "right": "Waits for all promises to settle regardless of outcome"
+          },
+          {
+            "id": "p3",
+            "left": "Promise.race()",
+            "right": "Settles with the result of the first promise that resolves or rejects"
+          },
+          {
+            "id": "p4",
+            "left": "Promise.any()",
+            "right": "Fulfills with the first fulfilled promise, ignores rejections unless all fail"
+          }
+        ],
+        "explanation": "Promise combinators have distinct settlement behaviors: all rejects fast, allSettled never rejects overall, race resolves/rejects with first result, and any looks for first success."
+      },
+      {
+        "id": "q5",
+        "type": "code",
+        "question": "What will be printed to the console when the following code executes?",
+        "codeSnippet": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
+        "options": ["A, B, C, D", "A, D, C, B", "A, D, B, C", "A, C, D, B"],
+        "correctIndex": 1,
+        "explanation": "Synchronous logs run first ('A', 'D'). Then microtask Promise.then runs ('C'). Finally, macrotask setTimeout runs ('B'). Output: A, D, C, B."
+      },
+      {
+        "id": "q6",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the correct ES6 array method to check if at least one element passes a test function:",
+        "template": "const hasAdmin = users.______(user => user.role === 'admin');",
+        "acceptedAnswers": ["some", ".some", "some()"],
+        "explanation": "Array.prototype.some() returns true if at least one array element passes the test implemented by the callback function."
+      }
+    ]
+  },
+  {
+    "id": "react-hooks",
+    "title": "React 19 & Hooks Deep Dive",
+    "description": "Effects, transitions, stale closures, layout timing, and custom hook patterns.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 20,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "When should you use useLayoutEffect instead of useEffect?",
+        "options": [
+          "When you need to measure or write layout before browser paint to prevent visual flicker",
+          "When performing asynchronous data fetching calls",
+          "When running long-running computations",
+          "Always, as it is faster than useEffect"
+        ],
+        "correctIndex": 0,
+        "explanation": "useLayoutEffect fires synchronously after all DOM mutations but before browser paint, preventing visual layout jumps during measurement."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of the following are valid React 19 / Modern React rules or optimizations? (Select all that apply)",
+        "options": [
+          "Hooks must only be called at the top level of function components",
+          "useActionState helps manage pending state for async form submissions",
+          "useEffect dependency arrays can safely contain unmemoized object literals created in render",
+          "useOptimistic enables optimistic UI updates during background server actions"
+        ],
+        "correctIndices": [0, 1, 3],
+        "explanation": "Hooks must follow top-level calling rules. React 19 introduced useActionState and useOptimistic. Unmemoized objects in useEffect dependency arrays cause infinite re-renders."
+      },
+      {
+        "id": "q3",
+        "type": "ordering",
+        "question": "Order the sequence of execution when a React state update occurs in a component with useEffect:",
+        "items": [
+          "State update function (e.g. setState) is called",
+          "React renders component and generates new Virtual DOM",
+          "React updates real DOM nodes",
+          "Browser paints updated DOM to screen",
+          "useEffect cleanup function runs for previous render",
+          "useEffect callback function runs"
+        ],
+        "correctOrder": [
+          "State update function (e.g. setState) is called",
+          "React renders component and generates new Virtual DOM",
+          "React updates real DOM nodes",
+          "Browser paints updated DOM to screen",
+          "useEffect cleanup function runs for previous render",
+          "useEffect callback function runs"
+        ],
+        "explanation": "React batches updates, renders Virtual DOM, applies mutations, allows browser paint, and asynchronously flushes passive effects (cleanups then callbacks)."
+      },
+      {
+        "id": "q4",
+        "type": "code",
+        "question": "What issue exists in the following React component?",
+        "codeSnippet": "function Timer() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    const id = setInterval(() => {\n      setCount(count + 1);\n    }, 1000);\n    return () => clearInterval(id);\n  }, []);\n  return <div>{count}</div>;\n}",
+        "options": [
+          "Infinite loop re-renders because count is in dependencies",
+          "Stale closure bug: count inside setInterval is locked at 0, so count never increments beyond 1",
+          "Syntax error in cleanup function return",
+          "Memory leak because setInterval is never cleared"
+        ],
+        "correctIndex": 1,
+        "explanation": "Because the dependency array is empty [], the closure captures count=0. Calling setCount(0+1) repeatedly sets count to 1. Fix by using functional update setCount(prev => prev + 1)."
+      },
+      {
+        "id": "q5",
+        "type": "fill_in_blank",
+        "question": "Complete the Hook call to defer a non-urgent UI state recalculation during fast input typing:",
+        "template": "const deferredQuery = _________(searchQuery);",
+        "acceptedAnswers": ["useDeferredValue", "React.useDeferredValue"],
+        "explanation": "useDeferredValue accepts a value and returns a deferred copy that lags behind urgent state updates to keep rendering responsive."
+      }
+    ]
+  }
+]

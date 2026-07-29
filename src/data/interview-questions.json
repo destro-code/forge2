@@ -1,0 +1,531 @@
+[
+  {
+    "id": "html-1",
+    "category": "HTML",
+    "difficulty": "Medium",
+    "question": "Explain DOM parsing, render tree construction, and script execution. What is the difference between <script>, <script async>, and <script defer>?",
+    "estimatedMinutes": 10,
+    "companyTags": ["Google", "Meta", "Amazon"],
+    "rubric": [
+      "Explains HTML parsing into DOM tree and CSS parsing into CSSOM tree",
+      "Describes how DOM + CSSOM combine to form the Render Tree and Layout phase",
+      "Differentiates standard <script> (blocks parsing), async (fetches in parallel, executes immediately upon download blocking DOM), and defer (fetches in parallel, executes in order after DOM parsing completes)",
+      "Mentions DOMContentLoaded event timing relative to script loading"
+    ],
+    "sampleAnswer": "When a browser requests an HTML document, it streams bytes and converts them to tokens, nodes, and the DOM tree in parallel with fetching external resources. In parallel, linked CSS files are parsed into the CSSOM. The browser combines DOM and CSSOM to create the Render Tree, which calculates layout dimensions and paints pixels.\n\nScript Execution Modes:\n1. Standard `<script>`: Pauses HTML parsing immediately, downloads the JS file synchronously, executes it, and then resumes HTML parsing. This blocks first contentful paint (FCP).\n2. `<script async>`: Downloads the script asynchronously in parallel with HTML parsing. As soon as download finishes, HTML parsing pauses to execute the script immediately. Order of execution is non-deterministic.\n3. `<script defer>`: Downloads the script asynchronously in parallel with HTML parsing, but delays execution until HTML parsing is fully complete (just before DOMContentLoaded). Preserves execution order.",
+    "codeSnippet": "<!-- Standard: Blocks parsing during download and execution -->\n<script src=\"app.js\"></script>\n\n<!-- Async: Downloads parallel, pauses parsing to execute as soon as ready -->\n<script async src=\"analytics.js\"></script>\n\n<!-- Defer: Downloads parallel, executes in DOM order after parsing finishes -->\n<script defer src=\"main-bundle.js\"></script>",
+    "commonPitfalls": [
+      "Confusing async with defer regarding execution order",
+      "Assuming defer delays download rather than execution",
+      "Forgetting that async scripts execute out of order as soon as they finish downloading"
+    ],
+    "followUpQuestions": [
+      "What happens if an async script depends on a library loaded via defer?",
+      "How does module loading (<script type='module'>) behave by default?"
+    ]
+  },
+  {
+    "id": "html-2",
+    "category": "HTML",
+    "difficulty": "Hard",
+    "question": "How do <picture>, <source>, and srcset with sizes enable responsive media delivery and prevent layout shift?",
+    "estimatedMinutes": 8,
+    "companyTags": ["Vercel", "Shopify", "Stripe"],
+    "rubric": [
+      "Explains the difference between resolution switching (srcset) and art direction (<picture>)",
+      "Describes how the 'sizes' attribute gives layout hints to the browser before CSS layout executes",
+      "Explains aspect-ratio or explicit width/height attributes for preventing Cumulative Layout Shift (CLS)"
+    ],
+    "sampleAnswer": "Responsive images use two main patterns:\n1. Resolution Switching (`srcset` + `sizes` on `<img>`): Allows browser to choose the ideal image resolution based on device pixel ratio (DPR) and layout viewport width. The `sizes` attribute tells the preloader how wide the image will render before CSS loads.\n2. Art Direction (`<picture>` element): Used when image crop or format (AVIF, WebP, JPEG) must change depending on viewport media queries or browser format support.\n\nTo prevent CLS, always provide explicit `width` and `height` attributes on the `<img>` tag so the browser computes the aspect-ratio slot before the image downloads.",
+    "codeSnippet": "<picture>\n  <source media=\"(min-width: 1024px)\" srcset=\"hero-wide.avif\" type=\"image/avif\">\n  <source srcset=\"hero-mobile.webp\" type=\"image/webp\">\n  <img src=\"hero-fallback.jpg\" alt=\"Developer dashboard overview\" width=\"1200\" height=\"600\" loading=\"lazy\">\n</picture>",
+    "commonPitfalls": [
+      "Omitting width/height attributes on <img> inside <picture>, causing CLS",
+      "Using <picture> for simple resolution changes when srcset + sizes is cleaner"
+    ],
+    "followUpQuestions": [
+      "How does the browser preloader parse srcset before styles are loaded?",
+      "What is the priority difference between eager, lazy, and fetchpriority attributes?"
+    ]
+  },
+  {
+    "id": "css-1",
+    "category": "CSS",
+    "difficulty": "Hard",
+    "question": "Explain Block Formatting Context (BFC), Stacking Contexts (z-index), and Container Queries vs Media Queries.",
+    "estimatedMinutes": 12,
+    "companyTags": ["Apple", "Airbnb", "Meta"],
+    "rubric": [
+      "Defines BFC and lists triggers (display: flow-root, overflow: hidden, flex/grid items, position: fixed/absolute)",
+      "Explains how BFC prevents margin collapsing and clears floats",
+      "Explains Stacking Context creation (position + z-index, opacity < 1, transform, filter, isolation: isolate)",
+      "Compares Container Queries (@container) targeting parent element width vs Media Queries (@media) targeting viewport width"
+    ],
+    "sampleAnswer": "A Block Formatting Context (BFC) is an isolated visual layout region where child blocks are laid out vertically. Forming a BFC (e.g. via `display: flow-root`) contains internal floats without clearfix hacks and prevents vertical margins from collapsing with elements outside the BFC.\n\nA Stacking Context determines rendering order along the Z-axis. Child elements with `z-index: 9999` will still render behind an element with `z-index: 1` if their parent belongs to a lower stacking context. Stacking contexts are formed by `isolation: isolate`, `opacity < 1`, `transform`, `filter`, or `position` with non-auto `z-index`.\n\nContainer Queries (`@container`) evaluate the size of a designated parent container rather than the browser viewport (`@media`), making modular component design truly context-aware when placed in sidebars, modals, or grid columns.",
+    "codeSnippet": "/* Container Query Setup */\n.card-container {\n  container-type: inline-size;\n  container-name: card;\n}\n\n@container card (min-width: 400px) {\n  .card-content {\n    display: flex;\n    flex-direction: row;\n  }\n}",
+    "commonPitfalls": [
+      "Assuming high z-index overrides parent stacking contexts",
+      "Using overflow: hidden solely to clear floats instead of display: flow-root"
+    ],
+    "followUpQuestions": [
+      "How does 'isolation: isolate' prevent z-index leakage in reusable UI component libraries?",
+      "What are containment properties in CSS performance optimization?"
+    ]
+  },
+  {
+    "id": "css-2",
+    "category": "CSS",
+    "difficulty": "Medium",
+    "question": "How do CSS Grid and Flexbox differ in terms of 1D vs 2D layout calculation algorithms?",
+    "estimatedMinutes": 8,
+    "companyTags": ["Microsoft", "Uber", "Netflix"],
+    "rubric": [
+      "Identifies Flexbox as 1D (content-driven layout along main/cross axis) vs Grid as 2D (layout-driven rows and columns)",
+      "Explains flex-grow, flex-shrink, flex-basis sizing math",
+      "Explains grid-template-columns with minmax(), fr units, and auto-fit/auto-fill"
+    ],
+    "sampleAnswer": "Flexbox is designed for 1-dimensional layouts (a single row or column at a time) where children drive the layout size based on content. CSS Grid is designed for 2-dimensional layouts where the parent container defines a structured grid coordinate system of rows and columns.\n\nIn Flexbox, space distribution is calculated via `flex-basis`, `flex-grow`, and `flex-shrink`. In CSS Grid, track sizing uses fractional units (`fr`) alongside dynamic functions like `grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))` to create responsive layouts without media queries.",
+    "codeSnippet": "/* Responsive Auto-Fit Grid without media queries */\n.card-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n  gap: 1.5rem;\n}",
+    "commonPitfalls": [
+      "Using Flexbox with hardcoded width percentages when CSS Grid is better suited",
+      "Confusing auto-fit (stretches tracks to fill remaining space) with auto-fill (creates empty tracks)"
+    ],
+    "followUpQuestions": [
+      "When would you combine Flexbox inside a CSS Grid item?",
+      "How does subgrid work in CSS Grid level 2?"
+    ]
+  },
+  {
+    "id": "js-1",
+    "category": "JavaScript",
+    "difficulty": "Medium",
+    "question": "Explain the JavaScript Event Loop, Call Stack, Microtask queue, and Macrotask queue with execution order examples.",
+    "estimatedMinutes": 10,
+    "companyTags": ["Google", "Amazon", "Meta", "Bloomberg"],
+    "rubric": [
+      "Describes single-threaded call stack execution",
+      "Identifies Microtasks (Promise.then, queueMicrotask, MutationObserver)",
+      "Identifies Macrotasks (setTimeout, setInterval, I/O, UI rendering)",
+      "Explains that ALL microtasks in the queue drain completely before the next macrotask or browser paint"
+    ],
+    "sampleAnswer": "JavaScript runs on a single-threaded event loop. Code execution starts on the synchronous Call Stack. When asynchronous tasks complete, their callbacks enter queue structures:\n\n1. Microtask Queue: Holds Promise reactions (`.then`), `queueMicrotask`, and `MutationObserver`. The Event Loop drains the ENTIRE microtask queue before moving to the next task or triggering a screen repaint.\n2. Macrotask Queue: Holds `setTimeout`, `setInterval`, network I/O, and UI events. The Event Loop processes ONE macrotask, then drains all microtasks that were queued, then yields to rendering if necessary, then picks the next macrotask.",
+    "codeSnippet": "console.log('1: Sync');\n\nsetTimeout(() => console.log('2: Timeout (Macrotask)'), 0);\n\nPromise.resolve().then(() => {\n  console.log('3: Promise (Microtask)');\n  queueMicrotask(() => console.log('4: Nested Microtask'));\n});\n\nconsole.log('5: Sync End');\n\n// Output Order: 1: Sync -> 5: Sync End -> 3: Promise -> 4: Nested Microtask -> 2: Timeout",
+    "commonPitfalls": [
+      "Believing setTimeout(fn, 0) executes immediately before Promises",
+      "Not realizing an infinite loop of microtasks will starve the event loop and freeze UI rendering"
+    ],
+    "followUpQuestions": [
+      "Where does requestAnimationFrame fit relative to microtasks and browser painting?",
+      "How does Node.js event loop phase structure differ from browser event loop?"
+    ]
+  },
+  {
+    "id": "js-2",
+    "category": "JavaScript",
+    "difficulty": "Hard",
+    "question": "How do Closures and Garbage Collection work in V8? Give an example of a memory leak caused by uncleaned closures.",
+    "estimatedMinutes": 12,
+    "companyTags": ["Meta", "Datadog", "Cloudflare"],
+    "rubric": [
+      "Defines Closure as a function bundled together with references to its surrounding lexical environment",
+      "Explains V8 Mark-and-Sweep garbage collection and root reachability",
+      "Demonstrates closure memory leak (shared scope retainment)"
+    ],
+    "sampleAnswer": "A closure is formed when an inner function retains references to variables in its outer lexical scope, even after the outer function has returned. V8 uses a Mark-and-Sweep garbage collector: objects are eligible for GC when they are no longer reachable from root objects.\n\nIn V8, functions in the same lexical parent scope share a single closure scope object. If one inner function holds a reference to a huge object, and another inner function is kept alive, the huge object CANNOT be garbage collected.",
+    "codeSnippet": "let uncleanedListener;\n\nfunction setupLeak() {\n  const hugeBuffer = new Array(10000000).fill('leak');\n  \n  function unusedClosure() {\n    if (hugeBuffer) console.log(hugeBuffer.length);\n  }\n  \n  uncleanedListener = function leakedClosure() {\n    console.log('Active listener running...');\n  };\n}\n\nsetupLeak();",
+    "commonPitfalls": [
+      "Assuming garbage collection cleans up unused local variables even if a sibling closure in the same scope remains referenced",
+      "Forgetting to detach event listeners or clear setInterval callbacks in SPA navigation"
+    ],
+    "followUpQuestions": [
+      "How do WeakMap and WeakSet prevent memory leaks compared to Map and Set?",
+      "How do you inspect retained objects using Chrome DevTools Heap Snapshot?"
+    ]
+  },
+  {
+    "id": "react-1",
+    "category": "React",
+    "difficulty": "Hard",
+    "question": "How does React Fiber reconciliation work? How do concurrent features like useTransition and useDeferredValue prioritize render lanes?",
+    "estimatedMinutes": 15,
+    "companyTags": ["Meta", "Vercel", "Airbnb", "DoorDash"],
+    "rubric": [
+      "Explains Fiber architecture as a linked list tree representation supporting interruptible, incremental rendering",
+      "Differentiates Render Phase (pure, asynchronous, interruptible) vs Commit Phase (synchronous DOM mutation)",
+      "Explains Lane Priority System (Sync lane vs InputContinuous vs Transition lane)",
+      "Describes how useTransition yields control to high-priority user inputs"
+    ],
+    "sampleAnswer": "React Fiber replaced the synchronous stack reconciler with a linked-list data structure where every component instance is a 'Fiber node'. Fiber allows React to split rendering work into small chunks, pause work to handle urgent user input, and resume or discard work as priorities change.\n\nTwo Main Phases:\n1. Render Phase: React traverses Fiber nodes, calls component functions, and calculates diffs. This phase is pure, async, and can be interrupted or restarted.\n2. Commit Phase: React synchronously applies calculated mutations to the DOM and fires layout effects.",
+    "codeSnippet": "import { useState, useTransition } from 'react';\n\nfunction SearchList() {\n  const [query, setQuery] = useState('');\n  const [deferredList, setDeferredList] = useState([]);\n  const [isPending, startTransition] = useTransition();\n\n  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {\n    setQuery(e.target.value);\n    startTransition(() => {\n      setDeferredList(heavyFilter(e.target.value));\n    });\n  };\n\n  return (\n    <div>\n      <input value={query} onChange={handleChange} />\n      {isPending && <p>Filtering records...</p>}\n      <List items={deferredList} />\n    </div>\n  );\n}",
+    "commonPitfalls": [
+      "Performing side effects inside the Render phase",
+      "Confusing useTransition (for state update triggers) with useDeferredValue (for wrapping received prop values)"
+    ],
+    "followUpQuestions": [
+      "What is the role of React Server Components (RSC) payload during hydration?",
+      "How does automatic batching work in React 18+ across async boundaries?"
+    ]
+  },
+  {
+    "id": "react-2",
+    "category": "React",
+    "difficulty": "Medium",
+    "question": "Compare React Server Components (RSC) vs Client Components. What are the rules for serializability across boundaries?",
+    "estimatedMinutes": 10,
+    "companyTags": ["Vercel", "Shopify", "Meta"],
+    "rubric": [
+      "Explains RSC execute purely on the server, zero client bundle size impact, direct DB access",
+      "Explains Client Components ('use client') run on server for SSR and hydrate on client for interactivity",
+      "Explains serializability rule: Props passed from Server Components to Client Components must be serializable"
+    ],
+    "sampleAnswer": "React Server Components (RSC) execute exclusively on the server during build or request time. They never ship their JavaScript code to the browser, allowing direct access to databases with zero bundle overhead.\n\nClient Components (marked with `'use client'`) render on the server to generate HTML (SSR) and hydrate on the client to enable state (`useState`), side effects (`useEffect`), and event handlers (`onClick`).",
+    "codeSnippet": "// ServerComponent.tsx (RSC - Runs on server)\nimport { db } from './db';\nimport { ClientButton } from './ClientButton';\n\nexport async function ProductPage({ id }: { id: string }) {\n  const product = await db.products.findUnique({ id });\n  \n  return (\n    <div>\n      <h1>{product.name}</h1>\n      <ClientButton product={product} />\n    </div>\n  );\n}",
+    "commonPitfalls": [
+      "Adding 'use client' at the top of every file out of habit",
+      "Attempting to pass non-serializable functions as props from RSC to Client Components"
+    ],
+    "followUpQuestions": [
+      "How do Server Actions work under the hood via HTTP POST requests?",
+      "How do you stream RSC content using Suspense boundaries?"
+    ]
+  },
+  {
+    "id": "ts-1",
+    "category": "TypeScript",
+    "difficulty": "Hard",
+    "question": "Explain Discriminated Unions, Type Narrowing, conditional types, and how the 'infer' keyword extracts types in generic utility functions.",
+    "estimatedMinutes": 12,
+    "companyTags": ["Stripe", "Linear", "Microsoft"],
+    "rubric": [
+      "Defines Discriminated Union with a common literal property tag",
+      "Explains Type Narrowing via switch/if guards and exhaustiveness checking using 'never'",
+      "Explains Conditional Types (T extends U ? X : Y)",
+      "Explains 'infer' keyword for pattern matching and extracting internal types within conditional types"
+    ],
+    "sampleAnswer": "A Discriminated Union is a union of object types that share a single common literal property (the 'discriminant'). TypeScript narrows the specific object shape inside control flow blocks based on checks against that discriminant.\n\nConditional Types take the form `T extends U ? X : Y`. When combined with the `infer` keyword, TypeScript can extract sub-types dynamically during type inference.",
+    "codeSnippet": "type APIState<T> =\n  | { status: 'idle' }\n  | { status: 'loading' }\n  | { status: 'success'; data: T }\n  | { status: 'error'; error: Error };\n\nfunction renderState<T>(state: APIState<T>) {\n  switch (state.status) {\n    case 'idle': return 'Ready';\n    case 'loading': return 'Loading...';\n    case 'success': return `Data: ${JSON.stringify(state.data)}`;\n    case 'error': return `Error: ${state.error.message}`;\n    default: {\n      const _exhaustiveCheck: never = state;\n      return _exhaustiveCheck;\n    }\n  }\n}",
+    "commonPitfalls": [
+      "Using non-literal properties as union discriminants",
+      "Forgetting exhaustiveness checking with 'never' when handling API response unions"
+    ],
+    "followUpQuestions": [
+      "How do mapped types and template literal types combine to build type-safe route paths?",
+      "What is the difference between covariance and contravariance in TypeScript generics?"
+    ]
+  },
+  {
+    "id": "ts-2",
+    "category": "TypeScript",
+    "difficulty": "Medium",
+    "question": "What is the difference between type assertions (as), type guards (is), and unknown vs any?",
+    "estimatedMinutes": 8,
+    "companyTags": ["Discord", "Vercel", "GitHub"],
+    "rubric": [
+      "Explains 'any' disables type checking vs 'unknown' enforces type checking before usage",
+      "Explains Type Assertions ('as') force compiler override without runtime checks",
+      "Explains Custom Type Guard functions using 'param is Type' predicate syntax for safe runtime validation"
+    ],
+    "sampleAnswer": "`any` opts out of type safety completely. `unknown` represents an unknown type safely: TypeScript forces developers to perform runtime validation or type narrowing before accessing properties.\n\nType Assertion (`val as MyType`) tells the compiler to trust the developer's type assignment, but performs ZERO runtime validation.\n\nType Guard (`function isUser(val: unknown): val is User`) performs actual runtime property validation and returns a boolean.",
+    "codeSnippet": "interface User {\n  id: string;\n  email: string;\n}\n\nfunction isUser(obj: unknown): obj is User {\n  return (\n    typeof obj === 'object' &&\n    obj !== null &&\n    'id' in obj &&\n    'email' in obj\n  );\n}",
+    "commonPitfalls": [
+      "Using 'as MyType' for untrusted network payloads instead of validating schemas",
+      "Using 'any' as a quick fix for complex generic type errors"
+    ],
+    "followUpQuestions": [
+      "How do runtime validation libraries like Zod integrate with TypeScript's z.infer?",
+      "What are satisfying operator ('satisfies') use cases?"
+    ]
+  },
+  {
+    "id": "a11y-1",
+    "category": "Accessibility",
+    "difficulty": "Hard",
+    "question": "How do you build a fully accessible modal dialog (WCAG 2.2 AA compliant)? Detail keyboard focus traps and screen reader roles.",
+    "estimatedMinutes": 12,
+    "companyTags": ["Salesforce", "Google", "Government.gov"],
+    "rubric": [
+      "Identifies key ARIA attributes: role='dialog', aria-modal='true', aria-labelledby, aria-describedby",
+      "Explains Focus Management: move focus into dialog on open, trap focus within dialog, restore focus on close",
+      "Mentions key bindings: Escape key to dismiss dialog",
+      "Explains hiding background content via inert attribute on app root"
+    ],
+    "sampleAnswer": "An accessible modal dialog requires precise ARIA semantics, focus management, and keyboard event handling to pass WCAG 2.2 AA standards.\n\n1. Markup & Semantics: `role=\"dialog\"` and `aria-modal=\"true\"`.\n2. Focus Management: Save activeElement reference on open. Intercept `Tab` and `Shift+Tab` to trap focus within modal. Listen for `Escape` to close and restore focus.\n3. Background Invalidation: Set `inert` or `aria-hidden=\"true\"` on the main application container while modal is active.",
+    "codeSnippet": "function Modal({ isOpen, onClose, title, children }: ModalProps) {\n  return (\n    <div\n      role=\"dialog\"\n      aria-modal=\"true\"\n      aria-labelledby=\"modal-title\"\n      tabIndex={-1}\n      onKeyDown={(e) => e.key === 'Escape' && onClose()}\n    >\n      <h2 id=\"modal-title\">{title}</h2>\n      {children}\n    </div>\n  );\n}",
+    "commonPitfalls": [
+      "Forgetting to restore focus to trigger button when modal closes",
+      "Allowing screen reader users to navigate background DOM behind modal"
+    ],
+    "followUpQuestions": [
+      "How does the native HTML <dialog> element simplify focus trapping?",
+      "What is the difference between visual order and DOM focus navigation order?"
+    ]
+  },
+  {
+    "id": "a11y-2",
+    "category": "Accessibility",
+    "difficulty": "Medium",
+    "question": "What are aria-live regions (polite vs assertive), and how do you announce dynamic SPA updates?",
+    "estimatedMinutes": 8,
+    "companyTags": ["Amazon", "Microsoft", "Lyft"],
+    "rubric": [
+      "Defines aria-live attribute for screen reader notifications of dynamic DOM changes",
+      "Differentiates polite (waits for speech pause) vs assertive (interrupts current speech)",
+      "Explains aria-atomic='true' to announce entire region vs partial updates"
+    ],
+    "sampleAnswer": "Single Page Applications (SPAs) update DOM content dynamically without full page reloads. Screen reader users need explicit announcements when state changes.\n\n1. `aria-live=\"polite\"`: Screen readers announce the update at the next natural speech pause.\n2. `aria-live=\"assertive\"`: Screen readers interrupt current speech immediately for urgent updates.",
+    "codeSnippet": "function StatusAnnouncer({ message, priority = 'polite' }: Props) {\n  return (\n    <div\n      role={priority === 'assertive' ? 'alert' : 'status'}\n      aria-live={priority}\n      aria-atomic=\"true\"\n      className=\"sr-only\"\n    >\n      {message}\n    </div>\n  );\n}",
+    "commonPitfalls": [
+      "Overusing aria-live='assertive', annoying screen reader users with constant speech interruptions",
+      "Injecting dynamic content into an aria-live region before the region itself is rendered in DOM"
+    ],
+    "followUpQuestions": [
+      "How do route announcements work when navigating between pages?",
+      "What is the role of role='status' vs role='alert'?"
+    ]
+  },
+  {
+    "id": "perf-1",
+    "category": "Performance",
+    "difficulty": "Hard",
+    "question": "Walk through diagnosing and optimizing Core Web Vitals (LCP, INP, CLS) on a heavy e-commerce PDP.",
+    "estimatedMinutes": 15,
+    "companyTags": ["Amazon", "Shopify", "Walmart", "Vercel"],
+    "rubric": [
+      "Defines Core Web Vitals: LCP (< 2.5s), INP (< 200ms), CLS (< 0.1)",
+      "Diagnoses LCP bottlenecks: hero image optimization (fetchpriority='high', inline CSS, preloading)",
+      "Diagnoses INP bottlenecks: long tasks (>50ms) on main thread, yielding via scheduler.yield() or requestAnimationFrame",
+      "Diagnoses CLS bottlenecks: un-sized images, font swapping with size-adjust"
+    ],
+    "sampleAnswer": "Core Web Vitals measure user-centric performance metrics:\n\n1. LCP (Largest Contentful Paint - Goal < 2.5s): Set `fetchpriority=\"high\"` on hero image, preload critical image URLs in HTML `<head>`, and serve AVIF/WebP over CDN.\n2. INP (Interaction to Next Paint - Goal < 200ms): Break up long tasks (>50ms) into micro-tasks using `await scheduler.yield()`, move heavy non-UI processing to Web Workers.\n3. CLS (Cumulative Layout Shift - Goal < 0.1): Reserve CSS aspect-ratio bounding boxes or skeleton layout slots for async content.",
+    "codeSnippet": "<link rel=\"preload\" href=\"/images/hero-pdp.avif\" as=\"image\" type=\"image/avif\" fetchpriority=\"high\">\n<img src=\"/images/hero-pdp.avif\" alt=\"Product Detail Hero\" width=\"800\" height=\"800\" fetchpriority=\"high\">",
+    "commonPitfalls": [
+      "Lazy loading the LCP hero image (loading='lazy' causes severe LCP regression)",
+      "Focusing exclusively on Lighthouse lab data instead of real user monitoring field data"
+    ],
+    "followUpQuestions": [
+      "How does Chrome DevTools Performance Profiler pinpoint Long Tasks (>50ms)?",
+      "What is the difference between FID and INP?"
+    ]
+  },
+  {
+    "id": "perf-2",
+    "category": "Performance",
+    "difficulty": "Medium",
+    "question": "Explain how bundler tree-shaking works (ES Modules vs CommonJS) and how to diagnose bundle bloat.",
+    "estimatedMinutes": 10,
+    "companyTags": ["Meta", "Vercel", "Stripe"],
+    "rubric": [
+      "Explains Tree-Shaking as dead code elimination based on static import/export analysis",
+      "Explains why ES Modules enable static analysis vs CommonJS dynamic execution",
+      "Explains sideEffects flag in package.json",
+      "Tools: rollup-plugin-visualizer, webpack-bundle-analyzer"
+    ],
+    "sampleAnswer": "Tree-shaking is a bundler optimization technique that removes unused exports from the production JavaScript bundle. It relies on ES Module (ESM) static syntax (`import` and `export`), where module dependencies can be analyzed at compile-time before code execution.\n\nCommonJS (`require()`) calls are dynamic and can be evaluated inside conditional loops at runtime, making static dependency graph analysis and dead-code elimination impossible or unsafe.",
+    "codeSnippet": "// package.json\n{\n  \"name\": \"my-ui-library\",\n  \"sideEffects\": [\n    \"*.css\",\n    \"./src/polyfills.ts\"\n  ]\n}",
+    "commonPitfalls": [
+      "Importing CJS versions of packages (e.g. lodash instead of lodash-es)",
+      "Top-level side effects inside unused modules preventing bundlers from safely pruning them"
+    ],
+    "followUpQuestions": [
+      "How does code-splitting via dynamic import() create separate bundle chunks?",
+      "What are modern module federation and bundle strategy patterns?"
+    ]
+  },
+  {
+    "id": "debug-1",
+    "category": "Debugging",
+    "difficulty": "Hard",
+    "question": "How do you systematically isolate and resolve a memory leak causing browser tab crashes over time using Chrome DevTools?",
+    "estimatedMinutes": 12,
+    "companyTags": ["Datadog", "Google", "Microsoft"],
+    "rubric": [
+      "Outlines reproduction steps: heap snapshot comparison across repeat user workflows",
+      "Explains Chrome DevTools Memory tab: Take Snapshot 1 -> Perform action 5x -> Force Garbage Collection -> Take Snapshot 2",
+      "Identifies Retainer Tree analysis (Detached DOM nodes, uncleaned event listeners)",
+      "Explains fix & verification"
+    ],
+    "sampleAnswer": "Systematic Memory Leak Debugging Workflow:\n1. Action Reproduction & Baseline: Take Heap Snapshot 1.\n2. Action Iteration & Comparison: Perform workflow 10 times, force Garbage Collection, take Heap Snapshot 2. Compare objects allocated between snapshots.\n3. Retainer Tree Analysis: Inspect detached DOM elements and uncleaned event listeners.\n4. Fix Verification: Clean up event listeners in `useEffect` cleanup return functions.",
+    "codeSnippet": "useEffect(() => {\n  const handleResize = () => setWidth(window.innerWidth);\n  window.addEventListener('resize', handleResize);\n  return () => {\n    window.removeEventListener('resize', handleResize);\n  };\n}, []);",
+    "commonPitfalls": [
+      "Taking heap snapshots without forcing Garbage Collection first",
+      "Ignoring detached DOM nodes retained in global store collections"
+    ],
+    "followUpQuestions": [
+      "What is the difference between Shallow Size and Retained Size in Heap Snapshots?",
+      "How does Performance Allocation Instrumentation timeline help track allocations?"
+    ]
+  },
+  {
+    "id": "debug-2",
+    "category": "Debugging",
+    "difficulty": "Medium",
+    "question": "Explain how to debug a subtle async race condition where network responses return out of order, and how AbortController solves it.",
+    "estimatedMinutes": 10,
+    "companyTags": ["Meta", "Uber", "Spotify"],
+    "rubric": [
+      "Explains Async Race Condition scenario (stale response overwriting latest UI state)",
+      "Explains AbortController and AbortSignal for fetch cancellation",
+      "Explains integration with React useEffect cleanup"
+    ],
+    "sampleAnswer": "An async race condition occurs when multiple asynchronous network requests are triggered sequentially, but complete out of order due to network latency variations.\n\nSolution using `AbortController`: Before issuing a new fetch request, abort the previous pending request signal. This instantly cancels the in-flight HTTP request at the browser layer and prevents out-of-order state updates.",
+    "codeSnippet": "useEffect(() => {\n  const controller = new AbortController();\n  async function search() {\n    try {\n      const res = await fetch(`/api/search?q=${query}`, {\n        signal: controller.signal\n      });\n      const data = await res.json();\n      setResults(data);\n    } catch (err) {\n      if (err.name !== 'AbortError') setError(err);\n    }\n  }\n  search();\n  return () => controller.abort();\n}, [query]);",
+    "commonPitfalls": [
+      "Treating AbortError as an unhandled application error in catch blocks",
+      "Relying solely on local boolean flags without canceling HTTP network requests on the wire"
+    ],
+    "followUpQuestions": [
+      "How do TanStack Query and RxJS switchMap handle request cancellation automatically?",
+      "What happens to the underlying TCP connection when a fetch request is aborted?"
+    ]
+  },
+  {
+    "id": "git-1",
+    "category": "Git",
+    "difficulty": "Medium",
+    "question": "Compare git rebase vs git merge. When should you use interactive rebase (git rebase -i), and how do you resolve conflicts?",
+    "estimatedMinutes": 8,
+    "companyTags": ["GitHub", "GitLab", "Atlassian"],
+    "rubric": [
+      "Compares git merge (non-destructive 3-way merge commit) vs git rebase (re-applies commits on top of tip)",
+      "Explains Interactive Rebase (`git rebase -i HEAD~N`): squash, reword, fixup, drop",
+      "Steps to resolve conflicts during rebase (`git add .` -> `git rebase --continue`)"
+    ],
+    "sampleAnswer": "`git merge` combines two feature branches by creating a new 'merge commit'. It is non-destructive and preserves complete historical context.\n\n`git rebase` rewrites history by taking commits from your feature branch and re-applying them sequentially onto the tip of the target base branch.\n\nInteractive Rebase (`git rebase -i HEAD~N`) allows engineers to clean up local feature branches (squash typos, reword messages) before submitting a PR.",
+    "codeSnippet": "# Interactive rebase for last 4 commits\ngit rebase -i HEAD~4\n\n# Resolve conflict workflow:\ngit add src/components/Dashboard.tsx\ngit rebase --continue",
+    "commonPitfalls": [
+      "Rebasing public shared branches that teammates are actively pulling from",
+      "Using 'git push -f' without '--force-with-lease'"
+    ],
+    "followUpQuestions": [
+      "What is the Golden Rule of Git Rebasing?",
+      "How does git reflog recover lost commits after a botched rebase?"
+    ]
+  },
+  {
+    "id": "git-2",
+    "category": "Git",
+    "difficulty": "Hard",
+    "question": "How does git bisect use binary search to locate regression bugs across a large codebase commit history?",
+    "estimatedMinutes": 8,
+    "companyTags": ["Meta", "Google", "Square"],
+    "rubric": [
+      "Explains binary search algorithm applied to commit graph",
+      "Outlines manual bisect workflow: git bisect start -> git bisect bad -> git bisect good <commit>",
+      "Explains automated bisect using test scripts: git bisect run npm test"
+    ],
+    "sampleAnswer": "`git bisect` is a built-in debugging tool that uses binary search to find the exact commit that introduced a bug or performance regression in a codebase.\n\nWorkflow:\n1. Initialize: `git bisect start`\n2. Mark current broken commit as bad: `git bisect bad`\n3. Mark historical working commit as good: `git bisect good v1.2.0`\n4. Git automatically checks out a commit halfway. You test, mark good/bad, and Git isolates the culprit commit.",
+    "codeSnippet": "git bisect start\ngit bisect bad HEAD\ngit bisect good v2.4.0\ngit bisect run npm test -- --spec src/tests/cart.test.ts",
+    "commonPitfalls": [
+      "Not resetting bisect state when finished (forgetting 'git bisect reset')",
+      "Testing commits where the project build fails due to unrelated broken dependencies"
+    ],
+    "followUpQuestions": [
+      "How do you skip unbuildable commits during a bisect session?",
+      "What is git cherry-pick and when is it useful?"
+    ]
+  },
+  {
+    "id": "arch-1",
+    "category": "Architecture",
+    "difficulty": "Hard",
+    "question": "Design a scalable State Management & Caching strategy for a real-time collaborative workspace app (like Figma or Notion).",
+    "estimatedMinutes": 20,
+    "companyTags": ["Figma", "Notion", "Atlassian", "Slack"],
+    "rubric": [
+      "Architectural layers: UI View layer, Local Client Cache, Real-time Sync Engine, Persistence (IndexedDB)",
+      "Conflict Resolution: CRDTs (Conflict-free Replicated Data Types like Yjs or Automerge)",
+      "Optimistic UI Updates: Immediate local state mutation with rollback queues",
+      "State Normalization: Normalized entity stores with ID lookup dictionaries"
+    ],
+    "sampleAnswer": "Architecture Overview for Collaborative Workspace:\n1. State Layer Separation: Local UI state (Zustand/Atomic), Shared Document Model (CRDTs), Server Cache (TanStack Query).\n2. Real-time Synchronization: CRDT data structures for multi-user editing transmitted over WebSockets.\n3. Offline-First: Sync local state to IndexedDB via Dexie.js for instant startup load times.\n4. Performance: Normalize data tables (`{ ids: ['1'], entities: { '1': {...} } }`) to prevent cascading re-renders.",
+    "codeSnippet": "interface DocumentStore {\n  nodeIds: string[];\n  nodesById: Record<string, CanvasNode>;\n  updateNode: (id: string, delta: Partial<CanvasNode>) => void;\n}\n\nexport const useDocStore = create<DocumentStore>((set) => ({\n  nodeIds: [],\n  nodesById: {},\n  updateNode: (id, delta) =>\n    set((state) => ({\n      nodesById: {\n        ...state.nodesById,\n        [id]: { ...state.nodesById[id], ...delta },\n      },\n    })),\n}));",
+    "commonPitfalls": [
+      "Storing deeply nested object trees directly in React state",
+      "Relying on last-write-wins (LWW) server timestamps for concurrent text editing"
+    ],
+    "followUpQuestions": [
+      "What is the difference between CRDTs and Operational Transformation (OT)?",
+      "How do you implement canvas spatial indexing (R-Tree) for rendering 100,000 nodes?"
+    ]
+  },
+  {
+    "id": "arch-2",
+    "category": "Architecture",
+    "difficulty": "Hard",
+    "question": "Compare Micro-frontends (Module Federation) vs Monorepo vs Monolith architectures for a multi-team engineering org.",
+    "estimatedMinutes": 15,
+    "companyTags": ["Uber", "Spotify", "Amazon", "Salesforce"],
+    "rubric": [
+      "Monolith: Single codebase, simple, but slow build times across large teams",
+      "Monorepo (Turborepo, Nx): Unified repository housing distinct applications and shared packages, atomic commits, shared CI caching",
+      "Micro-Frontends (Module Federation): Decoupled independently deployed applications combined at runtime, team autonomy"
+    ],
+    "sampleAnswer": "Architectural Comparison:\n1. Monolith: Simple DX, easy end-to-end refactoring, but long CI/CD build times as team grows.\n2. Monorepo (Turborepo/Nx): Single source of truth with shared design packages (`@company/ui`). Atomic commits across app boundaries and shared CI caching.\n3. Micro-Frontends (Webpack Module Federation): Independent team autonomy without coordinating deployment schedules, but higher operational overhead.",
+    "codeSnippet": "module.exports = {\n  plugins: [\n    new ModuleFederationPlugin({\n      name: 'checkoutApp',\n      filename: 'remoteEntry.js',\n      exposes: {\n        './CheckoutWidget': './src/components/CheckoutWidget',\n      },\n      shared: { react: { singleton: true }, 'react-dom': { singleton: true } },\n    }),\n  ],\n};",
+    "commonPitfalls": [
+      "Adopting micro-frontends prematurely for small engineering teams",
+      "Allowing micro-frontend teams to run mismatched React major versions"
+    ],
+    "followUpQuestions": [
+      "How do shared design tokens prevent UI fragmentation in Micro-frontends?",
+      "What is the role of Turborepo remote caching in CI pipelines?"
+    ]
+  },
+  {
+    "id": "beh-1",
+    "category": "Behavioral",
+    "difficulty": "Medium",
+    "question": "Tell me about a technical disagreement you had with a senior tech lead. How did you resolve it while keeping team momentum?",
+    "estimatedMinutes": 10,
+    "companyTags": ["Google", "Meta", "Amazon", "Netflix"],
+    "starFramework": {
+      "situation": "Describe the project context, technical approach in debate, and stakes.",
+      "task": "Explain your role, alternative technical proposal, and why it was superior.",
+      "action": "Detail collaborative steps: benchmarking data/POC creation, objective tradeoffs, active listening.",
+      "result": "State final decision, impact on delivery, and long-term relationship built."
+    },
+    "rubric": [
+      "Uses STAR framework clearly",
+      "Focuses on data, benchmarks, and customer outcomes rather than ego",
+      "Demonstrates respect and commitment to team alignment ('Disagree and Commit')",
+      "Highlights measurable technical or business results"
+    ],
+    "sampleAnswer": "Situation: While building our analytics dashboard, our Tech Lead proposed using a heavy legacy charting framework. Profiling indicated it added 450kB to our bundle and suffered FPS drops over 5,000 data points.\nTask: Propose a lightweight Canvas/WebGL charting solution without delaying launch.\nAction: Built a minimal POC benchmarking bundle size and FPS. Presented objective data in a sync and offered to write abstraction documentation.\nResult: Tech Lead agreed. Reduced bundle size by 380kB, achieved 60 FPS, and launched 3 days early.",
+    "commonPitfalls": [
+      "Sounding argumentative or blaming the senior engineer",
+      "Failing to provide concrete technical benchmarks or metrics"
+    ],
+    "followUpQuestions": [
+      "What would you have done if the Tech Lead still insisted on their approach?",
+      "How do you handle 'Disagree and Commit' when you feel strongly about technical risk?"
+    ]
+  },
+  {
+    "id": "beh-2",
+    "category": "Behavioral",
+    "difficulty": "Medium",
+    "question": "Describe a project where requirements changed mid-flight or a critical deadline was threatened. How did you negotiate scope and deliver?",
+    "estimatedMinutes": 10,
+    "companyTags": ["Amazon", "Stripe", "Uber", "Airbnb"],
+    "starFramework": {
+      "situation": "Original project scope, deadline, and unexpected change event.",
+      "task": "Identify core problem: impossible to deliver 100% of revised features on time.",
+      "action": "Categorized features into Must-Have (MVP) vs Nice-to-Have (Phase 2), communicated transparently.",
+      "result": "On-time delivery of core MVP, zero critical bugs post-launch."
+    },
+    "rubric": [
+      "Uses STAR framework clearly",
+      "Demonstrates proactive scope management and product empathy",
+      "Highlights transparent communication with cross-functional partners",
+      "Reflects engineering discipline under pressure"
+    ],
+    "sampleAnswer": "Situation: Two weeks before global launch, compliance informed us we had to implement mandatory MFA and localization for 4 European markets.\nTask: Impossible to build full MFA UI and 4 market translations in 14 days without risking site stability.\nAction: Held triage meeting with PM and QA. Proposed delivering MFA and 2 primary markets for launch day, staging remaining 2 markets for a patch release two weeks later.\nResult: On-time delivery of compliant checkout MVP, zero high-severity bugs, and delivered secondary markets 10 days later.",
+    "commonPitfalls": [
+      "Saying you worked 100 hours a week instead of negotiating scope",
+      "Failing to involve stakeholders early when deadlines became unrealistic"
+    ],
+    "followUpQuestions": [
+      "How do you prevent scope creep from happening in future sprint planning?",
+      "How do you communicate technical trade-offs to non-technical product managers?"
+    ]
+  }
+]

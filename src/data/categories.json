@@ -1,0 +1,50 @@
+[
+  {
+    "id": "core-web",
+    "name": "Core Web Foundations",
+    "description": "Semantic markup, layout algorithms, CSS architecture, responsive design, and WCAG accessibility standards.",
+    "icon": "LayoutTemplate",
+    "color": "chart-1",
+    "moduleCount": 1
+  },
+  {
+    "id": "language-mastery",
+    "name": "Language Systems & JS/TS",
+    "description": "Deep understanding of JavaScript mechanics, runtime execution engines, and enterprise-grade TypeScript type systems.",
+    "icon": "Braces",
+    "color": "chart-2",
+    "moduleCount": 2
+  },
+  {
+    "id": "framework-mastery",
+    "name": "Framework & UI Engineering",
+    "description": "React core primitives, custom hook composition, state modeling, concurrent features, and Server Components.",
+    "icon": "Atom",
+    "color": "chart-4",
+    "moduleCount": 1
+  },
+  {
+    "id": "architecture",
+    "name": "Architecture & Systems",
+    "description": "Frontend system design, micro-frontends, state design patterns, rendering strategies, and staff-level engineering.",
+    "icon": "Blocks",
+    "color": "chart-3",
+    "moduleCount": 1
+  },
+  {
+    "id": "quality-perf",
+    "name": "Quality, Testing & Performance",
+    "description": "Core Web Vitals optimization, bundle diet, automated testing strategies (Vitest/Playwright), and web performance.",
+    "icon": "Gauge",
+    "color": "chart-5",
+    "moduleCount": 2
+  },
+  {
+    "id": "career-interview",
+    "name": "Career & Interview Practice",
+    "description": "Take-home project practice, live coding benchmarks, frontend system design interviews, and technical leadership rubrics.",
+    "icon": "Briefcase",
+    "color": "chart-1",
+    "moduleCount": 1
+  }
+]

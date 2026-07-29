@@ -1,0 +1,67 @@
+[
+  {
+    "id": "fullstack-engineer",
+    "title": "Full-Stack Frontend Engineer",
+    "description": "The complete roadmap from core web standards to React 19, TypeScript, and architecture. Best for engineers targeting L4/L5 full-stack roles.",
+    "targetRole": "Frontend / Full-Stack Engineer",
+    "estimatedHours": 112,
+    "icon": "Compass",
+    "color": "chart-1",
+    "moduleIds": [
+      "html-css-foundations",
+      "javascript-deep-dive",
+      "typescript-mastery",
+      "react-professional"
+    ],
+    "difficulty": "Intermediate",
+    "featured": true
+  },
+  {
+    "id": "react-specialist",
+    "title": "React & UI Architect",
+    "description": "Master component design systems, hooks optimization, Suspense, state management patterns, and production React applications.",
+    "targetRole": "Senior React Engineer",
+    "estimatedHours": 62,
+    "icon": "Atom",
+    "color": "chart-4",
+    "moduleIds": ["typescript-mastery", "react-professional", "frontend-architecture"],
+    "difficulty": "Advanced",
+    "featured": true
+  },
+  {
+    "id": "css-architect",
+    "title": "CSS & Design Systems Specialist",
+    "description": "Master Flexbox, CSS Grid, container queries, visual performance, fluid typography, and building scalable UI component libraries.",
+    "targetRole": "Design Systems Engineer",
+    "estimatedHours": 38,
+    "icon": "LayoutTemplate",
+    "color": "chart-2",
+    "moduleIds": ["html-css-foundations", "performance-and-a11y"],
+    "difficulty": "Beginner",
+    "featured": false
+  },
+  {
+    "id": "performance-engineer",
+    "title": "Performance & Systems Specialist",
+    "description": "Optimize Core Web Vitals, memory management, bundle sizes, rendering paths, and high-frequency UI updates.",
+    "targetRole": "Web Performance Engineer",
+    "estimatedHours": 58,
+    "icon": "Gauge",
+    "color": "chart-5",
+    "moduleIds": ["javascript-deep-dive", "performance-and-a11y", "frontend-architecture"],
+    "difficulty": "Advanced",
+    "featured": false
+  },
+  {
+    "id": "interview-sprint",
+    "title": "Staff & Lead Interview Sprint",
+    "description": "Intense prep focusing on Frontend System Design, JS/TS tricky mechanics, machine coding exercises, and live interview rubrics.",
+    "targetRole": "Senior / Staff Engineer Candidate",
+    "estimatedHours": 46,
+    "icon": "Briefcase",
+    "color": "chart-3",
+    "moduleIds": ["javascript-deep-dive", "frontend-architecture", "interview-prep"],
+    "difficulty": "Advanced",
+    "featured": true
+  }
+]
