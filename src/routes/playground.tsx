@@ -2,22 +2,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
   Play,
   RotateCcw,
   Sparkles,
   CheckCircle2,
-  Clock,
-  Code2,
   PanelLeft,
   Terminal,
   Monitor,
   Lightbulb,
   ShieldCheck,
+  FileCode2,
 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 import type { PlaygroundFile, PlaygroundConsoleLog } from "@/lib/types/playground";
 import { PLAYGROUND_PRESETS } from "@/lib/playground-data";
@@ -50,10 +48,24 @@ export function Playground() {
   const activePreset =
     PLAYGROUND_PRESETS.find((p) => p.id === currentPresetId) || PLAYGROUND_PRESETS[0];
 
-  // Playground state
-  const [files, setFiles] = useState<PlaygroundFile[]>(activePreset.files);
-  const [activeFileId, setActiveFileId] = useState<string>(activePreset.files[0]?.id || "f-1");
-  const [openTabIds, setOpenTabIds] = useState<string[]>(activePreset.files.map((f) => f.id));
+  // Load initial files from localStorage if present
+  const [files, setFiles] = useState<PlaygroundFile[]>(() => {
+    if (typeof window === "undefined") return activePreset.files;
+    const key = `forge_playground_files_${activePreset.id}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {
+        // Fallback to preset defaults
+      }
+    }
+    return activePreset.files;
+  });
+
+  const [activeFileId, setActiveFileId] = useState<string>(files[0]?.id || "f-1");
+  const [openTabIds, setOpenTabIds] = useState<string[]>(files.map((f) => f.id));
 
   // Console & execution state
   const [consoleLogs, setConsoleLogs] = useState<PlaygroundConsoleLog[]>([]);
@@ -72,14 +84,36 @@ export function Playground() {
 
   const activeFile = files.find((f) => f.id === activeFileId) || files[0];
 
+  // Auto-persist files to localStorage whenever files change
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const key = `forge_playground_files_${currentPresetId}`;
+    localStorage.setItem(key, JSON.stringify(files));
+  }, [files, currentPresetId]);
+
   // Preset switch handler
   const handleSelectPreset = (presetId: string) => {
     const nextPreset = PLAYGROUND_PRESETS.find((p) => p.id === presetId);
     if (!nextPreset) return;
     setCurrentPresetId(presetId);
-    setFiles(nextPreset.files);
-    setActiveFileId(nextPreset.files[0]?.id || "f-1");
-    setOpenTabIds(nextPreset.files.map((f) => f.id));
+
+    // Check if there are saved edits in localStorage for this preset
+    let nextFiles = nextPreset.files;
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(`forge_playground_files_${presetId}`);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) nextFiles = parsed;
+        } catch {
+          // ignore error
+        }
+      }
+    }
+
+    setFiles(nextFiles);
+    setActiveFileId(nextFiles[0]?.id || "f-1");
+    setOpenTabIds(nextFiles.map((f) => f.id));
     setConsoleLogs([]);
     setExecutionStatus("idle");
     setExecutionTime(null);
@@ -187,13 +221,16 @@ export function Playground() {
 
   // Reset handler
   const handleReset = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(`forge_playground_files_${currentPresetId}`);
+    }
     setFiles(activePreset.files);
     setActiveFileId(activePreset.files[0]?.id || "f-1");
     setOpenTabIds(activePreset.files.map((f) => f.id));
     setConsoleLogs([]);
     setExecutionStatus("idle");
     setExecutionTime(null);
-    toast.info("Playground reset to preset default.");
+    toast.info("Playground reset to default preset code.");
   };
 
   // Apply solution handler
@@ -230,7 +267,7 @@ export function Playground() {
               className="gap-1.5 text-xs border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
-              Sprint 17 — AI Code Review
+              Explain / AI Code Review
             </Button>
 
             <Button
@@ -257,9 +294,9 @@ export function Playground() {
       />
 
       {/* Main Playground Editor & Panel Window */}
-      <div className="rounded-xl border border-border/60 bg-card overflow-hidden shadow-elegant flex flex-col h-[750px]">
+      <div className="rounded-xl border border-border/60 bg-card overflow-hidden shadow-elegant flex flex-col min-h-[600px] lg:h-[750px]">
         {/* Top Control Bar */}
-        <div className="flex items-center justify-between border-b border-border/60 bg-muted/30 px-3 py-2 text-xs">
+        <div className="flex flex-wrap items-center justify-between border-b border-border/60 bg-muted/30 px-3 py-2 text-xs gap-2">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -270,8 +307,10 @@ export function Playground() {
             >
               <PanelLeft className="h-4 w-4" />
             </Button>
-            <span className="font-semibold text-foreground">{activePreset.title}</span>
-            <Badge variant="secondary" className="text-[10px]">
+            <span className="font-semibold text-foreground truncate max-w-[200px] sm:max-w-none">
+              {activePreset.title}
+            </span>
+            <Badge variant="secondary" className="text-[10px] hidden sm:inline-flex">
               {activePreset.difficulty}
             </Badge>
           </div>
@@ -306,10 +345,10 @@ export function Playground() {
         </div>
 
         {/* Inner IDE Grid */}
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
           {/* Sidebar File Explorer */}
           {showFileTree && (
-            <div className="w-56 shrink-0">
+            <div className="w-full lg:w-56 shrink-0 border-b lg:border-b-0 lg:border-r border-border/60">
               <PlaygroundFileTree
                 files={files}
                 activeFileId={activeFileId}
@@ -329,7 +368,7 @@ export function Playground() {
           )}
 
           {/* Center Editor Column */}
-          <div className="flex-1 flex flex-col min-w-0 border-r border-border/60">
+          <div className="flex-1 flex flex-col min-w-0 border-r border-border/60 min-h-[350px]">
             {/* Tabs Bar */}
             <PlaygroundTabs
               files={files}
@@ -353,9 +392,10 @@ export function Playground() {
                   activeFile={activeFile}
                   onCodeChange={handleCodeChange}
                   onFormatCode={handleFormatCode}
+                  onRunCode={handleRun}
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-muted-foreground text-xs">
+                <div className="flex h-full items-center justify-center text-muted-foreground text-xs p-6">
                   No open file selected. Click a file in Explorer.
                 </div>
               )}
@@ -363,7 +403,7 @@ export function Playground() {
           </div>
 
           {/* Right Pane Column (Preview / Console / Hints) */}
-          <div className="w-[420px] shrink-0 flex flex-col bg-background">
+          <div className="w-full lg:w-[420px] shrink-0 flex flex-col bg-background min-h-[300px]">
             {activePaneTab === "preview" && (
               <PlaygroundPreview files={files} onLogCaptured={handleLogCaptured} />
             )}
@@ -414,7 +454,7 @@ export function Playground() {
         onApplySolution={handleApplySolution}
       />
 
-      {/* AI Code Reviewer Modal (Sprint 17) */}
+      {/* AI Code Reviewer Modal (Explain / AI Code Review) */}
       <PlaygroundCodeReviewerModal
         open={codeReviewOpen}
         onOpenChange={setCodeReviewOpen}

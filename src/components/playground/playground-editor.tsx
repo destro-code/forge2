@@ -1,9 +1,11 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Code2, Wand2, Sun, Moon, FileCode } from "lucide-react";
+import { toast } from "sonner";
+import { Wand2, Sun, Moon, FileCode, Copy, Check, Undo2, Redo2, Type, Command } from "lucide-react";
 import type { PlaygroundFile } from "@/lib/types/playground";
+import { useTheme } from "@/lib/hooks/use-theme";
 
 const MonacoEditor = lazy(() =>
   import("@monaco-editor/react").then((m) => ({ default: m.default })),
@@ -13,14 +15,46 @@ interface PlaygroundEditorProps {
   activeFile: PlaygroundFile;
   onCodeChange: (newCode: string) => void;
   onFormatCode?: () => void;
+  onRunCode?: () => void;
 }
 
 export function PlaygroundEditor({
   activeFile,
   onCodeChange,
   onFormatCode,
+  onRunCode,
 }: PlaygroundEditorProps) {
-  const [theme, setTheme] = useState<"vs-dark" | "light">("vs-dark");
+  const [mounted, setMounted] = useState(false);
+  const { theme: appTheme } = useTheme();
+
+  // Font size setting stored in state & persisted in localStorage
+  const [fontSize, setFontSize] = useState<number>(() => {
+    if (typeof window === "undefined") return 13;
+    const saved = localStorage.getItem("forge_playground_fontsize");
+    return saved ? parseInt(saved, 10) : 13;
+  });
+
+  // Editor theme setting: "auto" (synced with app) | "vs-dark" | "light"
+  const [editorThemeMode, setEditorThemeMode] = useState<"auto" | "vs-dark" | "light">("auto");
+  const [copied, setCopied] = useState(false);
+
+  // Monaco editor instance ref for command bindings (Undo / Redo)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const editorRef = useRef<any>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleFontSizeChange = (newSize: number) => {
+    setFontSize(newSize);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("forge_playground_fontsize", String(newSize));
+    }
+  };
+
+  const effectiveTheme =
+    editorThemeMode === "auto" ? (appTheme === "light" ? "light" : "vs-dark") : editorThemeMode;
 
   const getLanguage = (fileName: string) => {
     if (fileName.endsWith(".tsx") || fileName.endsWith(".ts")) return "typescript";
@@ -34,41 +68,88 @@ export function PlaygroundEditor({
   const lineCount = activeFile.code.split("\n").length;
   const charCount = activeFile.code.length;
 
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(activeFile.code);
+    setCopied(true);
+    toast.success(`Copied ${activeFile.name} to clipboard`);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleUndo = () => {
+    if (editorRef.current) {
+      editorRef.current.trigger("keyboard", "undo", null);
+    }
+  };
+
+  const handleRedo = () => {
+    if (editorRef.current) {
+      editorRef.current.trigger("keyboard", "redo", null);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleEditorMount = (editor: any, monaco: any) => {
+    editorRef.current = editor;
+
+    // Cmd/Ctrl + S -> Save & Format
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+      onFormatCode?.();
+      toast.success("Code formatted & state saved");
+    });
+
+    // Cmd/Ctrl + Enter -> Run Code
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+      onRunCode?.();
+    });
+
+    // Cmd/Ctrl + Shift + F -> Format
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF, () => {
+      onFormatCode?.();
+    });
+  };
+
   return (
     <div className="flex h-full flex-col bg-background">
       {/* Editor Main */}
       <div className="flex-1 relative overflow-hidden">
-        <Suspense
-          fallback={
-            <div className="flex h-full w-full items-center justify-center bg-card p-6">
-              <Skeleton className="h-full w-full rounded-lg" />
-            </div>
-          }
-        >
-          <MonacoEditor
-            height="100%"
-            language={getLanguage(activeFile.name)}
-            value={activeFile.code}
-            onChange={(v) => onCodeChange(v ?? "")}
-            theme={theme}
-            options={{
-              fontSize: 13,
-              fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace",
-              minimap: { enabled: false },
-              tabSize: 2,
-              wordWrap: "on",
-              scrollBeyondLastLine: false,
-              smoothScrolling: true,
-              automaticLayout: true,
-              padding: { top: 12, bottom: 12 },
-              lineNumbersMinChars: 3,
-            }}
-          />
-        </Suspense>
+        {mounted ? (
+          <Suspense
+            fallback={
+              <div className="flex h-full w-full items-center justify-center bg-card p-6">
+                <Skeleton className="h-full w-full rounded-lg" />
+              </div>
+            }
+          >
+            <MonacoEditor
+              height="100%"
+              language={getLanguage(activeFile.name)}
+              value={activeFile.code}
+              onChange={(v) => onCodeChange(v ?? "")}
+              onMount={handleEditorMount}
+              theme={effectiveTheme}
+              options={{
+                fontSize: fontSize,
+                fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace",
+                minimap: { enabled: false },
+                tabSize: 2,
+                wordWrap: "on",
+                scrollBeyondLastLine: false,
+                smoothScrolling: true,
+                automaticLayout: true,
+                padding: { top: 12, bottom: 12 },
+                lineNumbersMinChars: 3,
+              }}
+            />
+          </Suspense>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-card p-6">
+            <Skeleton className="h-full w-full rounded-lg" />
+          </div>
+        )}
       </div>
 
-      {/* Editor Status Bar */}
-      <div className="flex items-center justify-between border-t border-border/50 bg-card/60 px-3 py-1.5 text-[11px] text-muted-foreground">
+      {/* Editor Status & Action Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border/50 bg-card/60 px-3 py-1.5 text-[11px] text-muted-foreground">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 font-medium text-foreground">
             <FileCode className="h-3.5 w-3.5 text-primary" />
@@ -77,39 +158,99 @@ export function PlaygroundEditor({
           <Badge variant="outline" className="text-[10px] px-1.5 h-4 border-border/60">
             {getLanguage(activeFile.name)}
           </Badge>
-          <span>{lineCount} lines</span>
-          <span>{charCount} chars</span>
+          <span className="hidden sm:inline">{lineCount} lines</span>
+          <span className="hidden sm:inline">{charCount} chars</span>
+          <span className="hidden md:inline-flex items-center gap-1 text-[10px] text-muted-foreground/70">
+            <Command className="h-3 w-3" /> S (Save) · <Command className="h-3 w-3" /> ↵ (Run)
+          </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          {/* Undo / Redo */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            onClick={handleUndo}
+            title="Undo (Ctrl/Cmd+Z)"
+          >
+            <Undo2 className="h-3 w-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            onClick={handleRedo}
+            title="Redo (Ctrl/Cmd+Y)"
+          >
+            <Redo2 className="h-3 w-3" />
+          </Button>
+
+          {/* Copy Code */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            onClick={handleCopyCode}
+            title="Copy file code"
+          >
+            {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+          </Button>
+
+          {/* Font Size Selector */}
+          <div className="flex items-center gap-0.5 rounded border border-border/50 bg-background/50 px-1">
+            <Type className="h-3 w-3 text-muted-foreground" />
+            <select
+              value={fontSize}
+              onChange={(e) => handleFontSizeChange(parseInt(e.target.value, 10))}
+              className="bg-transparent text-[10px] text-foreground focus:outline-none cursor-pointer"
+              title="Font Size"
+            >
+              <option value={12}>12px</option>
+              <option value={13}>13px</option>
+              <option value={14}>14px</option>
+              <option value={16}>16px</option>
+              <option value={18}>18px</option>
+            </select>
+          </div>
+
+          {/* Format */}
           {onFormatCode && (
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 px-2 text-[10px] gap-1 hover:text-foreground"
+              className="h-6 px-1.5 text-[10px] gap-1 hover:text-foreground"
               onClick={onFormatCode}
-              title="Auto-format code"
+              title="Auto-format code (Ctrl/Cmd+Shift+F)"
             >
               <Wand2 className="h-3 w-3 text-primary" /> Format
             </Button>
           )}
 
+          {/* Theme Sync Toggle */}
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 px-2 text-[10px] gap-1"
-            onClick={() => setTheme(theme === "vs-dark" ? "light" : "vs-dark")}
-            title="Toggle Editor Theme"
+            className="h-6 px-1.5 text-[10px] gap-1"
+            onClick={() => {
+              if (editorThemeMode === "auto") setEditorThemeMode("vs-dark");
+              else if (editorThemeMode === "vs-dark") setEditorThemeMode("light");
+              else setEditorThemeMode("auto");
+            }}
+            title={`Editor Theme: ${editorThemeMode} (Click to toggle)`}
           >
-            {theme === "vs-dark" ? (
-              <>
-                <Sun className="h-3 w-3 text-amber-400" /> Light Theme
-              </>
+            {effectiveTheme === "vs-dark" ? (
+              <Sun className="h-3 w-3 text-amber-400" />
             ) : (
-              <>
-                <Moon className="h-3 w-3 text-sky-400" /> Dark Theme
-              </>
+              <Moon className="h-3 w-3 text-sky-400" />
             )}
+            <span className="capitalize">
+              {editorThemeMode === "auto"
+                ? "Sync"
+                : effectiveTheme === "vs-dark"
+                  ? "Dark"
+                  : "Light"}
+            </span>
           </Button>
         </div>
       </div>
