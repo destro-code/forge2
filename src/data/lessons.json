@@ -213,5 +213,131 @@
       }
     ],
     "interviewQuestions": ["Design the rendering strategy for a global e-commerce site."]
+  },
+  {
+    "id": "event-loop-deep-dive",
+    "topicId": "event-loop",
+    "title": "Mastering the JavaScript Event Loop",
+    "description": "Understand the call stack, microtask queue, macrotask queue, and render steps.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 30,
+    "mastery": "Not Started",
+    "sections": [
+      { "type": "heading", "text": "Tasks vs Microtasks" },
+      {
+        "type": "paragraph",
+        "text": "Promises and queueMicrotask push to the microtask queue, which drains completely before the next task or animation frame runs."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "The event loop turns asynchronous IO into predictable single-threaded execution.",
+    "resources": [],
+    "interviewQuestions": ["What runs first: setTimeout(fn, 0) or Promise.resolve().then(fn)?"]
+  },
+  {
+    "id": "css-grid-tracks-areas",
+    "topicId": "grid",
+    "title": "CSS Grid: Tracks, Areas & Responsiveness",
+    "description": "Build two-dimensional layouts using fr units, grid-template-areas, and minmax.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 25,
+    "mastery": "Not Started",
+    "sections": [
+      { "type": "heading", "text": "Defining Grid Tracks" },
+      {
+        "type": "paragraph",
+        "text": "Use repeat(auto-fit, minmax(250px, 1fr)) for responsive multi-column layouts without media queries."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "CSS Grid is ideal for two-dimensional layouts and structural page framing.",
+    "resources": [],
+    "interviewQuestions": ["How does auto-fill differ from auto-fit in CSS Grid?"]
+  },
+  {
+    "id": "generics-in-practice",
+    "topicId": "generics",
+    "title": "TypeScript Generics in Practice",
+    "description": "Learn how to craft type-safe reusable abstractions and infer complex return types.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 25,
+    "mastery": "Not Started",
+    "sections": [
+      { "type": "heading", "text": "Generic Constraints" },
+      {
+        "type": "paragraph",
+        "text": "Use extends to constrain generics (e.g., T extends { id: string })."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "Generics provide compile-time safety without sacrificing flexibility.",
+    "resources": [],
+    "interviewQuestions": ["Explain how generic type inference works in function arguments."]
+  },
+  {
+    "id": "web-vitals-inp-lcp",
+    "topicId": "core-web-vitals",
+    "title": "Optimizing LCP, INP, and CLS",
+    "description": "Diagnose performance bottlenecks and improve user-perceived speed.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 35,
+    "mastery": "Not Started",
+    "sections": [
+      { "type": "heading", "text": "Interaction to Next Paint (INP)" },
+      {
+        "type": "paragraph",
+        "text": "Keep main-thread JavaScript tasks under 50ms to ensure fast responsiveness."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "Core Web Vitals measure user experience metrics that directly impact SEO and retention.",
+    "resources": [],
+    "interviewQuestions": ["How do you measure and reduce LCP on a client-rendered SPA?"]
+  },
+  {
+    "id": "system-design-feed-architecture",
+    "topicId": "system-design-newsfeed",
+    "title": "Architecture of a Scalable News Feed",
+    "description": "Fan-out on write vs fan-out on read, caching layers, and cursor pagination.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 45,
+    "mastery": "Not Started",
+    "sections": [
+      { "type": "heading", "text": "Fan-out Strategies" },
+      {
+        "type": "paragraph",
+        "text": "High-follower accounts require fan-out on read (hybrid model) to avoid write amplification."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "System design trade-offs depend on read/write ratios and latency constraints.",
+    "resources": [],
+    "interviewQuestions": ["Compare offset pagination vs cursor-based pagination for feeds."]
+  },
+  {
+    "id": "unit-testing-with-vitest",
+    "topicId": "testing-fundamentals",
+    "title": "Unit & Integration Testing with Vitest",
+    "description": "Write fast unit tests, mock external dependencies, and test component rendering.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 25,
+    "mastery": "Not Started",
+    "sections": [
+      { "type": "heading", "text": "Testing Pure Logic" },
+      {
+        "type": "paragraph",
+        "text": "Isolate side effects with mock functions (vi.fn()) and test state transitions."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "A robust test suite gives confidence when refactoring complex modules.",
+    "resources": [],
+    "interviewQuestions": ["What is the difference between unit testing and integration testing?"]
   }
 ]

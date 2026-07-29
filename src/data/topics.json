@@ -115,5 +115,18 @@
     "next": [],
     "related": ["rendering-strategies"],
     "categoryId": "career-interview"
+  },
+  {
+    "id": "testing-fundamentals",
+    "moduleId": "testing-and-tooling",
+    "title": "Unit & Integration Testing",
+    "description": "Vitest, mock functions, assertion libraries, and Test-Driven Development patterns.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 45,
+    "interviewFrequency": "High",
+    "prerequisites": [],
+    "next": ["e2e-playwright"],
+    "related": [],
+    "categoryId": "quality-perf"
   }
 ]

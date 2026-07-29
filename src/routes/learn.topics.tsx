@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useCurriculum } from "@/lib/hooks/use-curriculum";
+import { useLessons, useModules, useLearningPaths } from "@/lib/hooks/use-content";
+import { getExploreTarget } from "@/lib/utils/explore-target";
 import { Clock, Network, TrendingUp, Search, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/learn/topics")({
@@ -28,6 +30,9 @@ export const Route = createFileRoute("/learn/topics")({
 function TopicsRoute() {
   const { topics, allTopics, categories, filter, setFilter, resetFilter, activeFiltersCount } =
     useCurriculum();
+  const lessons = useLessons();
+  const modules = useModules();
+  const learningPaths = useLearningPaths();
 
   return (
     <div className="space-y-8">
@@ -77,8 +82,11 @@ function TopicsRoute() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {topics.map((t) => {
             const category = categories.find((c) => c.id === t.categoryId);
+            const target = getExploreTarget(lessons, topics, modules, learningPaths, {
+              topicId: t.id,
+            });
             return (
-              <Link key={t.id} to="/learn/lessons" search={{ topicId: t.id }} className="group">
+              <Link key={t.id} to={target.to} search={target.search} className="group">
                 <Card className="h-full border-border/60 transition duration-200 hover:border-primary/40 hover:shadow-glow">
                   <CardContent className="p-5 flex flex-col justify-between h-full">
                     <div>

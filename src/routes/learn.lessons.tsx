@@ -53,21 +53,35 @@ function Lessons() {
   const paths = useLearningPaths();
   const { lessonsCompleted, bookmarks } = useProgress();
 
-  const [query, setQuery] = useState(searchParams.query || "");
-  const [selectedModule, setSelectedModule] = useState(searchParams.moduleId || "all");
-  const [selectedTopic, setSelectedTopic] = useState(searchParams.topicId || "all");
-  const [selectedPath, setSelectedPath] = useState(searchParams.pathId || "all");
-  const [selectedDifficulty, setSelectedDifficulty] = useState(searchParams.difficulty || "All");
-  const [selectedStatus, setSelectedStatus] = useState(searchParams.status || "all");
+  const query = searchParams.query || "";
+  const selectedModule = searchParams.moduleId || "all";
+  const selectedTopic = searchParams.topicId || "all";
+  const selectedPath = searchParams.pathId || "all";
+  const selectedDifficulty = searchParams.difficulty || "All";
+  const selectedStatus = searchParams.status || "all";
+
+  const updateFilter = (params: Record<string, string>, replace = false) => {
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        ...params,
+      }),
+      replace,
+    });
+  };
 
   const resetFilters = () => {
-    setQuery("");
-    setSelectedModule("all");
-    setSelectedTopic("all");
-    setSelectedPath("all");
-    setSelectedDifficulty("All");
-    setSelectedStatus("all");
-    navigate({ search: {} });
+    navigate({
+      search: {
+        query: "",
+        moduleId: "all",
+        topicId: "all",
+        pathId: "all",
+        difficulty: "All",
+        status: "all",
+      },
+      replace: true,
+    });
   };
 
   const activeFiltersCount =
@@ -77,6 +91,11 @@ function Lessons() {
     (selectedPath !== "all" ? 1 : 0) +
     (selectedDifficulty !== "All" ? 1 : 0) +
     (selectedStatus !== "all" ? 1 : 0);
+
+  const activeTopicObj =
+    selectedTopic !== "all" ? topics.find((t) => t.id === selectedTopic) : null;
+  const activeModuleObj =
+    selectedModule !== "all" ? modules.find((m) => m.id === selectedModule) : null;
 
   const filteredLessons = lessons.filter((l) => {
     if (query) {
@@ -123,6 +142,8 @@ function Lessons() {
     return true;
   });
 
+  const firstFilteredLesson = filteredLessons[0];
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -141,6 +162,62 @@ function Lessons() {
         }
       />
 
+      {/* Topic / Module Overview Hero Banner when filtered */}
+      {activeTopicObj && (
+        <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="bg-primary/20 text-primary text-[10px]">
+                Topic Focus
+              </Badge>
+              <DifficultyBadge difficulty={activeTopicObj.difficulty} />
+              <Badge variant="outline" className="text-[10px]">
+                <Clock className="h-3 w-3 mr-1 inline" />
+                {activeTopicObj.estimatedMinutes}m total
+              </Badge>
+            </div>
+            <h2 className="text-xl font-bold text-foreground">{activeTopicObj.title}</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
+              {activeTopicObj.description}
+            </p>
+          </div>
+          {firstFilteredLesson && (
+            <Button asChild size="lg" className="shrink-0 gap-2 shadow-glow">
+              <Link to={`/lesson/${firstFilteredLesson.id}`}>
+                <BookOpen className="h-4 w-4" /> Start Learning <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          )}
+        </div>
+      )}
+
+      {activeModuleObj && !activeTopicObj && (
+        <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="bg-primary/20 text-primary text-[10px]">
+                Module Focus
+              </Badge>
+              <DifficultyBadge difficulty={activeModuleObj.difficulty} />
+              <Badge variant="outline" className="text-[10px]">
+                ~{activeModuleObj.estimatedHours}h estimated
+              </Badge>
+            </div>
+            <h2 className="text-xl font-bold text-foreground">{activeModuleObj.title}</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
+              {activeModuleObj.description}
+            </p>
+          </div>
+          {firstFilteredLesson && (
+            <Button asChild size="lg" className="shrink-0 gap-2 shadow-glow">
+              <Link to={`/lesson/${firstFilteredLesson.id}`}>
+                <BookOpen className="h-4 w-4" /> Start Module <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          )}
+        </div>
+      )}
+
       {/* Search & Filter Controls */}
       <div className="space-y-4 rounded-xl border border-border/60 bg-card p-4 shadow-xs">
         <div className="flex flex-col sm:flex-row gap-3">
@@ -148,17 +225,17 @@ function Lessons() {
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => updateFilter({ query: e.target.value }, true)}
               placeholder="Search lessons by title, concept, or description..."
               className="h-10 pl-9"
             />
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <select
               value={selectedModule}
-              onChange={(e) => setSelectedModule(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+              onChange={(e) => updateFilter({ moduleId: e.target.value }, false)}
+              className="h-10 w-full sm:w-auto rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
             >
               <option value="all">All Modules</option>
               {modules.map((m) => (
@@ -169,9 +246,22 @@ function Lessons() {
             </select>
 
             <select
+              value={selectedTopic}
+              onChange={(e) => updateFilter({ topicId: e.target.value }, false)}
+              className="h-10 w-full sm:w-auto rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+            >
+              <option value="all">All Topics</option>
+              {topics.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.title}
+                </option>
+              ))}
+            </select>
+
+            <select
               value={selectedDifficulty}
-              onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+              onChange={(e) => updateFilter({ difficulty: e.target.value }, false)}
+              className="h-10 w-full sm:w-auto rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
             >
               <option value="All">All Difficulties</option>
               <option value="Beginner">Beginner</option>
@@ -181,8 +271,8 @@ function Lessons() {
 
             <select
               value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+              onChange={(e) => updateFilter({ status: e.target.value }, false)}
+              className="h-10 w-full sm:w-auto rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
             >
               <option value="all">All Statuses</option>
               <option value="completed">Completed</option>

@@ -319,14 +319,19 @@ function LessonView() {
         {/* Lesson Navigation Footer */}
         <nav className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-border/40">
           {prevLesson ? (
-            <Button variant="outline" asChild size="sm" className="max-w-[220px]">
-              <Link to={`/lesson/${prevLesson.id}`} className="truncate">
+            <Button
+              variant="outline"
+              asChild
+              size="sm"
+              className="w-full sm:w-auto sm:max-w-[220px]"
+            >
+              <Link to={`/lesson/${prevLesson.id}`} className="truncate justify-center">
                 <ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
                 <span className="truncate">Prev: {prevLesson.title}</span>
               </Link>
             </Button>
           ) : (
-            <Button variant="ghost" asChild size="sm">
+            <Button variant="ghost" asChild size="sm" className="w-full sm:w-auto">
               <Link to="/learn/lessons">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to library
@@ -338,7 +343,7 @@ function LessonView() {
             onClick={handleComplete}
             variant={isCompleted ? "outline" : "default"}
             size="sm"
-            className="shadow-glow"
+            className="w-full sm:w-auto shadow-glow"
           >
             {isCompleted ? (
               <>
@@ -354,14 +359,19 @@ function LessonView() {
           </Button>
 
           {nextLesson ? (
-            <Button variant="outline" asChild size="sm" className="max-w-[220px]">
-              <Link to={`/lesson/${nextLesson.id}`} className="truncate">
+            <Button
+              variant="outline"
+              asChild
+              size="sm"
+              className="w-full sm:w-auto sm:max-w-[220px]"
+            >
+              <Link to={`/lesson/${nextLesson.id}`} className="truncate justify-center">
                 <span className="truncate">Next: {nextLesson.title}</span>
                 <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
               </Link>
             </Button>
           ) : (
-            <Button variant="outline" asChild size="sm">
+            <Button variant="outline" asChild size="sm" className="w-full sm:w-auto">
               <Link to="/learn/lessons">
                 All lessons <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

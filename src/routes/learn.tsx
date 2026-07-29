@@ -10,6 +10,8 @@ import { CurriculumOverviewCard } from "@/components/learning/curriculum-overvie
 import { CurriculumFilterBar } from "@/components/learning/curriculum-filter-bar";
 import { LearningPathCard } from "@/components/learning/learning-path-card";
 import { useCurriculum } from "@/lib/hooks/use-curriculum";
+import { useLessons, useTopics, useLearningPaths } from "@/lib/hooks/use-content";
+import { getExploreTarget } from "@/lib/utils/explore-target";
 import { ArrowRight, BookOpen, Compass, Layers, Network, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/learn")({
@@ -43,6 +45,10 @@ function LearnRoute() {
     stats,
     activeFiltersCount,
   } = useCurriculum();
+
+  const lessons = useLessons();
+  const topics = useTopics();
+  const paths = useLearningPaths();
 
   const featuredPaths = learningPaths.filter((p) => p.featured);
 
@@ -142,6 +148,7 @@ function LearnRoute() {
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {modules.map((m) => {
               const category = categories.find((c) => c.id === m.categoryId);
+              const target = getExploreTarget(lessons, topics, modules, paths, { moduleId: m.id });
               return (
                 <Card
                   key={m.id}
@@ -182,8 +189,8 @@ function LearnRoute() {
                         {m.topicCount} topics · {m.lessonCount} lessons · ~{m.estimatedHours}h
                       </span>
                       <Link
-                        to="/learn/lessons"
-                        search={{ moduleId: m.id }}
+                        to={target.to}
+                        search={target.search}
                         className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
                       >
                         Explore <ArrowRight className="h-3 w-3" />

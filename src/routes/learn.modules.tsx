@@ -8,6 +8,8 @@ import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { CurriculumFilterBar } from "@/components/learning/curriculum-filter-bar";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useCurriculum } from "@/lib/hooks/use-curriculum";
+import { useLessons, useTopics } from "@/lib/hooks/use-content";
+import { getExploreTarget } from "@/lib/utils/explore-target";
 import { ArrowRight, Layers, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/learn/modules")({
@@ -29,6 +31,8 @@ export const Route = createFileRoute("/learn/modules")({
 function ModulesRoute() {
   const { categories, learningPaths, modules, filter, setFilter, resetFilter, activeFiltersCount } =
     useCurriculum();
+  const lessons = useLessons();
+  const topics = useTopics();
 
   return (
     <div className="space-y-8">
@@ -67,8 +71,11 @@ function ModulesRoute() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {modules.map((m) => {
             const category = categories.find((c) => c.id === m.categoryId);
+            const target = getExploreTarget(lessons, topics, modules, learningPaths, {
+              moduleId: m.id,
+            });
             return (
-              <Link key={m.id} to="/learn/lessons" search={{ moduleId: m.id }} className="group">
+              <Link key={m.id} to={target.to} search={target.search} className="group">
                 <Card className="h-full border-border/60 transition duration-200 hover:border-primary/40 hover:shadow-glow">
                   <CardContent className="p-5 flex flex-col justify-between h-full">
                     <div>

@@ -11,7 +11,9 @@ import {
   useProjects,
   useBugs,
   useTopics,
+  useLearningPaths,
 } from "@/lib/hooks/use-content";
+import { getExploreTarget } from "@/lib/utils/explore-target";
 import { Flame, Clock, BookOpen, Trophy, Sparkles, ChevronRight, ArrowRight } from "lucide-react";
 
 import { QuickResumeBar } from "@/components/dashboard/quick-resume-bar";
@@ -48,6 +50,7 @@ function Dashboard() {
   const projects = useProjects();
   const bugs = useBugs();
   const topics = useTopics();
+  const paths = useLearningPaths();
   const achievements = useAchievements();
 
   const continueLesson =
@@ -187,39 +190,42 @@ function Dashboard() {
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {modules.slice(0, 6).map((m) => (
-            <Link key={m.id} to="/learn/lessons" search={{ moduleId: m.id }} className="group">
-              <Card className="h-full border-border/60 transition hover:border-primary/40 hover:shadow-glow">
-                <CardContent className="p-5 flex flex-col justify-between h-full">
-                  <div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-                          {m.difficulty}
+          {modules.slice(0, 6).map((m) => {
+            const target = getExploreTarget(lessons, topics, modules, paths, { moduleId: m.id });
+            return (
+              <Link key={m.id} to={target.to} search={target.search} className="group">
+                <Card className="h-full border-border/60 transition hover:border-primary/40 hover:shadow-glow">
+                  <CardContent className="p-5 flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                            {m.difficulty}
+                          </div>
+                          <div className="mt-1 text-base font-semibold group-hover:text-primary transition-colors">
+                            {m.title}
+                          </div>
                         </div>
-                        <div className="mt-1 text-base font-semibold group-hover:text-primary transition-colors">
-                          {m.title}
-                        </div>
+                        <ProgressRing value={m.progress} />
                       </div>
-                      <ProgressRing value={m.progress} />
+                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                        {m.description}
+                      </p>
                     </div>
-                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
-                      {m.description}
-                    </p>
-                  </div>
-                  <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/40">
-                    <span>
-                      {m.lessonCount} lessons · ~{m.estimatedHours}h
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-primary font-medium">
-                      Explore{" "}
-                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+                    <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/40">
+                      <span>
+                        {m.lessonCount} lessons · ~{m.estimatedHours}h
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-primary font-medium">
+                        Explore{" "}
+                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
