@@ -8,8 +8,7 @@ import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { CurriculumFilterBar } from "@/components/learning/curriculum-filter-bar";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useCurriculum } from "@/lib/hooks/use-curriculum";
-import { useLessons, useTopics, useLearningPaths } from "@/lib/hooks/use-content";
-import { getExploreTarget } from "@/lib/utils/explore-target";
+import { useTopics, useLearningPaths } from "@/lib/hooks/use-content";
 import { ArrowRight, Layers, GraduationCap, FolderTree, BookOpen, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/learn/modules")({
@@ -95,9 +94,6 @@ function ModulesRoute() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => {
             const category = categories.find((c) => c.id === m.categoryId);
-            const target = getExploreTarget(lessons, topics, modules, learningPaths, {
-              moduleId: m.id,
-            });
 
             return (
               <Card
@@ -157,8 +153,8 @@ function ModulesRoute() {
                       variant="default"
                       size="sm"
                     >
-                      <Link to={target.to} search={target.search}>
-                        Open Module Chapters <ArrowRight className="h-3.5 w-3.5" />
+                      <Link to="/learn/modules/$moduleId" params={{ moduleId: m.id }}>
+                        Open Module Hub <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </Button>
                   </div>

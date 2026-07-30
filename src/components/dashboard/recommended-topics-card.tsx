@@ -74,15 +74,9 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
                   variant="ghost"
                   className="h-7 text-xs px-2 text-primary gap-1"
                 >
-                  {firstLesson ? (
-                    <Link to={`/lesson/${firstLesson.id}`}>
-                      Explore <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  ) : (
-                    <Link to="/learn/lessons" search={{ topicId: topic.id }}>
-                      Explore <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  )}
+                  <Link to="/learn/topics/$topicId" params={{ topicId: topic.id }}>
+                    Open Topic <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </Button>
               </div>
             </div>

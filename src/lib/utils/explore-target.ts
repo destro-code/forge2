@@ -26,39 +26,20 @@ export function getExploreTarget(
 ): ExploreTargetResult {
   const { topicId, moduleId, pathId } = options;
 
+  // Level 2 -> Level 3: Topic Explore routes to Topic Lesson Catalog
   if (topicId) {
-    const matchingLesson = lessons.find((l) => l.topicId === topicId);
-    if (matchingLesson) {
-      return { to: `/lesson/${matchingLesson.id}` };
-    }
     return { to: "/learn/lessons", search: { topicId } };
   }
 
+  // Level 1 -> Level 2: Module Explore routes to Module Chapter Topics Hub
   if (moduleId) {
-    const moduleTopics = topics.filter((t) => t.moduleId === moduleId).map((t) => t.id);
-    const matchingLesson = lessons.find((l) => moduleTopics.includes(l.topicId));
-    if (matchingLesson) {
-      return { to: `/lesson/${matchingLesson.id}` };
-    }
-    return { to: "/learn/lessons", search: { moduleId } };
+    return { to: "/learn/topics", search: { moduleId } };
   }
 
+  // Path Explore -> Level 1: Learning Path Explore routes to Module Pillars
   if (pathId) {
-    const path = learningPaths.find((p) => p.id === pathId);
-    if (path) {
-      const pathModuleIds = path.moduleIds;
-      const pathTopics = topics.filter((t) => pathModuleIds.includes(t.moduleId)).map((t) => t.id);
-      const matchingLesson = lessons.find((l) => pathTopics.includes(l.topicId));
-      if (matchingLesson) {
-        return { to: `/lesson/${matchingLesson.id}` };
-      }
-    }
-    return { to: "/learn/lessons", search: { pathId } };
+    return { to: "/learn/modules", search: { pathId } };
   }
 
-  if (lessons.length > 0) {
-    return { to: `/lesson/${lessons[0].id}` };
-  }
-
-  return { to: "/learn/lessons" };
+  return { to: "/learn" };
 }

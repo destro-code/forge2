@@ -10,7 +10,6 @@ import { LearningPathCard } from "@/components/learning/learning-path-card";
 import { useCurriculum } from "@/lib/hooks/use-curriculum";
 import { useLessons, useTopics, useModules, useLearningPaths } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
-import { getExploreTarget } from "@/lib/utils/explore-target";
 import {
   ArrowRight,
   BookOpen,
@@ -196,32 +195,35 @@ function LearnRoute() {
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {modules.slice(0, 4).map((m) => {
-            const target = getExploreTarget(lessons, topics, modules, paths, { moduleId: m.id });
             return (
               <Card
                 key={m.id}
                 className="group flex flex-col justify-between border-border/60 transition hover:border-primary/40 hover:shadow-glow"
               >
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <DifficultyBadge difficulty={m.difficulty} />
-                    <ProgressRing value={m.progress} size={42} />
+                <CardContent className="p-5 flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <DifficultyBadge difficulty={m.difficulty} />
+                      <ProgressRing value={m.progress} size={42} />
+                    </div>
+                    <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                      {m.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                      {m.description}
+                    </p>
                   </div>
-                  <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
-                    {m.title}
-                  </h3>
-                  <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{m.description}</p>
 
                   <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>
                       {m.topicCount} topics · {m.lessonCount} lessons
                     </span>
                     <Link
-                      to={target.to}
-                      search={target.search}
+                      to="/learn/modules/$moduleId"
+                      params={{ moduleId: m.id }}
                       className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
                     >
-                      Open <ArrowRight className="h-3 w-3" />
+                      Open Module <ArrowRight className="h-3 w-3" />
                     </Link>
                   </div>
                 </CardContent>

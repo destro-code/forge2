@@ -13,7 +13,6 @@ import {
   useTopics,
   useLearningPaths,
 } from "@/lib/hooks/use-content";
-import { getExploreTarget } from "@/lib/utils/explore-target";
 import { Flame, Clock, BookOpen, Trophy, Sparkles, ChevronRight, ArrowRight } from "lucide-react";
 
 import { QuickResumeBar } from "@/components/dashboard/quick-resume-bar";
@@ -191,9 +190,13 @@ function Dashboard() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {modules.slice(0, 6).map((m) => {
-            const target = getExploreTarget(lessons, topics, modules, paths, { moduleId: m.id });
             return (
-              <Link key={m.id} to={target.to} search={target.search} className="group">
+              <Link
+                key={m.id}
+                to="/learn/modules/$moduleId"
+                params={{ moduleId: m.id }}
+                className="group"
+              >
                 <Card className="h-full border-border/60 transition hover:border-primary/40 hover:shadow-glow">
                   <CardContent className="p-5 flex flex-col justify-between h-full">
                     <div>
@@ -217,7 +220,7 @@ function Dashboard() {
                         {m.lessonCount} lessons · ~{m.estimatedHours}h
                       </span>
                       <span className="inline-flex items-center gap-1 text-primary font-medium">
-                        Explore{" "}
+                        Open Module{" "}
                         <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                       </span>
                     </div>

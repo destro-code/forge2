@@ -8,7 +8,6 @@ import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useCurriculum } from "@/lib/hooks/use-curriculum";
 import { useLessons, useModules, useLearningPaths } from "@/lib/hooks/use-content";
-import { getExploreTarget } from "@/lib/utils/explore-target";
 import {
   Clock,
   Network,
@@ -208,9 +207,6 @@ function TopicsRoute() {
             const category = categories.find((c) => c.id === t.categoryId);
             const parentModule = modules.find((m) => m.id === t.moduleId);
             const topicLessonsCount = lessons.filter((l) => l.topicId === t.id).length;
-            const target = getExploreTarget(lessons, topics, modules, learningPaths, {
-              topicId: t.id,
-            });
 
             return (
               <Card
@@ -262,8 +258,8 @@ function TopicsRoute() {
                     </div>
 
                     <Button asChild className="w-full gap-2 text-xs" variant="secondary" size="sm">
-                      <Link to={target.to} search={target.search}>
-                        Start Chapter Lessons <ArrowRight className="h-3.5 w-3.5" />
+                      <Link to="/learn/topics/$topicId" params={{ topicId: t.id }}>
+                        Open Chapter Topic <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </Button>
                   </div>

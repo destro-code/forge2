@@ -22,6 +22,9 @@ export function useModule(id: string | undefined) {
 export function useTopics() {
   return useMemo(() => contentProvider.topics(), []);
 }
+export function useTopic(id: string | undefined) {
+  return useMemo(() => contentProvider.topics().find((t) => t.id === id), [id]);
+}
 export function useLessons() {
   return useMemo(() => contentProvider.lessons(), []);
 }

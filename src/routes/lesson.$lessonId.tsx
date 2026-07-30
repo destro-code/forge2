@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Callout } from "@/components/shared/callout";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
-import { useLesson, useLessons } from "@/lib/hooks/use-content";
+import { useLesson, useLessons, useTopic, useModule } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { toast } from "sonner";
 import {
@@ -21,6 +21,7 @@ import {
   Check,
   Code2,
   HelpCircle,
+  GraduationCap,
 } from "lucide-react";
 
 import { LessonReadingProgress } from "@/components/lesson/lesson-reading-progress";
@@ -48,6 +49,8 @@ export const Route = createFileRoute("/lesson/$lessonId")({
 function LessonView() {
   const { lessonId } = Route.useParams();
   const lesson = useLesson(lessonId);
+  const topic = useTopic(lesson?.topicId);
+  const parentModule = useModule(topic?.moduleId);
   const allLessons = useLessons();
   const {
     bookmarks,
@@ -181,7 +184,47 @@ function LessonView() {
         </aside>
 
         {/* Center Main Article Content */}
-        <article className="min-w-0">
+        <article className="min-w-0 space-y-6">
+          {/* Hierarchy Breadcrumb Navigation */}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5 overflow-x-auto whitespace-nowrap scrollbar-none">
+            <GraduationCap className="h-4 w-4 text-primary shrink-0" />
+            <Link to="/learn" className="hover:text-foreground hover:underline">
+              Roadmap
+            </Link>
+            <span>/</span>
+            <Link to="/learn/modules" className="hover:text-foreground hover:underline">
+              Modules
+            </Link>
+            {parentModule && (
+              <>
+                <span>/</span>
+                <Link
+                  to="/learn/modules/$moduleId"
+                  params={{ moduleId: parentModule.id }}
+                  className="hover:text-foreground hover:underline text-foreground"
+                >
+                  {parentModule.title}
+                </Link>
+              </>
+            )}
+            {topic && (
+              <>
+                <span>/</span>
+                <Link
+                  to="/learn/topics/$topicId"
+                  params={{ topicId: topic.id }}
+                  className="hover:text-foreground hover:underline text-foreground"
+                >
+                  {topic.title}
+                </Link>
+              </>
+            )}
+            <span>/</span>
+            <span className="font-semibold text-primary truncate max-w-[180px]">
+              {lesson.title}
+            </span>
+          </div>
+
           <PageHeader
             eyebrow="Lesson Engine 2.0"
             title={lesson.title}

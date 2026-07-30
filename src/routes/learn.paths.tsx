@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { useLearningPaths, useModules, useLessons, useTopics } from "@/lib/hooks/use-content";
-import { getExploreTarget } from "@/lib/utils/explore-target";
 import { Clock, ArrowRight, Target, Layers, Compass, BookOpen, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/learn/paths")({
@@ -120,16 +119,9 @@ function LearningPathsRoute() {
                   </div>
 
                   <Button asChild size="sm" className="gap-1.5 shadow-glow">
-                    {(() => {
-                      const target = getExploreTarget(lessons, topics, modules, paths, {
-                        pathId: path.id,
-                      });
-                      return (
-                        <Link to={target.to} search={target.search}>
-                          Explore Path <ArrowRight className="h-4 w-4" />
-                        </Link>
-                      );
-                    })()}
+                    <Link to="/learn/modules" search={{ pathId: path.id }}>
+                      Explore Path <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </Button>
                 </div>
               </CardContent>
