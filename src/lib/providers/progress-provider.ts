@@ -6,6 +6,7 @@ import type {
   ProjectUserNotes,
   JournalEntry,
   InterviewSessionResult,
+  LessonHighlight,
 } from "../types";
 
 export interface ProgressState {
@@ -28,6 +29,8 @@ export interface ProgressState {
   topicMasteryRecords?: Record<string, TopicMasteryRecord>;
   readinessGoalPercent?: number;
   lastActiveLessonId?: string;
+  lessonCheckpoints?: Record<string, boolean>; // key format: lessonId:checkpointId -> boolean
+  lessonHighlights?: Record<string, LessonHighlight[]>; // key: lessonId -> array of highlights
 }
 
 const seedHeatmap = () => {

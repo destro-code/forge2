@@ -78,11 +78,57 @@ export interface CurriculumFilter {
   progressStatus?: "All" | "Not Started" | "In Progress" | "Completed";
 }
 
+export type LessonHighlightColor = "yellow" | "emerald" | "cyan" | "rose" | "purple";
+
+export interface LessonHighlight {
+  id: string;
+  lessonId: string;
+  text: string;
+  color: LessonHighlightColor;
+  note?: string;
+  createdAt: string;
+}
+
 export type LessonSection =
-  | { type: "heading"; text: string }
+  | { type: "heading"; text: string; id?: string }
   | { type: "paragraph"; text: string }
   | { type: "callout"; variant: "tip" | "warning" | "mistake" | "info"; text: string }
-  | { type: "code"; language: string; code: string };
+  | {
+      type: "code";
+      language: string;
+      code: string;
+      title?: string;
+      editable?: boolean;
+      highlightLines?: number[];
+    }
+  | {
+      type: "diagram";
+      diagramType: "closure-scope" | "event-loop" | "fiber-tree" | "state-flow" | "custom";
+      title: string;
+      description?: string;
+    }
+  | {
+      type: "walkthrough";
+      title: string;
+      steps: { title: string; description: string; code?: string; language?: string }[];
+    }
+  | {
+      type: "collapsible";
+      title: string;
+      subtitle?: string;
+      content: string;
+      variant?: "deep-dive" | "pitfall" | "senior-tip" | "default";
+    }
+  | { type: "checkpoint"; id: string; label: string; hint?: string }
+  | {
+      type: "interactive-sandbox";
+      id?: string;
+      title?: string;
+      initialCode: string;
+      language?: string;
+      instructions?: string;
+    }
+  | { type: "inline-quiz"; quizId: string };
 
 export interface Lesson {
   id: string;

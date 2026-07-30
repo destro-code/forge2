@@ -18,6 +18,9 @@ import {
   Bookmark,
   BookOpen,
   Filter,
+  GraduationCap,
+  Layers,
+  FolderTree,
 } from "lucide-react";
 
 export const Route = createFileRoute("/learn/lessons")({
@@ -31,14 +34,14 @@ export const Route = createFileRoute("/learn/lessons")({
   }),
   head: () => ({
     meta: [
-      { title: "Lessons · Forge" },
+      { title: "Lesson Catalog (Level 3) · Forge" },
       {
         name: "description",
         content:
-          "Every Forge lesson — searchable, filterable, with interview questions and exercises.",
+          "Level 3 Lesson Catalog — searchable, filterable reading and practice units with code sandboxes and interview exercises.",
       },
-      { property: "og:title", content: "Lessons · Forge" },
-      { property: "og:description", content: "The lesson library." },
+      { property: "og:title", content: "Lesson Catalog · Forge" },
+      { property: "og:description", content: "The full lesson library catalog." },
     ],
   }),
   component: Lessons,
@@ -146,17 +149,41 @@ function Lessons() {
 
   return (
     <div className="space-y-8">
+      {/* Visual Hierarchy Navigation Breadcrumb */}
+      <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
+        <GraduationCap className="h-4 w-4 text-primary" />
+        <Link to="/learn" className="hover:text-foreground hover:underline">
+          Level 0: Roadmap
+        </Link>
+        <span>→</span>
+        <Link to="/learn/modules" className="hover:text-foreground hover:underline">
+          Level 1: Modules
+        </Link>
+        <span>→</span>
+        <Link to="/learn/topics" className="hover:text-foreground hover:underline">
+          Level 2: Topics
+        </Link>
+        <span>→</span>
+        <span className="font-semibold text-primary">Level 3: Lesson Catalog</span>
+      </div>
+
       <PageHeader
-        eyebrow="Library"
-        title="All Lessons"
-        description="Bite-sized, focused lessons engineered for staff-level retention and deep mental models."
+        eyebrow="Level 3 Catalog"
+        title="Lesson Catalog & Index"
+        description="Searchable, bite-sized lesson units engineered for staff-level retention, deep mental models, and interactive code sandboxes."
         actions={
           <div className="flex gap-2">
             <Button asChild variant="outline">
-              <Link to="/learn">Modules Overview</Link>
+              <Link to="/learn/modules" className="gap-1.5">
+                <Layers className="h-4 w-4 text-primary" />
+                Modules
+              </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link to="/learn/topics">Knowledge Graph</Link>
+              <Link to="/learn/topics" className="gap-1.5">
+                <FolderTree className="h-4 w-4 text-primary" />
+                Chapters & Topics
+              </Link>
             </Button>
           </div>
         }

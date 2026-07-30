@@ -16,23 +16,79 @@
       {
         "type": "callout",
         "variant": "tip",
-        "text": "Every function you write in JavaScript is technically a closure. The interesting question is what it closes over."
+        "text": "Every function you write in JavaScript is technically a closure. The interesting question is what state it closes over."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "closure-scope",
+        "title": "Lexical Environment & Scope Visualizer",
+        "description": "Step through heap memory allocation and watch inner functions close over outer scope bindings."
       },
       {
         "type": "code",
         "language": "javascript",
-        "code": "function counter() {\n  let count = 0;\n  return () => ++count;\n}\nconst next = counter();\nnext(); // 1\nnext(); // 2"
+        "code": "function counter() {\n  let count = 0;\n  return () => ++count;\n}\nconst next = counter();\nconsole.log(next()); // 1\nconsole.log(next()); // 2"
       },
-      { "type": "heading", "text": "Common mistakes" },
+      {
+        "type": "walkthrough",
+        "title": "Building a Private Counter Step-by-Step",
+        "steps": [
+          {
+            "title": "Global Functions",
+            "description": "Declare counter() in outer scope. Memory allocates a new execution context whenever counter() is invoked.",
+            "code": "function counter() {\n  let count = 0;\n}"
+          },
+          {
+            "title": "Returning Inner Function",
+            "description": "Return an anonymous arrow function that references count. JavaScript creates a closure link.",
+            "code": "function counter() {\n  let count = 0;\n  return () => ++count;\n}"
+          },
+          {
+            "title": "Invoking Outer Function",
+            "description": "Assign next = counter(). The outer execution frame finishes, but count stays in memory because next maintains a reference.",
+            "code": "const next = counter();\nnext(); // 1\nnext(); // 2"
+          }
+        ]
+      },
+      {
+        "type": "collapsible",
+        "variant": "senior-tip",
+        "title": "Senior Dev Perspective: Closures vs Objects",
+        "subtitle": "An old JavaScript proverb",
+        "content": "Objects are data with methods. Closures are methods with data. In modern TypeScript, closures power hooks, custom memoization caches, and module encapsulation without requiring verbose class instances."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp1",
+        "label": "I can explain lexical environment retention to another engineer.",
+        "hint": "Outer function local variables stay alive as long as inner functions reference them."
+      },
+      {
+        "type": "heading",
+        "text": "Common mistakes"
+      },
       {
         "type": "callout",
         "variant": "mistake",
-        "text": "Capturing a mutable loop variable with var creates a closure over the SAME binding. Use let."
+        "text": "Capturing a mutable loop variable with var creates a closure over the SAME binding. Always use let."
       },
       {
-        "type": "callout",
-        "variant": "warning",
-        "text": "Closures can retain memory. Avoid capturing large DOM nodes in long-lived callbacks."
+        "type": "collapsible",
+        "variant": "pitfall",
+        "title": "Gotcha: Memory Leaks with Stale References",
+        "content": "If a long-lived callback closes over a large array or DOM node, that memory cannot be garbage-collected. Null out references when cleaning up event listeners."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp2",
+        "label": "I know how to prevent stale memory leaks in long-lived callbacks.",
+        "hint": "Break circular references or detach callbacks when subscriptions unmount."
+      },
+      {
+        "type": "interactive-sandbox",
+        "title": "Try Closures Live in Mini Sandbox",
+        "instructions": "Modify the incrementer code below and click 'Run Code' to see live DOM output.",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function ClosureApp() {\n  const [count, setCount] = useState(0);\n  return (\n    <div style={{ padding: '16px', background: '#111827', color: '#fff', borderRadius: '8px' }}>\n      <h3 style={{ margin: '0 0 8px 0', color: '#60a5fa' }}>Closure State Sandbox</h3>\n      <p>Captured Value: <strong>{count}</strong></p>\n      <button \n        onClick={() => setCount(c => c + 1)} \n        style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer' }}\n      >\n        Increment Counter\n      </button>\n    </div>\n  );\n}"
       }
     ],
     "exercises": [

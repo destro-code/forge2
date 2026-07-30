@@ -8,21 +8,21 @@ import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { CurriculumFilterBar } from "@/components/learning/curriculum-filter-bar";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useCurriculum } from "@/lib/hooks/use-curriculum";
-import { useLessons, useTopics } from "@/lib/hooks/use-content";
+import { useLessons, useTopics, useLearningPaths } from "@/lib/hooks/use-content";
 import { getExploreTarget } from "@/lib/utils/explore-target";
-import { ArrowRight, Layers, BookOpen } from "lucide-react";
+import { ArrowRight, Layers, GraduationCap, FolderTree, BookOpen, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/learn/modules")({
   head: () => ({
     meta: [
-      { title: "Modules · Forge" },
+      { title: "Curriculum Pillars (Modules) · Forge" },
       {
         name: "description",
         content:
-          "Every module in Forge's frontend curriculum, organized by category, path, and difficulty level.",
+          "Level 1 Curriculum Pillars — major engineering modules containing chapter topics and specialized learning tracks.",
       },
-      { property: "og:title", content: "Modules · Forge" },
-      { property: "og:description", content: "The complete module library." },
+      { property: "og:title", content: "Curriculum Pillars (Modules) · Forge" },
+      { property: "og:description", content: "The complete module pillar hub." },
     ],
   }),
   component: ModulesRoute,
@@ -36,17 +36,41 @@ function ModulesRoute() {
 
   return (
     <div className="space-y-8">
+      {/* Visual Hierarchy Navigation Breadcrumb */}
+      <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
+        <GraduationCap className="h-4 w-4 text-primary" />
+        <Link to="/learn" className="hover:text-foreground hover:underline">
+          Level 0: Roadmap
+        </Link>
+        <span>→</span>
+        <span className="font-semibold text-primary">Level 1: Curriculum Pillars</span>
+        <span>→</span>
+        <Link to="/learn/topics" className="hover:text-foreground hover:underline">
+          Level 2: Topics
+        </Link>
+        <span>→</span>
+        <Link to="/learn/lessons" className="hover:text-foreground hover:underline">
+          Level 3: Lessons
+        </Link>
+      </div>
+
       <PageHeader
-        eyebrow="Module Architecture"
-        title="All Modules"
-        description="Core modules grouped by skill domains and topic depth, fully structured for self-paced progress."
+        eyebrow="Level 1 Architecture"
+        title="Curriculum Pillars & Modules"
+        description="Major engineering domains structured into self-contained pillars. Select a module to explore its chapter topics and knowledge graph dependencies."
         actions={
           <div className="flex gap-2">
             <Button asChild variant="outline">
-              <Link to="/learn/paths">Learning Paths</Link>
+              <Link to="/learn/topics" className="gap-1.5">
+                <FolderTree className="h-4 w-4 text-primary" />
+                Explore Topics
+              </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link to="/learn/topics">Knowledge Graph</Link>
+              <Link to="/learn/lessons" className="gap-1.5">
+                <BookOpen className="h-4 w-4 text-primary" />
+                Lesson Catalog
+              </Link>
             </Button>
           </div>
         }
@@ -68,53 +92,78 @@ function ModulesRoute() {
       />
 
       {modules.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => {
             const category = categories.find((c) => c.id === m.categoryId);
             const target = getExploreTarget(lessons, topics, modules, learningPaths, {
               moduleId: m.id,
             });
+
             return (
-              <Link key={m.id} to={target.to} search={target.search} className="group">
-                <Card className="h-full border-border/60 transition duration-200 hover:border-primary/40 hover:shadow-glow">
-                  <CardContent className="p-5 flex flex-col justify-between h-full">
-                    <div>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <DifficultyBadge difficulty={m.difficulty} />
-                            {category && (
-                              <Badge variant="outline" className="text-[10px]">
-                                {category.name}
-                              </Badge>
-                            )}
-                          </div>
-                          <h3 className="text-base font-semibold group-hover:text-primary transition-colors">
-                            {m.title}
-                          </h3>
+              <Card
+                key={m.id}
+                className="group flex flex-col justify-between border-border/60 transition duration-200 hover:border-primary/40 hover:shadow-glow overflow-hidden"
+              >
+                <CardContent className="p-6 flex flex-col justify-between h-full space-y-4">
+                  <div>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <DifficultyBadge difficulty={m.difficulty} />
+                          {category && (
+                            <Badge variant="outline" className="text-[10px] bg-muted/40 font-mono">
+                              {category.name}
+                            </Badge>
+                          )}
                         </div>
-                        <ProgressRing value={m.progress} size={48} />
+                        <h3 className="text-lg font-bold tracking-tight group-hover:text-primary transition-colors">
+                          {m.title}
+                        </h3>
                       </div>
-                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
-                        {m.description}
-                      </p>
+                      <ProgressRing value={m.progress} size={48} />
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex flex-wrap gap-1">
-                        {m.tags.map((t) => (
-                          <Badge key={t} variant="secondary" className="text-[10px]">
-                            {t}
-                          </Badge>
-                        ))}
-                      </div>
-                      <span className="inline-flex items-center gap-1 text-primary font-medium shrink-0">
-                        {m.lessonCount} lessons <ArrowRight className="h-3 w-3" />
+                    <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
+                      {m.description}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 pt-3 border-t border-border/40">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
+                      <span className="flex items-center gap-1">
+                        <FolderTree className="h-3.5 w-3.5 text-primary" />
+                        {m.topicCount} Chapters
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
+                        {m.lessonCount} Lessons
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5 text-amber-400" />~{m.estimatedHours}h
                       </span>
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
+
+                    <div className="flex flex-wrap gap-1">
+                      {m.tags.map((t) => (
+                        <Badge key={t} variant="secondary" className="text-[10px]">
+                          {t}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <Button
+                      asChild
+                      className="w-full gap-2 mt-2 shadow-xs"
+                      variant="default"
+                      size="sm"
+                    >
+                      <Link to={target.to} search={target.search}>
+                        Open Module Chapters <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>

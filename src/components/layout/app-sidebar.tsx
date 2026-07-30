@@ -37,6 +37,8 @@ import {
   Flame,
   Blocks,
   BookOpenText,
+  FolderTree,
+  Network,
   PenTool,
   Brain,
 } from "lucide-react";
@@ -46,10 +48,10 @@ type Item = { title: string; to: string; icon: React.ComponentType<{ className?:
 
 const learn: Item[] = [
   { title: "Dashboard", to: "/", icon: LayoutDashboard },
-  { title: "Learn", to: "/learn", icon: GraduationCap },
-  { title: "Modules", to: "/learn/modules", icon: Layers },
-  { title: "Topics", to: "/learn/topics", icon: Compass },
-  { title: "Lessons", to: "/learn/lessons", icon: BookOpen },
+  { title: "Academy Roadmap", to: "/learn", icon: GraduationCap },
+  { title: "Curriculum Modules", to: "/learn/modules", icon: Layers },
+  { title: "Chapter Topics", to: "/learn/topics", icon: FolderTree },
+  { title: "Lesson Catalog", to: "/learn/lessons", icon: BookOpen },
 ];
 const practice: Item[] = [
   { title: "Practice", to: "/practice", icon: ListChecks },

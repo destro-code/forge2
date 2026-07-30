@@ -49,6 +49,57 @@ export function useProgress() {
     saveNote(key: string, value: string) {
       setProgress((p) => ({ ...p, notes: { ...p.notes, [key]: value } }));
     },
+    toggleCheckpoint(lessonId: string, checkpointId: string) {
+      const key = `${lessonId}:${checkpointId}`;
+      setProgress((p) => {
+        const checkpoints = p.lessonCheckpoints || {};
+        return {
+          ...p,
+          lessonCheckpoints: {
+            ...checkpoints,
+            [key]: !checkpoints[key],
+          },
+        };
+      });
+    },
+    addHighlight(
+      lessonId: string,
+      item: { text: string; color: import("@/lib/types").LessonHighlightColor; note?: string },
+    ) {
+      const newHighlight: import("@/lib/types").LessonHighlight = {
+        id: `hl_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        lessonId,
+        text: item.text,
+        color: item.color,
+        note: item.note,
+        createdAt: new Date().toISOString(),
+      };
+      setProgress((p) => {
+        const currentHLs = p.lessonHighlights || {};
+        const list = currentHLs[lessonId] || [];
+        return {
+          ...p,
+          lessonHighlights: {
+            ...currentHLs,
+            [lessonId]: [newHighlight, ...list],
+          },
+        };
+      });
+      return newHighlight;
+    },
+    removeHighlight(lessonId: string, highlightId: string) {
+      setProgress((p) => {
+        const currentHLs = p.lessonHighlights || {};
+        const list = currentHLs[lessonId] || [];
+        return {
+          ...p,
+          lessonHighlights: {
+            ...currentHLs,
+            [lessonId]: list.filter((h) => h.id !== highlightId),
+          },
+        };
+      });
+    },
     toggleProjectTask(projectId: string, taskId: string) {
       setProgress((p) => {
         const key = `${projectId}:${taskId}`;
