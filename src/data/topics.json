@@ -1,81 +1,288 @@
 [
   {
-    "id": "closures",
-    "moduleId": "javascript-deep-dive",
-    "title": "Closures",
-    "description": "Understand lexical scope, closure capture, and how closures enable modules and memoization.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 45,
+    "id": "html-foundations",
+    "moduleId": "html-css-foundations",
+    "title": "HTML Foundations & Semantics",
+    "description": "Elements, document structure, semantic tags, forms, accessibility attributes, and DOM trees.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": ["scope-and-hoisting"],
-    "next": ["iife-patterns", "modules"],
-    "related": ["memoization", "event-loop"],
-    "categoryId": "language-mastery"
+    "prerequisites": [],
+    "next": [
+      "css-box-model"
+    ],
+    "related": [
+      "css-box-model"
+    ],
+    "categoryId": "core-web",
+    "order": 1
   },
   {
-    "id": "event-loop",
-    "moduleId": "javascript-deep-dive",
-    "title": "The Event Loop",
-    "description": "Call stack, task queue, microtasks and rendering — how the browser actually runs your code.",
-    "difficulty": "Advanced",
-    "estimatedMinutes": 60,
-    "interviewFrequency": "Very High",
-    "prerequisites": ["promises"],
-    "next": ["scheduling"],
-    "related": ["performance"],
-    "categoryId": "language-mastery"
-  },
-  {
-    "id": "useeffect",
-    "moduleId": "react-professional",
-    "title": "useEffect",
-    "description": "Effects, dependencies, cleanup, Strict Mode and when NOT to use it.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 55,
-    "interviewFrequency": "Very High",
-    "prerequisites": ["useState"],
-    "next": ["useLayoutEffect", "custom-hooks"],
-    "related": ["render-model"],
-    "categoryId": "framework-mastery"
+    "id": "css-box-model",
+    "moduleId": "html-css-foundations",
+    "title": "CSS Box Model & Specificity",
+    "description": "Margin, padding, borders, content-box vs border-box, specificity calculation, and cascade rules.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 40,
+    "interviewFrequency": "High",
+    "prerequisites": [
+      "html-foundations"
+    ],
+    "next": [
+      "flexbox"
+    ],
+    "related": [
+      "flexbox"
+    ],
+    "categoryId": "core-web",
+    "order": 2
   },
   {
     "id": "flexbox",
     "moduleId": "html-css-foundations",
-    "title": "Flexbox",
-    "description": "One-dimensional layout — main/cross axis, wrapping, alignment and real patterns.",
+    "title": "Flexbox Layouts",
+    "description": "One-dimensional flex layouts, main/cross axes, alignment, flex-grow/shrink/basis, and responsive patterns.",
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [],
-    "next": ["grid"],
-    "related": ["responsive"],
-    "categoryId": "core-web"
+    "prerequisites": [
+      "css-box-model"
+    ],
+    "next": [
+      "grid"
+    ],
+    "related": [
+      "grid"
+    ],
+    "categoryId": "core-web",
+    "order": 3
   },
   {
     "id": "grid",
     "moduleId": "html-css-foundations",
-    "title": "CSS Grid",
-    "description": "Two-dimensional layout with tracks, areas, subgrid and container queries.",
+    "title": "CSS Grid System",
+    "description": "Two-dimensional track grid, named areas, auto-fill/fit, subgrid, and modern responsive layouts.",
     "difficulty": "Intermediate",
     "estimatedMinutes": 55,
     "interviewFrequency": "Medium",
-    "prerequisites": ["flexbox"],
-    "next": ["container-queries"],
-    "related": ["responsive"],
-    "categoryId": "core-web"
+    "prerequisites": [
+      "flexbox"
+    ],
+    "next": [],
+    "related": [
+      "flexbox"
+    ],
+    "categoryId": "core-web",
+    "order": 4
+  },
+  {
+    "id": "js-fundamentals",
+    "moduleId": "javascript-deep-dive",
+    "title": "JavaScript Fundamentals & Primitive Types",
+    "description": "Variables, primitives vs objects, type coercion, strict equality, expressions, and evaluation.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 40,
+    "interviewFrequency": "Medium",
+    "prerequisites": [],
+    "next": [
+      "scope-hoisting"
+    ],
+    "related": [
+      "scope-hoisting"
+    ],
+    "categoryId": "language-mastery",
+    "order": 1
+  },
+  {
+    "id": "scope-hoisting",
+    "moduleId": "javascript-deep-dive",
+    "title": "Lexical Scope & Hoisting",
+    "description": "Global/function/block scope, Temporal Dead Zone (TDZ), variable hoisting, and execution contexts.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 45,
+    "interviewFrequency": "High",
+    "prerequisites": [
+      "js-fundamentals"
+    ],
+    "next": [
+      "closures"
+    ],
+    "related": [
+      "closures"
+    ],
+    "categoryId": "language-mastery",
+    "order": 2
+  },
+  {
+    "id": "closures",
+    "moduleId": "javascript-deep-dive",
+    "title": "Closures & Scope Capture",
+    "description": "Understand lexical scope retention, memory retention, module patterns, and function factories.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 45,
+    "interviewFrequency": "High",
+    "prerequisites": [
+      "scope-hoisting"
+    ],
+    "next": [
+      "promises-async"
+    ],
+    "related": [
+      "promises-async",
+      "event-loop"
+    ],
+    "categoryId": "language-mastery",
+    "order": 3
+  },
+  {
+    "id": "promises-async",
+    "moduleId": "javascript-deep-dive",
+    "title": "Promises & Async/Await",
+    "description": "Asynchronous primitives, promise states, microtasks, chaining, error handling, and Async/Await sugar.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 50,
+    "interviewFrequency": "Very High",
+    "prerequisites": [
+      "closures"
+    ],
+    "next": [
+      "event-loop"
+    ],
+    "related": [
+      "event-loop"
+    ],
+    "categoryId": "language-mastery",
+    "order": 4
+  },
+  {
+    "id": "event-loop",
+    "moduleId": "javascript-deep-dive",
+    "title": "The JavaScript Event Loop",
+    "description": "Call stack, task queue, microtask queue, requestAnimationFrame, and browser render phase.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 60,
+    "interviewFrequency": "Very High",
+    "prerequisites": [
+      "promises-async"
+    ],
+    "next": [],
+    "related": [
+      "promises-async"
+    ],
+    "categoryId": "language-mastery",
+    "order": 5
+  },
+  {
+    "id": "ts-types-interfaces",
+    "moduleId": "typescript-mastery",
+    "title": "Types & Interfaces",
+    "description": "Primitive type annotations, interfaces, type aliases, structural typing, and readonly properties.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 40,
+    "interviewFrequency": "High",
+    "prerequisites": [],
+    "next": [
+      "ts-unions-narrowing"
+    ],
+    "related": [
+      "ts-unions-narrowing"
+    ],
+    "categoryId": "language-mastery",
+    "order": 1
+  },
+  {
+    "id": "ts-unions-narrowing",
+    "moduleId": "typescript-mastery",
+    "title": "Unions, Intersections & Type Narrowing",
+    "description": "Discriminated unions, type guards, typeof/instanceof/in operators, and strict null checks.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 45,
+    "interviewFrequency": "High",
+    "prerequisites": [
+      "ts-types-interfaces"
+    ],
+    "next": [
+      "generics"
+    ],
+    "related": [
+      "generics"
+    ],
+    "categoryId": "language-mastery",
+    "order": 2
   },
   {
     "id": "generics",
     "moduleId": "typescript-mastery",
-    "title": "Generics",
-    "description": "Parametric polymorphism, constraints, inference and reusable type utilities.",
+    "title": "Generics & Parametric Types",
+    "description": "Parametric polymorphism, constraints, inference, reusable type utilities, and extends key checks.",
     "difficulty": "Intermediate",
     "estimatedMinutes": 50,
     "interviewFrequency": "High",
-    "prerequisites": ["basic-types"],
-    "next": ["utility-types", "conditional-types"],
-    "related": [],
-    "categoryId": "language-mastery"
+    "prerequisites": [
+      "ts-unions-narrowing"
+    ],
+    "next": [],
+    "related": [
+      "ts-unions-narrowing"
+    ],
+    "categoryId": "language-mastery",
+    "order": 3
+  },
+  {
+    "id": "react-jsx-components",
+    "moduleId": "react-professional",
+    "title": "JSX & Component Composition",
+    "description": "JSX syntax transformation, component hierarchy, props passing, children composition, and purity.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 40,
+    "interviewFrequency": "High",
+    "prerequisites": [],
+    "next": [
+      "react-state-props"
+    ],
+    "related": [
+      "react-state-props"
+    ],
+    "categoryId": "framework-mastery",
+    "order": 1
+  },
+  {
+    "id": "react-state-props",
+    "moduleId": "react-professional",
+    "title": "State Management & Event Handlers",
+    "description": "useState hook, state immutability, batching updates, synthetic events, and controlled input forms.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 45,
+    "interviewFrequency": "High",
+    "prerequisites": [
+      "react-jsx-components"
+    ],
+    "next": [
+      "useeffect"
+    ],
+    "related": [
+      "useeffect"
+    ],
+    "categoryId": "framework-mastery",
+    "order": 2
+  },
+  {
+    "id": "useeffect",
+    "moduleId": "react-professional",
+    "title": "useEffect & External Synchronization",
+    "description": "Effects, dependencies array, cleanup callbacks, Strict Mode double execution, and sync gotchas.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 55,
+    "interviewFrequency": "Very High",
+    "prerequisites": [
+      "react-state-props"
+    ],
+    "next": [],
+    "related": [
+      "react-state-props"
+    ],
+    "categoryId": "framework-mastery",
+    "order": 3
   },
   {
     "id": "rendering-strategies",
@@ -86,9 +293,10 @@
     "estimatedMinutes": 70,
     "interviewFrequency": "Very High",
     "prerequisites": [],
-    "next": ["caching", "edge"],
-    "related": ["performance"],
-    "categoryId": "architecture"
+    "next": [],
+    "related": [],
+    "categoryId": "architecture",
+    "order": 1
   },
   {
     "id": "core-web-vitals",
@@ -99,9 +307,24 @@
     "estimatedMinutes": 60,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": ["bundle-analysis"],
-    "related": ["rendering-strategies"],
-    "categoryId": "quality-perf"
+    "next": [],
+    "related": [],
+    "categoryId": "quality-perf",
+    "order": 1
+  },
+  {
+    "id": "testing-fundamentals",
+    "moduleId": "testing-and-tooling",
+    "title": "Unit & Integration Testing",
+    "description": "Vitest, mock functions, assertion libraries, and Test-Driven Development patterns.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 45,
+    "interviewFrequency": "High",
+    "prerequisites": [],
+    "next": [],
+    "related": [],
+    "categoryId": "quality-perf",
+    "order": 1
   },
   {
     "id": "system-design-newsfeed",
@@ -113,20 +336,8 @@
     "interviewFrequency": "Very High",
     "prerequisites": [],
     "next": [],
-    "related": ["rendering-strategies"],
-    "categoryId": "career-interview"
-  },
-  {
-    "id": "testing-fundamentals",
-    "moduleId": "testing-and-tooling",
-    "title": "Unit & Integration Testing",
-    "description": "Vitest, mock functions, assertion libraries, and Test-Driven Development patterns.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 45,
-    "interviewFrequency": "High",
-    "prerequisites": [],
-    "next": ["e2e-playwright"],
     "related": [],
-    "categoryId": "quality-perf"
+    "categoryId": "career-interview",
+    "order": 1
   }
 ]

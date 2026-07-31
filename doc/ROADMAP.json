@@ -1,0 +1,54 @@
+{
+  "sprint": 3,
+  "title": "HTML & CSS Foundations",
+  "priority": "Critical",
+  "goal": "Build a university-quality HTML & CSS course.",
+  "scope": [
+    "How the Internet Works",
+    "Browser Basics",
+    "HTML",
+    "Semantic HTML",
+    "Forms",
+    "Accessibility",
+    "SEO",
+    "CSS",
+    "Box Model",
+    "Typography",
+    "Flexbox",
+    "Grid",
+    "Responsive Design"
+  ],
+  "out_of_scope": [
+    "AI Mentor redesign",
+    "New routes outside curriculum",
+    "Playground refactor"
+  ],
+  "deliverables": [
+    "Structured lesson sequence",
+    "Prerequisites",
+    "Topic ordering",
+    "Mini project",
+    "Quiz",
+    "Debug challenge"
+  ],
+  "acceptance_criteria": [
+    "HTML starts before CSS layout concepts",
+    "No orphan topics",
+    "Counts derived from real data",
+    "Module flow is linear and teachable"
+  ],
+  "dependencies": [1, 2],
+  "files_likely_modified": [
+    "src/data/modules.json",
+    "src/data/topics.json",
+    "src/data/lessons.json",
+    "src/routes/learn.*"
+  ],
+  "test_requirements": [
+    "Navigation works",
+    "No broken routes",
+    "No empty module pages",
+    "Mobile remains usable"
+  ],
+  "status": "pending"
+}

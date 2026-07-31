@@ -4,7 +4,12 @@
     "title": "The Counter That Lies (Stale Closure)",
     "category": "hooks",
     "difficulty": "Intermediate",
-    "tags": ["React", "Hooks", "useEffect", "Closures"],
+    "tags": [
+      "React",
+      "Hooks",
+      "useEffect",
+      "Closures"
+    ],
     "estimatedMinutes": 15,
     "brief": "A counter component increments once from 0 to 1 and then freezes. Fix the stale closure bug.",
     "symptoms": [
@@ -37,14 +42,22 @@
         "description": "Verifies counter increments beyond 1 after multiple interval ticks."
       }
     ],
-    "interactiveType": "counter_stale"
+    "interactiveType": "counter_stale",
+    "topicId": "useeffect",
+    "moduleId": "react-professional",
+    "order": 1
   },
   {
     "id": "layout-shift",
     "title": "The Jumping Hero Banner (CLS)",
     "category": "css",
     "difficulty": "Beginner",
-    "tags": ["CSS", "CLS", "Performance", "Aspect Ratio"],
+    "tags": [
+      "CSS",
+      "CLS",
+      "Performance",
+      "Aspect Ratio"
+    ],
     "estimatedMinutes": 10,
     "brief": "Dynamic hero banner images load asynchronously and push lower layout elements down abruptly, causing a bad CLS score.",
     "symptoms": [
@@ -77,14 +90,22 @@
         "description": "Ensures aspect-ratio or explicit height constraints are declared on the hero container."
       }
     ],
-    "interactiveType": "layout_shift"
+    "interactiveType": "layout_shift",
+    "topicId": "css-box-model",
+    "moduleId": "html-css-foundations",
+    "order": 2
   },
   {
     "id": "memory-leak-listener",
     "title": "The Slow Resizing Tab (Retained Event Listener)",
     "category": "memory_leak",
     "difficulty": "Advanced",
-    "tags": ["JavaScript", "Memory Leak", "Event Listeners", "Cleanup"],
+    "tags": [
+      "JavaScript",
+      "Memory Leak",
+      "Event Listeners",
+      "Cleanup"
+    ],
     "estimatedMinutes": 20,
     "brief": "A window resize handler is registered inside useEffect without an unmount cleanup function, causing memory leaks.",
     "symptoms": [
@@ -117,14 +138,22 @@
         "description": "Confirms listener count resets to zero when navigating away."
       }
     ],
-    "interactiveType": "memory_leak"
+    "interactiveType": "memory_leak",
+    "topicId": "event-loop",
+    "moduleId": "javascript-deep-dive",
+    "order": 3
   },
   {
     "id": "network-race-condition",
     "title": "Out-of-Order Search Results (Network Race)",
     "category": "network",
     "difficulty": "Intermediate",
-    "tags": ["Async", "Network", "Fetch", "AbortController"],
+    "tags": [
+      "Async",
+      "Network",
+      "Fetch",
+      "AbortController"
+    ],
     "estimatedMinutes": 20,
     "brief": "Rapid search input displays stale results from earlier, slower network responses instead of the latest search query.",
     "symptoms": [
@@ -157,14 +186,22 @@
         "description": "Verifies controller.abort() is called when query changes prior to completion."
       }
     ],
-    "interactiveType": "network_race"
+    "interactiveType": "network_race",
+    "topicId": "promises-async",
+    "moduleId": "javascript-deep-dive",
+    "order": 4
   },
   {
     "id": "a11y-missing-aria",
     "title": "Unlabeled Icon Buttons & Focus Leak (Accessibility)",
     "category": "a11y",
     "difficulty": "Beginner",
-    "tags": ["Accessibility", "A11y", "ARIA", "Keyboard Navigation"],
+    "tags": [
+      "Accessibility",
+      "A11y",
+      "ARIA",
+      "Keyboard Navigation"
+    ],
     "estimatedMinutes": 15,
     "brief": "Icon-only buttons lack accessible names for screen readers, and custom popovers fail keyboard focus control.",
     "symptoms": [
@@ -197,14 +234,22 @@
         "description": "Verifies embedded SVG icons carry aria-hidden='true'."
       }
     ],
-    "interactiveType": "a11y_button"
+    "interactiveType": "a11y_button",
+    "topicId": "html-foundations",
+    "moduleId": "html-css-foundations",
+    "order": 5
   },
   {
     "id": "excessive-re-renders",
     "title": "The Laggy Product Data Grid (Unmemoized Callbacks)",
     "category": "performance",
     "difficulty": "Advanced",
-    "tags": ["React", "Performance", "useCallback", "React.memo"],
+    "tags": [
+      "React",
+      "Performance",
+      "useCallback",
+      "React.memo"
+    ],
     "estimatedMinutes": 25,
     "brief": "Passing new object literals and unmemoized callbacks into list items causes 500+ child components to re-render on every keystroke.",
     "symptoms": [
@@ -237,14 +282,22 @@
         "description": "Verifies child component render count drops from 500+ to zero for unaffected rows."
       }
     ],
-    "interactiveType": "perf_renders"
+    "interactiveType": "perf_renders",
+    "topicId": "core-web-vitals",
+    "moduleId": "performance-and-a11y",
+    "order": 6
   },
   {
     "id": "cannot-read-property-map",
     "title": "Cannot read properties of undefined (reading 'map')",
     "category": "console_error",
     "difficulty": "Beginner",
-    "tags": ["Console Error", "JavaScript", "Nullish Coalescing", "Optional Chaining"],
+    "tags": [
+      "Console Error",
+      "JavaScript",
+      "Nullish Coalescing",
+      "Optional Chaining"
+    ],
     "estimatedMinutes": 10,
     "brief": "Accessing array methods on asynchronous state before initial fetch completes triggers a blank screen runtime crash.",
     "symptoms": [
@@ -277,14 +330,22 @@
         "description": "Confirms array mapping succeeds safely when data arrives or is empty."
       }
     ],
-    "interactiveType": "console_null_map"
+    "interactiveType": "console_null_map",
+    "topicId": "js-fundamentals",
+    "moduleId": "javascript-deep-dive",
+    "order": 7
   },
   {
     "id": "infinite-useeffect-loop",
     "title": "Broken React App: The Uncapped Re-render Storm",
     "category": "react_app",
     "difficulty": "Intermediate",
-    "tags": ["React", "Hooks", "useEffect", "Infinite Loop"],
+    "tags": [
+      "React",
+      "Hooks",
+      "useEffect",
+      "Infinite Loop"
+    ],
     "estimatedMinutes": 15,
     "brief": "Updating state directly inside an un-guarded useEffect dependency array creates an infinite render cycle that freezes the browser.",
     "symptoms": [
@@ -317,6 +378,9 @@
         "description": "Ensures state setters inside effects do not depend on mutated object references."
       }
     ],
-    "interactiveType": "hooks_infinite"
+    "interactiveType": "hooks_infinite",
+    "topicId": "useeffect",
+    "moduleId": "react-professional",
+    "order": 8
   }
 ]

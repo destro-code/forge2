@@ -5,7 +5,11 @@
     "difficulty": "Medium",
     "question": "Explain DOM parsing, render tree construction, and script execution. What is the difference between <script>, <script async>, and <script defer>?",
     "estimatedMinutes": 10,
-    "companyTags": ["Google", "Meta", "Amazon"],
+    "companyTags": [
+      "Google",
+      "Meta",
+      "Amazon"
+    ],
     "rubric": [
       "Explains HTML parsing into DOM tree and CSS parsing into CSSOM tree",
       "Describes how DOM + CSSOM combine to form the Render Tree and Layout phase",
@@ -22,7 +26,10 @@
     "followUpQuestions": [
       "What happens if an async script depends on a library loaded via defer?",
       "How does module loading (<script type='module'>) behave by default?"
-    ]
+    ],
+    "topicId": "html-foundations",
+    "moduleId": "html-css-foundations",
+    "order": 1
   },
   {
     "id": "html-2",
@@ -30,7 +37,11 @@
     "difficulty": "Hard",
     "question": "How do <picture>, <source>, and srcset with sizes enable responsive media delivery and prevent layout shift?",
     "estimatedMinutes": 8,
-    "companyTags": ["Vercel", "Shopify", "Stripe"],
+    "companyTags": [
+      "Vercel",
+      "Shopify",
+      "Stripe"
+    ],
     "rubric": [
       "Explains the difference between resolution switching (srcset) and art direction (<picture>)",
       "Describes how the 'sizes' attribute gives layout hints to the browser before CSS layout executes",
@@ -45,7 +56,10 @@
     "followUpQuestions": [
       "How does the browser preloader parse srcset before styles are loaded?",
       "What is the priority difference between eager, lazy, and fetchpriority attributes?"
-    ]
+    ],
+    "topicId": "html-foundations",
+    "moduleId": "html-css-foundations",
+    "order": 2
   },
   {
     "id": "css-1",
@@ -53,7 +67,11 @@
     "difficulty": "Hard",
     "question": "Explain Block Formatting Context (BFC), Stacking Contexts (z-index), and Container Queries vs Media Queries.",
     "estimatedMinutes": 12,
-    "companyTags": ["Apple", "Airbnb", "Meta"],
+    "companyTags": [
+      "Apple",
+      "Airbnb",
+      "Meta"
+    ],
     "rubric": [
       "Defines BFC and lists triggers (display: flow-root, overflow: hidden, flex/grid items, position: fixed/absolute)",
       "Explains how BFC prevents margin collapsing and clears floats",
@@ -69,7 +87,10 @@
     "followUpQuestions": [
       "How does 'isolation: isolate' prevent z-index leakage in reusable UI component libraries?",
       "What are containment properties in CSS performance optimization?"
-    ]
+    ],
+    "topicId": "css-box-model",
+    "moduleId": "html-css-foundations",
+    "order": 3
   },
   {
     "id": "css-2",
@@ -77,7 +98,11 @@
     "difficulty": "Medium",
     "question": "How do CSS Grid and Flexbox differ in terms of 1D vs 2D layout calculation algorithms?",
     "estimatedMinutes": 8,
-    "companyTags": ["Microsoft", "Uber", "Netflix"],
+    "companyTags": [
+      "Microsoft",
+      "Uber",
+      "Netflix"
+    ],
     "rubric": [
       "Identifies Flexbox as 1D (content-driven layout along main/cross axis) vs Grid as 2D (layout-driven rows and columns)",
       "Explains flex-grow, flex-shrink, flex-basis sizing math",
@@ -92,7 +117,10 @@
     "followUpQuestions": [
       "When would you combine Flexbox inside a CSS Grid item?",
       "How does subgrid work in CSS Grid level 2?"
-    ]
+    ],
+    "topicId": "css-box-model",
+    "moduleId": "html-css-foundations",
+    "order": 4
   },
   {
     "id": "js-1",
@@ -100,7 +128,12 @@
     "difficulty": "Medium",
     "question": "Explain the JavaScript Event Loop, Call Stack, Microtask queue, and Macrotask queue with execution order examples.",
     "estimatedMinutes": 10,
-    "companyTags": ["Google", "Amazon", "Meta", "Bloomberg"],
+    "companyTags": [
+      "Google",
+      "Amazon",
+      "Meta",
+      "Bloomberg"
+    ],
     "rubric": [
       "Describes single-threaded call stack execution",
       "Identifies Microtasks (Promise.then, queueMicrotask, MutationObserver)",
@@ -116,7 +149,10 @@
     "followUpQuestions": [
       "Where does requestAnimationFrame fit relative to microtasks and browser painting?",
       "How does Node.js event loop phase structure differ from browser event loop?"
-    ]
+    ],
+    "topicId": "closures",
+    "moduleId": "javascript-deep-dive",
+    "order": 5
   },
   {
     "id": "js-2",
@@ -124,7 +160,11 @@
     "difficulty": "Hard",
     "question": "How do Closures and Garbage Collection work in V8? Give an example of a memory leak caused by uncleaned closures.",
     "estimatedMinutes": 12,
-    "companyTags": ["Meta", "Datadog", "Cloudflare"],
+    "companyTags": [
+      "Meta",
+      "Datadog",
+      "Cloudflare"
+    ],
     "rubric": [
       "Defines Closure as a function bundled together with references to its surrounding lexical environment",
       "Explains V8 Mark-and-Sweep garbage collection and root reachability",
@@ -139,7 +179,10 @@
     "followUpQuestions": [
       "How do WeakMap and WeakSet prevent memory leaks compared to Map and Set?",
       "How do you inspect retained objects using Chrome DevTools Heap Snapshot?"
-    ]
+    ],
+    "topicId": "closures",
+    "moduleId": "javascript-deep-dive",
+    "order": 6
   },
   {
     "id": "react-1",
@@ -147,7 +190,12 @@
     "difficulty": "Hard",
     "question": "How does React Fiber reconciliation work? How do concurrent features like useTransition and useDeferredValue prioritize render lanes?",
     "estimatedMinutes": 15,
-    "companyTags": ["Meta", "Vercel", "Airbnb", "DoorDash"],
+    "companyTags": [
+      "Meta",
+      "Vercel",
+      "Airbnb",
+      "DoorDash"
+    ],
     "rubric": [
       "Explains Fiber architecture as a linked list tree representation supporting interruptible, incremental rendering",
       "Differentiates Render Phase (pure, asynchronous, interruptible) vs Commit Phase (synchronous DOM mutation)",
@@ -163,7 +211,10 @@
     "followUpQuestions": [
       "What is the role of React Server Components (RSC) payload during hydration?",
       "How does automatic batching work in React 18+ across async boundaries?"
-    ]
+    ],
+    "topicId": "useeffect",
+    "moduleId": "react-professional",
+    "order": 7
   },
   {
     "id": "react-2",
@@ -171,7 +222,11 @@
     "difficulty": "Medium",
     "question": "Compare React Server Components (RSC) vs Client Components. What are the rules for serializability across boundaries?",
     "estimatedMinutes": 10,
-    "companyTags": ["Vercel", "Shopify", "Meta"],
+    "companyTags": [
+      "Vercel",
+      "Shopify",
+      "Meta"
+    ],
     "rubric": [
       "Explains RSC execute purely on the server, zero client bundle size impact, direct DB access",
       "Explains Client Components ('use client') run on server for SSR and hydrate on client for interactivity",
@@ -186,7 +241,10 @@
     "followUpQuestions": [
       "How do Server Actions work under the hood via HTTP POST requests?",
       "How do you stream RSC content using Suspense boundaries?"
-    ]
+    ],
+    "topicId": "useeffect",
+    "moduleId": "react-professional",
+    "order": 8
   },
   {
     "id": "ts-1",
@@ -194,7 +252,11 @@
     "difficulty": "Hard",
     "question": "Explain Discriminated Unions, Type Narrowing, conditional types, and how the 'infer' keyword extracts types in generic utility functions.",
     "estimatedMinutes": 12,
-    "companyTags": ["Stripe", "Linear", "Microsoft"],
+    "companyTags": [
+      "Stripe",
+      "Linear",
+      "Microsoft"
+    ],
     "rubric": [
       "Defines Discriminated Union with a common literal property tag",
       "Explains Type Narrowing via switch/if guards and exhaustiveness checking using 'never'",
@@ -210,7 +272,10 @@
     "followUpQuestions": [
       "How do mapped types and template literal types combine to build type-safe route paths?",
       "What is the difference between covariance and contravariance in TypeScript generics?"
-    ]
+    ],
+    "topicId": "ts-types-interfaces",
+    "moduleId": "typescript-mastery",
+    "order": 9
   },
   {
     "id": "ts-2",
@@ -218,7 +283,11 @@
     "difficulty": "Medium",
     "question": "What is the difference between type assertions (as), type guards (is), and unknown vs any?",
     "estimatedMinutes": 8,
-    "companyTags": ["Discord", "Vercel", "GitHub"],
+    "companyTags": [
+      "Discord",
+      "Vercel",
+      "GitHub"
+    ],
     "rubric": [
       "Explains 'any' disables type checking vs 'unknown' enforces type checking before usage",
       "Explains Type Assertions ('as') force compiler override without runtime checks",
@@ -233,7 +302,10 @@
     "followUpQuestions": [
       "How do runtime validation libraries like Zod integrate with TypeScript's z.infer?",
       "What are satisfying operator ('satisfies') use cases?"
-    ]
+    ],
+    "topicId": "ts-types-interfaces",
+    "moduleId": "typescript-mastery",
+    "order": 10
   },
   {
     "id": "a11y-1",
@@ -241,7 +313,11 @@
     "difficulty": "Hard",
     "question": "How do you build a fully accessible modal dialog (WCAG 2.2 AA compliant)? Detail keyboard focus traps and screen reader roles.",
     "estimatedMinutes": 12,
-    "companyTags": ["Salesforce", "Google", "Government.gov"],
+    "companyTags": [
+      "Salesforce",
+      "Google",
+      "Government.gov"
+    ],
     "rubric": [
       "Identifies key ARIA attributes: role='dialog', aria-modal='true', aria-labelledby, aria-describedby",
       "Explains Focus Management: move focus into dialog on open, trap focus within dialog, restore focus on close",
@@ -257,7 +333,10 @@
     "followUpQuestions": [
       "How does the native HTML <dialog> element simplify focus trapping?",
       "What is the difference between visual order and DOM focus navigation order?"
-    ]
+    ],
+    "topicId": "html-foundations",
+    "moduleId": "html-css-foundations",
+    "order": 11
   },
   {
     "id": "a11y-2",
@@ -265,7 +344,11 @@
     "difficulty": "Medium",
     "question": "What are aria-live regions (polite vs assertive), and how do you announce dynamic SPA updates?",
     "estimatedMinutes": 8,
-    "companyTags": ["Amazon", "Microsoft", "Lyft"],
+    "companyTags": [
+      "Amazon",
+      "Microsoft",
+      "Lyft"
+    ],
     "rubric": [
       "Defines aria-live attribute for screen reader notifications of dynamic DOM changes",
       "Differentiates polite (waits for speech pause) vs assertive (interrupts current speech)",
@@ -280,7 +363,10 @@
     "followUpQuestions": [
       "How do route announcements work when navigating between pages?",
       "What is the role of role='status' vs role='alert'?"
-    ]
+    ],
+    "topicId": "html-foundations",
+    "moduleId": "html-css-foundations",
+    "order": 12
   },
   {
     "id": "perf-1",
@@ -288,7 +374,12 @@
     "difficulty": "Hard",
     "question": "Walk through diagnosing and optimizing Core Web Vitals (LCP, INP, CLS) on a heavy e-commerce PDP.",
     "estimatedMinutes": 15,
-    "companyTags": ["Amazon", "Shopify", "Walmart", "Vercel"],
+    "companyTags": [
+      "Amazon",
+      "Shopify",
+      "Walmart",
+      "Vercel"
+    ],
     "rubric": [
       "Defines Core Web Vitals: LCP (< 2.5s), INP (< 200ms), CLS (< 0.1)",
       "Diagnoses LCP bottlenecks: hero image optimization (fetchpriority='high', inline CSS, preloading)",
@@ -304,7 +395,10 @@
     "followUpQuestions": [
       "How does Chrome DevTools Performance Profiler pinpoint Long Tasks (>50ms)?",
       "What is the difference between FID and INP?"
-    ]
+    ],
+    "topicId": "core-web-vitals",
+    "moduleId": "performance-and-a11y",
+    "order": 13
   },
   {
     "id": "perf-2",
@@ -312,7 +406,11 @@
     "difficulty": "Medium",
     "question": "Explain how bundler tree-shaking works (ES Modules vs CommonJS) and how to diagnose bundle bloat.",
     "estimatedMinutes": 10,
-    "companyTags": ["Meta", "Vercel", "Stripe"],
+    "companyTags": [
+      "Meta",
+      "Vercel",
+      "Stripe"
+    ],
     "rubric": [
       "Explains Tree-Shaking as dead code elimination based on static import/export analysis",
       "Explains why ES Modules enable static analysis vs CommonJS dynamic execution",
@@ -328,7 +426,10 @@
     "followUpQuestions": [
       "How does code-splitting via dynamic import() create separate bundle chunks?",
       "What are modern module federation and bundle strategy patterns?"
-    ]
+    ],
+    "topicId": "core-web-vitals",
+    "moduleId": "performance-and-a11y",
+    "order": 14
   },
   {
     "id": "debug-1",
@@ -336,7 +437,11 @@
     "difficulty": "Hard",
     "question": "How do you systematically isolate and resolve a memory leak causing browser tab crashes over time using Chrome DevTools?",
     "estimatedMinutes": 12,
-    "companyTags": ["Datadog", "Google", "Microsoft"],
+    "companyTags": [
+      "Datadog",
+      "Google",
+      "Microsoft"
+    ],
     "rubric": [
       "Outlines reproduction steps: heap snapshot comparison across repeat user workflows",
       "Explains Chrome DevTools Memory tab: Take Snapshot 1 -> Perform action 5x -> Force Garbage Collection -> Take Snapshot 2",
@@ -352,7 +457,10 @@
     "followUpQuestions": [
       "What is the difference between Shallow Size and Retained Size in Heap Snapshots?",
       "How does Performance Allocation Instrumentation timeline help track allocations?"
-    ]
+    ],
+    "topicId": "promises-async",
+    "moduleId": "javascript-deep-dive",
+    "order": 15
   },
   {
     "id": "debug-2",
@@ -360,7 +468,11 @@
     "difficulty": "Medium",
     "question": "Explain how to debug a subtle async race condition where network responses return out of order, and how AbortController solves it.",
     "estimatedMinutes": 10,
-    "companyTags": ["Meta", "Uber", "Spotify"],
+    "companyTags": [
+      "Meta",
+      "Uber",
+      "Spotify"
+    ],
     "rubric": [
       "Explains Async Race Condition scenario (stale response overwriting latest UI state)",
       "Explains AbortController and AbortSignal for fetch cancellation",
@@ -375,7 +487,10 @@
     "followUpQuestions": [
       "How do TanStack Query and RxJS switchMap handle request cancellation automatically?",
       "What happens to the underlying TCP connection when a fetch request is aborted?"
-    ]
+    ],
+    "topicId": "promises-async",
+    "moduleId": "javascript-deep-dive",
+    "order": 16
   },
   {
     "id": "git-1",
@@ -383,7 +498,11 @@
     "difficulty": "Medium",
     "question": "Compare git rebase vs git merge. When should you use interactive rebase (git rebase -i), and how do you resolve conflicts?",
     "estimatedMinutes": 8,
-    "companyTags": ["GitHub", "GitLab", "Atlassian"],
+    "companyTags": [
+      "GitHub",
+      "GitLab",
+      "Atlassian"
+    ],
     "rubric": [
       "Compares git merge (non-destructive 3-way merge commit) vs git rebase (re-applies commits on top of tip)",
       "Explains Interactive Rebase (`git rebase -i HEAD~N`): squash, reword, fixup, drop",
@@ -398,7 +517,10 @@
     "followUpQuestions": [
       "What is the Golden Rule of Git Rebasing?",
       "How does git reflog recover lost commits after a botched rebase?"
-    ]
+    ],
+    "topicId": "testing-fundamentals",
+    "moduleId": "testing-and-tooling",
+    "order": 17
   },
   {
     "id": "git-2",
@@ -406,7 +528,11 @@
     "difficulty": "Hard",
     "question": "How does git bisect use binary search to locate regression bugs across a large codebase commit history?",
     "estimatedMinutes": 8,
-    "companyTags": ["Meta", "Google", "Square"],
+    "companyTags": [
+      "Meta",
+      "Google",
+      "Square"
+    ],
     "rubric": [
       "Explains binary search algorithm applied to commit graph",
       "Outlines manual bisect workflow: git bisect start -> git bisect bad -> git bisect good <commit>",
@@ -421,7 +547,10 @@
     "followUpQuestions": [
       "How do you skip unbuildable commits during a bisect session?",
       "What is git cherry-pick and when is it useful?"
-    ]
+    ],
+    "topicId": "testing-fundamentals",
+    "moduleId": "testing-and-tooling",
+    "order": 18
   },
   {
     "id": "arch-1",
@@ -429,7 +558,12 @@
     "difficulty": "Hard",
     "question": "Design a scalable State Management & Caching strategy for a real-time collaborative workspace app (like Figma or Notion).",
     "estimatedMinutes": 20,
-    "companyTags": ["Figma", "Notion", "Atlassian", "Slack"],
+    "companyTags": [
+      "Figma",
+      "Notion",
+      "Atlassian",
+      "Slack"
+    ],
     "rubric": [
       "Architectural layers: UI View layer, Local Client Cache, Real-time Sync Engine, Persistence (IndexedDB)",
       "Conflict Resolution: CRDTs (Conflict-free Replicated Data Types like Yjs or Automerge)",
@@ -445,7 +579,10 @@
     "followUpQuestions": [
       "What is the difference between CRDTs and Operational Transformation (OT)?",
       "How do you implement canvas spatial indexing (R-Tree) for rendering 100,000 nodes?"
-    ]
+    ],
+    "topicId": "rendering-strategies",
+    "moduleId": "frontend-architecture",
+    "order": 19
   },
   {
     "id": "arch-2",
@@ -453,7 +590,12 @@
     "difficulty": "Hard",
     "question": "Compare Micro-frontends (Module Federation) vs Monorepo vs Monolith architectures for a multi-team engineering org.",
     "estimatedMinutes": 15,
-    "companyTags": ["Uber", "Spotify", "Amazon", "Salesforce"],
+    "companyTags": [
+      "Uber",
+      "Spotify",
+      "Amazon",
+      "Salesforce"
+    ],
     "rubric": [
       "Monolith: Single codebase, simple, but slow build times across large teams",
       "Monorepo (Turborepo, Nx): Unified repository housing distinct applications and shared packages, atomic commits, shared CI caching",
@@ -468,7 +610,10 @@
     "followUpQuestions": [
       "How do shared design tokens prevent UI fragmentation in Micro-frontends?",
       "What is the role of Turborepo remote caching in CI pipelines?"
-    ]
+    ],
+    "topicId": "rendering-strategies",
+    "moduleId": "frontend-architecture",
+    "order": 20
   },
   {
     "id": "beh-1",
@@ -476,7 +621,12 @@
     "difficulty": "Medium",
     "question": "Tell me about a technical disagreement you had with a senior tech lead. How did you resolve it while keeping team momentum?",
     "estimatedMinutes": 10,
-    "companyTags": ["Google", "Meta", "Amazon", "Netflix"],
+    "companyTags": [
+      "Google",
+      "Meta",
+      "Amazon",
+      "Netflix"
+    ],
     "starFramework": {
       "situation": "Describe the project context, technical approach in debate, and stakes.",
       "task": "Explain your role, alternative technical proposal, and why it was superior.",
@@ -497,7 +647,10 @@
     "followUpQuestions": [
       "What would you have done if the Tech Lead still insisted on their approach?",
       "How do you handle 'Disagree and Commit' when you feel strongly about technical risk?"
-    ]
+    ],
+    "topicId": "system-design-newsfeed",
+    "moduleId": "interview-prep",
+    "order": 21
   },
   {
     "id": "beh-2",
@@ -505,7 +658,12 @@
     "difficulty": "Medium",
     "question": "Describe a project where requirements changed mid-flight or a critical deadline was threatened. How did you negotiate scope and deliver?",
     "estimatedMinutes": 10,
-    "companyTags": ["Amazon", "Stripe", "Uber", "Airbnb"],
+    "companyTags": [
+      "Amazon",
+      "Stripe",
+      "Uber",
+      "Airbnb"
+    ],
     "starFramework": {
       "situation": "Original project scope, deadline, and unexpected change event.",
       "task": "Identify core problem: impossible to deliver 100% of revised features on time.",
@@ -526,6 +684,9 @@
     "followUpQuestions": [
       "How do you prevent scope creep from happening in future sprint planning?",
       "How do you communicate technical trade-offs to non-technical product managers?"
-    ]
+    ],
+    "topicId": "system-design-newsfeed",
+    "moduleId": "interview-prep",
+    "order": 22
   }
 ]

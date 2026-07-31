@@ -50,6 +50,7 @@ export interface Module {
   progress: number;
   color: string;
   tags: string[];
+  order?: number;
   categoryId?: string;
   pathIds?: string[];
   prerequisites?: string[];
@@ -66,6 +67,7 @@ export interface Topic {
   prerequisites: string[];
   next: string[];
   related: string[];
+  order?: number;
   categoryId?: string;
 }
 
@@ -133,11 +135,17 @@ export type LessonSection =
 export interface Lesson {
   id: string;
   topicId: string;
+  moduleId?: string;
+  order?: number;
   title: string;
   description: string;
   difficulty: Difficulty;
   estimatedMinutes: number;
   mastery: MasteryState;
+  learningObjectives?: string[];
+  prerequisites?: string[];
+  previousLessonId?: string | null;
+  nextLessonId?: string | null;
   sections: LessonSection[];
   exercises: { id: string; title: string; brief: string }[];
   quiz: {

@@ -1,6 +1,6 @@
 [
   {
-    "id": "js-fundamentals",
+    "id": "quiz-js-fundamentals",
     "title": "JavaScript & Engine Mastery",
     "description": "Scope, coercion, async execution, closures, event loop ordering, and prototype chains.",
     "difficulty": "Intermediate",
@@ -10,7 +10,12 @@
         "id": "q1",
         "type": "mcq",
         "question": "What does 'typeof null' evaluate to in JavaScript?",
-        "options": ["'null'", "'object'", "'undefined'", "'number'"],
+        "options": [
+          "'null'",
+          "'object'",
+          "'undefined'",
+          "'number'"
+        ],
         "correctIndex": 1,
         "explanation": "This is a historic JS bug. In original JS implementations, values were represented with type tags, and object's tag was 0. Since null was representation pointer NULL (0x00), typeof null evaluates to 'object'."
       },
@@ -24,7 +29,11 @@
           "const z = 30;",
           "function foo() {} in strict mode block"
         ],
-        "correctIndices": [0, 2, 3],
+        "correctIndices": [
+          0,
+          2,
+          3
+        ],
         "explanation": "let and const are block-scoped. Function declarations inside block statements are also block-scoped in ES6 strict mode. var is function-scoped or globally scoped."
       },
       {
@@ -78,7 +87,12 @@
         "type": "code",
         "question": "What will be printed to the console when the following code executes?",
         "codeSnippet": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
-        "options": ["A, B, C, D", "A, D, C, B", "A, D, B, C", "A, C, D, B"],
+        "options": [
+          "A, B, C, D",
+          "A, D, C, B",
+          "A, D, B, C",
+          "A, C, D, B"
+        ],
         "correctIndex": 1,
         "explanation": "Synchronous logs run first ('A', 'D'). Then microtask Promise.then runs ('C'). Finally, macrotask setTimeout runs ('B'). Output: A, D, C, B."
       },
@@ -87,13 +101,18 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the correct ES6 array method to check if at least one element passes a test function:",
         "template": "const hasAdmin = users.______(user => user.role === 'admin');",
-        "acceptedAnswers": ["some", ".some", "some()"],
+        "acceptedAnswers": [
+          "some",
+          ".some",
+          "some()"
+        ],
         "explanation": "Array.prototype.some() returns true if at least one array element passes the test implemented by the callback function."
       }
-    ]
+    ],
+    "topicId": "js-fundamentals"
   },
   {
-    "id": "react-hooks",
+    "id": "quiz-react-hooks",
     "title": "React 19 & Hooks Deep Dive",
     "description": "Effects, transitions, stale closures, layout timing, and custom hook patterns.",
     "difficulty": "Advanced",
@@ -122,7 +141,11 @@
           "useEffect dependency arrays can safely contain unmemoized object literals created in render",
           "useOptimistic enables optimistic UI updates during background server actions"
         ],
-        "correctIndices": [0, 1, 3],
+        "correctIndices": [
+          0,
+          1,
+          3
+        ],
         "explanation": "Hooks must follow top-level calling rules. React 19 introduced useActionState and useOptimistic. Unmemoized objects in useEffect dependency arrays cause infinite re-renders."
       },
       {
@@ -166,9 +189,13 @@
         "type": "fill_in_blank",
         "question": "Complete the Hook call to defer a non-urgent UI state recalculation during fast input typing:",
         "template": "const deferredQuery = _________(searchQuery);",
-        "acceptedAnswers": ["useDeferredValue", "React.useDeferredValue"],
+        "acceptedAnswers": [
+          "useDeferredValue",
+          "React.useDeferredValue"
+        ],
         "explanation": "useDeferredValue accepts a value and returns a deferred copy that lags behind urgent state updates to keep rendering responsive."
       }
-    ]
+    ],
+    "topicId": "useeffect"
   }
 ]

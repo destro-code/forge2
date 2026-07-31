@@ -81,6 +81,10 @@ export function Playground() {
 
   // Active right/bottom tab
   const [activePaneTab, setActivePaneTab] = useState<"preview" | "console" | "hints">("preview");
+  // Mobile single-pane active tab
+  const [mobileTab, setMobileTab] = useState<"editor" | "preview" | "console" | "hints" | "files">(
+    "editor",
+  );
 
   const activeFile = files.find((f) => f.id === activeFileId) || files[0];
 
@@ -315,8 +319,8 @@ export function Playground() {
             </Badge>
           </div>
 
-          {/* Right Pane Selector */}
-          <div className="flex items-center gap-1">
+          {/* Right Pane Selector (Desktop) */}
+          <div className="hidden lg:flex items-center gap-1">
             <Button
               variant={activePaneTab === "preview" ? "secondary" : "ghost"}
               size="sm"
@@ -344,11 +348,154 @@ export function Playground() {
           </div>
         </div>
 
-        {/* Inner IDE Grid */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        {/* Mobile Single-Pane Tab Bar */}
+        <div className="flex lg:hidden items-center border-b border-border/60 bg-muted/40 p-1 text-xs gap-1 overflow-x-auto">
+          <Button
+            variant={mobileTab === "editor" ? "secondary" : "ghost"}
+            size="sm"
+            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            onClick={() => setMobileTab("editor")}
+          >
+            <FileCode2 className="h-3.5 w-3.5 text-primary" /> Code
+          </Button>
+          <Button
+            variant={mobileTab === "preview" ? "secondary" : "ghost"}
+            size="sm"
+            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            onClick={() => setMobileTab("preview")}
+          >
+            <Monitor className="h-3.5 w-3.5 text-primary" /> Preview
+          </Button>
+          <Button
+            variant={mobileTab === "console" ? "secondary" : "ghost"}
+            size="sm"
+            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            onClick={() => setMobileTab("console")}
+          >
+            <Terminal className="h-3.5 w-3.5 text-primary" /> Console ({consoleLogs.length})
+          </Button>
+          <Button
+            variant={mobileTab === "hints" ? "secondary" : "ghost"}
+            size="sm"
+            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            onClick={() => setMobileTab("hints")}
+          >
+            <Lightbulb className="h-3.5 w-3.5 text-amber-400" /> Hints
+          </Button>
+          <Button
+            variant={mobileTab === "files" ? "secondary" : "ghost"}
+            size="sm"
+            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            onClick={() => setMobileTab("files")}
+          >
+            <PanelLeft className="h-3.5 w-3.5 text-primary" /> Files
+          </Button>
+        </div>
+
+        {/* Mobile Single-Pane View (< lg) */}
+        <div className="flex-1 flex flex-col overflow-hidden lg:hidden min-h-[500px]">
+          {mobileTab === "files" && (
+            <div className="flex-1 overflow-y-auto">
+              <PlaygroundFileTree
+                files={files}
+                activeFileId={activeFileId}
+                onSelectFile={(id) => {
+                  setActiveFileId(id);
+                  if (!openTabIds.includes(id)) {
+                    setOpenTabIds((prev) => [...prev, id]);
+                  }
+                  setMobileTab("editor");
+                }}
+                onAddFile={handleAddFile}
+                onDeleteFile={handleDeleteFile}
+                presets={PLAYGROUND_PRESETS}
+                currentPresetId={currentPresetId}
+                onSelectPreset={handleSelectPreset}
+              />
+            </div>
+          )}
+
+          {mobileTab === "editor" && (
+            <div className="flex-1 flex flex-col min-h-0">
+              <PlaygroundTabs
+                files={files}
+                openTabIds={openTabIds}
+                activeFileId={activeFileId}
+                onSelectTab={(id) => setActiveFileId(id)}
+                onCloseTab={(id) => {
+                  setOpenTabIds((prev) => prev.filter((t) => t !== id));
+                  if (activeFileId === id && openTabIds.length > 1) {
+                    const remaining = openTabIds.filter((t) => t !== id);
+                    setActiveFileId(remaining[0]);
+                  }
+                }}
+                onNewFileClick={() => handleAddFile(`Component-${files.length + 1}.tsx`)}
+              />
+              <div className="flex-1 min-h-0">
+                {activeFile ? (
+                  <PlaygroundEditor
+                    activeFile={activeFile}
+                    onCodeChange={handleCodeChange}
+                    onFormatCode={handleFormatCode}
+                    onRunCode={handleRun}
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-muted-foreground text-xs p-6">
+                    No open file selected. Select a file in Files tab.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {mobileTab === "preview" && (
+            <div className="flex-1 flex flex-col bg-background min-h-0">
+              <PlaygroundPreview files={files} onLogCaptured={handleLogCaptured} />
+            </div>
+          )}
+
+          {mobileTab === "console" && (
+            <div className="flex-1 flex flex-col bg-background min-h-0">
+              <PlaygroundConsole logs={consoleLogs} onClearConsole={() => setConsoleLogs([])} />
+            </div>
+          )}
+
+          {mobileTab === "hints" && (
+            <div className="flex-1 flex flex-col bg-background p-4 space-y-4 text-xs overflow-y-auto min-h-0">
+              <div className="flex items-center gap-2 text-amber-400 font-semibold text-sm">
+                <Lightbulb className="h-4 w-4" /> Lab Hints & Key Concepts
+              </div>
+
+              <div className="space-y-2">
+                {activePreset.hints.map((hint, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200/90 leading-relaxed"
+                  >
+                    <strong className="text-amber-400 block mb-1">Hint #{idx + 1}:</strong>
+                    {hint}
+                  </div>
+                ))}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full gap-1.5 text-xs mt-4"
+                onClick={() => setSolutionOpen(true)}
+              >
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                View Reference Solution
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Multi-Column IDE Grid (>= lg) */}
+        <div className="hidden lg:flex flex-1 flex-row overflow-hidden">
           {/* Sidebar File Explorer */}
           {showFileTree && (
-            <div className="w-full lg:w-56 shrink-0 border-b lg:border-b-0 lg:border-r border-border/60">
+            <div className="w-56 shrink-0 border-r border-border/60">
               <PlaygroundFileTree
                 files={files}
                 activeFileId={activeFileId}
@@ -403,7 +550,7 @@ export function Playground() {
           </div>
 
           {/* Right Pane Column (Preview / Console / Hints) */}
-          <div className="w-full lg:w-[420px] shrink-0 flex flex-col bg-background min-h-[300px]">
+          <div className="w-[420px] shrink-0 flex flex-col bg-background min-h-[300px]">
             {activePaneTab === "preview" && (
               <PlaygroundPreview files={files} onLogCaptured={handleLogCaptured} />
             )}

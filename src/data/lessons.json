@@ -1,28 +1,403 @@
 [
   {
-    "id": "closures-intro",
-    "topicId": "closures",
-    "title": "Closures, from scratch",
-    "description": "Build an intuition for closures by watching one form under your fingertips.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 18,
+    "id": "html-foundations-lesson",
+    "topicId": "html-foundations",
+    "moduleId": "html-css-foundations",
+    "title": "HTML Foundations & Semantic Web",
+    "description": "Learn semantic elements, document hierarchy, forms, and accessibility defaults from the ground up.",
+    "order": 1,
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
     "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of HTML Foundations & Semantic Web",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [],
     "sections": [
-      { "type": "heading", "text": "What is a closure?" },
+      {
+        "type": "heading",
+        "text": "Semantic HTML vs Div Soup"
+      },
       {
         "type": "paragraph",
-        "text": "A closure is a function bundled together with references to its surrounding state — the lexical environment in which it was declared."
+        "text": "HTML provides structural meaning to web documents. Semantic elements like <header>, <main>, <nav>, and <article> communicate role and hierarchy to browser engines, assistive technologies (screen readers), and search indexers."
       },
       {
         "type": "callout",
         "variant": "tip",
-        "text": "Every function you write in JavaScript is technically a closure. The interesting question is what state it closes over."
+        "text": "Using a <button> instead of a <div onClick> gives you keyboard accessibility (Enter/Space triggers) and focus management for free without writing custom event handlers."
       },
       {
-        "type": "diagram",
-        "diagramType": "closure-scope",
-        "title": "Lexical Environment & Scope Visualizer",
-        "description": "Step through heap memory allocation and watch inner functions close over outer scope bindings."
+        "type": "code",
+        "language": "html",
+        "code": "<article class=\"card\">\n  <header>\n    <h2>Semantic Card Title</h2>\n  </header>\n  <p>Content goes here with proper accessibility structure.</p>\n  <button type=\"button\">Action</button>\n</article>"
+      },
+      {
+        "type": "checkpoint",
+        "id": "html-cp1",
+        "label": "I understand why semantic elements are crucial for accessibility and screen readers.",
+        "hint": "Semantic tags declare innate interactive roles and landmark regions."
+      },
+      {
+        "type": "interactive-sandbox",
+        "title": "Interactive Semantic Markup Sandbox",
+        "instructions": "Modify the HTML/JSX layout below to render accessible cards and buttons.",
+        "initialCode": "import React from 'react';\n\nexport default function HtmlDemo() {\n  return (\n    <main style={{ padding: '16px', background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <header style={{ borderBottom: '1px solid #30363d', paddingBottom: '12px', marginBottom: '16px' }}>\n        <h1 style={{ margin: 0, fontSize: '20px', color: '#58a6ff' }}>Forge HTML Foundations</h1>\n      </header>\n      <article style={{ background: '#161b22', padding: '16px', borderRadius: '8px', border: '1px solid #30363d' }}>\n        <h2 style={{ margin: '0 0 8px 0', fontSize: '16px' }}>Accessible Button Component</h2>\n        <p style={{ color: '#8b949e', fontSize: '14px' }}>Native buttons receive automatic keyboard focus and click synthesis.</p>\n        <button \n          onClick={() => alert('Native button triggered!')}\n          style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}\n        >\n          Click Native Button\n        </button>\n      </article>\n    </main>\n  );\n}"
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-html-1",
+        "title": "Refactor Div Soup to Semantic Tags",
+        "brief": "Replace generic <div> containers with <header>, <nav>, <main>, and <footer> tags."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-html-1",
+        "question": "Which HTML element is most appropriate for a clickable action trigger?",
+        "options": [
+          "<div class=\"btn\">",
+          "<button>",
+          "<span>",
+          "<a> without href"
+        ],
+        "correctIndex": 1,
+        "explanation": "<button> inherently supports focus rings and Space/Enter key presses."
+      }
+    ],
+    "summary": "Semantic HTML forms the foundational skeleton of modern web applications, granting built-in accessibility, SEO, and native keyboard interaction.",
+    "resources": [
+      {
+        "label": "MDN — HTML Basics",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn/HTML"
+      }
+    ],
+    "interviewQuestions": [
+      "Why is semantic HTML better than using nested <div> tags with custom onClick handlers?",
+      "How do landmark elements affect screen reader navigation?"
+    ],
+    "previousLessonId": null,
+    "nextLessonId": "css-box-model-lesson"
+  },
+  {
+    "id": "css-box-model-lesson",
+    "topicId": "css-box-model",
+    "moduleId": "html-css-foundations",
+    "title": "CSS Box Model & Specificity Demystified",
+    "description": "Master margin, padding, border-box sizing, specificity scoring, and cascade rules.",
+    "order": 1,
+    "difficulty": "Beginner",
+    "estimatedMinutes": 22,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of CSS Box Model & Specificity Demystified",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "html-foundations-lesson"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Understanding box-sizing: border-box"
+      },
+      {
+        "type": "paragraph",
+        "text": "Every element on a web page is represented as a rectangular box comprising content, padding, border, and margin. In default content-box sizing, padding and border ADD to the element's specified width, breaking layouts unexpectedly."
+      },
+      {
+        "type": "code",
+        "language": "css",
+        "code": "/* Modern CSS Reset standard */\n*, *::before, *::after {\n  box-sizing: border-box;\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "css-cp1",
+        "label": "I know why border-box is essential for predictable layout math.",
+        "hint": "border-box includes padding and border inside the specified width and height."
+      },
+      {
+        "type": "interactive-sandbox",
+        "title": "Box Sizing Comparison Sandbox",
+        "instructions": "Toggle between content-box and border-box to see how width calculation changes.",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function BoxModelDemo() {\n  const [boxSizing, setBoxSizing] = useState('border-box');\n\n  return (\n    <div style={{ padding: '16px', background: '#0f172a', color: '#f8fafc', fontFamily: 'sans-serif' }}>\n      <div style={{ marginBottom: '16px' }}>\n        <button \n          onClick={() => setBoxSizing(b => b === 'border-box' ? 'content-box' : 'border-box')}\n          style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer' }}\n        >\n          Toggle Sizing: <strong>{boxSizing}</strong>\n        </button>\n      </div>\n      <div style={{\n        width: '200px',\n        padding: '20px',\n        border: '5px solid #60a5fa',\n        background: '#1e293b',\n        boxSizing: boxSizing\n      }}>\n        Specified Width: 200px<br />\n        Padding: 20px | Border: 5px\n      </div>\n    </div>\n  );\n}"
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-css-1",
+        "title": "Calculate Specificity Scores",
+        "brief": "Calculate the specificity vector (inline, ID, class, element) for given selector chains."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-css-1",
+        "question": "What happens when box-sizing is set to border-box?",
+        "options": [
+          "Padding is added outside the element width",
+          "Padding and border are included inside the element width",
+          "Margins are disabled",
+          "Borders become transparent"
+        ],
+        "correctIndex": 1,
+        "explanation": "border-box ensures the specified width includes content, padding, and border."
+      }
+    ],
+    "summary": "The box model dictates sizing math, while specificity controls which rules win when selectors compete.",
+    "resources": [
+      {
+        "label": "MDN — Box Model",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_box_model"
+      }
+    ],
+    "interviewQuestions": [
+      "Explain the difference between content-box and border-box.",
+      "How is selector specificity calculated in CSS?"
+    ],
+    "previousLessonId": "html-foundations-lesson",
+    "nextLessonId": "flexbox-fundamentals"
+  },
+  {
+    "id": "flexbox-fundamentals",
+    "topicId": "flexbox",
+    "moduleId": "html-css-foundations",
+    "title": "Flexbox in Practice",
+    "description": "Align items across main and cross axes with confidence.",
+    "order": 1,
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Flexbox in Practice",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "css-box-model-lesson"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Flexbox Axes"
+      },
+      {
+        "type": "paragraph",
+        "text": "Flexbox operates on two axes: main axis (defined by flex-direction) and cross axis (perpendicular to main axis)."
+      },
+      {
+        "type": "code",
+        "language": "css",
+        "code": ".container {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  align-items: center;\n}"
+      },
+      {
+        "type": "interactive-sandbox",
+        "title": "Flexbox Alignment Sandbox",
+        "instructions": "Change flex alignment rules live.",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function FlexDemo() {\n  const [justify, setJustify] = useState('space-between');\n  return (\n    <div style={{ padding: '16px', background: '#111827', color: '#fff' }}>\n      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>\n        {['flex-start', 'center', 'space-between', 'space-around'].map(j => (\n          <button key={j} onClick={() => setJustify(j)} style={{ background: justify === j ? '#2563eb' : '#374151', color: '#fff', border: 'none', padding: '4px 10px', borderRadius: '4px' }}>\n            {j}\n          </button>\n        ))}\n      </div>\n      <div style={{ display: 'flex', justifyContent: justify, alignItems: 'center', background: '#1f2937', padding: '12px', borderRadius: '8px' }}>\n        <div style={{ background: '#ef4444', padding: '12px 20px', borderRadius: '4px' }}>1</div>\n        <div style={{ background: '#10b981', padding: '12px 20px', borderRadius: '4px' }}>2</div>\n        <div style={{ background: '#3b82f6', padding: '12px 20px', borderRadius: '4px' }}>3</div>\n      </div>\n    </div>\n  );\n}"
+      }
+    ],
+    "exercises": [],
+    "quiz": [
+      {
+        "id": "q-flex-1",
+        "question": "Which property aligns flex items along the main axis?",
+        "options": [
+          "align-items",
+          "justify-content",
+          "align-content",
+          "flex-wrap"
+        ],
+        "correctIndex": 1,
+        "explanation": "justify-content controls main axis alignment."
+      }
+    ],
+    "summary": "Flexbox gives 1D control over layout alignment and space distribution.",
+    "resources": [],
+    "interviewQuestions": [
+      "When should you choose Flexbox over CSS Grid?"
+    ],
+    "previousLessonId": "css-box-model-lesson",
+    "nextLessonId": "grid-tracks-areas"
+  },
+  {
+    "id": "grid-tracks-areas",
+    "topicId": "grid",
+    "moduleId": "html-css-foundations",
+    "title": "CSS Grid Systems",
+    "description": "Two-dimensional layout power with tracks, areas, auto-fit, and subgrid.",
+    "order": 1,
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 25,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of CSS Grid Systems",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "flexbox-fundamentals"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Two-dimensional layout"
+      },
+      {
+        "type": "paragraph",
+        "text": "CSS Grid manages columns and rows simultaneously. Combine repeat(), auto-fit, and minmax() for fluid layouts without media queries."
+      },
+      {
+        "type": "code",
+        "language": "css",
+        "code": ".grid-layout {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n  gap: 1.5rem;\n}"
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "CSS Grid is built for 2D container layouts.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "flexbox-fundamentals",
+    "nextLessonId": "js-fundamentals-lesson"
+  },
+  {
+    "id": "js-fundamentals-lesson",
+    "topicId": "js-fundamentals",
+    "moduleId": "javascript-deep-dive",
+    "title": "JavaScript Fundamentals & Type System",
+    "description": "Understand primitive types, reference types, type coercion, and expression evaluation.",
+    "order": 1,
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of JavaScript Fundamentals & Type System",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "grid-tracks-areas"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Primitives vs Reference Objects"
+      },
+      {
+        "type": "paragraph",
+        "text": "JavaScript has 7 primitive types (string, number, boolean, null, undefined, symbol, bigint) passed by value, and Objects passed by reference memory addresses."
+      },
+      {
+        "type": "checkpoint",
+        "id": "js-cp1",
+        "label": "I know why strict equality === prevents silent type coercion bugs.",
+        "hint": "=== compares both value and type without automatic conversion."
+      },
+      {
+        "type": "interactive-sandbox",
+        "title": "Type Coercion & Equality Sandbox",
+        "instructions": "Test JavaScript loose vs strict equality evaluations.",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function EqualityDemo() {\n  return (\n    <div style={{ padding: '16px', background: '#18181b', color: '#fafafa', fontFamily: 'monospace' }}>\n      <h3 style={{ margin: '0 0 12px 0', color: '#f43f5e' }}>JavaScript Equality Matrix</h3>\n      <p>0 == '0' ➔ <strong>{String(0 == '0')}</strong></p>\n      <p>0 === '0' ➔ <strong>{String(0 === '0')}</strong></p>\n      <p>[] == ![] ➔ <strong>{String([] == ![])}</strong></p>\n      <p>NaN === NaN ➔ <strong>{String(NaN === NaN)}</strong></p>\n    </div>\n  );\n}"
+      }
+    ],
+    "exercises": [],
+    "quiz": [
+      {
+        "id": "q-js-1",
+        "question": "What does typeof null return in JavaScript?",
+        "options": [
+          "\"null\"",
+          "\"undefined\"",
+          "\"object\"",
+          "\"boolean\""
+        ],
+        "correctIndex": 2,
+        "explanation": "typeof null returning \"object\" is a legacy JS design bug preserved for backwards compatibility."
+      }
+    ],
+    "summary": "Mastering JS primitives, reference memory, and strict equality avoids tricky runtime surprises.",
+    "resources": [],
+    "interviewQuestions": [
+      "Why does typeof null return \"object\"?",
+      "How does pass-by-value differ from pass-by-reference in JavaScript?"
+    ],
+    "previousLessonId": "grid-tracks-areas",
+    "nextLessonId": "scope-hoisting-lesson"
+  },
+  {
+    "id": "scope-hoisting-lesson",
+    "topicId": "scope-hoisting",
+    "moduleId": "javascript-deep-dive",
+    "title": "Lexical Scope & Hoisting Mechanics",
+    "description": "Explore execution contexts, variable declarations, and the Temporal Dead Zone.",
+    "order": 1,
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 22,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Lexical Scope & Hoisting Mechanics",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "js-fundamentals-lesson"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "The Temporal Dead Zone (TDZ)"
+      },
+      {
+        "type": "paragraph",
+        "text": "let and const variables are hoisted to the top of their block scope, but remain uninitialized in the TDZ until execution reaches their declaration."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "code": "console.log(a); // undefined (var hoisted)\nvar a = 10;\n\n// console.log(b); // ReferenceError: Cannot access 'b' before initialization\nlet b = 20;"
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "Block scoping with let/const prevents variable leaks and enforces disciplined declaration timing.",
+    "resources": [],
+    "interviewQuestions": [
+      "What is the Temporal Dead Zone in JavaScript?"
+    ],
+    "previousLessonId": "js-fundamentals-lesson",
+    "nextLessonId": "closures-intro"
+  },
+  {
+    "id": "closures-intro",
+    "topicId": "closures",
+    "moduleId": "javascript-deep-dive",
+    "title": "Closures, from scratch",
+    "description": "Build an intuition for closures by watching one form under your fingertips.",
+    "order": 1,
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 18,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Closures, from scratch",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "scope-hoisting-lesson"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "What is a closure?"
+      },
+      {
+        "type": "paragraph",
+        "text": "A closure is a function bundled together with references to its surrounding state — the lexical environment in which it was declared."
       },
       {
         "type": "code",
@@ -30,74 +405,13 @@
         "code": "function counter() {\n  let count = 0;\n  return () => ++count;\n}\nconst next = counter();\nconsole.log(next()); // 1\nconsole.log(next()); // 2"
       },
       {
-        "type": "walkthrough",
-        "title": "Building a Private Counter Step-by-Step",
-        "steps": [
-          {
-            "title": "Global Functions",
-            "description": "Declare counter() in outer scope. Memory allocates a new execution context whenever counter() is invoked.",
-            "code": "function counter() {\n  let count = 0;\n}"
-          },
-          {
-            "title": "Returning Inner Function",
-            "description": "Return an anonymous arrow function that references count. JavaScript creates a closure link.",
-            "code": "function counter() {\n  let count = 0;\n  return () => ++count;\n}"
-          },
-          {
-            "title": "Invoking Outer Function",
-            "description": "Assign next = counter(). The outer execution frame finishes, but count stays in memory because next maintains a reference.",
-            "code": "const next = counter();\nnext(); // 1\nnext(); // 2"
-          }
-        ]
-      },
-      {
-        "type": "collapsible",
-        "variant": "senior-tip",
-        "title": "Senior Dev Perspective: Closures vs Objects",
-        "subtitle": "An old JavaScript proverb",
-        "content": "Objects are data with methods. Closures are methods with data. In modern TypeScript, closures power hooks, custom memoization caches, and module encapsulation without requiring verbose class instances."
-      },
-      {
-        "type": "checkpoint",
-        "id": "cp1",
-        "label": "I can explain lexical environment retention to another engineer.",
-        "hint": "Outer function local variables stay alive as long as inner functions reference them."
-      },
-      {
-        "type": "heading",
-        "text": "Common mistakes"
-      },
-      {
-        "type": "callout",
-        "variant": "mistake",
-        "text": "Capturing a mutable loop variable with var creates a closure over the SAME binding. Always use let."
-      },
-      {
-        "type": "collapsible",
-        "variant": "pitfall",
-        "title": "Gotcha: Memory Leaks with Stale References",
-        "content": "If a long-lived callback closes over a large array or DOM node, that memory cannot be garbage-collected. Null out references when cleaning up event listeners."
-      },
-      {
-        "type": "checkpoint",
-        "id": "cp2",
-        "label": "I know how to prevent stale memory leaks in long-lived callbacks.",
-        "hint": "Break circular references or detach callbacks when subscriptions unmount."
-      },
-      {
         "type": "interactive-sandbox",
         "title": "Try Closures Live in Mini Sandbox",
-        "instructions": "Modify the incrementer code below and click 'Run Code' to see live DOM output.",
+        "instructions": "Modify the incrementer code below and click 'Run Code' to see live output.",
         "initialCode": "import React, { useState } from 'react';\n\nexport default function ClosureApp() {\n  const [count, setCount] = useState(0);\n  return (\n    <div style={{ padding: '16px', background: '#111827', color: '#fff', borderRadius: '8px' }}>\n      <h3 style={{ margin: '0 0 8px 0', color: '#60a5fa' }}>Closure State Sandbox</h3>\n      <p>Captured Value: <strong>{count}</strong></p>\n      <button \n        onClick={() => setCount(c => c + 1)} \n        style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer' }}\n      >\n        Increment Counter\n      </button>\n    </div>\n  );\n}"
       }
     ],
-    "exercises": [
-      {
-        "id": "ex1",
-        "title": "Implement once()",
-        "brief": "Write once(fn) that calls fn only the first time and returns the cached result after."
-      }
-    ],
+    "exercises": [],
     "quiz": [
       {
         "id": "q1",
@@ -112,28 +426,315 @@
         "explanation": "Closures capture live bindings, not snapshotted values."
       }
     ],
-    "summary": "Closures pair a function with the environment where it was born. Master them and modules, memoization, and hooks click into place.",
-    "resources": [
+    "summary": "Closures pair a function with the environment where it was declared.",
+    "resources": [],
+    "interviewQuestions": [
+      "Explain closures to a junior engineer using an example."
+    ],
+    "previousLessonId": "scope-hoisting-lesson",
+    "nextLessonId": "promises-async-lesson"
+  },
+  {
+    "id": "promises-async-lesson",
+    "topicId": "promises-async",
+    "moduleId": "javascript-deep-dive",
+    "title": "Promises & Async/Await Primitives",
+    "description": "Master asynchronous flow, promise States, microtask scheduling, and error handling.",
+    "order": 1,
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 25,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Promises & Async/Await Primitives",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "closures-intro"
+    ],
+    "sections": [
       {
-        "label": "MDN — Closures",
-        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures"
+        "type": "heading",
+        "text": "Promise States & Chaining"
+      },
+      {
+        "type": "paragraph",
+        "text": "A Promise is an object representing eventual completion or failure of an async operation. It resides in one of three states: pending, fulfilled, or rejected."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "code": "async function fetchData() {\n  try {\n    const res = await fetch('/api/user');\n    const data = await res.json();\n    return data;\n  } catch (err) {\n    console.error('Fetch error:', err);\n  }\n}"
       }
     ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "Promises replace callback hell with structured async task composition.",
+    "resources": [],
     "interviewQuestions": [
-      "Explain closures to a junior engineer using an example.",
-      "How can closures cause memory leaks? How would you audit for them?"
-    ]
+      "How does async/await compare to raw Promises under the hood?"
+    ],
+    "previousLessonId": "closures-intro",
+    "nextLessonId": "event-loop-microtasks"
+  },
+  {
+    "id": "event-loop-microtasks",
+    "topicId": "event-loop",
+    "moduleId": "javascript-deep-dive",
+    "title": "Event Loop & Task Queues",
+    "description": "Call stack, task queue, microtasks and rendering — how the browser actually runs code.",
+    "order": 1,
+    "difficulty": "Advanced",
+    "estimatedMinutes": 30,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Event Loop & Task Queues",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "promises-async-lesson"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Microtasks vs Macrotasks"
+      },
+      {
+        "type": "paragraph",
+        "text": "Microtasks (Promises, queueMicrotask) run immediately after the current call stack clears, before macrotasks (setTimeout) or browser repaints."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "Microtasks drain completely before the event loop advances to the next task.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "promises-async-lesson",
+    "nextLessonId": "ts-types-interfaces-lesson"
+  },
+  {
+    "id": "ts-types-interfaces-lesson",
+    "topicId": "ts-types-interfaces",
+    "moduleId": "typescript-mastery",
+    "title": "TypeScript Types & Interfaces",
+    "description": "Static typing, interfaces, type aliases, structural compatibility, and readonly modifiers.",
+    "order": 1,
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of TypeScript Types & Interfaces",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "event-loop-microtasks"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Interfaces vs Type Aliases"
+      },
+      {
+        "type": "paragraph",
+        "text": "Interfaces excel at describing object shapes and support declaration merging. Type aliases support primitives, unions, and tuples."
+      },
+      {
+        "type": "code",
+        "language": "typescript",
+        "code": "interface User {\n  id: string;\n  name: string;\n  readonly role: 'admin' | 'user';\n}"
+      },
+      {
+        "type": "interactive-sandbox",
+        "title": "TypeScript Static Types Sandbox",
+        "instructions": "Test TS component props typing in the sandbox.",
+        "initialCode": "import React from 'react';\n\ninterface CardProps {\n  title: string;\n  status: 'active' | 'pending';\n}\n\nexport default function TsCard({ title = 'TypeScript Card', status = 'active' }: Partial<CardProps>) {\n  return (\n    <div style={{ padding: '16px', background: '#0284c7', color: '#fff', borderRadius: '8px' }}>\n      <h3 style={{ margin: 0 }}>{title}</h3>\n      <p>Status: <strong>{status}</strong></p>\n    </div>\n  );\n}"
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "TypeScript adds compile-time type safety over JavaScript runtime values.",
+    "resources": [],
+    "interviewQuestions": [
+      "When should you use an interface vs a type alias in TypeScript?"
+    ],
+    "previousLessonId": "event-loop-microtasks",
+    "nextLessonId": "ts-unions-narrowing-lesson"
+  },
+  {
+    "id": "ts-unions-narrowing-lesson",
+    "topicId": "ts-unions-narrowing",
+    "moduleId": "typescript-mastery",
+    "title": "Unions & Type Narrowing",
+    "description": "Discriminated unions, type guards, and handling complex conditional state types.",
+    "order": 1,
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 22,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Unions & Type Narrowing",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "ts-types-interfaces-lesson"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Discriminated Unions"
+      },
+      {
+        "type": "paragraph",
+        "text": "A discriminant literal field (like type: 'success' | 'error') allows TypeScript to narrow union types inside switch or if blocks."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "Discriminated unions model mutually exclusive states with complete type safety.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "ts-types-interfaces-lesson",
+    "nextLessonId": "generics-foundations"
+  },
+  {
+    "id": "generics-foundations",
+    "topicId": "generics",
+    "moduleId": "typescript-mastery",
+    "title": "TypeScript Generics Mastery",
+    "description": "Write reusable, type-safe functions, data structures, and utilities.",
+    "order": 1,
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 25,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of TypeScript Generics Mastery",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "ts-unions-narrowing-lesson"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Generic Functions"
+      },
+      {
+        "type": "paragraph",
+        "text": "Generics act as type variables, allowing functions to operate over various types while preserving full return type inference."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "Generics empower flexible abstraction without losing static type safety.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "ts-unions-narrowing-lesson",
+    "nextLessonId": "react-jsx-components-lesson"
+  },
+  {
+    "id": "react-jsx-components-lesson",
+    "topicId": "react-jsx-components",
+    "moduleId": "react-professional",
+    "title": "JSX & React Component Composition",
+    "description": "Master JSX syntax, element trees, props flow, and component purity.",
+    "order": 1,
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of JSX & React Component Composition",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "generics-foundations"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "JSX is Syntactic Sugar"
+      },
+      {
+        "type": "paragraph",
+        "text": "JSX compiles down to React.createElement() calls. Components must remain pure functions regarding props and state."
+      },
+      {
+        "type": "interactive-sandbox",
+        "title": "JSX Composition Sandbox",
+        "instructions": "Compose nested React components.",
+        "initialCode": "import React from 'react';\n\nfunction Header({ title }) {\n  return <h2 style={{ color: '#a855f7', margin: 0 }}>{title}</h2>;\n}\n\nexport default function App() {\n  return (\n    <div style={{ padding: '16px', background: '#18181b', color: '#fff', borderRadius: '8px' }}>\n      <Header title=\"JSX Component Tree\" />\n      <p>Props flow downward cleanly from parent to child.</p>\n    </div>\n  );\n}"
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "React components describe UI declarations using props and state.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "generics-foundations",
+    "nextLessonId": "react-state-props-lesson"
+  },
+  {
+    "id": "react-state-props-lesson",
+    "topicId": "react-state-props",
+    "moduleId": "react-professional",
+    "title": "State & Event Handlers in React",
+    "description": "useState hook, immutable updates, batching, and controlled forms.",
+    "order": 1,
+    "difficulty": "Beginner",
+    "estimatedMinutes": 22,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of State & Event Handlers in React",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "react-jsx-components-lesson"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Immutability & State Updates"
+      },
+      {
+        "type": "paragraph",
+        "text": "Never mutate state variables directly. Always call setFunction with new object/array references or update callbacks."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "State updates schedule re-renders with fresh immutable values.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "react-jsx-components-lesson",
+    "nextLessonId": "useeffect-mental-model"
   },
   {
     "id": "useeffect-mental-model",
     "topicId": "useeffect",
+    "moduleId": "react-professional",
     "title": "A mental model for useEffect",
-    "description": "Effects synchronize your component to external systems — think in terms of setup and cleanup, not lifecycle.",
+    "description": "Effects synchronize your component to external systems — think setup and cleanup.",
+    "order": 1,
     "difficulty": "Intermediate",
     "estimatedMinutes": 22,
     "mastery": "Practicing",
+    "learningObjectives": [
+      "Understand foundational concepts of A mental model for useEffect",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "react-state-props-lesson"
+    ],
     "sections": [
-      { "type": "heading", "text": "Effects synchronize" },
+      {
+        "type": "heading",
+        "text": "Effects synchronize"
+      },
       {
         "type": "paragraph",
         "text": "Every render, React compares the deps array. If anything changed, it runs cleanup for the old effect and setup for the new one."
@@ -142,258 +743,158 @@
         "type": "code",
         "language": "tsx",
         "code": "useEffect(() => {\n  const ctrl = new AbortController();\n  fetch(url, { signal: ctrl.signal }).then(setData);\n  return () => ctrl.abort();\n}, [url]);"
-      },
-      {
-        "type": "callout",
-        "variant": "mistake",
-        "text": "Empty deps arrays are almost never what you want when the effect uses props or state."
       }
     ],
-    "exercises": [
-      {
-        "id": "ex1",
-        "title": "Room lights",
-        "brief": "Sync a Room prop to a chat server: connect on mount, reconnect on prop change, disconnect on unmount."
-      }
-    ],
-    "quiz": [
-      {
-        "id": "q1",
-        "question": "When does the cleanup function run?",
-        "options": [
-          "Only on unmount",
-          "Before every re-run of the effect and on unmount",
-          "After every render",
-          "Never in Strict Mode"
-        ],
-        "correctIndex": 1,
-        "explanation": "Cleanup runs before the next setup and on unmount."
-      }
-    ],
-    "summary": "Model effects as synchronization contracts. If you cannot describe the external system, you probably do not need an effect.",
-    "resources": [
-      {
-        "label": "You might not need an effect",
-        "url": "https://react.dev/learn/you-might-not-need-an-effect"
-      }
-    ],
-    "interviewQuestions": [
-      "When would you avoid useEffect entirely?",
-      "What does Strict Mode's double-invocation teach you about your effects?"
-    ]
+    "exercises": [],
+    "quiz": [],
+    "summary": "Effects keep React components synchronized with external non-React systems.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "react-state-props-lesson",
+    "nextLessonId": "rendering-strategies-deep-dive"
   },
   {
-    "id": "flexbox-axes",
-    "topicId": "flexbox",
-    "title": "Thinking in axes",
-    "description": "Once you stop thinking in rows and columns and start thinking in main and cross axes, flex clicks.",
-    "difficulty": "Beginner",
-    "estimatedMinutes": 15,
-    "mastery": "Mastered",
-    "sections": [
-      {
-        "type": "paragraph",
-        "text": "Flexbox aligns children along a main axis and a cross axis. Change flex-direction and the axes rotate with it."
-      },
-      {
-        "type": "code",
-        "language": "css",
-        "code": ".row { display: flex; gap: 1rem; align-items: center; }\n.push { margin-left: auto; }"
-      }
-    ],
-    "exercises": [
-      {
-        "id": "ex1",
-        "title": "Nav bar",
-        "brief": "Build a nav bar with a logo, a link cluster, and a right-aligned CTA using only flex."
-      }
-    ],
-    "quiz": [
-      {
-        "id": "q1",
-        "question": "align-items aligns children along which axis?",
-        "options": ["Main", "Cross", "Depends on writing mode", "Neither"],
-        "correctIndex": 1,
-        "explanation": "align-items works on the cross axis; justify-content on the main axis."
-      }
-    ],
-    "summary": "Main + cross axis is the whole model. Everything else is defaults and gaps.",
-    "resources": [
-      {
-        "label": "A Complete Guide to Flexbox",
-        "url": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/"
-      }
-    ],
-    "interviewQuestions": ["When would you reach for grid over flex?"]
-  },
-  {
-    "id": "rendering-strategies-overview",
+    "id": "rendering-strategies-deep-dive",
     "topicId": "rendering-strategies",
-    "title": "CSR, SSR, SSG, ISR — and now streaming",
-    "description": "Trade-offs across rendering strategies and the questions that pick the winner.",
-    "difficulty": "Advanced",
-    "estimatedMinutes": 28,
-    "mastery": "Not Started",
-    "sections": [
-      {
-        "type": "paragraph",
-        "text": "The right rendering strategy is a function of freshness, personalization, cost and TTFB budget."
-      },
-      {
-        "type": "callout",
-        "variant": "tip",
-        "text": "Ask: who is this page for, how fresh must it be, and can the response be cached at the edge?"
-      }
-    ],
-    "exercises": [
-      {
-        "id": "ex1",
-        "title": "Pick a strategy",
-        "brief": "Choose a rendering strategy for a marketing home, a logged-in dashboard, and a product page."
-      }
-    ],
-    "quiz": [
-      {
-        "id": "q1",
-        "question": "Which strategy gives the best TTFB for anonymous, cacheable pages?",
-        "options": ["CSR", "SSR", "SSG at the edge", "ISR"],
-        "correctIndex": 2,
-        "explanation": "Prebuilt HTML served from the edge wins TTFB for anonymous cacheable content."
-      }
-    ],
-    "summary": "There is no single best. There is a best for this page, right now.",
-    "resources": [
-      {
-        "label": "Web.dev — Rendering on the web",
-        "url": "https://web.dev/articles/rendering-on-the-web"
-      }
-    ],
-    "interviewQuestions": ["Design the rendering strategy for a global e-commerce site."]
-  },
-  {
-    "id": "event-loop-deep-dive",
-    "topicId": "event-loop",
-    "title": "Mastering the JavaScript Event Loop",
-    "description": "Understand the call stack, microtask queue, macrotask queue, and render steps.",
+    "moduleId": "frontend-architecture",
+    "title": "Architectural Rendering Models",
+    "description": "Compare CSR, SSR, SSG, ISR, streaming, and Server Components.",
+    "order": 1,
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
-    "mastery": "Not Started",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Architectural Rendering Models",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "useeffect-mental-model"
+    ],
     "sections": [
-      { "type": "heading", "text": "Tasks vs Microtasks" },
+      {
+        "type": "heading",
+        "text": "Rendering Spectrum"
+      },
       {
         "type": "paragraph",
-        "text": "Promises and queueMicrotask push to the microtask queue, which drains completely before the next task or animation frame runs."
+        "text": "From client-rendered SPAs to server streaming, choosing the right rendering boundary optimizes TTFB, FCP, and interactive responsiveness."
       }
     ],
     "exercises": [],
     "quiz": [],
-    "summary": "The event loop turns asynchronous IO into predictable single-threaded execution.",
+    "summary": "Select rendering models based on latency budgets, dynamic data freshness, and SEO requirements.",
     "resources": [],
-    "interviewQuestions": ["What runs first: setTimeout(fn, 0) or Promise.resolve().then(fn)?"]
+    "interviewQuestions": [],
+    "previousLessonId": "useeffect-mental-model",
+    "nextLessonId": "core-web-vitals-mastery"
   },
   {
-    "id": "css-grid-tracks-areas",
-    "topicId": "grid",
-    "title": "CSS Grid: Tracks, Areas & Responsiveness",
-    "description": "Build two-dimensional layouts using fr units, grid-template-areas, and minmax.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 25,
-    "mastery": "Not Started",
-    "sections": [
-      { "type": "heading", "text": "Defining Grid Tracks" },
-      {
-        "type": "paragraph",
-        "text": "Use repeat(auto-fit, minmax(250px, 1fr)) for responsive multi-column layouts without media queries."
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "CSS Grid is ideal for two-dimensional layouts and structural page framing.",
-    "resources": [],
-    "interviewQuestions": ["How does auto-fill differ from auto-fit in CSS Grid?"]
-  },
-  {
-    "id": "generics-in-practice",
-    "topicId": "generics",
-    "title": "TypeScript Generics in Practice",
-    "description": "Learn how to craft type-safe reusable abstractions and infer complex return types.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 25,
-    "mastery": "Not Started",
-    "sections": [
-      { "type": "heading", "text": "Generic Constraints" },
-      {
-        "type": "paragraph",
-        "text": "Use extends to constrain generics (e.g., T extends { id: string })."
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Generics provide compile-time safety without sacrificing flexibility.",
-    "resources": [],
-    "interviewQuestions": ["Explain how generic type inference works in function arguments."]
-  },
-  {
-    "id": "web-vitals-inp-lcp",
+    "id": "core-web-vitals-mastery",
     "topicId": "core-web-vitals",
-    "title": "Optimizing LCP, INP, and CLS",
-    "description": "Diagnose performance bottlenecks and improve user-perceived speed.",
+    "moduleId": "performance-and-a11y",
+    "title": "Core Web Vitals & Web Performance",
+    "description": "Optimize LCP, INP, and CLS for production web applications.",
+    "order": 1,
+    "difficulty": "Advanced",
+    "estimatedMinutes": 28,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Core Web Vitals & Web Performance",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "rendering-strategies-deep-dive"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Measuring What Matters"
+      },
+      {
+        "type": "paragraph",
+        "text": "Largest Contentful Paint (LCP), Interaction to Next Paint (INP), and Cumulative Layout Shift (CLS) define real user experience quality."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "High Web Vitals performance directly improves conversion rates and user retention.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "rendering-strategies-deep-dive",
+    "nextLessonId": "testing-vitest-tdd"
+  },
+  {
+    "id": "testing-vitest-tdd",
+    "topicId": "testing-fundamentals",
+    "moduleId": "testing-and-tooling",
+    "title": "Unit & Integration Testing with Vitest",
+    "description": "TDD patterns, mocks, assertions, and test harness setup.",
+    "order": 1,
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 25,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of Unit & Integration Testing with Vitest",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "core-web-vitals-mastery"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Test-Driven Development"
+      },
+      {
+        "type": "paragraph",
+        "text": "Write failing tests first to establish clear spec boundaries before implementing component logic."
+      }
+    ],
+    "exercises": [],
+    "quiz": [],
+    "summary": "Reliable test suites give environments confidence during refactoring.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "core-web-vitals-mastery",
+    "nextLessonId": "system-design-newsfeed-lesson"
+  },
+  {
+    "id": "system-design-newsfeed-lesson",
+    "topicId": "system-design-newsfeed",
+    "moduleId": "interview-prep",
+    "title": "System Design: Scalable News Feed",
+    "description": "Design an enterprise news feed architecture with pagination, fanout, and caching.",
+    "order": 1,
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
-    "mastery": "Not Started",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Understand foundational concepts of System Design: Scalable News Feed",
+      "Apply code patterns in hands-on exercises",
+      "Identify common pitfalls and interview questions"
+    ],
+    "prerequisites": [
+      "testing-vitest-tdd"
+    ],
     "sections": [
-      { "type": "heading", "text": "Interaction to Next Paint (INP)" },
+      {
+        "type": "heading",
+        "text": "Fanout on Write vs Read"
+      },
       {
         "type": "paragraph",
-        "text": "Keep main-thread JavaScript tasks under 50ms to ensure fast responsiveness."
+        "text": "Compare pushing feed updates to follower caches on write versus pulling on demand during read requests."
       }
     ],
     "exercises": [],
     "quiz": [],
-    "summary": "Core Web Vitals measure user experience metrics that directly impact SEO and retention.",
+    "summary": "Scalable frontend design requires balancing server push/pull strategies with client caching.",
     "resources": [],
-    "interviewQuestions": ["How do you measure and reduce LCP on a client-rendered SPA?"]
-  },
-  {
-    "id": "system-design-feed-architecture",
-    "topicId": "system-design-newsfeed",
-    "title": "Architecture of a Scalable News Feed",
-    "description": "Fan-out on write vs fan-out on read, caching layers, and cursor pagination.",
-    "difficulty": "Advanced",
-    "estimatedMinutes": 45,
-    "mastery": "Not Started",
-    "sections": [
-      { "type": "heading", "text": "Fan-out Strategies" },
-      {
-        "type": "paragraph",
-        "text": "High-follower accounts require fan-out on read (hybrid model) to avoid write amplification."
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "System design trade-offs depend on read/write ratios and latency constraints.",
-    "resources": [],
-    "interviewQuestions": ["Compare offset pagination vs cursor-based pagination for feeds."]
-  },
-  {
-    "id": "unit-testing-with-vitest",
-    "topicId": "testing-fundamentals",
-    "title": "Unit & Integration Testing with Vitest",
-    "description": "Write fast unit tests, mock external dependencies, and test component rendering.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 25,
-    "mastery": "Not Started",
-    "sections": [
-      { "type": "heading", "text": "Testing Pure Logic" },
-      {
-        "type": "paragraph",
-        "text": "Isolate side effects with mock functions (vi.fn()) and test state transitions."
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "A robust test suite gives confidence when refactoring complex modules.",
-    "resources": [],
-    "interviewQuestions": ["What is the difference between unit testing and integration testing?"]
+    "interviewQuestions": [],
+    "previousLessonId": "testing-vitest-tdd",
+    "nextLessonId": null
   }
 ]

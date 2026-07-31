@@ -5,14 +5,23 @@
     "description": "Semantic markup, modern CSS, layout systems, responsive design and accessibility fundamentals.",
     "icon": "LayoutTemplate",
     "difficulty": "Beginner",
-    "topicCount": 12,
-    "lessonCount": 42,
-    "estimatedHours": 18,
+    "topicCount": 4,
+    "lessonCount": 4,
+    "estimatedHours": 2.8,
     "progress": 0.68,
     "color": "chart-1",
-    "tags": ["HTML", "CSS", "A11y"],
+    "tags": [
+      "HTML",
+      "CSS",
+      "A11y"
+    ],
     "categoryId": "core-web",
-    "pathIds": ["fullstack-engineer", "css-architect"]
+    "pathIds": [
+      "fullstack-engineer",
+      "css-architect"
+    ],
+    "order": 1,
+    "prerequisites": []
   },
   {
     "id": "javascript-deep-dive",
@@ -20,14 +29,25 @@
     "description": "The language from scope and closures to async, generators, iterators and the event loop.",
     "icon": "Braces",
     "difficulty": "Intermediate",
-    "topicCount": 18,
-    "lessonCount": 64,
-    "estimatedHours": 32,
+    "topicCount": 5,
+    "lessonCount": 5,
+    "estimatedHours": 4,
     "progress": 0.42,
     "color": "chart-5",
-    "tags": ["JS", "ES2025"],
+    "tags": [
+      "JS",
+      "ES2025"
+    ],
     "categoryId": "language-mastery",
-    "pathIds": ["fullstack-engineer", "performance-engineer", "interview-sprint"]
+    "pathIds": [
+      "fullstack-engineer",
+      "performance-engineer",
+      "interview-sprint"
+    ],
+    "order": 2,
+    "prerequisites": [
+      "html-css-foundations"
+    ]
   },
   {
     "id": "typescript-mastery",
@@ -35,14 +55,23 @@
     "description": "Type systems, generics, utility types, inference patterns and enterprise-grade typing.",
     "icon": "FileType",
     "difficulty": "Intermediate",
-    "topicCount": 14,
-    "lessonCount": 48,
-    "estimatedHours": 22,
+    "topicCount": 3,
+    "lessonCount": 3,
+    "estimatedHours": 2.3,
     "progress": 0.25,
     "color": "chart-2",
-    "tags": ["TS"],
+    "tags": [
+      "TS"
+    ],
     "categoryId": "language-mastery",
-    "pathIds": ["fullstack-engineer", "react-specialist"]
+    "pathIds": [
+      "fullstack-engineer",
+      "react-specialist"
+    ],
+    "order": 3,
+    "prerequisites": [
+      "javascript-deep-dive"
+    ]
   },
   {
     "id": "react-professional",
@@ -50,14 +79,24 @@
     "description": "Hooks, composition, Suspense, transitions, server components and production patterns.",
     "icon": "Atom",
     "difficulty": "Advanced",
-    "topicCount": 22,
-    "lessonCount": 78,
-    "estimatedHours": 40,
+    "topicCount": 3,
+    "lessonCount": 3,
+    "estimatedHours": 2.3,
     "progress": 0.15,
     "color": "chart-4",
-    "tags": ["React", "RSC"],
+    "tags": [
+      "React",
+      "RSC"
+    ],
     "categoryId": "framework-mastery",
-    "pathIds": ["fullstack-engineer", "react-specialist"]
+    "pathIds": [
+      "fullstack-engineer",
+      "react-specialist"
+    ],
+    "order": 4,
+    "prerequisites": [
+      "typescript-mastery"
+    ]
   },
   {
     "id": "frontend-architecture",
@@ -65,14 +104,24 @@
     "description": "State strategies, folder structure, rendering models, scalability and staff-level thinking.",
     "icon": "Blocks",
     "difficulty": "Advanced",
-    "topicCount": 10,
-    "lessonCount": 34,
-    "estimatedHours": 24,
+    "topicCount": 1,
+    "lessonCount": 1,
+    "estimatedHours": 1.2,
     "progress": 0.08,
     "color": "chart-3",
-    "tags": ["Architecture"],
+    "tags": [
+      "Architecture"
+    ],
     "categoryId": "architecture",
-    "pathIds": ["react-specialist", "performance-engineer", "interview-sprint"]
+    "pathIds": [
+      "react-specialist",
+      "performance-engineer",
+      "interview-sprint"
+    ],
+    "order": 5,
+    "prerequisites": [
+      "react-professional"
+    ]
   },
   {
     "id": "performance-and-a11y",
@@ -80,14 +129,24 @@
     "description": "Core Web Vitals, rendering pipeline, bundle diet, WCAG and inclusive interfaces.",
     "icon": "Gauge",
     "difficulty": "Advanced",
-    "topicCount": 11,
-    "lessonCount": 36,
-    "estimatedHours": 20,
-    "progress": 0.0,
+    "topicCount": 1,
+    "lessonCount": 1,
+    "estimatedHours": 1,
+    "progress": 0,
     "color": "chart-1",
-    "tags": ["Perf", "A11y"],
+    "tags": [
+      "Perf",
+      "A11y"
+    ],
     "categoryId": "quality-perf",
-    "pathIds": ["css-architect", "performance-engineer"]
+    "pathIds": [
+      "css-architect",
+      "performance-engineer"
+    ],
+    "order": 6,
+    "prerequisites": [
+      "frontend-architecture"
+    ]
   },
   {
     "id": "testing-and-tooling",
@@ -95,14 +154,22 @@
     "description": "Vitest, Playwright, TDD, CI, linting, formatters and the modern build chain.",
     "icon": "FlaskConical",
     "difficulty": "Intermediate",
-    "topicCount": 9,
-    "lessonCount": 28,
-    "estimatedHours": 14,
-    "progress": 0.0,
+    "topicCount": 1,
+    "lessonCount": 1,
+    "estimatedHours": 1,
+    "progress": 0,
     "color": "chart-2",
-    "tags": ["Testing"],
+    "tags": [
+      "Testing"
+    ],
     "categoryId": "quality-perf",
-    "pathIds": ["fullstack-engineer"]
+    "pathIds": [
+      "fullstack-engineer"
+    ],
+    "order": 7,
+    "prerequisites": [
+      "performance-and-a11y"
+    ]
   },
   {
     "id": "interview-prep",
@@ -110,13 +177,21 @@
     "description": "System design, live coding, take-home projects and behavioral practice with rubrics.",
     "icon": "Briefcase",
     "difficulty": "Advanced",
-    "topicCount": 8,
-    "lessonCount": 30,
-    "estimatedHours": 16,
-    "progress": 0.0,
+    "topicCount": 1,
+    "lessonCount": 1,
+    "estimatedHours": 1.5,
+    "progress": 0,
     "color": "chart-4",
-    "tags": ["Interview"],
+    "tags": [
+      "Interview"
+    ],
     "categoryId": "career-interview",
-    "pathIds": ["interview-sprint"]
+    "pathIds": [
+      "interview-sprint"
+    ],
+    "order": 8,
+    "prerequisites": [
+      "testing-and-tooling"
+    ]
   }
 ]

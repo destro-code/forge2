@@ -8,7 +8,7 @@ import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { CurriculumFilterBar } from "@/components/learning/curriculum-filter-bar";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useCurriculum } from "@/lib/hooks/use-curriculum";
-import { useTopics, useLearningPaths } from "@/lib/hooks/use-content";
+import { useTopics, useLearningPaths, useLessons } from "@/lib/hooks/use-content";
 import { ArrowRight, Layers, GraduationCap, FolderTree, BookOpen, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/learn/modules")({

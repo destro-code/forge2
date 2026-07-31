@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, RefreshCw, Terminal, ExternalLink, Code2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { buildPlaygroundHtml } from "@/lib/playground-compiler";
 
 interface LessonInlineSandboxProps {
   initialCode: string;
@@ -21,122 +22,14 @@ export function LessonInlineSandbox({
   const [consoleLogs, setConsoleLogs] = useState<{ level: string; msg: string }[]>([]);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const buildSrcDoc = () => {
-    const safeCode = JSON.stringify(code).replace(/<\/script>/g, "<\\/script>");
-
-    return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8" />
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js" crossorigin></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 12px;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #090a0f;
-      color: #f8fafc;
-      font-size: 13px;
-    }
-    #error-box {
-      display: none;
-      padding: 10px;
-      background: #3b1318;
-      color: #fca5a5;
-      border-radius: 6px;
-      font-family: monospace;
-      font-size: 11px;
-      margin-bottom: 10px;
-      border: 1px solid #ef4444;
-      white-space: pre-wrap;
-    }
-  </style>
-</head>
-<body>
-  <div id="error-box"></div>
-  <div id="root"></div>
-
-  <script>
-    (function() {
-      function sendLog(level, args) {
-        const msg = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-        window.parent.postMessage({ type: 'SANDBOX_LOG', level: level, msg: msg }, '*');
-      }
-      console.log = function(...args) { sendLog('log', args); };
-      console.info = function(...args) { sendLog('info', args); };
-      console.warn = function(...args) { sendLog('warn', args); };
-      console.error = function(...args) { sendLog('error', args); };
-
-      window.onerror = function(msg) {
-        const errEl = document.getElementById('error-box');
-        errEl.style.display = 'block';
-        errEl.textContent = 'Runtime Error: ' + msg;
-        sendLog('error', [msg]);
-      };
-    })();
-  </script>
-
-  <script>
-    const userCode = ${safeCode};
-
-    function runCode() {
-      if (!window.Babel) {
-        setTimeout(runCode, 30);
-        return;
-      }
-      try {
-        const transformed = Babel.transform(userCode, {
-          presets: [
-            ['env', { modules: 'commonjs' }],
-            ['react', { runtime: 'classic' }],
-            ['typescript', { isTSX: true, allExtensions: true }]
-          ]
-        }).code;
-
-        const exports = {};
-        const module = { exports: exports };
-
-        const factory = new Function(
-          'require',
-          'module',
-          'exports',
-          'React',
-          'ReactDOM',
-          transformed
-        );
-
-        factory(
-          function(pkg) {
-            if (pkg === 'react') return window.React;
-            if (pkg === 'react-dom' || pkg === 'react-dom/client') return window.ReactDOM;
-            return {};
-          },
-          module,
-          exports,
-          window.React,
-          window.ReactDOM
-        );
-
-        const Component = module.exports.default || module.exports.App || Object.values(module.exports)[0];
-        if (Component && typeof Component === 'function') {
-          const root = ReactDOM.createRoot(document.getElementById('root'));
-          root.render(React.createElement(Component));
-        }
-      } catch (err) {
-        const errEl = document.getElementById('error-box');
-        errEl.style.display = 'block';
-        errEl.textContent = 'Compile Error: ' + err.message;
-        console.error(err.message);
-      }
-    }
-
-    runCode();
-  </script>
-</body>
-</html>`;
-  };
+  const sandboxFiles = [
+    {
+      id: "app-file",
+      name: "App.tsx",
+      code: code,
+      language: "typescript" as const,
+    },
+  ];
 
   useEffect(() => {
     const handleMsg = (e: MessageEvent) => {
@@ -212,7 +105,7 @@ export function LessonInlineSandbox({
           <iframe
             key={key}
             ref={iframeRef}
-            srcDoc={buildSrcDoc()}
+            srcDoc={buildPlaygroundHtml(sandboxFiles, { isInline: true, title })}
             title="Lesson Inline Sandbox Preview"
             sandbox="allow-scripts"
             className="w-full h-40 rounded-lg border border-border/50 bg-[#090a0f]"
