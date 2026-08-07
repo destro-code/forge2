@@ -309,6 +309,17 @@ export interface Flashcard {
   deck: string;
 }
 
+export interface AchievementCondition {
+  type:
+    | "lessonsCompleted"
+    | "streakDays"
+    | "solvedBugs"
+    | "interviewQuestions"
+    | "moduleLessonsCompleted";
+  threshold?: number;
+  moduleId?: string;
+}
+
 export interface Achievement {
   id: string;
   title: string;
@@ -318,6 +329,7 @@ export interface Achievement {
   unlocked: boolean;
   unlockedAt?: string;
   progress?: number;
+  condition?: AchievementCondition;
 }
 
 export type BugCategory =

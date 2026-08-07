@@ -1,19 +1,17 @@
-import { createLocalStore } from "../local-store";
+import {
+  useProgressStore,
+  EMPTY_PROGRESS_STATE,
+  type ProgressState,
+} from "@/lib/stores/use-progress-store";
 import type {
   MasteryState,
   TopicMasteryRecord,
-  ProjectReflection,
-  ProjectUserNotes,
   JournalEntry,
-  InterviewSessionResult,
-  LessonHighlight,
   Lesson,
   Topic,
   Module,
   Quiz,
   Bug,
-  QuizResultRecord,
-  CertificateRecord,
 } from "../types";
 import lessonsData from "@/data/lessons.json";
 import topicsData from "@/data/topics.json";
@@ -21,33 +19,8 @@ import modulesData from "@/data/modules.json";
 import quizzesData from "@/data/quizzes.json";
 import bugsData from "@/data/bugs.json";
 
-export interface ProgressState {
-  streakDays: number;
-  totalMinutes: number;
-  lessonsCompleted: string[];
-  solvedBugs: string[];
-  bookmarks: string[];
-  mastery: Record<string, MasteryState>;
-  notes: Record<string, string>;
-  weekly: number[]; // last 7 days minutes
-  heatmap: { date: string; value: number }[];
-  skills: { name: string; value: number }[];
-  projectTasks: Record<string, boolean>;
-  projectCriteria: Record<string, boolean>;
-  projectReflections: Record<string, ProjectReflection>;
-  projectPortfolioNotes: Record<string, ProjectUserNotes>;
-  journalEntries: JournalEntry[];
-  interviewResults: InterviewSessionResult[];
-  topicMasteryRecords?: Record<string, TopicMasteryRecord>;
-  readinessGoalPercent?: number;
-  lastActiveLessonId?: string;
-  lessonCheckpoints?: Record<string, boolean>; // key format: lessonId:checkpointId -> boolean
-  lessonHighlights?: Record<string, LessonHighlight[]>; // key: lessonId -> array of highlights
-  activityDates?: string[];
-  completedQuizzes?: string[];
-  quizResults?: QuizResultRecord[];
-  certificates?: CertificateRecord[];
-}
+export type { ProgressState };
+export { EMPTY_PROGRESS_STATE, useProgressStore };
 
 export function deriveStreakDays(activityDates: string[] = []): number {
   if (!activityDates || activityDates.length === 0) return 0;
@@ -441,33 +414,8 @@ export const initialTopicMasteryRecords: Record<string, TopicMasteryRecord> = {
   },
 };
 
-export const EMPTY_PROGRESS_STATE: ProgressState = {
-  activityDates: [],
-  streakDays: 0,
-  totalMinutes: 0,
-  lessonsCompleted: [],
-  solvedBugs: [],
-  bookmarks: [],
-  mastery: {},
-  notes: {},
-  weekly: [0, 0, 0, 0, 0, 0, 0],
-  heatmap: deriveHeatmap([]),
-  skills: deriveSkills({ lessonsCompleted: [], solvedBugs: [] }),
-  projectTasks: {},
-  projectCriteria: {},
-  projectReflections: {},
-  projectPortfolioNotes: {},
-  journalEntries: [],
-  interviewResults: [],
-  topicMasteryRecords: {},
-  readinessGoalPercent: 85,
-  lastActiveLessonId: undefined,
-  completedQuizzes: [],
-  quizResults: [],
-  certificates: [],
-};
-
 export const DEMO_PROGRESS_STATE: ProgressState = {
+  xp: 1250,
   activityDates: [
     "2026-07-28T14:30:00Z",
     "2026-07-27T10:00:00Z",
@@ -516,7 +464,59 @@ export const DEMO_PROGRESS_STATE: ProgressState = {
   certificates: [],
 };
 
-export const progressStore = createLocalStore<ProgressState>(
-  "forge:progress:v1",
-  EMPTY_PROGRESS_STATE,
-);
+export const progressStore = {
+  read: (): ProgressState => {
+    const s = useProgressStore.getState();
+    return getDerivedProgress(s);
+  },
+  write: (next: ProgressState) => {
+    useProgressStore.getState().setProgress(next);
+  },
+  set: (next: ProgressState) => {
+    useProgressStore.getState().setProgress(next);
+  },
+  update: (updater: (prev: ProgressState) => ProgressState) => {
+    useProgressStore.getState().setProgress(updater);
+  },
+  subscribe: (listener: () => void) => {
+    return useProgressStore.subscribe(listener);
+  },
+  useStore: (): [
+    ProgressState,
+    (updater: ProgressState | ((prev: ProgressState) => ProgressState)) => void,
+  ] => {
+    const rawProgress = useProgressStore();
+    const setProgress = useProgressStore((state) => state.setProgress);
+
+    const stateSlice: ProgressState = {
+      xp: rawProgress.xp ?? 0,
+      streakDays: rawProgress.streakDays ?? 0,
+      totalMinutes: rawProgress.totalMinutes ?? 0,
+      lessonsCompleted: rawProgress.lessonsCompleted ?? [],
+      solvedBugs: rawProgress.solvedBugs ?? [],
+      bookmarks: rawProgress.bookmarks ?? [],
+      mastery: rawProgress.mastery ?? {},
+      notes: rawProgress.notes ?? {},
+      weekly: rawProgress.weekly ?? [0, 0, 0, 0, 0, 0, 0],
+      heatmap: rawProgress.heatmap ?? [],
+      skills: rawProgress.skills ?? [],
+      projectTasks: rawProgress.projectTasks ?? {},
+      projectCriteria: rawProgress.projectCriteria ?? {},
+      projectReflections: rawProgress.projectReflections ?? {},
+      projectPortfolioNotes: rawProgress.projectPortfolioNotes ?? {},
+      journalEntries: rawProgress.journalEntries ?? [],
+      interviewResults: rawProgress.interviewResults ?? [],
+      topicMasteryRecords: rawProgress.topicMasteryRecords ?? {},
+      readinessGoalPercent: rawProgress.readinessGoalPercent ?? 85,
+      lastActiveLessonId: rawProgress.lastActiveLessonId,
+      lessonCheckpoints: rawProgress.lessonCheckpoints ?? {},
+      lessonHighlights: rawProgress.lessonHighlights ?? {},
+      activityDates: rawProgress.activityDates ?? [],
+      completedQuizzes: rawProgress.completedQuizzes ?? [],
+      quizResults: rawProgress.quizResults ?? [],
+      certificates: rawProgress.certificates ?? [],
+    };
+
+    return [stateSlice, setProgress];
+  },
+};

@@ -1,4 +1,5 @@
 # Forge Component Standards
+
 Version: 2.0
 
 ---
@@ -337,9 +338,9 @@ Example
 
 ```ts
 interface LessonCardProps {
-    lesson: Lesson;
-    completed: boolean;
-    onOpen(): void;
+  lesson: Lesson;
+  completed: boolean;
+  onOpen(): void;
 }
 ```
 

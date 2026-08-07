@@ -8,12 +8,8 @@
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "css-box-model"
-    ],
-    "related": [
-      "css-box-model"
-    ],
+    "next": ["css-box-model"],
+    "related": ["css-box-model"],
     "categoryId": "core-web",
     "order": 1
   },
@@ -25,15 +21,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "html-foundations"
-    ],
-    "next": [
-      "flexbox"
-    ],
-    "related": [
-      "flexbox"
-    ],
+    "prerequisites": ["html-foundations"],
+    "next": ["flexbox"],
+    "related": ["flexbox"],
     "categoryId": "core-web",
     "order": 2
   },
@@ -45,15 +35,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "css-box-model"
-    ],
-    "next": [
-      "grid"
-    ],
-    "related": [
-      "grid"
-    ],
+    "prerequisites": ["css-box-model"],
+    "next": ["grid"],
+    "related": ["grid"],
     "categoryId": "core-web",
     "order": 3
   },
@@ -65,13 +49,9 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 55,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "flexbox"
-    ],
+    "prerequisites": ["flexbox"],
     "next": [],
-    "related": [
-      "flexbox"
-    ],
+    "related": ["flexbox"],
     "categoryId": "core-web",
     "order": 4
   },
@@ -84,12 +64,8 @@
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
     "prerequisites": [],
-    "next": [
-      "scope-hoisting"
-    ],
-    "related": [
-      "scope-hoisting"
-    ],
+    "next": ["scope-hoisting"],
+    "related": ["scope-hoisting"],
     "categoryId": "language-mastery",
     "order": 1
   },
@@ -101,15 +77,9 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "js-fundamentals"
-    ],
-    "next": [
-      "closures"
-    ],
-    "related": [
-      "closures"
-    ],
+    "prerequisites": ["js-fundamentals"],
+    "next": ["closures"],
+    "related": ["closures"],
     "categoryId": "language-mastery",
     "order": 2
   },
@@ -121,16 +91,9 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "scope-hoisting"
-    ],
-    "next": [
-      "promises-async"
-    ],
-    "related": [
-      "promises-async",
-      "event-loop"
-    ],
+    "prerequisites": ["scope-hoisting"],
+    "next": ["promises-async"],
+    "related": ["promises-async", "event-loop"],
     "categoryId": "language-mastery",
     "order": 3
   },
@@ -142,15 +105,9 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 50,
     "interviewFrequency": "Very High",
-    "prerequisites": [
-      "closures"
-    ],
-    "next": [
-      "event-loop"
-    ],
-    "related": [
-      "event-loop"
-    ],
+    "prerequisites": ["closures"],
+    "next": ["event-loop"],
+    "related": ["event-loop"],
     "categoryId": "language-mastery",
     "order": 4
   },
@@ -162,13 +119,9 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 60,
     "interviewFrequency": "Very High",
-    "prerequisites": [
-      "promises-async"
-    ],
+    "prerequisites": ["promises-async"],
     "next": [],
-    "related": [
-      "promises-async"
-    ],
+    "related": ["promises-async"],
     "categoryId": "language-mastery",
     "order": 5
   },
@@ -181,12 +134,8 @@
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "ts-unions-narrowing"
-    ],
-    "related": [
-      "ts-unions-narrowing"
-    ],
+    "next": ["ts-unions-narrowing"],
+    "related": ["ts-unions-narrowing"],
     "categoryId": "language-mastery",
     "order": 1
   },
@@ -198,15 +147,9 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "ts-types-interfaces"
-    ],
-    "next": [
-      "generics"
-    ],
-    "related": [
-      "generics"
-    ],
+    "prerequisites": ["ts-types-interfaces"],
+    "next": ["generics"],
+    "related": ["generics"],
     "categoryId": "language-mastery",
     "order": 2
   },
@@ -218,13 +161,9 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 50,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "ts-unions-narrowing"
-    ],
+    "prerequisites": ["ts-unions-narrowing"],
     "next": [],
-    "related": [
-      "ts-unions-narrowing"
-    ],
+    "related": ["ts-unions-narrowing"],
     "categoryId": "language-mastery",
     "order": 3
   },
@@ -237,12 +176,8 @@
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "react-state-props"
-    ],
-    "related": [
-      "react-state-props"
-    ],
+    "next": ["react-state-props"],
+    "related": ["react-state-props"],
     "categoryId": "framework-mastery",
     "order": 1
   },
@@ -254,15 +189,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "react-jsx-components"
-    ],
-    "next": [
-      "useeffect"
-    ],
-    "related": [
-      "useeffect"
-    ],
+    "prerequisites": ["react-jsx-components"],
+    "next": ["useeffect"],
+    "related": ["useeffect"],
     "categoryId": "framework-mastery",
     "order": 2
   },
@@ -274,13 +203,9 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 55,
     "interviewFrequency": "Very High",
-    "prerequisites": [
-      "react-state-props"
-    ],
+    "prerequisites": ["react-state-props"],
     "next": [],
-    "related": [
-      "react-state-props"
-    ],
+    "related": ["react-state-props"],
     "categoryId": "framework-mastery",
     "order": 3
   },

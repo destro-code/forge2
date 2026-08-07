@@ -1,12 +1,18 @@
-import { create } from "@/lib/mini-store";
+import { create } from "zustand";
 
-export const commandPaletteStore = create({ open: false });
+interface CommandPaletteState {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  toggle: () => void;
+}
+
+export const useCommandPaletteStore = create<CommandPaletteState>((set) => ({
+  open: false,
+  setOpen: (open) => set({ open }),
+  toggle: () => set((state) => ({ open: !state.open })),
+}));
 
 export function useCommandPalette() {
-  const [state, set] = commandPaletteStore.useStore();
-  return {
-    open: state.open,
-    setOpen: (o: boolean) => set({ open: o }),
-    toggle: () => set({ open: !state.open }),
-  };
+  const { open, setOpen, toggle } = useCommandPaletteStore();
+  return { open, setOpen, toggle };
 }

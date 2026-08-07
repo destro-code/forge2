@@ -19,7 +19,8 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import type { QuizQuestion } from "@/lib/types";
+import type { Quiz, QuizQuestion } from "@/lib/types";
+import quizzesData from "@/data/quizzes.json";
 import { QuizTimer } from "@/components/quiz/quiz-timer";
 import { QuizNavigationDrawer } from "@/components/quiz/quiz-navigation-drawer";
 import { MCQQuestionCard } from "@/components/quiz/questions/mcq-question";
@@ -31,6 +32,12 @@ import { FillInBlankQuestionCard } from "@/components/quiz/questions/fill-blank-
 import { QuizResults } from "@/components/quiz/quiz-results";
 
 export const Route = createFileRoute("/quizzes/$quizId")({
+  loader: ({ params }) => {
+    const quizExists = (quizzesData as Quiz[]).some((q) => q.id === params.quizId);
+    if (!quizExists) {
+      throw notFound();
+    }
+  },
   head: () => ({
     meta: [
       { title: "Quiz Runner · Forge" },
@@ -75,17 +82,7 @@ function QuizPlay() {
   }, []);
 
   if (!quiz) {
-    return (
-      <div className="space-y-4 py-12 text-center">
-        <h2 className="text-xl font-bold">Quiz Not Found</h2>
-        <p className="text-sm text-muted-foreground">The requested quiz could not be found.</p>
-        <Button asChild variant="outline">
-          <Link to="/quizzes">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Quizzes
-          </Link>
-        </Button>
-      </div>
-    );
+    throw notFound();
   }
 
   if (activeQuestions.length === 0) {

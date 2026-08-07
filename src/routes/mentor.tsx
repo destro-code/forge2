@@ -160,7 +160,7 @@ function Counter() {
 }`,
 };
 
-export function Mentor() {
+function Mentor() {
   const [state, set] = mentorStore.useStore();
   const active = state.conversations.find((c) => c.id === state.activeId) ?? state.conversations[0];
   const [activeMode, setActiveMode] = useState<MentorMode>(active?.mode || "chat");

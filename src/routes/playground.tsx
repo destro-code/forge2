@@ -3,27 +3,12 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import {
-  Play,
-  RotateCcw,
-  Sparkles,
-  CheckCircle2,
-  PanelLeft,
-  Terminal,
-  Monitor,
-  Lightbulb,
-  ShieldCheck,
-  FileCode2,
-} from "lucide-react";
-import { useState, useCallback, useEffect } from "react";
+import { RotateCcw, Sparkles, ShieldCheck, Code2, Lightbulb } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
 
-import type { PlaygroundFile, PlaygroundConsoleLog } from "@/lib/types/playground";
+import type { PlaygroundFile } from "@/lib/types/playground";
 import { PLAYGROUND_PRESETS } from "@/lib/playground-data";
-import { PlaygroundFileTree } from "@/components/playground/playground-file-tree";
-import { PlaygroundTabs } from "@/components/playground/playground-tabs";
 import { PlaygroundEditor } from "@/components/playground/playground-editor";
-import { PlaygroundPreview } from "@/components/playground/playground-preview";
-import { PlaygroundConsole } from "@/components/playground/playground-console";
 import { PlaygroundSolutionModal } from "@/components/playground/playground-solution-modal";
 import { PlaygroundCodeReviewerModal } from "@/components/playground/playground-code-reviewer-modal";
 
@@ -34,21 +19,20 @@ export const Route = createFileRoute("/playground")({
       {
         name: "description",
         content:
-          "Full Monaco editor, multi-file explorer, live preview, console stream, and reference solution comparison.",
+          "Sandpack browser-based execution environment, live React TS component preview, reference solution comparison, and AI code review.",
       },
       { property: "og:title", content: "Playground · Forge" },
-      { property: "og:description", content: "Production-grade frontend sandbox." },
+      { property: "og:description", content: "Secure Sandpack React playground workspace." },
     ],
   }),
   component: Playground,
 });
 
-export function Playground() {
+function Playground() {
   const [currentPresetId, setCurrentPresetId] = useState<string>(PLAYGROUND_PRESETS[0].id);
   const activePreset =
     PLAYGROUND_PRESETS.find((p) => p.id === currentPresetId) || PLAYGROUND_PRESETS[0];
 
-  // Load initial files from localStorage if present
   const [files, setFiles] = useState<PlaygroundFile[]>(() => {
     if (typeof window === "undefined") return activePreset.files;
     const key = `forge_playground_files_${activePreset.id}`;
@@ -58,50 +42,28 @@ export function Playground() {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch {
-        // Fallback to preset defaults
+        // Fallback to active preset default files
       }
     }
     return activePreset.files;
   });
 
-  const [activeFileId, setActiveFileId] = useState<string>(files[0]?.id || "f-1");
-  const [openTabIds, setOpenTabIds] = useState<string[]>(files.map((f) => f.id));
-
-  // Console & execution state
-  const [consoleLogs, setConsoleLogs] = useState<PlaygroundConsoleLog[]>([]);
-  const [executionStatus, setExecutionStatus] = useState<"idle" | "running" | "success" | "error">(
-    "idle",
-  );
-  const [executionTime, setExecutionTime] = useState<number | null>(null);
-
-  // Solution modal state
   const [solutionOpen, setSolutionOpen] = useState(false);
   const [codeReviewOpen, setCodeReviewOpen] = useState(false);
-  const [showFileTree, setShowFileTree] = useState(true);
 
-  // Active right/bottom tab
-  const [activePaneTab, setActivePaneTab] = useState<"preview" | "console" | "hints">("preview");
-  // Mobile single-pane active tab
-  const [mobileTab, setMobileTab] = useState<"editor" | "preview" | "console" | "hints" | "files">(
-    "editor",
-  );
+  const activeFile = files[0] || activePreset.files[0];
 
-  const activeFile = files.find((f) => f.id === activeFileId) || files[0];
-
-  // Auto-persist files to localStorage whenever files change
   useEffect(() => {
     if (typeof window === "undefined") return;
     const key = `forge_playground_files_${currentPresetId}`;
     localStorage.setItem(key, JSON.stringify(files));
   }, [files, currentPresetId]);
 
-  // Preset switch handler
   const handleSelectPreset = (presetId: string) => {
     const nextPreset = PLAYGROUND_PRESETS.find((p) => p.id === presetId);
     if (!nextPreset) return;
     setCurrentPresetId(presetId);
 
-    // Check if there are saved edits in localStorage for this preset
     let nextFiles = nextPreset.files;
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(`forge_playground_files_${presetId}`);
@@ -110,160 +72,53 @@ export function Playground() {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) nextFiles = parsed;
         } catch {
-          // ignore error
+          // Fallback to preset defaults
         }
       }
     }
 
     setFiles(nextFiles);
-    setActiveFileId(nextFiles[0]?.id || "f-1");
-    setOpenTabIds(nextFiles.map((f) => f.id));
-    setConsoleLogs([]);
-    setExecutionStatus("idle");
-    setExecutionTime(null);
-    toast.success(`Loaded preset: ${nextPreset.title}`);
+    toast.success(`Loaded lab preset: ${nextPreset.title}`);
   };
 
-  // Add file handler
-  const handleAddFile = (fileName: string) => {
-    const ext = fileName.split(".").pop() || "";
-    let lang: PlaygroundFile["language"] = "typescript";
-    if (ext === "css") lang = "css";
-    if (ext === "html") lang = "html";
-    if (ext === "json") lang = "json";
-    if (ext === "js" || ext === "jsx") lang = "javascript";
+  const handleCodeChange = useCallback((fileName: string, newCode: string) => {
+    setFiles((prev) => {
+      let changed = false;
+      const next = prev.map((f) => {
+        const cleanName = f.name.startsWith("/") ? f.name.slice(1) : f.name;
+        const targetCleanName = fileName.startsWith("/") ? fileName.slice(1) : fileName;
+        if (cleanName === targetCleanName && f.code !== newCode) {
+          changed = true;
+          return { ...f, code: newCode };
+        }
+        return f;
+      });
+      return changed ? next : prev;
+    });
+  }, []);
 
-    const newFile: PlaygroundFile = {
-      id: `custom-${Date.now()}`,
-      name: fileName,
-      code: `// ${fileName}\nexport default function Component() {\n  return <div>New Component</div>;\n}\n`,
-      language: lang,
-    };
-
-    setFiles((prev) => [...prev, newFile]);
-    setOpenTabIds((prev) => [...prev, newFile.id]);
-    setActiveFileId(newFile.id);
-    toast.success(`Created ${fileName}`);
-  };
-
-  // Delete file handler
-  const handleDeleteFile = (fileId: string) => {
-    const fileToDelete = files.find((f) => f.id === fileId);
-    if (!fileToDelete) return;
-
-    setFiles((prev) => prev.filter((f) => f.id !== fileId));
-    setOpenTabIds((prev) => prev.filter((id) => id !== fileId));
-
-    if (activeFileId === fileId) {
-      const remaining = files.filter((f) => f.id !== fileId);
-      if (remaining.length > 0) {
-        setActiveFileId(remaining[0].id);
-      }
-    }
-    toast.info(`Deleted ${fileToDelete.name}`);
-  };
-
-  // Code update handler
-  const handleCodeChange = (newCode: string) => {
-    setFiles((prev) => prev.map((f) => (f.id === activeFileId ? { ...f, code: newCode } : f)));
-  };
-
-  // Format code handler
-  const handleFormatCode = () => {
-    if (!activeFile) return;
-    try {
-      const formatted = activeFile.code
-        .split("\n")
-        .map((line) => line.trimEnd())
-        .join("\n");
-      handleCodeChange(formatted);
-      toast.success(`Formatted ${activeFile.name}`);
-    } catch {
-      toast.error("Failed to format code");
-    }
-  };
-
-  // Log capturer callback from iframe
-  const handleLogCaptured = useCallback(
-    (level: "log" | "info" | "warn" | "error", message: string) => {
-      setConsoleLogs((prev) => [
-        ...prev,
-        {
-          id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-          level,
-          message,
-          timestamp: new Date().toLocaleTimeString(),
-        },
-      ]);
-    },
-    [],
-  );
-
-  // Run code handler
-  const handleRun = () => {
-    setExecutionStatus("running");
-    const startTime = performance.now();
-
-    // Log run trigger
-    setConsoleLogs((prev) => [
-      ...prev,
-      {
-        id: `sys-${Date.now()}`,
-        level: "info",
-        message: `⚡ Compiling & executing playground project (${files.length} files)...`,
-        timestamp: new Date().toLocaleTimeString(),
-      },
-    ]);
-
-    setTimeout(() => {
-      const duration = Math.round(performance.now() - startTime);
-      setExecutionTime(duration);
-      setExecutionStatus("success");
-      toast.success(`Compiled & executed in ${duration}ms`);
-    }, 250);
-  };
-
-  // Reset handler
   const handleReset = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem(`forge_playground_files_${currentPresetId}`);
     }
     setFiles(activePreset.files);
-    setActiveFileId(activePreset.files[0]?.id || "f-1");
-    setOpenTabIds(activePreset.files.map((f) => f.id));
-    setConsoleLogs([]);
-    setExecutionStatus("idle");
-    setExecutionTime(null);
-    toast.info("Playground reset to default preset code.");
+    toast.info("Playground code reset to lab defaults.");
   };
 
-  // Apply solution handler
   const handleApplySolution = (solutionFiles: PlaygroundFile[]) => {
     setFiles(solutionFiles);
-    setActiveFileId(solutionFiles[0]?.id || "f-1");
-    setOpenTabIds(solutionFiles.map((f) => f.id));
-    toast.success("Applied reference solution to playground!");
+    toast.success("Applied reference solution code!");
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Page Header */}
       <PageHeader
-        eyebrow="Interactive Workspace"
-        title="Playground Engine"
-        description="Write code, test state hooks, run live component renders, and inspect console logs in real time."
+        eyebrow="Browser Execution Sandbox"
+        title="Sandpack Playground"
+        description="Isolated browser runtime powered by Sandpack. Edit React TypeScript components with live hot-reloading preview and instant syntax diagnostics."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            {executionStatus === "success" && executionTime !== null && (
-              <Badge
-                variant="outline"
-                className="gap-1 border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-xs"
-              >
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                Compiled ({executionTime}ms)
-              </Badge>
-            )}
-
             <Button
               variant="outline"
               size="sm"
@@ -286,310 +141,66 @@ export function Playground() {
 
             <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 text-xs">
               <RotateCcw className="h-3.5 w-3.5" />
-              Reset
-            </Button>
-
-            <Button size="sm" onClick={handleRun} className="gap-1.5 shadow-glow text-xs">
-              <Play className="h-3.5 w-3.5" />
-              Run Code
+              Reset Lab
             </Button>
           </div>
         }
       />
 
-      {/* Main Playground Editor & Panel Window */}
-      <div className="rounded-xl border border-border/60 bg-card overflow-hidden shadow-elegant flex flex-col min-h-[600px] lg:h-[750px]">
-        {/* Top Control Bar */}
-        <div className="flex flex-wrap items-center justify-between border-b border-border/60 bg-muted/30 px-3 py-2 text-xs gap-2">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-7 w-7 ${showFileTree ? "text-primary bg-primary/10" : "text-muted-foreground"}`}
-              onClick={() => setShowFileTree(!showFileTree)}
-              title="Toggle File Explorer"
-            >
-              <PanelLeft className="h-4 w-4" />
-            </Button>
-            <span className="font-semibold text-foreground truncate max-w-[200px] sm:max-w-none">
-              {activePreset.title}
-            </span>
-            <Badge variant="secondary" className="text-[10px] hidden sm:inline-flex">
-              {activePreset.difficulty}
-            </Badge>
+      {/* Lab Preset Selector & Context Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm w-full max-w-full overflow-hidden">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Code2 className="h-5 w-5" />
           </div>
-
-          {/* Right Pane Selector (Desktop) */}
-          <div className="hidden lg:flex items-center gap-1">
-            <Button
-              variant={activePaneTab === "preview" ? "secondary" : "ghost"}
-              size="sm"
-              className="h-7 text-xs gap-1"
-              onClick={() => setActivePaneTab("preview")}
-            >
-              <Monitor className="h-3.5 w-3.5 text-primary" /> Preview
-            </Button>
-            <Button
-              variant={activePaneTab === "console" ? "secondary" : "ghost"}
-              size="sm"
-              className="h-7 text-xs gap-1"
-              onClick={() => setActivePaneTab("console")}
-            >
-              <Terminal className="h-3.5 w-3.5 text-primary" /> Console ({consoleLogs.length})
-            </Button>
-            <Button
-              variant={activePaneTab === "hints" ? "secondary" : "ghost"}
-              size="sm"
-              className="h-7 text-xs gap-1"
-              onClick={() => setActivePaneTab("hints")}
-            >
-              <Lightbulb className="h-3.5 w-3.5 text-amber-400" /> Hints
-            </Button>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-foreground text-sm">{activePreset.title}</h3>
+              <Badge variant="secondary" className="text-[10px]">
+                {activePreset.difficulty}
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground">{activePreset.description}</p>
           </div>
         </div>
 
-        {/* Mobile Single-Pane Tab Bar */}
-        <div className="flex lg:hidden items-center border-b border-border/60 bg-muted/40 p-1 text-xs gap-1 overflow-x-auto">
-          <Button
-            variant={mobileTab === "editor" ? "secondary" : "ghost"}
-            size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
-            onClick={() => setMobileTab("editor")}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground hidden sm:inline">
+            Lab Presets:
+          </span>
+          <select
+            value={currentPresetId}
+            onChange={(e) => handleSelectPreset(e.target.value)}
+            className="h-9 rounded-md border border-input bg-background px-3 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
           >
-            <FileCode2 className="h-3.5 w-3.5 text-primary" /> Code
-          </Button>
-          <Button
-            variant={mobileTab === "preview" ? "secondary" : "ghost"}
-            size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
-            onClick={() => setMobileTab("preview")}
-          >
-            <Monitor className="h-3.5 w-3.5 text-primary" /> Preview
-          </Button>
-          <Button
-            variant={mobileTab === "console" ? "secondary" : "ghost"}
-            size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
-            onClick={() => setMobileTab("console")}
-          >
-            <Terminal className="h-3.5 w-3.5 text-primary" /> Console ({consoleLogs.length})
-          </Button>
-          <Button
-            variant={mobileTab === "hints" ? "secondary" : "ghost"}
-            size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
-            onClick={() => setMobileTab("hints")}
-          >
-            <Lightbulb className="h-3.5 w-3.5 text-amber-400" /> Hints
-          </Button>
-          <Button
-            variant={mobileTab === "files" ? "secondary" : "ghost"}
-            size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
-            onClick={() => setMobileTab("files")}
-          >
-            <PanelLeft className="h-3.5 w-3.5 text-primary" /> Files
-          </Button>
+            {PLAYGROUND_PRESETS.map((preset) => (
+              <option key={preset.id} value={preset.id}>
+                {preset.title} ({preset.category})
+              </option>
+            ))}
+          </select>
         </div>
+      </div>
 
-        {/* Mobile Single-Pane View (< lg) */}
-        <div className="flex-1 flex flex-col overflow-hidden lg:hidden min-h-[500px]">
-          {mobileTab === "files" && (
-            <div className="flex-1 overflow-y-auto">
-              <PlaygroundFileTree
-                files={files}
-                activeFileId={activeFileId}
-                onSelectFile={(id) => {
-                  setActiveFileId(id);
-                  if (!openTabIds.includes(id)) {
-                    setOpenTabIds((prev) => [...prev, id]);
-                  }
-                  setMobileTab("editor");
-                }}
-                onAddFile={handleAddFile}
-                onDeleteFile={handleDeleteFile}
-                presets={PLAYGROUND_PRESETS}
-                currentPresetId={currentPresetId}
-                onSelectPreset={handleSelectPreset}
-              />
-            </div>
-          )}
+      {/* Main Workspace Layout (Sandpack Editor & Preview) */}
+      <div className="w-full max-w-full overflow-hidden">
+        <PlaygroundEditor
+          files={files}
+          activeFileId={files[0]?.id}
+          onCodeChange={handleCodeChange}
+        />
+      </div>
 
-          {mobileTab === "editor" && (
-            <div className="flex-1 flex flex-col min-h-0">
-              <PlaygroundTabs
-                files={files}
-                openTabIds={openTabIds}
-                activeFileId={activeFileId}
-                onSelectTab={(id) => setActiveFileId(id)}
-                onCloseTab={(id) => {
-                  setOpenTabIds((prev) => prev.filter((t) => t !== id));
-                  if (activeFileId === id && openTabIds.length > 1) {
-                    const remaining = openTabIds.filter((t) => t !== id);
-                    setActiveFileId(remaining[0]);
-                  }
-                }}
-                onNewFileClick={() => handleAddFile(`Component-${files.length + 1}.tsx`)}
-              />
-              <div className="flex-1 min-h-0">
-                {activeFile ? (
-                  <PlaygroundEditor
-                    activeFile={activeFile}
-                    onCodeChange={handleCodeChange}
-                    onFormatCode={handleFormatCode}
-                    onRunCode={handleRun}
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-muted-foreground text-xs p-6">
-                    No open file selected. Select a file in Files tab.
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {mobileTab === "preview" && (
-            <div className="flex-1 flex flex-col bg-background min-h-0">
-              <PlaygroundPreview files={files} onLogCaptured={handleLogCaptured} />
-            </div>
-          )}
-
-          {mobileTab === "console" && (
-            <div className="flex-1 flex flex-col bg-background min-h-0">
-              <PlaygroundConsole logs={consoleLogs} onClearConsole={() => setConsoleLogs([])} />
-            </div>
-          )}
-
-          {mobileTab === "hints" && (
-            <div className="flex-1 flex flex-col bg-background p-4 space-y-4 text-xs overflow-y-auto min-h-0">
-              <div className="flex items-center gap-2 text-amber-400 font-semibold text-sm">
-                <Lightbulb className="h-4 w-4" /> Lab Hints & Key Concepts
-              </div>
-
-              <div className="space-y-2">
-                {activePreset.hints.map((hint, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200/90 leading-relaxed"
-                  >
-                    <strong className="text-amber-400 block mb-1">Hint #{idx + 1}:</strong>
-                    {hint}
-                  </div>
-                ))}
-              </div>
-
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-1.5 text-xs mt-4"
-                onClick={() => setSolutionOpen(true)}
-              >
-                <Sparkles className="h-3.5 w-3.5 text-primary" />
-                View Reference Solution
-              </Button>
-            </div>
-          )}
+      {/* Architectural Hints & Learning Tips */}
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 space-y-2 text-xs w-full max-w-full overflow-hidden">
+        <div className="flex items-center gap-2 font-semibold text-amber-400">
+          <Lightbulb className="h-4 w-4" /> Lab Hints & Key Concepts
         </div>
-
-        {/* Desktop Multi-Column IDE Grid (>= lg) */}
-        <div className="hidden lg:flex flex-1 flex-row overflow-hidden">
-          {/* Sidebar File Explorer */}
-          {showFileTree && (
-            <div className="w-56 shrink-0 border-r border-border/60">
-              <PlaygroundFileTree
-                files={files}
-                activeFileId={activeFileId}
-                onSelectFile={(id) => {
-                  setActiveFileId(id);
-                  if (!openTabIds.includes(id)) {
-                    setOpenTabIds((prev) => [...prev, id]);
-                  }
-                }}
-                onAddFile={handleAddFile}
-                onDeleteFile={handleDeleteFile}
-                presets={PLAYGROUND_PRESETS}
-                currentPresetId={currentPresetId}
-                onSelectPreset={handleSelectPreset}
-              />
-            </div>
-          )}
-
-          {/* Center Editor Column */}
-          <div className="flex-1 flex flex-col min-w-0 border-r border-border/60 min-h-[350px]">
-            {/* Tabs Bar */}
-            <PlaygroundTabs
-              files={files}
-              openTabIds={openTabIds}
-              activeFileId={activeFileId}
-              onSelectTab={(id) => setActiveFileId(id)}
-              onCloseTab={(id) => {
-                setOpenTabIds((prev) => prev.filter((t) => t !== id));
-                if (activeFileId === id && openTabIds.length > 1) {
-                  const remaining = openTabIds.filter((t) => t !== id);
-                  setActiveFileId(remaining[0]);
-                }
-              }}
-              onNewFileClick={() => handleAddFile(`Component-${files.length + 1}.tsx`)}
-            />
-
-            {/* Monaco Editor */}
-            <div className="flex-1 min-h-0">
-              {activeFile ? (
-                <PlaygroundEditor
-                  activeFile={activeFile}
-                  onCodeChange={handleCodeChange}
-                  onFormatCode={handleFormatCode}
-                  onRunCode={handleRun}
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-muted-foreground text-xs p-6">
-                  No open file selected. Click a file in Explorer.
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Pane Column (Preview / Console / Hints) */}
-          <div className="w-[420px] shrink-0 flex flex-col bg-background min-h-[300px]">
-            {activePaneTab === "preview" && (
-              <PlaygroundPreview files={files} onLogCaptured={handleLogCaptured} />
-            )}
-
-            {activePaneTab === "console" && (
-              <PlaygroundConsole logs={consoleLogs} onClearConsole={() => setConsoleLogs([])} />
-            )}
-
-            {activePaneTab === "hints" && (
-              <div className="p-4 space-y-4 text-xs overflow-y-auto">
-                <div className="flex items-center gap-2 text-amber-400 font-semibold text-sm">
-                  <Lightbulb className="h-4 w-4" /> Lab Hints & Key Concepts
-                </div>
-
-                <div className="space-y-2">
-                  {activePreset.hints.map((hint, idx) => (
-                    <div
-                      key={idx}
-                      className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200/90 leading-relaxed"
-                    >
-                      <strong className="text-amber-400 block mb-1">Hint #{idx + 1}:</strong>
-                      {hint}
-                    </div>
-                  ))}
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full gap-1.5 text-xs mt-4"
-                  onClick={() => setSolutionOpen(true)}
-                >
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
-                  View Reference Solution
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
+        <ul className="list-disc pl-5 space-y-1 text-amber-200/90 leading-relaxed">
+          {activePreset.hints.map((hint, idx) => (
+            <li key={idx}>{hint}</li>
+          ))}
+        </ul>
       </div>
 
       {/* Compare Solution Modal */}
@@ -601,13 +212,17 @@ export function Playground() {
         onApplySolution={handleApplySolution}
       />
 
-      {/* AI Code Reviewer Modal (Explain / AI Code Review) */}
+      {/* AI Code Reviewer Modal */}
       <PlaygroundCodeReviewerModal
         open={codeReviewOpen}
         onOpenChange={setCodeReviewOpen}
         files={files}
         activeFile={activeFile}
-        onApplyRefactoredCode={(newCode) => handleCodeChange(newCode)}
+        onApplyRefactoredCode={(newCode) => {
+          if (activeFile) {
+            handleCodeChange(activeFile.name, newCode);
+          }
+        }}
       />
     </div>
   );

@@ -10,16 +10,9 @@
     "estimatedHours": 2.8,
     "progress": 0.68,
     "color": "chart-1",
-    "tags": [
-      "HTML",
-      "CSS",
-      "A11y"
-    ],
+    "tags": ["HTML", "CSS", "A11y"],
     "categoryId": "core-web",
-    "pathIds": [
-      "fullstack-engineer",
-      "css-architect"
-    ],
+    "pathIds": ["fullstack-engineer", "css-architect"],
     "order": 1,
     "prerequisites": []
   },
@@ -34,20 +27,11 @@
     "estimatedHours": 4,
     "progress": 0.42,
     "color": "chart-5",
-    "tags": [
-      "JS",
-      "ES2025"
-    ],
+    "tags": ["JS", "ES2025"],
     "categoryId": "language-mastery",
-    "pathIds": [
-      "fullstack-engineer",
-      "performance-engineer",
-      "interview-sprint"
-    ],
+    "pathIds": ["fullstack-engineer", "performance-engineer", "interview-sprint"],
     "order": 2,
-    "prerequisites": [
-      "html-css-foundations"
-    ]
+    "prerequisites": ["html-css-foundations"]
   },
   {
     "id": "typescript-mastery",
@@ -60,18 +44,11 @@
     "estimatedHours": 2.3,
     "progress": 0.25,
     "color": "chart-2",
-    "tags": [
-      "TS"
-    ],
+    "tags": ["TS"],
     "categoryId": "language-mastery",
-    "pathIds": [
-      "fullstack-engineer",
-      "react-specialist"
-    ],
+    "pathIds": ["fullstack-engineer", "react-specialist"],
     "order": 3,
-    "prerequisites": [
-      "javascript-deep-dive"
-    ]
+    "prerequisites": ["javascript-deep-dive"]
   },
   {
     "id": "react-professional",
@@ -84,19 +61,11 @@
     "estimatedHours": 2.3,
     "progress": 0.15,
     "color": "chart-4",
-    "tags": [
-      "React",
-      "RSC"
-    ],
+    "tags": ["React", "RSC"],
     "categoryId": "framework-mastery",
-    "pathIds": [
-      "fullstack-engineer",
-      "react-specialist"
-    ],
+    "pathIds": ["fullstack-engineer", "react-specialist"],
     "order": 4,
-    "prerequisites": [
-      "typescript-mastery"
-    ]
+    "prerequisites": ["typescript-mastery"]
   },
   {
     "id": "frontend-architecture",
@@ -109,19 +78,11 @@
     "estimatedHours": 1.2,
     "progress": 0.08,
     "color": "chart-3",
-    "tags": [
-      "Architecture"
-    ],
+    "tags": ["Architecture"],
     "categoryId": "architecture",
-    "pathIds": [
-      "react-specialist",
-      "performance-engineer",
-      "interview-sprint"
-    ],
+    "pathIds": ["react-specialist", "performance-engineer", "interview-sprint"],
     "order": 5,
-    "prerequisites": [
-      "react-professional"
-    ]
+    "prerequisites": ["react-professional"]
   },
   {
     "id": "performance-and-a11y",
@@ -134,19 +95,11 @@
     "estimatedHours": 1,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "Perf",
-      "A11y"
-    ],
+    "tags": ["Perf", "A11y"],
     "categoryId": "quality-perf",
-    "pathIds": [
-      "css-architect",
-      "performance-engineer"
-    ],
+    "pathIds": ["css-architect", "performance-engineer"],
     "order": 6,
-    "prerequisites": [
-      "frontend-architecture"
-    ]
+    "prerequisites": ["frontend-architecture"]
   },
   {
     "id": "testing-and-tooling",
@@ -159,17 +112,11 @@
     "estimatedHours": 1,
     "progress": 0,
     "color": "chart-2",
-    "tags": [
-      "Testing"
-    ],
+    "tags": ["Testing"],
     "categoryId": "quality-perf",
-    "pathIds": [
-      "fullstack-engineer"
-    ],
+    "pathIds": ["fullstack-engineer"],
     "order": 7,
-    "prerequisites": [
-      "performance-and-a11y"
-    ]
+    "prerequisites": ["performance-and-a11y"]
   },
   {
     "id": "interview-prep",
@@ -182,16 +129,10 @@
     "estimatedHours": 1.5,
     "progress": 0,
     "color": "chart-4",
-    "tags": [
-      "Interview"
-    ],
+    "tags": ["Interview"],
     "categoryId": "career-interview",
-    "pathIds": [
-      "interview-sprint"
-    ],
+    "pathIds": ["interview-sprint"],
     "order": 8,
-    "prerequisites": [
-      "testing-and-tooling"
-    ]
+    "prerequisites": ["testing-and-tooling"]
   }
 ]

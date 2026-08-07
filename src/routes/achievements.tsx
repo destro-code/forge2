@@ -3,7 +3,8 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { useAchievements } from "@/lib/hooks/use-content";
+import { useAchievements, useLessons } from "@/lib/hooks/use-content";
+import { useProgress } from "@/lib/hooks/use-progress";
 import { Trophy, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +31,55 @@ const tierClasses: Record<string, string> = {
 };
 
 function Achievements() {
-  const items = useAchievements();
+  const rawItems = useAchievements();
+  const progress = useProgress();
+  const lessons = useLessons();
+
+  const items = rawItems.map((a) => {
+    if (!a.condition) {
+      return a;
+    }
+
+    let current = 0;
+    let target = a.condition.threshold || 1;
+
+    switch (a.condition.type) {
+      case "lessonsCompleted":
+        current = (progress.lessonsCompleted || []).length;
+        break;
+      case "streakDays":
+        current = progress.streakDays || 0;
+        break;
+      case "solvedBugs":
+        current = (progress.solvedBugs || []).length;
+        break;
+      case "interviewQuestions":
+        current = (progress.interviewResults || []).reduce(
+          (acc, r) => acc + (r.questionsAnswered || 1),
+          0,
+        );
+        break;
+      case "moduleLessonsCompleted": {
+        const moduleLessons = lessons.filter((l) => l.moduleId === a.condition?.moduleId);
+        target = moduleLessons.length || 1;
+        current = moduleLessons.filter((l) =>
+          (progress.lessonsCompleted || []).includes(l.id),
+        ).length;
+        break;
+      }
+    }
+
+    const isUnlocked = current >= target;
+    const progressRatio = target > 0 ? Math.min(1, Math.max(0, current / target)) : 0;
+
+    return {
+      ...a,
+      unlocked: isUnlocked,
+      progress: progressRatio,
+      unlockedAt: isUnlocked ? a.unlockedAt || "Unlocked" : undefined,
+    };
+  });
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -72,9 +121,9 @@ function Achievements() {
                   </div>
                 </div>
               )}
-              {a.unlocked && a.unlockedAt && (
+              {a.unlocked && (
                 <div className="mt-3 text-[10px] text-muted-foreground">
-                  Unlocked · {a.unlockedAt}
+                  Unlocked{a.unlockedAt ? ` · ${a.unlockedAt}` : ""}
                 </div>
               )}
             </CardContent>

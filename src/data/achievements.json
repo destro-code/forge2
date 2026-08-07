@@ -6,7 +6,11 @@
     "icon": "Sparkles",
     "tier": "bronze",
     "unlocked": true,
-    "unlockedAt": "2026-07-12"
+    "unlockedAt": "2026-07-12",
+    "condition": {
+      "type": "lessonsCompleted",
+      "threshold": 1
+    }
   },
   {
     "id": "week-streak",
@@ -15,7 +19,11 @@
     "icon": "Flame",
     "tier": "silver",
     "unlocked": true,
-    "unlockedAt": "2026-07-20"
+    "unlockedAt": "2026-07-20",
+    "condition": {
+      "type": "streakDays",
+      "threshold": 7
+    }
   },
   {
     "id": "hundred-lessons",
@@ -24,7 +32,11 @@
     "icon": "Trophy",
     "tier": "gold",
     "unlocked": false,
-    "progress": 0.42
+    "progress": 0,
+    "condition": {
+      "type": "lessonsCompleted",
+      "threshold": 100
+    }
   },
   {
     "id": "interview-ready",
@@ -33,7 +45,11 @@
     "icon": "Briefcase",
     "tier": "gold",
     "unlocked": false,
-    "progress": 0.15
+    "progress": 0,
+    "condition": {
+      "type": "interviewQuestions",
+      "threshold": 20
+    }
   },
   {
     "id": "debug-master",
@@ -42,7 +58,11 @@
     "icon": "Bug",
     "tier": "silver",
     "unlocked": false,
-    "progress": 0.08
+    "progress": 0,
+    "condition": {
+      "type": "solvedBugs",
+      "threshold": 25
+    }
   },
   {
     "id": "architect",
@@ -51,6 +71,10 @@
     "icon": "Blocks",
     "tier": "platinum",
     "unlocked": false,
-    "progress": 0.05
+    "progress": 0,
+    "condition": {
+      "type": "moduleLessonsCompleted",
+      "moduleId": "frontend-architecture"
+    }
   }
 ]

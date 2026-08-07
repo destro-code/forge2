@@ -25,11 +25,7 @@
     "estimatedHours": 62,
     "icon": "Atom",
     "color": "chart-4",
-    "moduleIds": [
-      "typescript-mastery",
-      "react-professional",
-      "frontend-architecture"
-    ],
+    "moduleIds": ["typescript-mastery", "react-professional", "frontend-architecture"],
     "difficulty": "Advanced",
     "featured": true,
     "order": 2
@@ -42,10 +38,7 @@
     "estimatedHours": 38,
     "icon": "LayoutTemplate",
     "color": "chart-2",
-    "moduleIds": [
-      "html-css-foundations",
-      "performance-and-a11y"
-    ],
+    "moduleIds": ["html-css-foundations", "performance-and-a11y"],
     "difficulty": "Beginner",
     "featured": false,
     "order": 3
@@ -58,11 +51,7 @@
     "estimatedHours": 58,
     "icon": "Gauge",
     "color": "chart-5",
-    "moduleIds": [
-      "javascript-deep-dive",
-      "performance-and-a11y",
-      "frontend-architecture"
-    ],
+    "moduleIds": ["javascript-deep-dive", "performance-and-a11y", "frontend-architecture"],
     "difficulty": "Advanced",
     "featured": false,
     "order": 4
@@ -75,11 +64,7 @@
     "estimatedHours": 46,
     "icon": "Briefcase",
     "color": "chart-3",
-    "moduleIds": [
-      "javascript-deep-dive",
-      "frontend-architecture",
-      "interview-prep"
-    ],
+    "moduleIds": ["javascript-deep-dive", "frontend-architecture", "interview-prep"],
     "difficulty": "Advanced",
     "featured": true,
     "order": 5

@@ -50,8 +50,9 @@ type Item = { title: string; to: string; icon: React.ComponentType<{ className?:
 const learn: Item[] = [
   { title: "Dashboard", to: "/", icon: LayoutDashboard },
   { title: "Academy Roadmap", to: "/learn", icon: GraduationCap },
-  { title: "Curriculum Modules", to: "/learn/modules", icon: Layers },
-  { title: "Chapter Topics", to: "/learn/topics", icon: FolderTree },
+  { title: "Modules", to: "/learn/modules", icon: Layers },
+  { title: "Topics", to: "/learn/topics", icon: FolderTree },
+  { title: "Paths", to: "/learn/paths", icon: Compass },
   { title: "Lesson Catalog", to: "/learn/lessons", icon: BookOpen },
 ];
 const practice: Item[] = [

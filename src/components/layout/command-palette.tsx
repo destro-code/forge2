@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/command";
 import { useCommandPalette } from "@/lib/hooks/use-command-palette";
 import { useTheme } from "@/lib/hooks/use-theme";
+import { useLessons, useTopics, useProjects } from "@/lib/hooks/use-content";
 import {
   LayoutDashboard,
   GraduationCap,
@@ -26,12 +27,16 @@ import {
   Moon,
   BookOpen,
   Library,
+  Layers,
 } from "lucide-react";
 
 export function CommandPalette() {
   const { open, setOpen, toggle } = useCommandPalette();
   const navigate = useNavigate();
   const { toggle: toggleTheme, theme } = useTheme();
+  const lessons = useLessons();
+  const topics = useTopics();
+  const projects = useProjects();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -103,6 +108,42 @@ export function CommandPalette() {
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </CommandItem>
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Content">
+          {lessons.map((lesson) => (
+            <CommandItem
+              key={lesson.id}
+              value={`lesson ${lesson.title} ${lesson.id}`}
+              onSelect={() => go(`/lesson/${lesson.id}`)}
+            >
+              <BookOpen className="mr-2 h-4 w-4 text-primary" />
+              <span className="flex-1 truncate">{lesson.title}</span>
+              <span className="ml-2 text-xs text-muted-foreground">Lesson</span>
+            </CommandItem>
+          ))}
+          {topics.map((topic) => (
+            <CommandItem
+              key={topic.id}
+              value={`topic ${topic.title} ${topic.id}`}
+              onSelect={() => go(`/learn/topics/${topic.id}`)}
+            >
+              <Layers className="mr-2 h-4 w-4 text-primary" />
+              <span className="flex-1 truncate">{topic.title}</span>
+              <span className="ml-2 text-xs text-muted-foreground">Topic</span>
+            </CommandItem>
+          ))}
+          {projects.map((project) => (
+            <CommandItem
+              key={project.id}
+              value={`project ${project.title} ${project.id}`}
+              onSelect={() => go(`/projects/${project.id}`)}
+            >
+              <FolderKanban className="mr-2 h-4 w-4 text-primary" />
+              <span className="flex-1 truncate">{project.title}</span>
+              <span className="ml-2 text-xs text-muted-foreground">Project</span>
+            </CommandItem>
+          ))}
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Actions">

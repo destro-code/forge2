@@ -8,13 +8,7 @@
     "category": "Design Systems",
     "difficulty": "Intermediate",
     "estimatedHours": 20,
-    "tags": [
-      "React",
-      "TypeScript",
-      "Tailwind CSS",
-      "Accessibility",
-      "Design Tokens"
-    ],
+    "tags": ["React", "TypeScript", "Tailwind CSS", "Accessibility", "Design Tokens"],
     "milestones": [
       {
         "id": "m1",
@@ -27,9 +21,7 @@
             "milestoneId": "m1",
             "title": "Define CSS custom properties for light & dark color modes",
             "description": "Set up standard CSS variables in global stylesheet for primary, background, surface, muted, and destructive tokens.",
-            "hints": [
-              "Use HSL or OKLCH values for smoother color contrast transitions."
-            ],
+            "hints": ["Use HSL or OKLCH values for smoother color contrast transitions."],
             "estimatedMinutes": 45
           },
           {
@@ -37,9 +29,7 @@
             "milestoneId": "m1",
             "title": "Create a type-safe token utility with class-variance-authority (cva)",
             "description": "Implement variant resolution helpers for Button, Badge, and Card components.",
-            "hints": [
-              "Use cva() to define intent, size, and state variants cleanly."
-            ],
+            "hints": ["Use cva() to define intent, size, and state variants cleanly."],
             "estimatedMinutes": 60
           },
           {
@@ -65,9 +55,7 @@
             "milestoneId": "m2",
             "title": "Build Button with React.forwardRef and loading state",
             "description": "Ensure native button props, accessible aria-disabled, and smooth spinner replacement.",
-            "hints": [
-              "Use React.ComponentPropsWithoutRef<'button'> for full prop pass-through."
-            ],
+            "hints": ["Use React.ComponentPropsWithoutRef<'button'> for full prop pass-through."],
             "estimatedMinutes": 60
           },
           {
@@ -75,9 +63,7 @@
             "milestoneId": "m2",
             "title": "Build Input component with prefix/suffix slot support",
             "description": "Allow icons or prefix buttons inside text input elements without layout shifts.",
-            "hints": [
-              "Wrap the native input in a relative container for absolute icon overlays."
-            ],
+            "hints": ["Wrap the native input in a relative container for absolute icon overlays."],
             "estimatedMinutes": 60
           },
           {
@@ -85,9 +71,7 @@
             "milestoneId": "m2",
             "title": "Build Badge & Avatar primitives",
             "description": "Support online/offline indicators, fallback initials, and image error handling.",
-            "hints": [
-              "Handle broken image URL fallbacks using onError event state."
-            ],
+            "hints": ["Handle broken image URL fallbacks using onError event state."],
             "estimatedMinutes": 120
           }
         ]
@@ -103,9 +87,7 @@
             "milestoneId": "m3",
             "title": "Implement Dialog compound pattern (Dialog.Trigger, Dialog.Content)",
             "description": "Render modal backdrop in a React Portal and handle Escape key dismissal.",
-            "hints": [
-              "Use ReactDOM.createPortal to escape parent DOM overflow bounds."
-            ],
+            "hints": ["Use ReactDOM.createPortal to escape parent DOM overflow bounds."],
             "estimatedMinutes": 120
           },
           {
@@ -113,9 +95,7 @@
             "milestoneId": "m3",
             "title": "Build keyboard-accessible Dropdown Menu",
             "description": "Support ArrowUp/ArrowDown focus navigation and enter/space selection.",
-            "hints": [
-              "Maintain an activeFocusedIndex state inside menu context."
-            ],
+            "hints": ["Maintain an activeFocusedIndex state inside menu context."],
             "estimatedMinutes": 120
           },
           {
@@ -141,9 +121,7 @@
             "milestoneId": "m4",
             "title": "Build interactive prop control inspector",
             "description": "Allow developers to toggle variants, sizes, and disable states dynamically.",
-            "hints": [
-              "Map component props directly to interactive control knobs."
-            ],
+            "hints": ["Map component props directly to interactive control knobs."],
             "estimatedMinutes": 150
           },
           {
@@ -151,9 +129,7 @@
             "milestoneId": "m4",
             "title": "Configure tsup/esbuild package export pipeline",
             "description": "Generate both CJS and ESM build bundles with automatically extracted TypeScript declaration files.",
-            "hints": [
-              "Set external: ['react', 'react-dom'] in tsup config."
-            ],
+            "hints": ["Set external: ['react', 'react-dom'] in tsup config."],
             "estimatedMinutes": 150
           }
         ]
@@ -231,13 +207,7 @@
     "category": "State Management",
     "difficulty": "Advanced",
     "estimatedHours": 30,
-    "tags": [
-      "React",
-      "DnD",
-      "State Management",
-      "Optimistic UI",
-      "TypeScript"
-    ],
+    "tags": ["React", "DnD", "State Management", "Optimistic UI", "TypeScript"],
     "milestones": [
       {
         "id": "m1",
@@ -250,9 +220,7 @@
             "milestoneId": "m1",
             "title": "Define normalized state schema for Board (columnsById, cardsById)",
             "description": "Structure card IDs in column arrays to allow O(1) lookups and swift reordering.",
-            "hints": [
-              "Avoid nested arrays inside cards to keep drag reorders immutable."
-            ],
+            "hints": ["Avoid nested arrays inside cards to keep drag reorders immutable."],
             "estimatedMinutes": 60
           },
           {
@@ -260,9 +228,7 @@
             "milestoneId": "m1",
             "title": "Build responsive column grid layout",
             "description": "Allow horizontal scrolling on smaller screens with sticky column headers.",
-            "hints": [
-              "Use flex-shrink-0 for column containers in horizontal scroll views."
-            ],
+            "hints": ["Use flex-shrink-0 for column containers in horizontal scroll views."],
             "estimatedMinutes": 90
           },
           {
@@ -270,9 +236,7 @@
             "milestoneId": "m1",
             "title": "Implement task creation modal & inline title editing",
             "description": "Allow rapid inline task insertion directly at the top or bottom of any column.",
-            "hints": [
-              "Auto-focus the inline input element on creation."
-            ],
+            "hints": ["Auto-focus the inline input element on creation."],
             "estimatedMinutes": 90
           }
         ]
@@ -298,9 +262,7 @@
             "milestoneId": "m2",
             "title": "Implement cross-column card movement algorithm",
             "description": "Update source column card array and target column card array atomically.",
-            "hints": [
-              "Ensure array splice operations produce fresh immutable object references."
-            ],
+            "hints": ["Ensure array splice operations produce fresh immutable object references."],
             "estimatedMinutes": 120
           },
           {
@@ -326,9 +288,7 @@
             "milestoneId": "m3",
             "title": "Implement optimistic state update hook with rollback state snapshot",
             "description": "Instantly render new card order before triggering async network request.",
-            "hints": [
-              "Save previous state in a ref before executing optimistic dispatch."
-            ],
+            "hints": ["Save previous state in a ref before executing optimistic dispatch."],
             "estimatedMinutes": 150
           },
           {
@@ -336,9 +296,7 @@
             "milestoneId": "m3",
             "title": "Build offline mutation queue with window.navigator.onLine recovery",
             "description": "Store pending moves in LocalStorage when offline and replay them when network returns.",
-            "hints": [
-              "Listen to window.addEventListener('online', syncQueue)."
-            ],
+            "hints": ["Listen to window.addEventListener('online', syncQueue)."],
             "estimatedMinutes": 150
           }
         ]
@@ -400,13 +358,7 @@
     "category": "Full-stack",
     "difficulty": "Beginner",
     "estimatedHours": 12,
-    "tags": [
-      "React",
-      "MDX",
-      "Tailwind CSS",
-      "SEO",
-      "Performance"
-    ],
+    "tags": ["React", "MDX", "Tailwind CSS", "SEO", "Performance"],
     "milestones": [
       {
         "id": "m1",
@@ -419,9 +371,7 @@
             "milestoneId": "m1",
             "title": "Build semantic header with sticky scroll blur effect",
             "description": "Add backdrop-blur-md background to header on scroll.",
-            "hints": [
-              "Use sticky top-0 z-50 with backdrop-blur-md."
-            ],
+            "hints": ["Use sticky top-0 z-50 with backdrop-blur-md."],
             "estimatedMinutes": 45
           },
           {
@@ -429,9 +379,7 @@
             "milestoneId": "m1",
             "title": "Craft Hero layout with animated availability badge",
             "description": "Highlight current role, bio, and status indicator dot (e.g. 'Available for hire').",
-            "hints": [
-              "Use relative flex ping animation for pulsing dot."
-            ],
+            "hints": ["Use relative flex ping animation for pulsing dot."],
             "estimatedMinutes": 75
           }
         ]
@@ -447,9 +395,7 @@
             "milestoneId": "m2",
             "title": "Build responsive Bento Grid project card layout",
             "description": "Feature primary showcase projects in span-2 cards on desktop views.",
-            "hints": [
-              "Use grid-cols-1 md:grid-cols-3 gap-4."
-            ],
+            "hints": ["Use grid-cols-1 md:grid-cols-3 gap-4."],
             "estimatedMinutes": 90
           },
           {
@@ -457,9 +403,7 @@
             "milestoneId": "m2",
             "title": "Add project filter tabs (All, Full-stack, Mobile, Open Source)",
             "description": "Animate active tab pill indicator with layoutId.",
-            "hints": [
-              "Framer motion layoutId provides fluid tab sliding."
-            ],
+            "hints": ["Framer motion layoutId provides fluid tab sliding."],
             "estimatedMinutes": 90
           }
         ]
@@ -475,9 +419,7 @@
             "milestoneId": "m3",
             "title": "Implement estimated reading time calculation utility",
             "description": "Calculate reading minutes based on 200 words-per-minute average.",
-            "hints": [
-              "Strip HTML tags before splitting string by whitespace."
-            ],
+            "hints": ["Strip HTML tags before splitting string by whitespace."],
             "estimatedMinutes": 60
           },
           {
@@ -485,9 +427,7 @@
             "milestoneId": "m3",
             "title": "Integrate code syntax highlighter with copy button",
             "description": "Provide a copy-to-clipboard button on code blocks with brief checkmark feedback.",
-            "hints": [
-              "Use navigator.clipboard.writeText with setTimeout fallback."
-            ],
+            "hints": ["Use navigator.clipboard.writeText with setTimeout fallback."],
             "estimatedMinutes": 180
           }
         ]
@@ -533,12 +473,7 @@
     "category": "State Management",
     "difficulty": "Intermediate",
     "estimatedHours": 18,
-    "tags": [
-      "React",
-      "Form Validation",
-      "State Machine",
-      "E-Commerce"
-    ],
+    "tags": ["React", "Form Validation", "State Machine", "E-Commerce"],
     "milestones": [
       {
         "id": "m1",
@@ -551,9 +486,7 @@
             "milestoneId": "m1",
             "title": "Create step progression bar with active & completed indicators",
             "description": "Visual breadcrumb bar allowing users to click back to previously completed steps.",
-            "hints": [
-              "Prevent forward jump unless previous steps are validated."
-            ],
+            "hints": ["Prevent forward jump unless previous steps are validated."],
             "estimatedMinutes": 60
           },
           {
@@ -561,9 +494,7 @@
             "milestoneId": "m1",
             "title": "Build Shipping Address form with auto-complete & validation",
             "description": "Validate email, ZIP code pattern, and address line items in real time.",
-            "hints": [
-              "Use Zod or custom regex validators for postal code formats."
-            ],
+            "hints": ["Use Zod or custom regex validators for postal code formats."],
             "estimatedMinutes": 120
           }
         ]
@@ -579,9 +510,7 @@
             "milestoneId": "m2",
             "title": "Implement promo code validator with loading & error states",
             "description": "Support percentage discount (e.g., 'FORGE20' -> 20% off) and fixed amount coupons.",
-            "hints": [
-              "Display clear savings breakdown line item in order summary."
-            ],
+            "hints": ["Display clear savings breakdown line item in order summary."],
             "estimatedMinutes": 90
           },
           {
@@ -589,9 +518,7 @@
             "milestoneId": "m2",
             "title": "Build responsive order breakdown drawer for mobile views",
             "description": "Provide sticky collapsed summary banner at bottom of mobile viewports.",
-            "hints": [
-              "Collapsible accordion drawer keeps mobile checkout clean."
-            ],
+            "hints": ["Collapsible accordion drawer keeps mobile checkout clean."],
             "estimatedMinutes": 90
           }
         ]
@@ -631,13 +558,7 @@
     "category": "Full-stack",
     "difficulty": "Advanced",
     "estimatedHours": 25,
-    "tags": [
-      "React",
-      "AI",
-      "Streaming",
-      "TypeScript",
-      "Markdown"
-    ],
+    "tags": ["React", "AI", "Streaming", "TypeScript", "Markdown"],
     "milestones": [
       {
         "id": "m1",
@@ -650,9 +571,7 @@
             "milestoneId": "m1",
             "title": "Implement auto-scroll to bottom with user manual override detection",
             "description": "Pause auto-scroll if user scrolls up to read prior messages during stream.",
-            "hints": [
-              "Compare scrollTop + clientHeight against scrollHeight."
-            ],
+            "hints": ["Compare scrollTop + clientHeight against scrollHeight."],
             "estimatedMinutes": 120
           },
           {
@@ -660,9 +579,7 @@
             "milestoneId": "m1",
             "title": "Render Markdown message content with code copy button",
             "description": "Support bold, lists, inline code, and syntax highlighted blocks.",
-            "hints": [
-              "Use react-markdown inside styled container wrappers."
-            ],
+            "hints": ["Use react-markdown inside styled container wrappers."],
             "estimatedMinutes": 120
           }
         ]
@@ -678,9 +595,7 @@
             "milestoneId": "m2",
             "title": "Build collateral sidebar with conversation search & filter",
             "description": "Organize chat history by date groupings (Today, Yesterday, Last 7 Days).",
-            "hints": [
-              "Group array of threads by date diff offset."
-            ],
+            "hints": ["Group array of threads by date diff offset."],
             "estimatedMinutes": 90
           },
           {
@@ -688,9 +603,7 @@
             "milestoneId": "m2",
             "title": "Add Model selector dropdown (Gemini Flash, Gemini Pro, Custom)",
             "description": "Allow switching model presets per conversation thread.",
-            "hints": [
-              "Store selectedModelId in thread metadata."
-            ],
+            "hints": ["Store selectedModelId in thread metadata."],
             "estimatedMinutes": 90
           }
         ]

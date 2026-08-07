@@ -58,12 +58,7 @@
       {
         "id": "q-html-1",
         "question": "Which HTML element is most appropriate for a clickable action trigger?",
-        "options": [
-          "<div class=\"btn\">",
-          "<button>",
-          "<span>",
-          "<a> without href"
-        ],
+        "options": ["<div class=\"btn\">", "<button>", "<span>", "<a> without href"],
         "correctIndex": 1,
         "explanation": "<button> inherently supports focus rings and Space/Enter key presses."
       }
@@ -97,9 +92,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "html-foundations-lesson"
-    ],
+    "prerequisites": ["html-foundations-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -177,9 +170,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "css-box-model-lesson"
-    ],
+    "prerequisites": ["css-box-model-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -206,21 +197,14 @@
       {
         "id": "q-flex-1",
         "question": "Which property aligns flex items along the main axis?",
-        "options": [
-          "align-items",
-          "justify-content",
-          "align-content",
-          "flex-wrap"
-        ],
+        "options": ["align-items", "justify-content", "align-content", "flex-wrap"],
         "correctIndex": 1,
         "explanation": "justify-content controls main axis alignment."
       }
     ],
     "summary": "Flexbox gives 1D control over layout alignment and space distribution.",
     "resources": [],
-    "interviewQuestions": [
-      "When should you choose Flexbox over CSS Grid?"
-    ],
+    "interviewQuestions": ["When should you choose Flexbox over CSS Grid?"],
     "previousLessonId": "css-box-model-lesson",
     "nextLessonId": "grid-tracks-areas"
   },
@@ -239,9 +223,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "flexbox-fundamentals"
-    ],
+    "prerequisites": ["flexbox-fundamentals"],
     "sections": [
       {
         "type": "heading",
@@ -280,9 +262,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "grid-tracks-areas"
-    ],
+    "prerequisites": ["grid-tracks-areas"],
     "sections": [
       {
         "type": "heading",
@@ -310,12 +290,7 @@
       {
         "id": "q-js-1",
         "question": "What does typeof null return in JavaScript?",
-        "options": [
-          "\"null\"",
-          "\"undefined\"",
-          "\"object\"",
-          "\"boolean\""
-        ],
+        "options": ["\"null\"", "\"undefined\"", "\"object\"", "\"boolean\""],
         "correctIndex": 2,
         "explanation": "typeof null returning \"object\" is a legacy JS design bug preserved for backwards compatibility."
       }
@@ -344,9 +319,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "js-fundamentals-lesson"
-    ],
+    "prerequisites": ["js-fundamentals-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -366,9 +339,7 @@
     "quiz": [],
     "summary": "Block scoping with let/const prevents variable leaks and enforces disciplined declaration timing.",
     "resources": [],
-    "interviewQuestions": [
-      "What is the Temporal Dead Zone in JavaScript?"
-    ],
+    "interviewQuestions": ["What is the Temporal Dead Zone in JavaScript?"],
     "previousLessonId": "js-fundamentals-lesson",
     "nextLessonId": "closures-intro"
   },
@@ -387,9 +358,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "scope-hoisting-lesson"
-    ],
+    "prerequisites": ["scope-hoisting-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -428,9 +397,7 @@
     ],
     "summary": "Closures pair a function with the environment where it was declared.",
     "resources": [],
-    "interviewQuestions": [
-      "Explain closures to a junior engineer using an example."
-    ],
+    "interviewQuestions": ["Explain closures to a junior engineer using an example."],
     "previousLessonId": "scope-hoisting-lesson",
     "nextLessonId": "promises-async-lesson"
   },
@@ -449,9 +416,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "closures-intro"
-    ],
+    "prerequisites": ["closures-intro"],
     "sections": [
       {
         "type": "heading",
@@ -471,9 +436,7 @@
     "quiz": [],
     "summary": "Promises replace callback hell with structured async task composition.",
     "resources": [],
-    "interviewQuestions": [
-      "How does async/await compare to raw Promises under the hood?"
-    ],
+    "interviewQuestions": ["How does async/await compare to raw Promises under the hood?"],
     "previousLessonId": "closures-intro",
     "nextLessonId": "event-loop-microtasks"
   },
@@ -492,9 +455,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "promises-async-lesson"
-    ],
+    "prerequisites": ["promises-async-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -528,9 +489,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "event-loop-microtasks"
-    ],
+    "prerequisites": ["event-loop-microtasks"],
     "sections": [
       {
         "type": "heading",
@@ -556,9 +515,7 @@
     "quiz": [],
     "summary": "TypeScript adds compile-time type safety over JavaScript runtime values.",
     "resources": [],
-    "interviewQuestions": [
-      "When should you use an interface vs a type alias in TypeScript?"
-    ],
+    "interviewQuestions": ["When should you use an interface vs a type alias in TypeScript?"],
     "previousLessonId": "event-loop-microtasks",
     "nextLessonId": "ts-unions-narrowing-lesson"
   },
@@ -577,9 +534,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "ts-types-interfaces-lesson"
-    ],
+    "prerequisites": ["ts-types-interfaces-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -613,9 +568,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "ts-unions-narrowing-lesson"
-    ],
+    "prerequisites": ["ts-unions-narrowing-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -649,9 +602,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "generics-foundations"
-    ],
+    "prerequisites": ["generics-foundations"],
     "sections": [
       {
         "type": "heading",
@@ -691,9 +642,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "react-jsx-components-lesson"
-    ],
+    "prerequisites": ["react-jsx-components-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -727,9 +676,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "react-state-props-lesson"
-    ],
+    "prerequisites": ["react-state-props-lesson"],
     "sections": [
       {
         "type": "heading",
@@ -768,9 +715,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "useeffect-mental-model"
-    ],
+    "prerequisites": ["useeffect-mental-model"],
     "sections": [
       {
         "type": "heading",
@@ -804,9 +749,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "rendering-strategies-deep-dive"
-    ],
+    "prerequisites": ["rendering-strategies-deep-dive"],
     "sections": [
       {
         "type": "heading",
@@ -840,9 +783,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "core-web-vitals-mastery"
-    ],
+    "prerequisites": ["core-web-vitals-mastery"],
     "sections": [
       {
         "type": "heading",
@@ -876,9 +817,7 @@
       "Apply code patterns in hands-on exercises",
       "Identify common pitfalls and interview questions"
     ],
-    "prerequisites": [
-      "testing-vitest-tdd"
-    ],
+    "prerequisites": ["testing-vitest-tdd"],
     "sections": [
       {
         "type": "heading",

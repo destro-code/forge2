@@ -18,11 +18,7 @@
     "Grid",
     "Responsive Design"
   ],
-  "out_of_scope": [
-    "AI Mentor redesign",
-    "New routes outside curriculum",
-    "Playground refactor"
-  ],
+  "out_of_scope": ["AI Mentor redesign", "New routes outside curriculum", "Playground refactor"],
   "deliverables": [
     "Structured lesson sequence",
     "Prerequisites",

@@ -1,35 +1,36 @@
 Forge Frontend Engineering Academy
 Curriculum Blueprint v1
-1) What this academy is
-Forge is not a topic catalog. It is a guided training path that takes a learner from zero confidence to interview-ready frontend engineer.
-Every part of the curriculum must do four things:
-Teach a concept clearly.
-Show where the concept is used.
-Make the learner build something with it.
-Verify that the learner can explain it back.
-The experience should feel like a progression, not a playlist.
 
-2) Curriculum design rules
-Core rules
-Every topic must have a prerequisite.
-Every lesson must have one main objective.
-Every mission must end with a visible output.
-Every phase must end with a checkpoint or capstone.
-Every capstone must combine previously learned skills.
-Every interview section must revisit older topics through questions, debugging, and explanation.
-Learning flow
-Each unit should follow this sequence:
-Why this matters → Concept → Example → Guided practice → Independent task → Review → Checkpoint
-Content style
-Use simple language first, then technical language.
-Start with mental models before syntax.
-Teach by construction, not just explanation.
-Introduce common mistakes early.
-Show how to debug, not only how to build.
+1. What this academy is
+   Forge is not a topic catalog. It is a guided training path that takes a learner from zero confidence to interview-ready frontend engineer.
+   Every part of the curriculum must do four things:
+   Teach a concept clearly.
+   Show where the concept is used.
+   Make the learner build something with it.
+   Verify that the learner can explain it back.
+   The experience should feel like a progression, not a playlist.
 
-3) Academy structure
-Forge should be organized into 10 phases:
-Web Foundations
+2. Curriculum design rules
+   Core rules
+   Every topic must have a prerequisite.
+   Every lesson must have one main objective.
+   Every mission must end with a visible output.
+   Every phase must end with a checkpoint or capstone.
+   Every capstone must combine previously learned skills.
+   Every interview section must revisit older topics through questions, debugging, and explanation.
+   Learning flow
+   Each unit should follow this sequence:
+   Why this matters → Concept → Example → Guided practice → Independent task → Review → Checkpoint
+   Content style
+   Use simple language first, then technical language.
+   Start with mental models before syntax.
+   Teach by construction, not just explanation.
+   Introduce common mistakes early.
+   Show how to debug, not only how to build.
+
+3. Academy structure
+   Forge should be organized into 10 phases:
+   Web Foundations
 
 HTML Mastery
 
@@ -823,80 +824,80 @@ Final capstone presentation
 Checkpoint:
 Ready for frontend interviews
 
-4) Assessment structure
-Every mission should include:
-one concept quiz,
-one practical exercise,
-one debug challenge,
-one mini-project or applied task,
-one checkpoint review.
-Every phase should include:
-summary notes,
-flashcards,
-interview questions,
-common mistakes,
-progress tracking,
-a visible completion state.
+4. Assessment structure
+   Every mission should include:
+   one concept quiz,
+   one practical exercise,
+   one debug challenge,
+   one mini-project or applied task,
+   one checkpoint review.
+   Every phase should include:
+   summary notes,
+   flashcards,
+   interview questions,
+   common mistakes,
+   progress tracking,
+   a visible completion state.
 
-5) Progress and mastery model
-Forge should track progress at four levels:
-Lesson completion
-Mission completion
-Phase completion
-Mastery status
-Suggested mastery states:
-Not started
-In progress
-Completed
-Needs review
-Mastered
-Learners should be able to revisit:
-weak lessons,
-quiz misses,
-debug challenges,
-checkpoint reviews,
-interview questions.
+5. Progress and mastery model
+   Forge should track progress at four levels:
+   Lesson completion
+   Mission completion
+   Phase completion
+   Mastery status
+   Suggested mastery states:
+   Not started
+   In progress
+   Completed
+   Needs review
+   Mastered
+   Learners should be able to revisit:
+   weak lessons,
+   quiz misses,
+   debug challenges,
+   checkpoint reviews,
+   interview questions.
 
-6) Content rules for every lesson
-Each lesson should contain:
-Title
-Goal
-Why it matters
-Prerequisites
-Explanation
-Code example
-Visual or mental model
-Common mistakes
-Practice task
-Debug challenge
-Mini-checkpoint
-Review question
-Next step
+6. Content rules for every lesson
+   Each lesson should contain:
+   Title
+   Goal
+   Why it matters
+   Prerequisites
+   Explanation
+   Code example
+   Visual or mental model
+   Common mistakes
+   Practice task
+   Debug challenge
+   Mini-checkpoint
+   Review question
+   Next step
 
-7) Capstone philosophy
-Capstones should not be random projects.
-They should reflect the current phase.
-Examples:
-Phase 2 capstone: Personal profile website
-Phase 4 capstone: Responsive marketing page
-Phase 6 capstone: API-powered app
-Phase 8 capstone: Frontend dashboard
-Phase 10 capstone: Full interview prep project presentation
-Each capstone should test:
-comprehension,
-application,
-debugging,
-presentation,
-confidence.
+7. Capstone philosophy
+   Capstones should not be random projects.
+   They should reflect the current phase.
+   Examples:
+   Phase 2 capstone: Personal profile website
+   Phase 4 capstone: Responsive marketing page
+   Phase 6 capstone: API-powered app
+   Phase 8 capstone: Frontend dashboard
+   Phase 10 capstone: Full interview prep project presentation
+   Each capstone should test:
+   comprehension,
+   application,
+   debugging,
+   presentation,
+   confidence.
 
-8) Final academy promise
-If a learner finishes Forge from start to finish, they should be able to:
-build responsive websites,
-write strong HTML and CSS,
-use JavaScript confidently,
-build React apps,
-work with APIs,
-debug problems calmly,
-explain decisions clearly,
-and handle frontend interviews with real confidence.
-This is the curriculum Forge should represent.
+8. Final academy promise
+   If a learner finishes Forge from start to finish, they should be able to:
+   build responsive websites,
+   write strong HTML and CSS,
+   use JavaScript confidently,
+   build React apps,
+   work with APIs,
+   debug problems calmly,
+   explain decisions clearly,
+   and handle frontend interviews with real confidence.
+   This is the curriculum Forge should represent.

@@ -5,11 +5,7 @@
     "difficulty": "Medium",
     "question": "Explain DOM parsing, render tree construction, and script execution. What is the difference between <script>, <script async>, and <script defer>?",
     "estimatedMinutes": 10,
-    "companyTags": [
-      "Google",
-      "Meta",
-      "Amazon"
-    ],
+    "companyTags": ["Google", "Meta", "Amazon"],
     "rubric": [
       "Explains HTML parsing into DOM tree and CSS parsing into CSSOM tree",
       "Describes how DOM + CSSOM combine to form the Render Tree and Layout phase",
@@ -37,11 +33,7 @@
     "difficulty": "Hard",
     "question": "How do <picture>, <source>, and srcset with sizes enable responsive media delivery and prevent layout shift?",
     "estimatedMinutes": 8,
-    "companyTags": [
-      "Vercel",
-      "Shopify",
-      "Stripe"
-    ],
+    "companyTags": ["Vercel", "Shopify", "Stripe"],
     "rubric": [
       "Explains the difference between resolution switching (srcset) and art direction (<picture>)",
       "Describes how the 'sizes' attribute gives layout hints to the browser before CSS layout executes",
@@ -67,11 +59,7 @@
     "difficulty": "Hard",
     "question": "Explain Block Formatting Context (BFC), Stacking Contexts (z-index), and Container Queries vs Media Queries.",
     "estimatedMinutes": 12,
-    "companyTags": [
-      "Apple",
-      "Airbnb",
-      "Meta"
-    ],
+    "companyTags": ["Apple", "Airbnb", "Meta"],
     "rubric": [
       "Defines BFC and lists triggers (display: flow-root, overflow: hidden, flex/grid items, position: fixed/absolute)",
       "Explains how BFC prevents margin collapsing and clears floats",
@@ -98,11 +86,7 @@
     "difficulty": "Medium",
     "question": "How do CSS Grid and Flexbox differ in terms of 1D vs 2D layout calculation algorithms?",
     "estimatedMinutes": 8,
-    "companyTags": [
-      "Microsoft",
-      "Uber",
-      "Netflix"
-    ],
+    "companyTags": ["Microsoft", "Uber", "Netflix"],
     "rubric": [
       "Identifies Flexbox as 1D (content-driven layout along main/cross axis) vs Grid as 2D (layout-driven rows and columns)",
       "Explains flex-grow, flex-shrink, flex-basis sizing math",
@@ -128,12 +112,7 @@
     "difficulty": "Medium",
     "question": "Explain the JavaScript Event Loop, Call Stack, Microtask queue, and Macrotask queue with execution order examples.",
     "estimatedMinutes": 10,
-    "companyTags": [
-      "Google",
-      "Amazon",
-      "Meta",
-      "Bloomberg"
-    ],
+    "companyTags": ["Google", "Amazon", "Meta", "Bloomberg"],
     "rubric": [
       "Describes single-threaded call stack execution",
       "Identifies Microtasks (Promise.then, queueMicrotask, MutationObserver)",
@@ -160,11 +139,7 @@
     "difficulty": "Hard",
     "question": "How do Closures and Garbage Collection work in V8? Give an example of a memory leak caused by uncleaned closures.",
     "estimatedMinutes": 12,
-    "companyTags": [
-      "Meta",
-      "Datadog",
-      "Cloudflare"
-    ],
+    "companyTags": ["Meta", "Datadog", "Cloudflare"],
     "rubric": [
       "Defines Closure as a function bundled together with references to its surrounding lexical environment",
       "Explains V8 Mark-and-Sweep garbage collection and root reachability",
@@ -190,12 +165,7 @@
     "difficulty": "Hard",
     "question": "How does React Fiber reconciliation work? How do concurrent features like useTransition and useDeferredValue prioritize render lanes?",
     "estimatedMinutes": 15,
-    "companyTags": [
-      "Meta",
-      "Vercel",
-      "Airbnb",
-      "DoorDash"
-    ],
+    "companyTags": ["Meta", "Vercel", "Airbnb", "DoorDash"],
     "rubric": [
       "Explains Fiber architecture as a linked list tree representation supporting interruptible, incremental rendering",
       "Differentiates Render Phase (pure, asynchronous, interruptible) vs Commit Phase (synchronous DOM mutation)",
@@ -222,11 +192,7 @@
     "difficulty": "Medium",
     "question": "Compare React Server Components (RSC) vs Client Components. What are the rules for serializability across boundaries?",
     "estimatedMinutes": 10,
-    "companyTags": [
-      "Vercel",
-      "Shopify",
-      "Meta"
-    ],
+    "companyTags": ["Vercel", "Shopify", "Meta"],
     "rubric": [
       "Explains RSC execute purely on the server, zero client bundle size impact, direct DB access",
       "Explains Client Components ('use client') run on server for SSR and hydrate on client for interactivity",
@@ -252,11 +218,7 @@
     "difficulty": "Hard",
     "question": "Explain Discriminated Unions, Type Narrowing, conditional types, and how the 'infer' keyword extracts types in generic utility functions.",
     "estimatedMinutes": 12,
-    "companyTags": [
-      "Stripe",
-      "Linear",
-      "Microsoft"
-    ],
+    "companyTags": ["Stripe", "Linear", "Microsoft"],
     "rubric": [
       "Defines Discriminated Union with a common literal property tag",
       "Explains Type Narrowing via switch/if guards and exhaustiveness checking using 'never'",
@@ -283,11 +245,7 @@
     "difficulty": "Medium",
     "question": "What is the difference between type assertions (as), type guards (is), and unknown vs any?",
     "estimatedMinutes": 8,
-    "companyTags": [
-      "Discord",
-      "Vercel",
-      "GitHub"
-    ],
+    "companyTags": ["Discord", "Vercel", "GitHub"],
     "rubric": [
       "Explains 'any' disables type checking vs 'unknown' enforces type checking before usage",
       "Explains Type Assertions ('as') force compiler override without runtime checks",
@@ -313,11 +271,7 @@
     "difficulty": "Hard",
     "question": "How do you build a fully accessible modal dialog (WCAG 2.2 AA compliant)? Detail keyboard focus traps and screen reader roles.",
     "estimatedMinutes": 12,
-    "companyTags": [
-      "Salesforce",
-      "Google",
-      "Government.gov"
-    ],
+    "companyTags": ["Salesforce", "Google", "Government.gov"],
     "rubric": [
       "Identifies key ARIA attributes: role='dialog', aria-modal='true', aria-labelledby, aria-describedby",
       "Explains Focus Management: move focus into dialog on open, trap focus within dialog, restore focus on close",
@@ -344,11 +298,7 @@
     "difficulty": "Medium",
     "question": "What are aria-live regions (polite vs assertive), and how do you announce dynamic SPA updates?",
     "estimatedMinutes": 8,
-    "companyTags": [
-      "Amazon",
-      "Microsoft",
-      "Lyft"
-    ],
+    "companyTags": ["Amazon", "Microsoft", "Lyft"],
     "rubric": [
       "Defines aria-live attribute for screen reader notifications of dynamic DOM changes",
       "Differentiates polite (waits for speech pause) vs assertive (interrupts current speech)",
@@ -374,12 +324,7 @@
     "difficulty": "Hard",
     "question": "Walk through diagnosing and optimizing Core Web Vitals (LCP, INP, CLS) on a heavy e-commerce PDP.",
     "estimatedMinutes": 15,
-    "companyTags": [
-      "Amazon",
-      "Shopify",
-      "Walmart",
-      "Vercel"
-    ],
+    "companyTags": ["Amazon", "Shopify", "Walmart", "Vercel"],
     "rubric": [
       "Defines Core Web Vitals: LCP (< 2.5s), INP (< 200ms), CLS (< 0.1)",
       "Diagnoses LCP bottlenecks: hero image optimization (fetchpriority='high', inline CSS, preloading)",
@@ -406,11 +351,7 @@
     "difficulty": "Medium",
     "question": "Explain how bundler tree-shaking works (ES Modules vs CommonJS) and how to diagnose bundle bloat.",
     "estimatedMinutes": 10,
-    "companyTags": [
-      "Meta",
-      "Vercel",
-      "Stripe"
-    ],
+    "companyTags": ["Meta", "Vercel", "Stripe"],
     "rubric": [
       "Explains Tree-Shaking as dead code elimination based on static import/export analysis",
       "Explains why ES Modules enable static analysis vs CommonJS dynamic execution",
@@ -437,11 +378,7 @@
     "difficulty": "Hard",
     "question": "How do you systematically isolate and resolve a memory leak causing browser tab crashes over time using Chrome DevTools?",
     "estimatedMinutes": 12,
-    "companyTags": [
-      "Datadog",
-      "Google",
-      "Microsoft"
-    ],
+    "companyTags": ["Datadog", "Google", "Microsoft"],
     "rubric": [
       "Outlines reproduction steps: heap snapshot comparison across repeat user workflows",
       "Explains Chrome DevTools Memory tab: Take Snapshot 1 -> Perform action 5x -> Force Garbage Collection -> Take Snapshot 2",
@@ -468,11 +405,7 @@
     "difficulty": "Medium",
     "question": "Explain how to debug a subtle async race condition where network responses return out of order, and how AbortController solves it.",
     "estimatedMinutes": 10,
-    "companyTags": [
-      "Meta",
-      "Uber",
-      "Spotify"
-    ],
+    "companyTags": ["Meta", "Uber", "Spotify"],
     "rubric": [
       "Explains Async Race Condition scenario (stale response overwriting latest UI state)",
       "Explains AbortController and AbortSignal for fetch cancellation",
@@ -498,11 +431,7 @@
     "difficulty": "Medium",
     "question": "Compare git rebase vs git merge. When should you use interactive rebase (git rebase -i), and how do you resolve conflicts?",
     "estimatedMinutes": 8,
-    "companyTags": [
-      "GitHub",
-      "GitLab",
-      "Atlassian"
-    ],
+    "companyTags": ["GitHub", "GitLab", "Atlassian"],
     "rubric": [
       "Compares git merge (non-destructive 3-way merge commit) vs git rebase (re-applies commits on top of tip)",
       "Explains Interactive Rebase (`git rebase -i HEAD~N`): squash, reword, fixup, drop",
@@ -528,11 +457,7 @@
     "difficulty": "Hard",
     "question": "How does git bisect use binary search to locate regression bugs across a large codebase commit history?",
     "estimatedMinutes": 8,
-    "companyTags": [
-      "Meta",
-      "Google",
-      "Square"
-    ],
+    "companyTags": ["Meta", "Google", "Square"],
     "rubric": [
       "Explains binary search algorithm applied to commit graph",
       "Outlines manual bisect workflow: git bisect start -> git bisect bad -> git bisect good <commit>",
@@ -558,12 +483,7 @@
     "difficulty": "Hard",
     "question": "Design a scalable State Management & Caching strategy for a real-time collaborative workspace app (like Figma or Notion).",
     "estimatedMinutes": 20,
-    "companyTags": [
-      "Figma",
-      "Notion",
-      "Atlassian",
-      "Slack"
-    ],
+    "companyTags": ["Figma", "Notion", "Atlassian", "Slack"],
     "rubric": [
       "Architectural layers: UI View layer, Local Client Cache, Real-time Sync Engine, Persistence (IndexedDB)",
       "Conflict Resolution: CRDTs (Conflict-free Replicated Data Types like Yjs or Automerge)",
@@ -590,12 +510,7 @@
     "difficulty": "Hard",
     "question": "Compare Micro-frontends (Module Federation) vs Monorepo vs Monolith architectures for a multi-team engineering org.",
     "estimatedMinutes": 15,
-    "companyTags": [
-      "Uber",
-      "Spotify",
-      "Amazon",
-      "Salesforce"
-    ],
+    "companyTags": ["Uber", "Spotify", "Amazon", "Salesforce"],
     "rubric": [
       "Monolith: Single codebase, simple, but slow build times across large teams",
       "Monorepo (Turborepo, Nx): Unified repository housing distinct applications and shared packages, atomic commits, shared CI caching",
@@ -621,12 +536,7 @@
     "difficulty": "Medium",
     "question": "Tell me about a technical disagreement you had with a senior tech lead. How did you resolve it while keeping team momentum?",
     "estimatedMinutes": 10,
-    "companyTags": [
-      "Google",
-      "Meta",
-      "Amazon",
-      "Netflix"
-    ],
+    "companyTags": ["Google", "Meta", "Amazon", "Netflix"],
     "starFramework": {
       "situation": "Describe the project context, technical approach in debate, and stakes.",
       "task": "Explain your role, alternative technical proposal, and why it was superior.",
@@ -658,12 +568,7 @@
     "difficulty": "Medium",
     "question": "Describe a project where requirements changed mid-flight or a critical deadline was threatened. How did you negotiate scope and deliver?",
     "estimatedMinutes": 10,
-    "companyTags": [
-      "Amazon",
-      "Stripe",
-      "Uber",
-      "Airbnb"
-    ],
+    "companyTags": ["Amazon", "Stripe", "Uber", "Airbnb"],
     "starFramework": {
       "situation": "Original project scope, deadline, and unexpected change event.",
       "task": "Identify core problem: impossible to deliver 100% of revised features on time.",

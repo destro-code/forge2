@@ -4,12 +4,7 @@
     "title": "The Counter That Lies (Stale Closure)",
     "category": "hooks",
     "difficulty": "Intermediate",
-    "tags": [
-      "React",
-      "Hooks",
-      "useEffect",
-      "Closures"
-    ],
+    "tags": ["React", "Hooks", "useEffect", "Closures"],
     "estimatedMinutes": 15,
     "brief": "A counter component increments once from 0 to 1 and then freezes. Fix the stale closure bug.",
     "symptoms": [
@@ -52,12 +47,7 @@
     "title": "The Jumping Hero Banner (CLS)",
     "category": "css",
     "difficulty": "Beginner",
-    "tags": [
-      "CSS",
-      "CLS",
-      "Performance",
-      "Aspect Ratio"
-    ],
+    "tags": ["CSS", "CLS", "Performance", "Aspect Ratio"],
     "estimatedMinutes": 10,
     "brief": "Dynamic hero banner images load asynchronously and push lower layout elements down abruptly, causing a bad CLS score.",
     "symptoms": [
@@ -100,12 +90,7 @@
     "title": "The Slow Resizing Tab (Retained Event Listener)",
     "category": "memory_leak",
     "difficulty": "Advanced",
-    "tags": [
-      "JavaScript",
-      "Memory Leak",
-      "Event Listeners",
-      "Cleanup"
-    ],
+    "tags": ["JavaScript", "Memory Leak", "Event Listeners", "Cleanup"],
     "estimatedMinutes": 20,
     "brief": "A window resize handler is registered inside useEffect without an unmount cleanup function, causing memory leaks.",
     "symptoms": [
@@ -148,12 +133,7 @@
     "title": "Out-of-Order Search Results (Network Race)",
     "category": "network",
     "difficulty": "Intermediate",
-    "tags": [
-      "Async",
-      "Network",
-      "Fetch",
-      "AbortController"
-    ],
+    "tags": ["Async", "Network", "Fetch", "AbortController"],
     "estimatedMinutes": 20,
     "brief": "Rapid search input displays stale results from earlier, slower network responses instead of the latest search query.",
     "symptoms": [
@@ -196,12 +176,7 @@
     "title": "Unlabeled Icon Buttons & Focus Leak (Accessibility)",
     "category": "a11y",
     "difficulty": "Beginner",
-    "tags": [
-      "Accessibility",
-      "A11y",
-      "ARIA",
-      "Keyboard Navigation"
-    ],
+    "tags": ["Accessibility", "A11y", "ARIA", "Keyboard Navigation"],
     "estimatedMinutes": 15,
     "brief": "Icon-only buttons lack accessible names for screen readers, and custom popovers fail keyboard focus control.",
     "symptoms": [
@@ -244,12 +219,7 @@
     "title": "The Laggy Product Data Grid (Unmemoized Callbacks)",
     "category": "performance",
     "difficulty": "Advanced",
-    "tags": [
-      "React",
-      "Performance",
-      "useCallback",
-      "React.memo"
-    ],
+    "tags": ["React", "Performance", "useCallback", "React.memo"],
     "estimatedMinutes": 25,
     "brief": "Passing new object literals and unmemoized callbacks into list items causes 500+ child components to re-render on every keystroke.",
     "symptoms": [
@@ -292,12 +262,7 @@
     "title": "Cannot read properties of undefined (reading 'map')",
     "category": "console_error",
     "difficulty": "Beginner",
-    "tags": [
-      "Console Error",
-      "JavaScript",
-      "Nullish Coalescing",
-      "Optional Chaining"
-    ],
+    "tags": ["Console Error", "JavaScript", "Nullish Coalescing", "Optional Chaining"],
     "estimatedMinutes": 10,
     "brief": "Accessing array methods on asynchronous state before initial fetch completes triggers a blank screen runtime crash.",
     "symptoms": [
@@ -340,12 +305,7 @@
     "title": "Broken React App: The Uncapped Re-render Storm",
     "category": "react_app",
     "difficulty": "Intermediate",
-    "tags": [
-      "React",
-      "Hooks",
-      "useEffect",
-      "Infinite Loop"
-    ],
+    "tags": ["React", "Hooks", "useEffect", "Infinite Loop"],
     "estimatedMinutes": 15,
     "brief": "Updating state directly inside an un-guarded useEffect dependency array creates an infinite render cycle that freezes the browser.",
     "symptoms": [

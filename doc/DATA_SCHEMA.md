@@ -1,4 +1,5 @@
 # Forge Data Schema
+
 Version: 2.0
 
 ---
@@ -115,10 +116,10 @@ settings.json
 
 ```json
 {
-"id":"",
-"title":"",
-"description":"",
-"paths":[]
+  "id": "",
+  "title": "",
+  "description": "",
+  "paths": []
 }
 ```
 
@@ -128,12 +129,12 @@ settings.json
 
 ```json
 {
-"id":"",
-"title":"",
-"description":"",
-"difficulty":"",
-"estimatedHours":0,
-"modules":[]
+  "id": "",
+  "title": "",
+  "description": "",
+  "difficulty": "",
+  "estimatedHours": 0,
+  "modules": []
 }
 ```
 
@@ -175,15 +176,15 @@ Testing
 
 ```json
 {
-"id":"",
-"pathId":"",
-"title":"",
-"description":"",
-"order":1,
-"difficulty":"",
-"estimatedHours":20,
-"prerequisites":[],
-"chapterIds":[]
+  "id": "",
+  "pathId": "",
+  "title": "",
+  "description": "",
+  "order": 1,
+  "difficulty": "",
+  "estimatedHours": 20,
+  "prerequisites": [],
+  "chapterIds": []
 }
 ```
 
@@ -223,13 +224,13 @@ Mini Project
 
 ```json
 {
-"id":"",
-"moduleId":"",
-"title":"",
-"description":"",
-"order":1,
-"estimatedMinutes":45,
-"lessonIds":[]
+  "id": "",
+  "moduleId": "",
+  "title": "",
+  "description": "",
+  "order": 1,
+  "estimatedMinutes": 45,
+  "lessonIds": []
 }
 ```
 
@@ -261,24 +262,24 @@ Practice
 
 ```json
 {
-"id":"",
-"chapterId":"",
-"title":"",
-"order":1,
-"type":"lesson",
-"difficulty":"",
-"estimatedMinutes":20,
-"learningObjectives":[],
-"prerequisites":[],
-"content":"",
-"resources":[],
-"practiceId":"",
-"quizId":"",
-"debugChallengeId":"",
-"interviewQuestionIds":[],
-"miniProjectId":"",
-"nextLessonId":"",
-"previousLessonId":""
+  "id": "",
+  "chapterId": "",
+  "title": "",
+  "order": 1,
+  "type": "lesson",
+  "difficulty": "",
+  "estimatedMinutes": 20,
+  "learningObjectives": [],
+  "prerequisites": [],
+  "content": "",
+  "resources": [],
+  "practiceId": "",
+  "quizId": "",
+  "debugChallengeId": "",
+  "interviewQuestionIds": [],
+  "miniProjectId": "",
+  "nextLessonId": "",
+  "previousLessonId": ""
 }
 ```
 
@@ -310,13 +311,13 @@ debug challenge
 
 ```json
 {
-"id":"",
-"lessonId":"",
-"title":"",
-"instructions":"",
-"starterFiles":[],
-"solutionFiles":[],
-"hints":[]
+  "id": "",
+  "lessonId": "",
+  "title": "",
+  "instructions": "",
+  "starterFiles": [],
+  "solutionFiles": [],
+  "hints": []
 }
 ```
 
@@ -326,9 +327,9 @@ debug challenge
 
 ```json
 {
-"id":"",
-"lessonId":"",
-"questions":[]
+  "id": "",
+  "lessonId": "",
+  "questions": []
 }
 ```
 
@@ -338,12 +339,12 @@ debug challenge
 
 ```json
 {
-"id":"",
-"type":"mcq",
-"question":"",
-"choices":[],
-"answer":"",
-"explanation":""
+  "id": "",
+  "type": "mcq",
+  "question": "",
+  "choices": [],
+  "answer": "",
+  "explanation": ""
 }
 ```
 
@@ -371,14 +372,14 @@ Debugging
 
 ```json
 {
-"id":"",
-"lessonId":"",
-"title":"",
-"difficulty":"",
-"starterCode":"",
-"bugs":[],
-"hints":[],
-"solution":""
+  "id": "",
+  "lessonId": "",
+  "title": "",
+  "difficulty": "",
+  "starterCode": "",
+  "bugs": [],
+  "hints": [],
+  "solution": ""
 }
 ```
 
@@ -388,13 +389,13 @@ Debugging
 
 ```json
 {
-"id":"",
-"lessonId":"",
-"type":"technical",
-"difficulty":"",
-"question":"",
-"expectedAnswer":"",
-"followUps":[]
+  "id": "",
+  "lessonId": "",
+  "type": "technical",
+  "difficulty": "",
+  "question": "",
+  "expectedAnswer": "",
+  "followUps": []
 }
 ```
 
@@ -404,13 +405,13 @@ Debugging
 
 ```json
 {
-"id":"",
-"moduleId":"",
-"title":"",
-"description":"",
-"requirements":[],
-"starterFiles":[],
-"rubric":[]
+  "id": "",
+  "moduleId": "",
+  "title": "",
+  "description": "",
+  "requirements": [],
+  "starterFiles": [],
+  "rubric": []
 }
 ```
 
@@ -420,12 +421,12 @@ Debugging
 
 ```json
 {
-"id":"",
-"pathId":"",
-"title":"",
-"description":"",
-"requirements":[],
-"gradingRubric":[]
+  "id": "",
+  "pathId": "",
+  "title": "",
+  "description": "",
+  "requirements": [],
+  "gradingRubric": []
 }
 ```
 
@@ -435,11 +436,11 @@ Debugging
 
 ```json
 {
-"id":"",
-"lessonId":"",
-"type":"article",
-"title":"",
-"url":""
+  "id": "",
+  "lessonId": "",
+  "type": "article",
+  "title": "",
+  "url": ""
 }
 ```
 
@@ -465,11 +466,11 @@ Reference
 
 ```json
 {
-"id":"",
-"lessonId":"",
-"front":"",
-"back":"",
-"difficulty":""
+  "id": "",
+  "lessonId": "",
+  "front": "",
+  "back": "",
+  "difficulty": ""
 }
 ```
 
@@ -479,12 +480,12 @@ Reference
 
 ```json
 {
-"id":"",
-"title":"",
-"description":"",
-"xp":100,
-"icon":"",
-"unlockCondition":""
+  "id": "",
+  "title": "",
+  "description": "",
+  "xp": 100,
+  "icon": "",
+  "unlockCondition": ""
 }
 ```
 
@@ -494,18 +495,18 @@ Reference
 
 ```json
 {
-"userId":"",
-"completedLessons":[],
-"completedPractice":[],
-"completedProjects":[],
-"completedDebugChallenges":[],
-"completedQuizzes":[],
-"xp":0,
-"currentPath":"",
-"currentModule":"",
-"currentChapter":"",
-"currentLesson":"",
-"masteryLevel":""
+  "userId": "",
+  "completedLessons": [],
+  "completedPractice": [],
+  "completedProjects": [],
+  "completedDebugChallenges": [],
+  "completedQuizzes": [],
+  "xp": 0,
+  "currentPath": "",
+  "currentModule": "",
+  "currentChapter": "",
+  "currentLesson": "",
+  "masteryLevel": ""
 }
 ```
 
