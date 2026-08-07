@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MasteryEnginePage } from "@/components/progress-page";
+import { MasteryEnginePage } from "./progress";
 
 export const Route = createFileRoute("/mastery")({
   head: () => ({

@@ -16,7 +16,6 @@ export interface SettingsState {
     model: string;
     coachingMode: boolean;
     temperature: number;
-    geminiApiKey?: string;
   };
   learning: {
     dailyGoalMinutes: number;
@@ -34,13 +33,7 @@ const DEFAULT_SETTINGS_STATE: SettingsState = {
   fontSize: "md",
   reduceMotion: false,
   editor: { tabSize: 2, wordWrap: true, fontLigatures: true, theme: "vs-dark" },
-  ai: {
-    provider: "mock",
-    model: "forge-tutor-1",
-    coachingMode: true,
-    temperature: 0.4,
-    geminiApiKey: "",
-  },
+  ai: { provider: "mock", model: "forge-tutor-1", coachingMode: true, temperature: 0.4 },
   learning: { dailyGoalMinutes: 30, autoAdvance: false, showHintsFirst: true },
   notifications: { dailyReminder: true, weeklyReport: true },
 };

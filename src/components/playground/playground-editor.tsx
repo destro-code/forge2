@@ -229,8 +229,7 @@ export function PlaygroundEditor({ files, activeFileId, onCodeChange }: Playgrou
 
             <TabsContent
               value="editor"
-              forceMount
-              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950 data-[state=inactive]:hidden"
+              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950"
             >
               <SandpackCodeEditor
                 showLineNumbers
@@ -244,8 +243,7 @@ export function PlaygroundEditor({ files, activeFileId, onCodeChange }: Playgrou
 
             <TabsContent
               value="preview"
-              forceMount
-              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950 data-[state=inactive]:hidden"
+              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950"
             >
               <SandpackPreview
                 showNavigator={false}
@@ -257,8 +255,7 @@ export function PlaygroundEditor({ files, activeFileId, onCodeChange }: Playgrou
 
             <TabsContent
               value="console"
-              forceMount
-              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950 data-[state=inactive]:hidden"
+              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950"
             >
               <CustomSandpackConsole height="480px" />
             </TabsContent>

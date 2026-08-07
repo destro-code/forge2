@@ -72,14 +72,7 @@ interface ArchEdge {
   label: string;
 }
 
-interface DrawingPath {
-  points: { x: number; y: number }[];
-  color: string;
-  width: number;
-  isEraser: boolean;
-}
-
-function WhiteboardPage() {
+export function WhiteboardPage() {
   const [activeMode, setActiveMode] = useState<Mode>("explain");
   const [selectedPreset, setSelectedPreset] = useState<WhiteboardPreset | null>(
     WHITEBOARD_PRESETS[0],
@@ -116,205 +109,6 @@ function WhiteboardPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [presetsDialogOpen, setPresetsDialogOpen] = useState(false);
   const chatBottomRef = useRef<HTMLDivElement>(null);
-
-  // Visual Sketchpad States & Refs
-  const [leftTab, setLeftTab] = useState<"scratchpad" | "visual">("scratchpad");
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const canvasContainerRef = useRef<HTMLDivElement | null>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [brushColor, setBrushColor] = useState("#22d3ee"); // Neon Cyan
-  const [brushSize, setBrushSize] = useState(4);
-  const [isEraser, setIsEraser] = useState(false);
-  const [paths, setPaths] = useState<DrawingPath[]>([]);
-  const currentPathRef = useRef<DrawingPath | null>(null);
-
-  const redrawCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Clear background
-    ctx.fillStyle = "#0f172a";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw technical grid dots
-    ctx.fillStyle = "rgba(148, 163, 184, 0.08)";
-    const gap = 20;
-    for (let x = gap; x < canvas.width; x += gap) {
-      for (let y = gap; y < canvas.height; y += gap) {
-        ctx.beginPath();
-        ctx.arc(x, y, 1, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    // Redraw all paths using relative coordinates
-    paths.forEach((path) => {
-      if (path.points.length < 2) return;
-      ctx.beginPath();
-      ctx.strokeStyle = path.isEraser ? "#0f172a" : path.color;
-      ctx.lineWidth = path.width;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      const start = path.points[0];
-      ctx.moveTo(start.x * canvas.width, start.y * canvas.height);
-
-      for (let i = 1; i < path.points.length; i++) {
-        const pt = path.points[i];
-        ctx.lineTo(pt.x * canvas.width, pt.y * canvas.height);
-      }
-      ctx.stroke();
-    });
-  }, [paths]);
-
-  const clearCanvas = () => {
-    setPaths([]);
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.fillStyle = "#0f172a";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw technical grid dots
-        ctx.fillStyle = "rgba(148, 163, 184, 0.08)";
-        const gap = 20;
-        for (let x = gap; x < canvas.width; x += gap) {
-          for (let y = gap; y < canvas.height; y += gap) {
-            ctx.beginPath();
-            ctx.arc(x, y, 1, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-      }
-    }
-    toast.info("Visual sketchpad cleared.");
-  };
-
-  const downloadCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    try {
-      const dataUrl = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.download = `architecture-sketch-${Date.now()}.png`;
-      link.href = dataUrl;
-      link.click();
-      toast.success("Downloaded sketch as PNG successfully!");
-    } catch (err) {
-      toast.error("Failed to download sketch image.");
-    }
-  };
-
-  // Setup drawing handlers
-  const startDrawing = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>,
-  ) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    let clientX, clientY;
-
-    if ("touches" in e) {
-      if (e.touches.length === 0) return;
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-
-    const x = (clientX - rect.left) / rect.width;
-    const y = (clientY - rect.top) / rect.height;
-
-    setIsDrawing(true);
-    currentPathRef.current = {
-      points: [{ x, y }],
-      color: brushColor,
-      width: brushSize,
-      isEraser,
-    };
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDrawing || !currentPathRef.current) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const rect = canvas.getBoundingClientRect();
-    let clientX, clientY;
-
-    if ("touches" in e) {
-      if (e.touches.length === 0) return;
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-
-    const x = (clientX - rect.left) / rect.width;
-    const y = (clientY - rect.top) / rect.height;
-
-    const points = currentPathRef.current.points;
-    const prevPoint = points[points.length - 1];
-
-    ctx.beginPath();
-    ctx.strokeStyle = isEraser ? "#0f172a" : brushColor;
-    ctx.lineWidth = brushSize;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.moveTo(prevPoint.x * canvas.width, prevPoint.y * canvas.height);
-    ctx.lineTo(x * canvas.width, y * canvas.height);
-    ctx.stroke();
-
-    points.push({ x, y });
-  };
-
-  const endDrawing = () => {
-    if (!isDrawing) return;
-    setIsDrawing(false);
-    if (currentPathRef.current && currentPathRef.current.points.length > 0) {
-      setPaths((prev) => [...prev, currentPathRef.current]);
-    }
-    currentPathRef.current = null;
-  };
-
-  useEffect(() => {
-    const container = canvasContainerRef.current;
-    if (!container || leftTab !== "visual") return;
-
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const rect = container.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = Math.max(480, rect.height);
-      redrawCanvas();
-    }
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
-        const canvas = canvasRef.current;
-        if (canvas) {
-          canvas.width = width;
-          canvas.height = Math.max(480, height);
-          redrawCanvas();
-        }
-      }
-    });
-
-    resizeObserver.observe(container);
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [leftTab, redrawCanvas]);
 
   // Sync preset when changed
   const loadPreset = (preset: WhiteboardPreset) => {
@@ -655,445 +449,261 @@ function WhiteboardPage() {
       <div className="grid flex-1 grid-cols-1 overflow-hidden lg:grid-cols-12">
         {/* Left Side: Code Scratchpad & Interactive Canvas (8 cols) */}
         <div className="flex flex-col border-r lg:col-span-7 xl:col-span-7">
-          {/* Sub-tab Selection Buttons for Code vs Visual Canvas */}
-          <div className="flex items-center border-b bg-muted/40 px-4 h-10 shrink-0 gap-1 overflow-x-auto max-w-full scrollbar-none">
-            <Button
-              variant={leftTab === "scratchpad" ? "secondary" : "ghost"}
-              size="sm"
-              className={`h-8 text-xs font-semibold px-3 rounded-md transition-all gap-1.5 cursor-pointer ${
-                leftTab === "scratchpad"
-                  ? "bg-slate-800 text-cyan-300 border border-slate-700/60 shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              onClick={() => setLeftTab("scratchpad")}
-            >
-              <FileCode className="h-3.5 w-3.5" />
-              Code Scratchpad
-            </Button>
-            <Button
-              variant={leftTab === "visual" ? "secondary" : "ghost"}
-              size="sm"
-              className={`h-8 text-xs font-semibold px-3 rounded-md transition-all gap-1.5 cursor-pointer ${
-                leftTab === "visual"
-                  ? "bg-slate-800 text-cyan-300 border border-slate-700/60 shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              onClick={() => setLeftTab("visual")}
-            >
-              <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-              Visual Sketchpad
-            </Button>
+          {/* Editor Header Toolbar */}
+          <div className="flex flex-wrap items-center justify-between border-b px-4 py-2 bg-muted/20 gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {activeMode === "architecture"
+                  ? "Architecture Canvas & Specification"
+                  : "Code Scratchpad"}
+              </span>
+              <Badge variant="secondary" className="text-[10px]">
+                {language}
+              </Badge>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="xs"
+                className="h-7 gap-1 text-[11px]"
+                onClick={() => {
+                  navigator.clipboard.writeText(code);
+                  toast.success("Code copied to clipboard!");
+                }}
+              >
+                <Copy className="h-3 w-3" /> Copy
+              </Button>
+
+              <Button
+                variant="outline"
+                size="xs"
+                className="h-7 gap-1 text-[11px]"
+                onClick={() => {
+                  setCode("");
+                  toast.info("Scratchpad cleared.");
+                }}
+              >
+                <RotateCcw className="h-3 w-3" /> Clear
+              </Button>
+
+              {activeMode !== "architecture" && (
+                <Button
+                  size="xs"
+                  className="h-7 gap-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px]"
+                  onClick={handleRunCode}
+                >
+                  <Play className="h-3 w-3" /> Run JS Sandbox
+                </Button>
+              )}
+            </div>
           </div>
 
-          {leftTab === "visual" ? (
-            <div
-              className="flex-1 flex flex-col p-4 gap-4 overflow-hidden"
-              ref={canvasContainerRef}
-            >
-              {/* Scrollable Toolbar for Mobile / Tablet to prevent overflow */}
-              <div className="flex items-center gap-3 overflow-x-auto pb-3 mb-1 border-b border-border/40 scrollbar-none flex-nowrap w-full">
-                <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1 rounded-lg shrink-0">
-                  <Button
-                    size="sm"
-                    variant={!isEraser ? "default" : "ghost"}
-                    className={`h-7 px-2.5 text-xs font-semibold rounded-md gap-1 cursor-pointer transition ${
-                      !isEraser
-                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
-                        : "text-slate-400 hover:text-white"
-                    }`}
-                    onClick={() => setIsEraser(false)}
-                  >
-                    <Plus className="h-3.5 w-3.5 text-cyan-400" /> Pen
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={isEraser ? "default" : "ghost"}
-                    className={`h-7 px-2.5 text-xs font-semibold rounded-md gap-1 cursor-pointer transition ${
-                      isEraser
-                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
-                        : "text-slate-400 hover:text-white"
-                    }`}
-                    onClick={() => setIsEraser(true)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5 text-rose-400" /> Eraser
-                  </Button>
-                </div>
-
-                {/* Divider */}
-                <div className="h-6 w-px bg-border shrink-0" />
-
-                {/* Brush Size Selector */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[10px] uppercase font-semibold text-slate-400 mr-1">
-                    Size:
-                  </span>
-                  {[2, 4, 8, 12].map((sz) => (
-                    <Button
-                      key={sz}
-                      size="sm"
-                      variant={brushSize === sz ? "default" : "outline"}
-                      className={`h-7 w-7 p-0 rounded-md cursor-pointer transition ${
-                        brushSize === sz
-                          ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
-                          : "text-slate-400 border-slate-800 hover:bg-slate-900"
-                      }`}
-                      onClick={() => setBrushSize(sz)}
-                    >
-                      <span className="text-xs font-bold">
-                        {sz === 2 ? "S" : sz === 4 ? "M" : sz === 8 ? "L" : "XL"}
-                      </span>
-                    </Button>
-                  ))}
-                </div>
-
-                {/* Divider */}
-                <div className="h-6 w-px bg-border shrink-0" />
-
-                {/* Color Palette */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[10px] uppercase font-semibold text-slate-400 mr-1">
-                    Color:
-                  </span>
-                  {[
-                    { hex: "#22d3ee", label: "Cyan" },
-                    { hex: "#10b981", label: "Emerald" },
-                    { hex: "#a855f7", label: "Purple" },
-                    { hex: "#fbbf24", label: "Yellow" },
-                    { hex: "#f97316", label: "Orange" },
-                    { hex: "#f8fafc", label: "White" },
-                  ].map((col) => (
-                    <button
-                      key={col.hex}
-                      className={`h-6 w-6 rounded-full border cursor-pointer transition-all hover:scale-110 ${
-                        brushColor === col.hex && !isEraser
-                          ? "ring-2 ring-cyan-400 scale-105 border-white"
-                          : "border-slate-700"
-                      }`}
-                      style={{ backgroundColor: col.hex }}
-                      onClick={() => {
-                        setBrushColor(col.hex);
-                        setIsEraser(false);
-                      }}
-                      title={col.label}
-                    />
-                  ))}
-                </div>
-
-                {/* Divider */}
-                <div className="h-6 w-px bg-border shrink-0 ml-auto" />
-
-                {/* Canvas Operations */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2.5 text-xs font-semibold rounded-md border-slate-800 hover:bg-slate-900 gap-1"
-                    onClick={downloadCanvas}
-                  >
-                    <Download className="h-3.5 w-3.5" /> Download
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2.5 text-xs font-semibold rounded-md border-slate-800 hover:bg-slate-900 text-rose-400 hover:text-rose-300 gap-1"
-                    onClick={clearCanvas}
-                  >
-                    <RotateCcw className="h-3.5 w-3.5" /> Clear
-                  </Button>
-                </div>
-              </div>
-
-              {/* HTML5 Canvas Element */}
-              <div className="flex-1 relative w-full min-h-[420px] rounded-xl border border-slate-800 bg-[#0f172a] overflow-hidden shadow-inner">
-                <canvas
-                  ref={canvasRef}
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={endDrawing}
-                  onMouseLeave={endDrawing}
-                  onTouchStart={startDrawing}
-                  onTouchMove={draw}
-                  onTouchEnd={endDrawing}
-                  className="absolute inset-0 w-full h-full cursor-crosshair touch-none"
-                />
-                {paths.length === 0 && !isDrawing && (
-                  <div className="absolute inset-0 flex items-center justify-center text-center p-6 pointer-events-none select-none">
-                    <div className="space-y-1.5 text-slate-500 max-w-sm">
-                      <Sparkles className="h-8 w-8 mx-auto text-cyan-500/40 mb-1.5" />
-                      <h4 className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                        Interactive Canvas
-                      </h4>
-                      <p className="text-[11px] leading-relaxed">
-                        Sketch systems architecture, block flowcharts, or notes. Redraws dynamically
-                        on resize.
-                      </p>
-                    </div>
+          {/* Editor / Canvas Body */}
+          <div className="flex-1 flex flex-col overflow-y-auto p-4 gap-4">
+            {/* Architecture Node Visualizer (if architecture mode) */}
+            {activeMode === "architecture" && (
+              <Card className="p-4 bg-muted/20 border-dashed border-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2">
+                    <Box className="h-4 w-4 text-primary" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider">
+                      System Components & Flow Nodes
+                    </h3>
                   </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* Editor Header Toolbar */}
-              <div className="flex flex-wrap items-center justify-between border-b px-4 py-2 bg-muted/20 gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {activeMode === "architecture"
-                      ? "Architecture Canvas & Specification"
-                      : "Code Scratchpad"}
-                  </span>
-                  <Badge variant="secondary" className="text-[10px]">
-                    {language}
-                  </Badge>
+                  <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <Input
+                      placeholder="Component name..."
+                      value={newNodeLabel}
+                      onChange={(e) => setNewNodeLabel(e.target.value)}
+                      className="h-7 text-xs w-36"
+                    />
+                    <select
+                      value={newNodeType}
+                      onChange={(e) => setNewNodeType(e.target.value as ArchNode["type"])}
+                      className="h-7 text-xs rounded-md border bg-background px-2"
+                    >
+                      <option value="client">Client UI</option>
+                      <option value="gateway">API Gateway</option>
+                      <option value="service">Microservice</option>
+                      <option value="store">State / Cache</option>
+                      <option value="db">Database</option>
+                      <option value="queue">Queue / Event</option>
+                    </select>
+                    <Button size="xs" onClick={handleAddNode} className="h-7 gap-1">
+                      <Plus className="h-3 w-3" /> Add Node
+                    </Button>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="xs"
-                    className="h-7 gap-1 text-[11px]"
-                    onClick={() => {
-                      navigator.clipboard.writeText(code);
-                      toast.success("Code copied to clipboard!");
-                    }}
-                  >
-                    <Copy className="h-3 w-3" /> Copy
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    size="xs"
-                    className="h-7 gap-1 text-[11px]"
-                    onClick={() => {
-                      setCode("");
-                      toast.info("Scratchpad cleared.");
-                    }}
-                  >
-                    <RotateCcw className="h-3 w-3" /> Clear
-                  </Button>
-
-                  {activeMode !== "architecture" && (
-                    <Button
-                      size="xs"
-                      className="h-7 gap-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px]"
-                      onClick={handleRunCode}
+                {/* Node Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
+                  {nodes.map((node) => (
+                    <div
+                      key={node.id}
+                      className="flex items-center justify-between p-2.5 rounded-lg border bg-card text-xs shadow-xs"
                     >
-                      <Play className="h-3 w-3" /> Run JS Sandbox
-                    </Button>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant={
+                            node.type === "client"
+                              ? "default"
+                              : node.type === "db"
+                                ? "destructive"
+                                : "secondary"
+                          }
+                          className="text-[9px] uppercase"
+                        >
+                          {node.type}
+                        </Badge>
+                        <span className="font-semibold">{node.label}</span>
+                      </div>
+                      <Button
+                        size="icon-xs"
+                        variant="ghost"
+                        onClick={() => handleRemoveNode(node.id)}
+                        className="h-5 w-5 text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Data Flow Connections */}
+                <div className="space-y-1">
+                  <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                    Configured Data Flows ({edges.length}):
+                  </div>
+                  {edges.map((e) => (
+                    <div
+                      key={e.id}
+                      className="flex items-center gap-2 text-xs font-mono text-muted-foreground bg-background/60 p-1.5 rounded border"
+                    >
+                      <span className="text-primary font-bold">
+                        {nodes.find((n) => n.id === e.from)?.label || e.from}
+                      </span>
+                      <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-primary font-bold">
+                        {nodes.find((n) => n.id === e.to)?.label || e.to}
+                      </span>
+                      <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-foreground ml-auto">
+                        {e.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            {/* Code Textarea */}
+            <div className="relative flex-1 min-h-[280px]">
+              <Textarea
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Type or paste code / whiteboard snippet here..."
+                className="h-full min-h-[280px] w-full resize-none font-mono text-xs leading-relaxed p-4 border-2 focus-visible:ring-primary"
+              />
+            </div>
+
+            {/* Predict Output Interactive Section (Active when mode === "predict") */}
+            {activeMode === "predict" && (
+              <Card className="p-4 border-primary/30 bg-primary/5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Play className="h-4 w-4 text-primary" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider">
+                      Predict Output Challenge
+                    </h3>
+                  </div>
+                  {hasExecuted && (
+                    <Badge
+                      variant={executionMatch ? "default" : "destructive"}
+                      className="gap-1 text-[10px]"
+                    >
+                      {executionMatch ? (
+                        <>
+                          <CheckCircle2 className="h-3 w-3" /> Prediction Matched
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-3 w-3" /> Prediction Mismatched
+                        </>
+                      )}
+                    </Badge>
                   )}
                 </div>
-              </div>
 
-              {/* Editor / Canvas Body */}
-              <div className="flex-1 flex flex-col overflow-y-auto p-4 gap-4">
-                {/* Architecture Node Visualizer (if architecture mode) */}
-                {activeMode === "architecture" && (
-                  <Card className="p-4 bg-muted/20 border-dashed border-2">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-2">
-                        <Box className="h-4 w-4 text-primary" />
-                        <h3 className="text-xs font-bold uppercase tracking-wider">
-                          System Components & Flow Nodes
-                        </h3>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <Input
-                          placeholder="Component name..."
-                          value={newNodeLabel}
-                          onChange={(e) => setNewNodeLabel(e.target.value)}
-                          className="h-7 text-xs w-36"
-                        />
-                        <select
-                          value={newNodeType}
-                          onChange={(e) => setNewNodeType(e.target.value as ArchNode["type"])}
-                          className="h-7 text-xs rounded-md border bg-background px-2"
-                        >
-                          <option value="client">Client UI</option>
-                          <option value="gateway">API Gateway</option>
-                          <option value="service">Microservice</option>
-                          <option value="store">State / Cache</option>
-                          <option value="db">Database</option>
-                          <option value="queue">Queue / Event</option>
-                        </select>
-                        <Button size="xs" onClick={handleAddNode} className="h-7 gap-1">
-                          <Plus className="h-3 w-3" /> Add Node
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Node Cards Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
-                      {nodes.map((node) => (
-                        <div
-                          key={node.id}
-                          className="flex items-center justify-between p-2.5 rounded-lg border bg-card text-xs shadow-xs"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Badge
-                              variant={
-                                node.type === "client"
-                                  ? "default"
-                                  : node.type === "db"
-                                    ? "destructive"
-                                    : "secondary"
-                              }
-                              className="text-[9px] uppercase"
-                            >
-                              {node.type}
-                            </Badge>
-                            <span className="font-semibold">{node.label}</span>
-                          </div>
-                          <Button
-                            size="icon-xs"
-                            variant="ghost"
-                            onClick={() => handleRemoveNode(node.id)}
-                            className="h-5 w-5 text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Data Flow Connections */}
-                    <div className="space-y-1">
-                      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                        Configured Data Flows ({edges.length}):
-                      </div>
-                      {edges.map((e) => (
-                        <div
-                          key={e.id}
-                          className="flex items-center gap-2 text-xs font-mono text-muted-foreground bg-background/60 p-1.5 rounded border"
-                        >
-                          <span className="text-primary font-bold">
-                            {nodes.find((n) => n.id === e.from)?.label || e.from}
-                          </span>
-                          <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-primary font-bold">
-                            {nodes.find((n) => n.id === e.to)?.label || e.to}
-                          </span>
-                          <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-foreground ml-auto">
-                            {e.label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </Card>
-                )}
-
-                {/* Code Textarea */}
-                <div className="relative flex-1 min-h-[280px]">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Type your predicted console output (one log per line):
+                  </label>
                   <Textarea
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder="Type or paste code / whiteboard snippet here..."
-                    className="h-full min-h-[280px] w-full resize-none font-mono text-xs leading-relaxed p-4 border-2 focus-visible:ring-primary"
+                    value={userPrediction}
+                    onChange={(e) => setUserPrediction(e.target.value)}
+                    placeholder="e.g.&#10;1: Start&#10;7: End&#10;4: Promise 1"
+                    rows={3}
+                    className="font-mono text-xs bg-background"
                   />
                 </div>
 
-                {/* Predict Output Interactive Section (Active when mode === "predict") */}
-                {activeMode === "predict" && (
-                  <Card className="p-4 border-primary/30 bg-primary/5 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Play className="h-4 w-4 text-primary" />
-                        <h3 className="text-xs font-bold uppercase tracking-wider">
-                          Predict Output Challenge
-                        </h3>
-                      </div>
-                      {hasExecuted && (
-                        <Badge
-                          variant={executionMatch ? "default" : "destructive"}
-                          className="gap-1 text-[10px]"
+                <div className="flex items-center gap-2">
+                  <Button size="xs" onClick={handleRunCode} className="gap-1 font-semibold">
+                    <Check className="h-3.5 w-3.5" /> Verify Prediction
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    onClick={() =>
+                      handleAskAI(
+                        "Explain the event loop and scope queue for this exact output execution.",
+                      )
+                    }
+                    className="gap-1"
+                  >
+                    <Bot className="h-3.5 w-3.5" /> Ask AI to Trace
+                  </Button>
+                </div>
+              </Card>
+            )}
+
+            {/* Live JS Console Output Terminal */}
+            {hasExecuted && (
+              <Card className="p-3 bg-slate-950 text-slate-100 font-mono text-xs space-y-2 border-slate-800">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                  <span className="flex items-center gap-1.5 text-slate-400 font-semibold text-[11px] uppercase tracking-wider">
+                    <Terminal className="h-3.5 w-3.5 text-emerald-400" /> Browser JS Sandbox Console
+                    Output
+                  </span>
+                  <Badge variant="outline" className="text-[9px] border-slate-700 text-slate-400">
+                    Captured {consoleOutput.length} lines
+                  </Badge>
+                </div>
+                <div className="space-y-1 max-h-40 overflow-y-auto pt-1">
+                  {consoleOutput.length === 0 ? (
+                    <div className="text-slate-500 italic text-[11px]">
+                      No console logs produced during execution.
+                    </div>
+                  ) : (
+                    consoleOutput.map((line, idx) => (
+                      <div key={idx} className="flex items-start gap-2">
+                        <span className="text-slate-600 select-none text-[10px] w-5 text-right">
+                          {idx + 1}
+                        </span>
+                        <span
+                          className={
+                            line.startsWith("[ERROR]") ? "text-rose-400" : "text-emerald-300"
+                          }
                         >
-                          {executionMatch ? (
-                            <>
-                              <CheckCircle2 className="h-3 w-3" /> Prediction Matched
-                            </>
-                          ) : (
-                            <>
-                              <XCircle className="h-3 w-3" /> Prediction Mismatched
-                            </>
-                          )}
-                        </Badge>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                        Type your predicted console output (one log per line):
-                      </label>
-                      <Textarea
-                        value={userPrediction}
-                        onChange={(e) => setUserPrediction(e.target.value)}
-                        placeholder="e.g.&#10;1: Start&#10;7: End&#10;4: Promise 1"
-                        rows={3}
-                        className="font-mono text-xs bg-background"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button size="xs" onClick={handleRunCode} className="gap-1 font-semibold">
-                        <Check className="h-3.5 w-3.5" /> Verify Prediction
-                      </Button>
-                      <Button
-                        size="xs"
-                        variant="outline"
-                        onClick={() =>
-                          handleAskAI(
-                            "Explain the event loop and scope queue for this exact output execution.",
-                          )
-                        }
-                        className="gap-1"
-                      >
-                        <Bot className="h-3.5 w-3.5" /> Ask AI to Trace
-                      </Button>
-                    </div>
-                  </Card>
-                )}
-
-                {/* Live JS Console Output Terminal */}
-                {hasExecuted && (
-                  <Card className="p-3 bg-slate-950 text-slate-100 font-mono text-xs space-y-2 border-slate-800">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                      <span className="flex items-center gap-1.5 text-slate-400 font-semibold text-[11px] uppercase tracking-wider">
-                        <Terminal className="h-3.5 w-3.5 text-emerald-400" /> Browser JS Sandbox
-                        Console Output
-                      </span>
-                      <Badge
-                        variant="outline"
-                        className="text-[9px] border-slate-700 text-slate-400"
-                      >
-                        Captured {consoleOutput.length} lines
-                      </Badge>
-                    </div>
-                    <div className="space-y-1 max-h-40 overflow-y-auto pt-1">
-                      {consoleOutput.length === 0 ? (
-                        <div className="text-slate-500 italic text-[11px]">
-                          No console logs produced during execution.
-                        </div>
-                      ) : (
-                        consoleOutput.map((line, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
-                            <span className="text-slate-600 select-none text-[10px] w-5 text-right">
-                              {idx + 1}
-                            </span>
-                            <span
-                              className={
-                                line.startsWith("[ERROR]") ? "text-rose-400" : "text-emerald-300"
-                              }
-                            >
-                              {line}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </Card>
-                )}
-              </div>
-            </>
-          )}
+                          {line}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </Card>
+            )}
+          </div>
         </div>
 
         {/* Right Side: AI Whiteboard Mentor Panel (5 cols) */}

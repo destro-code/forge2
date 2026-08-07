@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mentorStore } from "@/lib/providers/mentor-store";
 import { mentorProvider } from "@/lib/providers/mentor-provider";
-import { useSettings } from "@/lib/hooks/use-settings";
 import {
   Select,
   SelectContent,
@@ -161,27 +160,7 @@ function Counter() {
 }`,
 };
 
-function getSystemPrompt(mode: MentorMode): string {
-  switch (mode) {
-    case "chat":
-      return "You are a professional Staff Front-end Engineer and Mentor. Provide Socratic guidance on frontend architecture, career trajectory, and engineering trade-offs. Encourage critical thinking by asking guiding questions rather than immediately giving away solutions.";
-    case "lesson-help":
-      return "You are a learning assistant helping with software engineering exercises. Provide progressive hints, conceptual breakdowns, and walkthroughs. Avoid immediate spoilers or paste-ready code blocks unless specifically requested; guide the student to solve it.";
-    case "code-review":
-      return "You are a Staff Software Engineer performing a comprehensive code review. Analyze the provided code for performance optimizations, WCAG accessibility, memory leaks, and general code hygiene. Suggest clean refactorings with explanatory markdown and clean typescript snippets.";
-    case "explanations":
-      return "You are a brilliant educator specialized in computer science. Explain complex programming concepts, visual mental models, event loop call-stack execution, microtask/macrotask queues, or Big-O complexity with clarity, rich analogies, and structured text.";
-    case "debug-help":
-      return "You are an expert debugging assistant. Help diagnose root causes, identify stale closures, track down memory leaks, explain stack traces, and formulate reproducible test cases or fixes.";
-    default:
-      return "You are a professional Front-end Software Engineering Mentor.";
-  }
-}
-
-function Mentor() {
-  const { settings } = useSettings();
-  const apiKey = settings.ai.geminiApiKey;
-
+export function Mentor() {
   const [state, set] = mentorStore.useStore();
   const active = state.conversations.find((c) => c.id === state.activeId) ?? state.conversations[0];
   const [activeMode, setActiveMode] = useState<MentorMode>(active?.mode || "chat");
@@ -242,7 +221,7 @@ function Mentor() {
     const asstMsg: MentorMessage = {
       id: crypto.randomUUID(),
       role: "assistant",
-      content: "Thinking...",
+      content: "",
       createdAt: Date.now(),
       mode: activeMode,
     };
@@ -265,113 +244,29 @@ function Mentor() {
     abortRef.current = ctrl;
 
     try {
-      // Format chat history and current user prompt to match Google Gemini API request schema
-      const contents = [...active.messages, userMsg]
-        .filter((m) => m.content.trim() !== "" && m.content !== "Thinking...")
-        .map((m) => ({
-          role: m.role === "user" ? "user" : "model",
-          parts: [{ text: m.content }],
-        }));
-
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            contents,
-            systemInstruction: {
-              parts: [{ text: getSystemPrompt(activeMode) }],
-            },
-            generationConfig: {
-              temperature: settings.ai.temperature ?? 0.4,
-            },
-          }),
-          signal: ctrl.signal,
-        },
-      );
-
-      if (!response.ok) {
-        const errBody = await response.json().catch(() => ({}));
-        throw new Error(errBody?.error?.message || `API error (${response.status})`);
+      let acc = "";
+      for await (const chunk of mentorProvider.stream([...active.messages, userMsg], {
+        model,
+        mode: activeMode,
+        signal: ctrl.signal,
+      })) {
+        acc += chunk;
+        const cur = mentorStore.read();
+        const convo = cur.conversations.find((c) => c.id === active.id)!;
+        const updated = {
+          ...convo,
+          messages: convo.messages.map((m) => (m.id === asstMsg.id ? { ...m, content: acc } : m)),
+        };
+        mentorStore.write({
+          ...cur,
+          conversations: cur.conversations.map((c) => (c.id === active.id ? updated : c)),
+        });
       }
-
-      const data = await response.json();
-      const textResponse =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received from Gemini.";
-
-      const cur = mentorStore.read();
-      const convo = cur.conversations.find((c) => c.id === active.id)!;
-      const updated = {
-        ...convo,
-        messages: convo.messages.map((m) =>
-          m.id === asstMsg.id ? { ...m, content: textResponse } : m,
-        ),
-      };
-      mentorStore.write({
-        ...cur,
-        conversations: cur.conversations.map((c) => (c.id === active.id ? updated : c)),
-      });
-    } catch (error) {
-      const err = error as Error;
-      if (err.name === "AbortError") return;
-      toast.error(err.message || "Failed to fetch response from Gemini API");
-
-      const cur = mentorStore.read();
-      const convo = cur.conversations.find((c) => c.id === active.id)!;
-      const updated = {
-        ...convo,
-        messages: convo.messages.map((m) =>
-          m.id === asstMsg.id
-            ? {
-                ...m,
-                content: `Error: ${err.message || "Failed to communicate with Google Gemini API. Please verify your API key in Settings."}`,
-              }
-            : m,
-        ),
-      };
-      mentorStore.write({
-        ...cur,
-        conversations: cur.conversations.map((c) => (c.id === active.id ? updated : c)),
-      });
     } finally {
       setStreaming(false);
       abortRef.current = null;
     }
   };
-
-  if (!apiKey) {
-    return (
-      <div className="space-y-8">
-        <PageHeader
-          eyebrow="AI Mentor"
-          title="Forge AI Mentor & Coaching Hub"
-          description="Your Staff Engineer mentor equipped with Specialized AI Support Modes: Chat, Lesson Help, Code Review, Explanations, and Debug Assistance."
-        />
-        <div className="flex flex-col items-center justify-center min-h-[400px] border border-border/60 rounded-2xl bg-card/40 p-8 text-center max-w-2xl mx-auto space-y-6">
-          <div className="p-4 rounded-full bg-primary/10 text-primary">
-            <Sparkles className="h-8 w-8" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Gemini API Key Required</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              To unlock direct, secure access to your AI Mentor, please configure your Google Gemini
-              API Key. Your key is stored safely on your device and is never sent to any third party
-              other than Google.
-            </p>
-          </div>
-          <Button asChild>
-            <Link to="/settings" className="gap-2">
-              <Zap className="h-4 w-4" />
-              Configure API Key in Settings
-            </Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   const newChat = () => {
     const id = crypto.randomUUID();

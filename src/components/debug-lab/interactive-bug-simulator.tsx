@@ -378,8 +378,7 @@ export function InteractiveBugSimulator({
 
               <TabsContent
                 value="editor"
-                forceMount
-                className="mt-2 rounded-lg overflow-hidden border border-slate-800 bg-slate-950 min-h-[380px] data-[state=inactive]:hidden"
+                className="mt-2 rounded-lg overflow-hidden border border-slate-800 bg-slate-950 min-h-[380px]"
               >
                 <SandpackCodeEditor
                   showLineNumbers
@@ -393,8 +392,7 @@ export function InteractiveBugSimulator({
 
               <TabsContent
                 value="preview"
-                forceMount
-                className="mt-2 rounded-lg overflow-hidden border border-slate-800 bg-slate-950 min-h-[380px] data-[state=inactive]:hidden"
+                className="mt-2 rounded-lg overflow-hidden border border-slate-800 bg-slate-950 min-h-[380px]"
               >
                 <SandpackPreview
                   showNavigator={false}
@@ -406,8 +404,7 @@ export function InteractiveBugSimulator({
 
               <TabsContent
                 value="console"
-                forceMount
-                className="mt-2 rounded-lg overflow-hidden border border-slate-800 bg-slate-950 min-h-[380px] data-[state=inactive]:hidden"
+                className="mt-2 rounded-lg overflow-hidden border border-slate-800 bg-slate-950 min-h-[380px]"
               >
                 <SandpackConsole style={{ height: "400px" }} />
               </TabsContent>

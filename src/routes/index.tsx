@@ -4,7 +4,6 @@ import { StatCard } from "@/components/shared/stat-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProgress } from "@/lib/hooks/use-progress";
-import { progressStore } from "@/lib/providers/progress-provider";
 import {
   useModules,
   useLessons,
@@ -45,7 +44,6 @@ export const Route = createFileRoute("/")({
 
 function Dashboard() {
   const progress = useProgress();
-  const [, setProgress] = progressStore.useStore();
   const modules = useModules();
   const lessons = useLessons();
   const projects = useProjects();

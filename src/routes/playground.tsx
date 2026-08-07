@@ -28,7 +28,7 @@ export const Route = createFileRoute("/playground")({
   component: Playground,
 });
 
-function Playground() {
+export function Playground() {
   const [currentPresetId, setCurrentPresetId] = useState<string>(PLAYGROUND_PRESETS[0].id);
   const activePreset =
     PLAYGROUND_PRESETS.find((p) => p.id === currentPresetId) || PLAYGROUND_PRESETS[0];
