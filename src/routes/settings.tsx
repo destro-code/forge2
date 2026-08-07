@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -182,6 +183,20 @@ function Settings() {
                     <SelectItem value="openrouter">OpenRouter</SelectItem>
                   </SelectContent>
                 </Select>
+              </Row>
+              <Row label="Gemini API Key">
+                <Input
+                  type="password"
+                  placeholder="AIzaSy..."
+                  value={settings.ai.geminiApiKey || ""}
+                  onChange={(e) =>
+                    setSettings((s) => ({
+                      ...s,
+                      ai: { ...s.ai, geminiApiKey: e.target.value },
+                    }))
+                  }
+                  className="w-48 font-mono text-xs"
+                />
               </Row>
               <Row label="Coaching mode">
                 <Switch

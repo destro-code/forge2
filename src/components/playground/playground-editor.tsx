@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   SandpackProvider,
   SandpackLayout,
   SandpackCodeEditor,
   SandpackPreview,
   useSandpack,
-  useSandpackConsole,
   type SandpackTheme,
 } from "@codesandbox/sandpack-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -68,8 +67,63 @@ function SandpackSync({ onCodeChange }: SandpackSyncProps) {
   return null;
 }
 
+interface SandpackConsoleLog {
+  id: string;
+  method: string;
+  data?: unknown[];
+}
+
 function CustomSandpackConsole({ height = "480px" }: { height?: string }) {
-  const { logs: rawLogs, reset } = useSandpackConsole();
+  const { listen, sandpack } = useSandpack();
+  const [rawLogs, setRawLogs] = useState<SandpackConsoleLog[]>([]);
+
+  useEffect(() => {
+    if (sandpack.status !== "running") return;
+
+    const unsubscribe = listen((message) => {
+      if (message.type === "start") {
+        setRawLogs([]);
+      } else if (message.type === "console" && message.codesandbox) {
+        const payloadLog = (
+          Array.isArray(message.log) ? message.log : [message.log]
+        ) as SandpackConsoleLog[];
+
+        // Handle clear console method
+        const hasClear = payloadLog.some((log) => log?.method === "clear");
+        if (hasClear) {
+          setRawLogs([]);
+          return;
+        }
+
+        setRawLogs((prev) => {
+          const newLogs = [...prev];
+          for (const newLog of payloadLog) {
+            if (!newLog || !newLog.id) continue;
+            const exists = newLogs.some((l) => l.id === newLog.id);
+            if (!exists) {
+              newLogs.push(newLog);
+            }
+          }
+          if (newLogs.length > 200) {
+            return newLogs.slice(newLogs.length - 200);
+          }
+          return newLogs;
+        });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [sandpack.status, listen]);
+
+  if (sandpack.status !== "running") {
+    return (
+      <div className="p-4 text-slate-500 font-mono text-xs flex items-center justify-center h-full">
+        Initializing console...
+      </div>
+    );
+  }
 
   // Map and filter logs to match PlaygroundConsole requirements
   const logs = (rawLogs || [])
@@ -118,6 +172,10 @@ function CustomSandpackConsole({ height = "480px" }: { height?: string }) {
         timestamp: new Date().toLocaleTimeString(),
       };
     });
+
+  const reset = () => {
+    setRawLogs([]);
+  };
 
   return (
     <div style={{ height }} className="w-full h-full overflow-hidden">
@@ -229,7 +287,8 @@ export function PlaygroundEditor({ files, activeFileId, onCodeChange }: Playgrou
 
             <TabsContent
               value="editor"
-              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950"
+              forceMount
+              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950 data-[state=inactive]:hidden"
             >
               <SandpackCodeEditor
                 showLineNumbers
@@ -243,7 +302,8 @@ export function PlaygroundEditor({ files, activeFileId, onCodeChange }: Playgrou
 
             <TabsContent
               value="preview"
-              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950"
+              forceMount
+              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950 data-[state=inactive]:hidden"
             >
               <SandpackPreview
                 showNavigator={false}
@@ -255,7 +315,8 @@ export function PlaygroundEditor({ files, activeFileId, onCodeChange }: Playgrou
 
             <TabsContent
               value="console"
-              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950"
+              forceMount
+              className="mt-2 min-h-[420px] w-full max-w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-950 data-[state=inactive]:hidden"
             >
               <CustomSandpackConsole height="480px" />
             </TabsContent>
