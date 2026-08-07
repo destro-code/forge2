@@ -151,7 +151,7 @@ function WhiteboardPage() {
 
     // Redraw all paths using relative coordinates
     paths.forEach((path) => {
-      if (path.points.length < 2) return;
+      if (!path || !path.points || path.points.length < 2) return;
       ctx.beginPath();
       ctx.strokeStyle = path.isEraser ? "#0f172a" : path.color;
       ctx.lineWidth = path.width;
@@ -159,11 +159,14 @@ function WhiteboardPage() {
       ctx.lineJoin = "round";
 
       const start = path.points[0];
+      if (!start) return;
       ctx.moveTo(start.x * canvas.width, start.y * canvas.height);
 
       for (let i = 1; i < path.points.length; i++) {
         const pt = path.points[i];
-        ctx.lineTo(pt.x * canvas.width, pt.y * canvas.height);
+        if (pt) {
+          ctx.lineTo(pt.x * canvas.width, pt.y * canvas.height);
+        }
       }
       ctx.stroke();
     });
@@ -263,7 +266,9 @@ function WhiteboardPage() {
     const y = (clientY - rect.top) / rect.height;
 
     const points = currentPathRef.current.points;
+    if (!points || points.length === 0) return;
     const prevPoint = points[points.length - 1];
+    if (!prevPoint) return;
 
     ctx.beginPath();
     ctx.strokeStyle = isEraser ? "#0f172a" : brushColor;
@@ -280,8 +285,9 @@ function WhiteboardPage() {
   const endDrawing = () => {
     if (!isDrawing) return;
     setIsDrawing(false);
-    if (currentPathRef.current && currentPathRef.current.points.length > 0) {
-      setPaths((prev) => [...prev, currentPathRef.current]);
+    const activePath = currentPathRef.current;
+    if (activePath && activePath.points && activePath.points.length > 0) {
+      setPaths((prev) => [...prev, activePath]);
     }
     currentPathRef.current = null;
   };
