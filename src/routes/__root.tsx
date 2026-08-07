@@ -16,6 +16,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { TopBar } from "@/components/layout/top-bar";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { KeyboardShortcutsModal } from "@/components/layout/keyboard-shortcuts-modal";
+import { MobileConsole } from "@/components/shared/mobile-console";
 import { Toaster } from "@/components/ui/sonner";
 import { useTheme } from "@/lib/hooks/use-theme";
 import { validateCurriculumData } from "@/lib/utils/data-validator";
@@ -155,6 +156,7 @@ function AppLayout() {
         <CommandPalette />
         <KeyboardShortcutsModal />
         <Toaster />
+        <MobileConsole />
       </div>
     </SidebarProvider>
   );
