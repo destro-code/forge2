@@ -24,13 +24,6 @@ export function PlaygroundConsole({ logs, onClearConsole }: PlaygroundConsolePro
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredLogs = logs.filter((log) => {
-    // Explicitly filter out and ignore any error messages containing the exact strings "Canceled" or "ERR Canceled"
-    if (
-      log.level === "error" &&
-      (log.message.includes("Canceled") || log.message.includes("ERR Canceled"))
-    ) {
-      return false;
-    }
     if (filterLevel !== "all" && log.level !== filterLevel) return false;
     if (searchQuery && !log.message.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;

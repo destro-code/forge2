@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Check, Terminal, Play, Eye } from "lucide-react";
+import { Copy, Check, Terminal, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -21,8 +21,6 @@ export function LessonInteractiveCode({
 }: LessonInteractiveCodeProps) {
   const [copied, setCopied] = useState(false);
   const [outputLog, setOutputLog] = useState<string | null>(null);
-  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
-  const [previewCss, setPreviewCss] = useState<string | null>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -34,43 +32,8 @@ export function LessonInteractiveCode({
   const lines = code.split("\n");
 
   const handleQuickRun = () => {
-    setOutputLog(null);
-    setPreviewHtml(null);
-    setPreviewCss(null);
-
-    const lang = (language || "").toLowerCase().trim();
-
     try {
-      if (lang === "css") {
-        setPreviewCss(code);
-        setOutputLog("CSS Applied successfully to live preview element.");
-        toast.success("CSS applied to live preview element");
-        return;
-      }
-
-      if (lang === "html" || lang === "htm" || lang === "svg") {
-        setPreviewHtml(code);
-        setOutputLog("HTML rendered successfully in live preview frame.");
-        toast.success("HTML rendered in preview frame");
-        return;
-      }
-
-      if (lang === "json") {
-        try {
-          const parsed = JSON.parse(code);
-          setOutputLog(
-            `Valid JSON object parsed successfully:\n${JSON.stringify(parsed, null, 2)}`,
-          );
-          toast.success("JSON parsed successfully");
-        } catch (jsonErr: unknown) {
-          const msg = jsonErr instanceof Error ? jsonErr.message : String(jsonErr);
-          setOutputLog(`[JSON SyntaxError] ${msg}`);
-          toast.error(`JSON SyntaxError: ${msg}`);
-        }
-        return;
-      }
-
-      // JS / TS / JSX / TSX or fallback code execution
+      // Intercept console output for simple snippet evaluation
       const logs: string[] = [];
       const dummyConsole = {
         log: (...args: unknown[]) =>
@@ -79,22 +42,13 @@ export function LessonInteractiveCode({
           ),
         warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
         error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
-        info: (...args: unknown[]) => logs.push(`[INFO] ${args.join(" ")}`),
       };
 
-      // Strip TS annotations & import/export statements to allow safe JS evaluation
+      // Strip import / export statements to allow quick eval if simple JS/TS
       const cleanCode = code
         .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
-        .replace(/^import\s+['"].*?['"];?/gm, "")
         .replace(/^export\s+default\s+/gm, "")
-        .replace(/^export\s+/gm, "")
-        .replace(/interface\s+\w+\s*\{[\s\S]*?\}/g, "")
-        .replace(/type\s+\w+\s*=[\s\S]*?;/g, "")
-        .replace(
-          /:\s*(string|number|boolean|any|void|unknown|object|never|Record<.*?>|Array<.*?>)(\[\])?/g,
-          "",
-        )
-        .replace(/\s+as\s+\w+/g, "");
+        .replace(/^export\s+/gm, "");
 
       const fn = new Function("console", cleanCode);
       fn(dummyConsole);
@@ -104,13 +58,10 @@ export function LessonInteractiveCode({
         toast.success("Snippet executed cleanly");
       } else {
         setOutputLog("✓ Executed cleanly (no console output).");
-        toast.success("Executed cleanly");
       }
     } catch (err: unknown) {
-      const errName = err instanceof Error ? err.name : "RuntimeError";
       const errMsg = err instanceof Error ? err.message : String(err);
-      setOutputLog(`[${errName}] ${errMsg}`);
-      toast.error(`Execution note: ${errMsg}`);
+      setOutputLog(`Runtime Note: ${errMsg}`);
     }
   };
 
@@ -135,7 +86,7 @@ export function LessonInteractiveCode({
             size="sm"
             onClick={handleQuickRun}
             className="h-6 px-2 text-[10px] gap-1 hover:text-foreground"
-            title="Evaluate or preview snippet"
+            title="Evaluate console output"
           >
             <Play className="h-3 w-3 text-emerald-400" /> Run Quick
           </Button>
@@ -189,68 +140,21 @@ export function LessonInteractiveCode({
         </pre>
       </div>
 
-      {/* Console output & live preview drawer */}
-      {(outputLog !== null || previewCss !== null || previewHtml !== null) && (
-        <div className="border-t border-border/50 bg-black/80 p-3 text-[11px] font-mono text-emerald-300 space-y-3">
-          <div className="flex items-center justify-between text-muted-foreground text-[10px] font-sans">
-            <span className="flex items-center gap-1.5 font-semibold text-foreground">
-              <Terminal className="h-3.5 w-3.5 text-emerald-400" />
-              Quick Execution Console & Preview
+      {/* Console output drawer if quick run executed */}
+      {outputLog !== null && (
+        <div className="border-t border-border/50 bg-black/60 p-3 text-[11px] font-mono text-emerald-300">
+          <div className="flex items-center justify-between text-muted-foreground text-[10px] mb-1 font-sans">
+            <span className="flex items-center gap-1 font-semibold text-foreground">
+              <Terminal className="h-3 w-3 text-emerald-400" /> Quick Output Log
             </span>
             <button
-              onClick={() => {
-                setOutputLog(null);
-                setPreviewHtml(null);
-                setPreviewCss(null);
-              }}
-              className="text-[10px] text-muted-foreground hover:text-foreground transition-colors px-2 py-0.5 rounded bg-muted/20"
+              onClick={() => setOutputLog(null)}
+              className="text-muted-foreground hover:text-foreground"
             >
               Dismiss
             </button>
           </div>
-
-          {outputLog && (
-            <div className="whitespace-pre-wrap font-mono text-emerald-300 bg-slate-950/90 p-3 rounded-lg border border-slate-800/80 leading-relaxed max-h-48 overflow-y-auto">
-              {outputLog}
-            </div>
-          )}
-
-          {/* Live CSS Preview Element */}
-          {previewCss && (
-            <div className="rounded-lg border border-slate-800 bg-slate-950 p-3 font-sans">
-              <style>{previewCss}</style>
-              <div className="flex items-center gap-1.5 text-[10px] uppercase font-mono tracking-wider text-muted-foreground mb-2">
-                <Eye className="h-3 w-3 text-cyan-400" /> CSS Live Element Preview
-              </div>
-              <div className="p-4 rounded-lg bg-slate-900 border border-slate-800 text-slate-200">
-                <div className="preview-target font-sans space-y-2">
-                  <h4 className="text-sm font-semibold text-foreground">
-                    Live Styled Target Element
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    Custom layout, colors, box-sizing, and typography rules defined in the CSS
-                    snippet are live in this container.
-                  </p>
-                  <button className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium shadow-sm">
-                    Interactive Sample Button
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Live HTML Preview Container */}
-          {previewHtml && (
-            <div className="rounded-lg border border-slate-800 bg-slate-950 p-3 font-sans">
-              <div className="flex items-center gap-1.5 text-[10px] uppercase font-mono tracking-wider text-muted-foreground mb-2">
-                <Eye className="h-3 w-3 text-emerald-400" /> Rendered HTML Frame
-              </div>
-              <div
-                className="p-4 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 overflow-x-auto"
-                dangerouslySetInnerHTML={{ __html: previewHtml }}
-              />
-            </div>
-          )}
+          <div className="whitespace-pre-wrap">{outputLog}</div>
         </div>
       )}
     </div>

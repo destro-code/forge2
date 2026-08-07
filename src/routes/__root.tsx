@@ -18,22 +18,21 @@ import { CommandPalette } from "@/components/layout/command-palette";
 import { KeyboardShortcutsModal } from "@/components/layout/keyboard-shortcuts-modal";
 import { Toaster } from "@/components/ui/sonner";
 import { useTheme } from "@/lib/hooks/use-theme";
-import { validateCurriculumData } from "@/lib/utils/data-validator";
 
 function NotFoundComponent() {
   return (
     <div className="grid min-h-dvh place-items-center bg-background px-4">
       <div className="max-w-md text-center">
         <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">404</div>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight">Page Not Found</h1>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight">This page hasn't been forged yet</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          The route you are looking for does not exist or has been moved.
+          The route you're looking for doesn't exist in the Academy.
         </p>
         <Link
           to="/"
-          className="mt-6 inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="mt-6 inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          Return to Dashboard
+          Back to dashboard
         </Link>
       </div>
     </div>
@@ -123,11 +122,6 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function AppLayout() {
   useTheme(); // hydrate theme
-
-  useEffect(() => {
-    validateCurriculumData();
-  }, []);
-
   return (
     <SidebarProvider>
       <a

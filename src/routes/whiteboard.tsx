@@ -30,7 +30,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {
@@ -321,35 +321,35 @@ export function WhiteboardPage() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] w-full max-w-full flex-col overflow-hidden bg-background">
+    <div className="flex h-[calc(100vh-3.5rem)] flex-col overflow-hidden bg-background">
       {/* Top Navigation & Mode Switcher Bar */}
-      <header className="flex flex-col md:flex-row shrink-0 items-start md:items-center justify-between border-b px-3 py-2 gap-2 overflow-x-auto max-w-full">
-        <div className="flex items-center gap-2.5 shrink-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Sparkles className="h-4 w-4" />
+      <header className="flex shrink-0 items-center justify-between border-b px-4 py-2.5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Sparkles className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-semibold tracking-tight">Whiteboard Mode</h1>
+              <h1 className="text-base font-semibold tracking-tight">Whiteboard Mode</h1>
               <Badge
                 variant="outline"
-                className="text-[9px] font-mono uppercase tracking-widest text-primary border-primary/30 py-0"
+                className="text-[10px] font-mono uppercase tracking-widest text-primary border-primary/30"
               >
                 Sprint 12
               </Badge>
             </div>
-            <p className="text-[11px] text-muted-foreground hidden sm:block">
+            <p className="text-xs text-muted-foreground">
               Real-time AI code breakdown, output prediction, debug trace & architecture critique
             </p>
           </div>
         </div>
 
-        {/* 5 Core Support Tabs (Scrollable on small viewports) */}
-        <div className="flex items-center gap-1 rounded-xl border bg-muted/40 p-1 overflow-x-auto max-w-full scrollbar-none whitespace-nowrap shrink-0">
+        {/* 5 Core Support Tabs */}
+        <div className="flex items-center gap-1.5 rounded-xl border bg-muted/40 p-1">
           <Button
             size="sm"
             variant={activeMode === "explain" ? "default" : "ghost"}
-            className="h-7 gap-1.5 text-xs font-medium"
+            className="h-8 gap-1.5 text-xs font-medium"
             onClick={() => setActiveMode("explain")}
           >
             <FileCode className="h-3.5 w-3.5" />
@@ -359,7 +359,7 @@ export function WhiteboardPage() {
           <Button
             size="sm"
             variant={activeMode === "predict" ? "default" : "ghost"}
-            className="h-7 gap-1.5 text-xs font-medium"
+            className="h-8 gap-1.5 text-xs font-medium"
             onClick={() => setActiveMode("predict")}
           >
             <Play className="h-3.5 w-3.5" />
@@ -369,7 +369,7 @@ export function WhiteboardPage() {
           <Button
             size="sm"
             variant={activeMode === "debug" ? "default" : "ghost"}
-            className="h-7 gap-1.5 text-xs font-medium"
+            className="h-8 gap-1.5 text-xs font-medium"
             onClick={() => setActiveMode("debug")}
           >
             <Bug className="h-3.5 w-3.5" />
@@ -379,7 +379,7 @@ export function WhiteboardPage() {
           <Button
             size="sm"
             variant={activeMode === "improve" ? "default" : "ghost"}
-            className="h-7 gap-1.5 text-xs font-medium"
+            className="h-8 gap-1.5 text-xs font-medium"
             onClick={() => setActiveMode("improve")}
           >
             <Zap className="h-3.5 w-3.5" />
@@ -389,7 +389,7 @@ export function WhiteboardPage() {
           <Button
             size="sm"
             variant={activeMode === "architecture" ? "default" : "ghost"}
-            className="h-7 gap-1.5 text-xs font-medium"
+            className="h-8 gap-1.5 text-xs font-medium"
             onClick={() => setActiveMode("architecture")}
           >
             <Network className="h-3.5 w-3.5" />
@@ -400,12 +400,12 @@ export function WhiteboardPage() {
         {/* Presets Modal Trigger */}
         <Dialog open={presetsDialogOpen} onOpenChange={setPresetsDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="h-7 gap-1.5 text-xs shrink-0">
+            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
               <Layers className="h-3.5 w-3.5" />
-              Presets ({filteredPresets.length})
+              Whiteboard Questions ({filteredPresets.length})
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
@@ -450,7 +450,7 @@ export function WhiteboardPage() {
         {/* Left Side: Code Scratchpad & Interactive Canvas (8 cols) */}
         <div className="flex flex-col border-r lg:col-span-7 xl:col-span-7">
           {/* Editor Header Toolbar */}
-          <div className="flex flex-wrap items-center justify-between border-b px-4 py-2 bg-muted/20 gap-2">
+          <div className="flex items-center justify-between border-b px-4 py-2 bg-muted/20">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {activeMode === "architecture"
@@ -504,19 +504,19 @@ export function WhiteboardPage() {
             {/* Architecture Node Visualizer (if architecture mode) */}
             {activeMode === "architecture" && (
               <Card className="p-4 bg-muted/20 border-dashed border-2">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <Box className="h-4 w-4 text-primary" />
                     <h3 className="text-xs font-bold uppercase tracking-wider">
                       System Components & Flow Nodes
                     </h3>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                  <div className="flex items-center gap-2">
                     <Input
                       placeholder="Component name..."
                       value={newNodeLabel}
                       onChange={(e) => setNewNodeLabel(e.target.value)}
-                      className="h-7 text-xs w-36"
+                      className="h-7 text-xs w-40"
                     />
                     <select
                       value={newNodeType}
@@ -737,14 +737,14 @@ export function WhiteboardPage() {
           </div>
 
           {/* Quick Action Badges */}
-          <div className="flex items-center gap-1.5 p-2.5 border-b bg-muted/20 text-xs overflow-x-auto max-w-full scrollbar-none whitespace-nowrap">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mr-1 shrink-0">
+          <div className="flex flex-wrap items-center gap-1.5 p-2.5 border-b bg-muted/20 text-xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mr-1">
               Quick AI Prompts:
             </span>
             <Button
               variant="outline"
               size="xs"
-              className="h-6 text-[10px] rounded-full shrink-0"
+              className="h-6 text-[10px] rounded-full"
               onClick={() =>
                 handleAskAI(
                   "Explain time & space complexity (Big-O) and call stack mechanics in detail.",
@@ -756,7 +756,7 @@ export function WhiteboardPage() {
             <Button
               variant="outline"
               size="xs"
-              className="h-6 text-[10px] rounded-full shrink-0"
+              className="h-6 text-[10px] rounded-full"
               onClick={() =>
                 handleAskAI(
                   "Are there any hidden memory leaks, stale closures, or unhandled errors?",
@@ -768,7 +768,7 @@ export function WhiteboardPage() {
             <Button
               variant="outline"
               size="xs"
-              className="h-6 text-[10px] rounded-full shrink-0"
+              className="h-6 text-[10px] rounded-full"
               onClick={() =>
                 handleAskAI(
                   "How would a Senior Architect redesign this for maximum performance and readability?",
