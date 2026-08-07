@@ -4,13 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { RotateCcw, Sparkles, ShieldCheck, Code2, Lightbulb } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import type { PlaygroundFile } from "@/lib/types/playground";
 import { PLAYGROUND_PRESETS } from "@/lib/playground-data";
-import { PlaygroundEditor } from "@/components/playground/playground-editor";
 import { PlaygroundSolutionModal } from "@/components/playground/playground-solution-modal";
 import { PlaygroundCodeReviewerModal } from "@/components/playground/playground-code-reviewer-modal";
+
+const PlaygroundEditor = React.lazy(() =>
+  import("@/components/playground/playground-editor").then((m) => ({
+    default: m.PlaygroundEditor,
+  })),
+);
 
 export const Route = createFileRoute("/playground")({
   head: () => ({
@@ -184,11 +189,20 @@ function Playground() {
 
       {/* Main Workspace Layout (Sandpack Editor & Preview) */}
       <div className="w-full max-w-full overflow-hidden">
-        <PlaygroundEditor
-          files={files}
-          activeFileId={files[0]?.id}
-          onCodeChange={handleCodeChange}
-        />
+        <React.Suspense
+          fallback={
+            <div className="p-8 text-center text-slate-400 min-h-[480px] flex flex-col items-center justify-center border border-border/60 rounded-xl bg-[#0f172a]/40 gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="text-sm">Loading execution environment...</p>
+            </div>
+          }
+        >
+          <PlaygroundEditor
+            files={files}
+            activeFileId={files[0]?.id}
+            onCodeChange={handleCodeChange}
+          />
+        </React.Suspense>
       </div>
 
       {/* Architectural Hints & Learning Tips */}

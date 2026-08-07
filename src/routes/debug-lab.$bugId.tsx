@@ -13,7 +13,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { CodeBlock } from "@/components/shared/code-block";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
-import { InteractiveBugSimulator } from "@/components/debug-lab/interactive-bug-simulator";
 import { useProgress } from "@/lib/hooks/use-progress";
 import bugsData from "@/data/bugs.json";
 import type { Bug } from "@/lib/types";
@@ -28,8 +27,14 @@ import {
   Award,
   Terminal,
 } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
+
+const InteractiveBugSimulator = React.lazy(() =>
+  import("@/components/debug-lab/interactive-bug-simulator").then((m) => ({
+    default: m.InteractiveBugSimulator,
+  })),
+);
 
 export const Route = createFileRoute("/debug-lab/$bugId")({
   loader: ({ params }) => {
@@ -141,15 +146,24 @@ function BugView() {
           </TabsList>
 
           <TabsContent value="editor" className="mt-4 space-y-4">
-            <InteractiveBugSimulator
-              brokenCode={bug.brokenCode}
-              fixedCode={bug.fixedCode}
-              bugTitle={bug.title}
-              bugId={bug.id}
-              interactiveType={bug.interactiveType}
-              isFixed={activeCodeTab === "fixed"}
-              onVerifySuccess={handleMarkSolved}
-            />
+            <React.Suspense
+              fallback={
+                <div className="p-8 text-center text-slate-400 min-h-[300px] flex flex-col items-center justify-center border border-border/60 rounded-xl bg-slate-950/40 gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <p className="text-sm">Loading execution environment...</p>
+                </div>
+              }
+            >
+              <InteractiveBugSimulator
+                brokenCode={bug.brokenCode}
+                fixedCode={bug.fixedCode}
+                bugTitle={bug.title}
+                bugId={bug.id}
+                interactiveType={bug.interactiveType}
+                isFixed={activeCodeTab === "fixed"}
+                onVerifySuccess={handleMarkSolved}
+              />
+            </React.Suspense>
 
             <Card className="border-border/60">
               <CardHeader className="py-3 px-4 flex flex-row items-center justify-between border-b border-border/40">
@@ -190,15 +204,24 @@ function BugView() {
           </TabsContent>
 
           <TabsContent value="preview" className="mt-4 space-y-4">
-            <InteractiveBugSimulator
-              brokenCode={bug.brokenCode}
-              fixedCode={bug.fixedCode}
-              bugTitle={bug.title}
-              bugId={bug.id}
-              interactiveType={bug.interactiveType}
-              isFixed={activeCodeTab === "fixed"}
-              onVerifySuccess={handleMarkSolved}
-            />
+            <React.Suspense
+              fallback={
+                <div className="p-8 text-center text-slate-400 min-h-[300px] flex flex-col items-center justify-center border border-border/60 rounded-xl bg-slate-950/40 gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <p className="text-sm">Loading execution environment...</p>
+                </div>
+              }
+            >
+              <InteractiveBugSimulator
+                brokenCode={bug.brokenCode}
+                fixedCode={bug.fixedCode}
+                bugTitle={bug.title}
+                bugId={bug.id}
+                interactiveType={bug.interactiveType}
+                isFixed={activeCodeTab === "fixed"}
+                onVerifySuccess={handleMarkSolved}
+              />
+            </React.Suspense>
           </TabsContent>
 
           <TabsContent value="console" className="mt-4 space-y-4">
@@ -331,15 +354,24 @@ function BugView() {
               </div>
             </div>
 
-            <InteractiveBugSimulator
-              brokenCode={bug.brokenCode}
-              fixedCode={bug.fixedCode}
-              bugTitle={bug.title}
-              bugId={bug.id}
-              interactiveType={bug.interactiveType}
-              isFixed={activeCodeTab === "fixed"}
-              onVerifySuccess={handleMarkSolved}
-            />
+            <React.Suspense
+              fallback={
+                <div className="p-8 text-center text-slate-400 min-h-[400px] flex flex-col items-center justify-center border border-border/60 rounded-xl bg-[#0f172a]/40 gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <p className="text-sm">Loading execution environment...</p>
+                </div>
+              }
+            >
+              <InteractiveBugSimulator
+                brokenCode={bug.brokenCode}
+                fixedCode={bug.fixedCode}
+                bugTitle={bug.title}
+                bugId={bug.id}
+                interactiveType={bug.interactiveType}
+                isFixed={activeCodeTab === "fixed"}
+                onVerifySuccess={handleMarkSolved}
+              />
+            </React.Suspense>
           </div>
 
           {/* Code Inspector Tabs */}
