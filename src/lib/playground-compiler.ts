@@ -15,15 +15,3 @@ export function buildPlaygroundHtml(
   const report = runCompilerPipeline(files, options);
   return report.outputHtml;
 }
-
-/**
- * Dynamically loads browser-only execution utilities when running in the client.
- */
-export async function loadClientCompilerRuntime() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  return {
-    isBrowser: true,
-  };
-}
