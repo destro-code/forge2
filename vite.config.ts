@@ -1,27 +1,30 @@
-// @lovable.dev/vite-tanstack-config already includes the following — do NOT add them manually
-// or the app will break with duplicate plugins:
-//   - TanStack devtools (dev-only, first), tanstackStart, viteReact, tailwindcss, tsConfigPaths,
-//     nitro (build-only using cloudflare as a default target), VITE_* env injection, @ path alias,
-//     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
-// You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+if (typeof global !== "undefined" && typeof (global as any).self === "undefined") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (global as any).self = global;
+}
+
+import path from "path";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
   define: {
     "process.env": {},
-    // Polyfill self for libraries like cuid/sandpack that expect browser context during build
     self: "globalThis",
   },
-  vite: {
-    define: {
-      "process.env": {},
-      // Polyfill self for libraries like cuid/sandpack that expect browser context during build
-      self: "globalThis",
+  resolve: {
+    alias: {
+      "@": path.resolve(process.cwd(), "./src"),
     },
   },
-  tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
+  plugins: [react(), TanStackRouterVite()],
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+    rollupOptions: {
+      input: "./index.html",
+    },
   },
 });
