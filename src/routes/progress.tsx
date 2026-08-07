@@ -19,7 +19,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { HeatMap } from "@/components/shared/heat-map";
-import { progressStore, initialTopicMasteryRecords } from "@/lib/providers/progress-provider";
+import { progressStore } from "@/lib/providers/progress-provider";
+import { useProgress } from "@/lib/hooks/use-progress";
 import type { MasteryState, TopicMasteryRecord } from "@/lib/types";
 import { toast } from "sonner";
 import {
@@ -98,7 +99,8 @@ const CATEGORIES = [
 ];
 
 export function MasteryEnginePage() {
-  const [progress, setProgress] = progressStore.useStore();
+  const progress = useProgress();
+  const [, setProgress] = progressStore.useStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("confidence");
@@ -116,9 +118,9 @@ export function MasteryEnginePage() {
     null,
   );
 
-  // Safely fallback to initialTopicMasteryRecords if not yet populated in local storage
+  // Safely fallback to empty object if not yet populated in local storage
   const masteryRecords: Record<string, TopicMasteryRecord> = useMemo(() => {
-    return progress.topicMasteryRecords || initialTopicMasteryRecords;
+    return progress.topicMasteryRecords || {};
   }, [progress.topicMasteryRecords]);
 
   const recordsList = useMemo(() => Object.values(masteryRecords), [masteryRecords]);
@@ -256,7 +258,7 @@ export function MasteryEnginePage() {
   // Event Handlers for State Persistence
   const handleUpdateConfidence = (topicId: string, newConfidence: number) => {
     setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || initialTopicMasteryRecords;
+      const currentMap = prev.topicMasteryRecords || {};
       const existing = currentMap[topicId];
       if (!existing) return prev;
 
@@ -284,7 +286,7 @@ export function MasteryEnginePage() {
 
   const handleUpdateMastery = (topicId: string, newMastery: MasteryState) => {
     setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || initialTopicMasteryRecords;
+      const currentMap = prev.topicMasteryRecords || {};
       const existing = currentMap[topicId];
       if (!existing) return prev;
 
@@ -310,7 +312,7 @@ export function MasteryEnginePage() {
     nextDate.setDate(nextDate.getDate() + newInterval);
 
     setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || initialTopicMasteryRecords;
+      const currentMap = prev.topicMasteryRecords || {};
       const record = currentMap[topicId];
       if (!record) return prev;
 
@@ -343,7 +345,7 @@ export function MasteryEnginePage() {
     nextDate.setDate(nextDate.getDate() + daysAhead);
 
     setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || initialTopicMasteryRecords;
+      const currentMap = prev.topicMasteryRecords || {};
       const record = currentMap[topicId];
       if (!record) return prev;
 
@@ -384,7 +386,7 @@ export function MasteryEnginePage() {
     };
 
     setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || initialTopicMasteryRecords;
+      const currentMap = prev.topicMasteryRecords || {};
       return {
         ...prev,
         topicMasteryRecords: {

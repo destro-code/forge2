@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
+import { useProgress } from "@/lib/hooks/use-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -118,6 +119,16 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
   const correctCount = questionResults.filter((r) => r.isCorrect).length;
   const totalCount = quiz.questions.length;
   const scorePercent = Math.round((correctCount / totalCount) * 100);
+
+  const { saveQuizResult } = useProgress();
+  const hasSavedRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasSavedRef.current && quiz.id) {
+      hasSavedRef.current = true;
+      saveQuizResult(quiz.id, scorePercent, quiz.topicId);
+    }
+  }, [quiz.id, quiz.topicId, scorePercent, saveQuizResult]);
 
   const formattedTimeSpent = `${Math.floor(timeSpentSeconds / 60)}m ${timeSpentSeconds % 60}s`;
 

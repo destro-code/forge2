@@ -283,6 +283,14 @@ export type QuizQuestion =
   | CodeQuestion
   | FillInBlankQuestion;
 
+export interface QuizResultRecord {
+  id: string;
+  quizId: string;
+  topicId?: string;
+  scorePercent: number;
+  completedAt: string;
+}
+
 export interface Quiz {
   id: string;
   title: string;
@@ -290,6 +298,7 @@ export interface Quiz {
   difficulty: Difficulty;
   estimatedMinutes: number;
   category?: string;
+  topicId?: string;
   questions: QuizQuestion[];
 }
 
@@ -446,4 +455,12 @@ export interface JournalEntry {
   isFavorite: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CertificateRecord {
+  id: string;
+  pathId: string;
+  pathTitle: string;
+  score: number;
+  issuedAt: string;
 }

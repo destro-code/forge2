@@ -13,7 +13,22 @@ export function createLocalStore<T>(key: string, fallback: T) {
     if (!hydrated) {
       try {
         const raw = window.localStorage.getItem(key);
-        cache = raw ? (JSON.parse(raw) as T) : fallback;
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (
+            typeof fallback === "object" &&
+            fallback !== null &&
+            typeof parsed === "object" &&
+            parsed !== null &&
+            !Array.isArray(parsed)
+          ) {
+            cache = { ...fallback, ...parsed };
+          } else {
+            cache = parsed as T;
+          }
+        } else {
+          cache = fallback;
+        }
       } catch {
         cache = fallback;
       }
@@ -33,6 +48,11 @@ export function createLocalStore<T>(key: string, fallback: T) {
       }
     }
     listeners.forEach((l) => l());
+  }
+
+  function update(updater: (prev: T) => T) {
+    const next = updater(read());
+    write(next);
   }
 
   function subscribe(l: () => void) {
@@ -55,5 +75,5 @@ export function createLocalStore<T>(key: string, fallback: T) {
     ];
   }
 
-  return { read, write, subscribe, useStore };
+  return { read, write, update, subscribe, useStore };
 }

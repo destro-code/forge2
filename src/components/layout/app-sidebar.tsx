@@ -32,6 +32,7 @@ import {
   Trophy,
   BarChart3,
   Calendar,
+  Award,
   Settings,
   Info,
   Flame,
@@ -42,7 +43,7 @@ import {
   PenTool,
   Brain,
 } from "lucide-react";
-import { progressStore } from "@/lib/providers/progress-provider";
+import { useProgress } from "@/lib/hooks/use-progress";
 
 type Item = { title: string; to: string; icon: React.ComponentType<{ className?: string }> };
 
@@ -65,13 +66,14 @@ const practice: Item[] = [
 ];
 const grow: Item[] = [
   { title: "Mastery Engine", to: "/mastery", icon: Brain },
+  { title: "Certificates", to: "/certificates", icon: Award },
   { title: "Journal", to: "/journal", icon: BookOpenText },
   { title: "Interview Room", to: "/interview", icon: MessagesSquare },
   { title: "AI Mentor", to: "/mentor", icon: Sparkles },
   { title: "Progress", to: "/progress", icon: LineChart },
   { title: "Achievements", to: "/achievements", icon: Trophy },
   { title: "Statistics", to: "/statistics", icon: BarChart3 },
-  { title: "Calendar", to: "/challenges", icon: Calendar },
+  { title: "Calendar", to: "/calendar", icon: Calendar },
 ];
 const misc: Item[] = [
   { title: "Bookmarks", to: "/bookmarks", icon: Bookmark },
@@ -85,7 +87,7 @@ export function AppSidebar() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const [progress] = progressStore.useStore();
+  const progress = useProgress();
 
   const isActive = (to: string) =>
     to === "/" ? path === "/" : path === to || path.startsWith(to + "/");

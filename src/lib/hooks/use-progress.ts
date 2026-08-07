@@ -1,16 +1,122 @@
-import { progressStore } from "@/lib/providers/progress-provider";
+import {
+  progressStore,
+  getDerivedProgress,
+  type ProgressState,
+} from "@/lib/providers/progress-provider";
 import type {
   MasteryState,
   ProjectReflection,
   ProjectUserNotes,
   JournalEntry,
   InterviewSessionResult,
+  QuizResultRecord,
+  TopicMasteryRecord,
+  CertificateRecord,
 } from "@/lib/types";
+import topicsData from "@/data/topics.json";
+import learningPathsData from "@/data/learning-paths.json";
+
+function getMasteryLabelFromConfidence(confidence: number): MasteryState {
+  if (confidence >= 85) return "Mastered";
+  if (confidence >= 70) return "Interview Ready";
+  if (confidence >= 50) return "Practicing";
+  if (confidence >= 30) return "Learning";
+  if (confidence > 0) return "Needs Review";
+  return "Not Started";
+}
+
+function recordActivityState(p: ProgressState): ProgressState {
+  const today = new Date().toISOString().slice(0, 10);
+  const activityDates = p.activityDates || [];
+  if (activityDates.includes(today)) {
+    return p;
+  }
+  return {
+    ...p,
+    activityDates: [...activityDates, today],
+  };
+}
 
 export function useProgress() {
-  const [progress, setProgress] = progressStore.useStore();
+  const [rawProgress, setProgress] = progressStore.useStore();
+  const progress = getDerivedProgress(rawProgress);
+
   return {
     ...progress,
+    recordActivity() {
+      setProgress((p) => recordActivityState(p));
+    },
+    saveQuizResult(quizId: string, scorePercent: number, topicId?: string) {
+      setProgress((p) => {
+        const withActivity = recordActivityState(p);
+        const currentQuizResults = withActivity.quizResults || [];
+
+        const newResult: QuizResultRecord = {
+          id: `qr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          quizId,
+          topicId,
+          scorePercent,
+          completedAt: new Date().toISOString(),
+        };
+
+        const quizResults = [newResult, ...currentQuizResults];
+
+        const currentTopicRecords = withActivity.topicMasteryRecords || {};
+        const updatedTopicRecords = { ...currentTopicRecords };
+
+        if (topicId) {
+          const existing = currentTopicRecords[topicId];
+          if (existing) {
+            const oldConfidence = existing.confidence ?? 50;
+            const newConfidence = Math.min(
+              100,
+              Math.max(0, Math.round(oldConfidence * 0.6 + scorePercent * 0.4)),
+            );
+            const newMastery = getMasteryLabelFromConfidence(newConfidence);
+
+            updatedTopicRecords[topicId] = {
+              ...existing,
+              quizScorePercent: scorePercent,
+              reviewCount: (existing.reviewCount || 0) + 1,
+              lastReviewedAt: new Date().toISOString(),
+              confidence: newConfidence,
+              mastery: newMastery,
+            };
+          } else {
+            const topic = topicsData.find((t) => t.id === topicId);
+            const category = topic
+              ? topic.categoryId === "core-web"
+                ? "HTML/CSS"
+                : topic.categoryId === "language-mastery"
+                  ? "JavaScript"
+                  : topic.categoryId === "framework-mastery"
+                    ? "React"
+                    : "Architecture"
+              : "General";
+
+            const confidence = Math.min(100, Math.max(0, Math.round(scorePercent)));
+            updatedTopicRecords[topicId] = {
+              topicId,
+              topicTitle: topic ? topic.title : topicId,
+              category,
+              confidence,
+              mastery: getMasteryLabelFromConfidence(confidence),
+              lastReviewedAt: new Date().toISOString(),
+              nextReviewAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+              intervalDays: 7,
+              reviewCount: 1,
+              quizScorePercent: scorePercent,
+            };
+          }
+        }
+
+        return {
+          ...withActivity,
+          quizResults,
+          topicMasteryRecords: updatedTopicRecords,
+        };
+      });
+    },
     setMastery(lessonId: string, state: MasteryState) {
       setProgress((p) => ({ ...p, mastery: { ...p.mastery, [lessonId]: state } }));
     },
@@ -23,13 +129,16 @@ export function useProgress() {
       }));
     },
     completeLesson(id: string) {
-      setProgress((p) => ({
-        ...p,
-        lastActiveLessonId: id,
-        lessonsCompleted: p.lessonsCompleted.includes(id)
-          ? p.lessonsCompleted
-          : [...p.lessonsCompleted, id],
-      }));
+      setProgress((p) => {
+        const withActivity = recordActivityState(p);
+        return {
+          ...withActivity,
+          lastActiveLessonId: id,
+          lessonsCompleted: withActivity.lessonsCompleted.includes(id)
+            ? withActivity.lessonsCompleted
+            : [...withActivity.lessonsCompleted, id],
+        };
+      });
     },
     setLastActiveLesson(id: string) {
       setProgress((p) => {
@@ -39,9 +148,10 @@ export function useProgress() {
     },
     completeBug(id: string) {
       setProgress((p) => {
-        const solved = p.solvedBugs || [];
+        const withActivity = recordActivityState(p);
+        const solved = withActivity.solvedBugs || [];
         return {
-          ...p,
+          ...withActivity,
           solvedBugs: solved.includes(id) ? solved : [...solved, id],
         };
       });
@@ -214,6 +324,28 @@ export function useProgress() {
         ...p,
         interviewResults: [],
       }));
+    },
+    saveCertificate(pathId: string, score: number) {
+      const pathObj = learningPathsData.find((p) => p.id === pathId);
+      const pathTitle = pathObj ? pathObj.title : pathId;
+      const newCert: CertificateRecord = {
+        id: `cert_${pathId}_${Date.now()}`,
+        pathId,
+        pathTitle,
+        score,
+        issuedAt: new Date().toISOString(),
+      };
+
+      setProgress((p) => {
+        const withActivity = recordActivityState(p);
+        const existing = withActivity.certificates || [];
+        const filtered = existing.filter((c) => c.pathId !== pathId);
+        return {
+          ...withActivity,
+          certificates: [newCert, ...filtered],
+        };
+      });
+      return newCert;
     },
   };
 }

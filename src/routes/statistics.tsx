@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { HeatMap } from "@/components/shared/heat-map";
-import { progressStore, initialTopicMasteryRecords } from "@/lib/providers/progress-provider";
+import { progressStore } from "@/lib/providers/progress-provider";
+import { useProgress } from "@/lib/hooks/use-progress";
 import {
   Clock,
   Percent,
@@ -69,14 +70,14 @@ export const Route = createFileRoute("/statistics")({
 });
 
 export function AnalyticsPage() {
-  const [progress] = progressStore.useStore();
+  const progress = useProgress();
   const [timeHorizon, setTimeHorizon] = useState<"7d" | "30d" | "90d" | "12m">("30d");
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [activeTab, setActiveTab] = useState<string>("overview");
 
   // Topics & Mastery
   const masteryRecords = useMemo(
-    () => progress.topicMasteryRecords || initialTopicMasteryRecords,
+    () => progress.topicMasteryRecords || {},
     [progress.topicMasteryRecords],
   );
   const recordsList = useMemo(() => Object.values(masteryRecords), [masteryRecords]);

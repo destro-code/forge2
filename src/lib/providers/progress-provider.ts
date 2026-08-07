@@ -7,7 +7,19 @@ import type {
   JournalEntry,
   InterviewSessionResult,
   LessonHighlight,
+  Lesson,
+  Topic,
+  Module,
+  Quiz,
+  Bug,
+  QuizResultRecord,
+  CertificateRecord,
 } from "../types";
+import lessonsData from "@/data/lessons.json";
+import topicsData from "@/data/topics.json";
+import modulesData from "@/data/modules.json";
+import quizzesData from "@/data/quizzes.json";
+import bugsData from "@/data/bugs.json";
 
 export interface ProgressState {
   streakDays: number;
@@ -31,19 +43,197 @@ export interface ProgressState {
   lastActiveLessonId?: string;
   lessonCheckpoints?: Record<string, boolean>; // key format: lessonId:checkpointId -> boolean
   lessonHighlights?: Record<string, LessonHighlight[]>; // key: lessonId -> array of highlights
+  activityDates?: string[];
+  completedQuizzes?: string[];
+  quizResults?: QuizResultRecord[];
+  certificates?: CertificateRecord[];
 }
 
-const seedHeatmap = () => {
+export function deriveStreakDays(activityDates: string[] = []): number {
+  if (!activityDates || activityDates.length === 0) return 0;
+
+  const dateSet = new Set(activityDates.map((d) => d.slice(0, 10)));
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
+  let startDate: Date | null = null;
+  if (dateSet.has(todayStr)) {
+    startDate = now;
+  } else if (dateSet.has(yesterdayStr)) {
+    startDate = yesterday;
+  } else {
+    return 0;
+  }
+
+  let streak = 0;
+  const checkDate = new Date(startDate);
+  while (true) {
+    const dateStr = checkDate.toISOString().slice(0, 10);
+    if (dateSet.has(dateStr)) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+export function deriveHeatmap(activityDates: string[] = []): { date: string; value: number }[] {
+  const counts: Record<string, number> = {};
+  for (const d of activityDates || []) {
+    const key = d.slice(0, 10);
+    counts[key] = (counts[key] || 0) + 1;
+  }
+
   const out: { date: string; value: number }[] = [];
-  const now = new Date("2026-07-29T00:00:00Z");
+  const now = new Date();
   for (let i = 0; i < 84; i++) {
     const d = new Date(now);
-    d.setUTCDate(d.getUTCDate() - (83 - i));
-    const seed = (i * 9301 + 49297) % 233280;
-    out.push({ date: d.toISOString().slice(0, 10), value: Math.round((seed / 233280) * 4) });
+    d.setDate(d.getDate() - (83 - i));
+    const dateStr = d.toISOString().slice(0, 10);
+    const count = counts[dateStr] || 0;
+    out.push({
+      date: dateStr,
+      value: Math.min(count, 4),
+    });
   }
   return out;
-};
+}
+
+const SKILL_CATEGORIES = [
+  "HTML/CSS",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Architecture",
+  "Performance",
+  "Testing",
+  "Interview",
+];
+
+export function getLessonSkillCategories(lesson: Lesson): string[] {
+  const cats = new Set<string>();
+  const topic = (topicsData as Topic[]).find((t) => t.id === lesson.topicId);
+  const mod = (modulesData as Module[]).find((m) => m.id === (lesson.moduleId || topic?.moduleId));
+  const text = [
+    lesson.id,
+    lesson.title,
+    topic?.id,
+    topic?.title,
+    mod?.id,
+    mod?.title,
+    ...(mod?.tags || []),
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  if (/html|css|flexbox|grid|a11y/i.test(text)) cats.add("HTML/CSS");
+  if (/javascript|\bjs\b|closure|scope|hoisting|promise|event-loop/i.test(text))
+    cats.add("JavaScript");
+  if (/typescript|\bts\b|generics/i.test(text)) cats.add("TypeScript");
+  if (/react|hook|useeffect|jsx|component/i.test(text)) cats.add("React");
+  if (/architecture|rendering-strategies/i.test(text)) cats.add("Architecture");
+  if (/performance|perf|core-web-vitals/i.test(text)) cats.add("Performance");
+  if (/testing|test|vitest|tdd/i.test(text)) cats.add("Testing");
+  if (/interview|system-design/i.test(text)) cats.add("Interview");
+
+  return Array.from(cats);
+}
+
+export function getBugSkillCategories(bug: Bug): string[] {
+  const cats = new Set<string>();
+  const text = [bug.id, bug.title, bug.category, ...(bug.tags || [])].join(" ").toLowerCase();
+
+  if (/css|html|a11y|layout/i.test(text)) cats.add("HTML/CSS");
+  if (
+    /javascript|\bjs\b|closure|scope|hoisting|promise|event-loop|memory_leak|listener|console_error|nullish/i.test(
+      text,
+    )
+  )
+    cats.add("JavaScript");
+  if (/typescript|\bts\b/i.test(text)) cats.add("TypeScript");
+  if (/react|hook|useeffect|stale|renders|infinite/i.test(text)) cats.add("React");
+  if (/architecture/i.test(text)) cats.add("Architecture");
+  if (/performance|perf|cls|memory_leak|race|re-render/i.test(text)) cats.add("Performance");
+  if (/testing|test/i.test(text)) cats.add("Testing");
+  if (/interview/i.test(text)) cats.add("Interview");
+
+  return Array.from(cats);
+}
+
+export function getQuizSkillCategories(quiz: Quiz): string[] {
+  const cats = new Set<string>();
+  const text = [quiz.id, quiz.title, quiz.description || ""].join(" ").toLowerCase();
+
+  if (/css|html/i.test(text)) cats.add("HTML/CSS");
+  if (/javascript|\bjs\b|engine|closure|scope|event-loop/i.test(text)) cats.add("JavaScript");
+  if (/typescript|\bts\b/i.test(text)) cats.add("TypeScript");
+  if (/react|hook|useeffect/i.test(text)) cats.add("React");
+  if (/architecture/i.test(text)) cats.add("Architecture");
+  if (/performance|perf/i.test(text)) cats.add("Performance");
+  if (/testing|test/i.test(text)) cats.add("Testing");
+  if (/interview/i.test(text)) cats.add("Interview");
+
+  return Array.from(cats);
+}
+
+export function deriveSkills(
+  progress: Partial<ProgressState>,
+  existingSkills?: { name: string; value: number }[],
+): { name: string; value: number }[] {
+  const completedLessons = new Set(progress.lessonsCompleted || []);
+  const solvedBugs = new Set(progress.solvedBugs || []);
+  const quizResults = progress.quizResults || [];
+  const completedQuizzes = new Set([
+    ...(progress.completedQuizzes || []),
+    ...quizResults.map((q) => q.quizId),
+  ]);
+
+  const lessons = lessonsData as Lesson[];
+  const bugs = bugsData as Bug[];
+  const quizzes = quizzesData as Quiz[];
+
+  return SKILL_CATEGORIES.map((categoryName) => {
+    const fallbackObj = existingSkills?.find((s) => s.name === categoryName);
+    const fallbackValue = fallbackObj ? fallbackObj.value : 0;
+
+    const catLessons = lessons.filter((l) => getLessonSkillCategories(l).includes(categoryName));
+    const catBugs = bugs.filter((b) => getBugSkillCategories(b).includes(categoryName));
+    const catQuizzes = quizzes.filter((q) => getQuizSkillCategories(q).includes(categoryName));
+
+    const totalAvailable = catLessons.length + catBugs.length + catQuizzes.length;
+    if (totalAvailable === 0) {
+      return { name: categoryName, value: fallbackValue };
+    }
+
+    const completedLessonCount = catLessons.filter((l) => completedLessons.has(l.id)).length;
+    const solvedBugCount = catBugs.filter((b) => solvedBugs.has(b.id)).length;
+    const completedQuizCount = catQuizzes.filter((q) => completedQuizzes.has(q.id)).length;
+
+    const completedTotal = completedLessonCount + solvedBugCount + completedQuizCount;
+    const percent = Math.round((completedTotal / totalAvailable) * 100);
+
+    return { name: categoryName, value: percent };
+  });
+}
+
+export function getDerivedProgress(state: ProgressState): ProgressState {
+  const activityDates = state.activityDates || [];
+  return {
+    ...state,
+    activityDates,
+    streakDays: deriveStreakDays(activityDates),
+    heatmap: deriveHeatmap(activityDates),
+    skills: deriveSkills(state, state.skills),
+    certificates: state.certificates || [],
+  };
+}
 
 const initialJournalEntries: JournalEntry[] = [
   {
@@ -251,8 +441,41 @@ export const initialTopicMasteryRecords: Record<string, TopicMasteryRecord> = {
   },
 };
 
-export const progressStore = createLocalStore<ProgressState>("forge:progress:v1", {
-  streakDays: 12,
+export const EMPTY_PROGRESS_STATE: ProgressState = {
+  activityDates: [],
+  streakDays: 0,
+  totalMinutes: 0,
+  lessonsCompleted: [],
+  solvedBugs: [],
+  bookmarks: [],
+  mastery: {},
+  notes: {},
+  weekly: [0, 0, 0, 0, 0, 0, 0],
+  heatmap: deriveHeatmap([]),
+  skills: deriveSkills({ lessonsCompleted: [], solvedBugs: [] }),
+  projectTasks: {},
+  projectCriteria: {},
+  projectReflections: {},
+  projectPortfolioNotes: {},
+  journalEntries: [],
+  interviewResults: [],
+  topicMasteryRecords: {},
+  readinessGoalPercent: 85,
+  lastActiveLessonId: undefined,
+  completedQuizzes: [],
+  quizResults: [],
+  certificates: [],
+};
+
+export const DEMO_PROGRESS_STATE: ProgressState = {
+  activityDates: [
+    "2026-07-28T14:30:00Z",
+    "2026-07-27T10:00:00Z",
+    "2026-07-26T10:15:00Z",
+    "2026-07-25T09:00:00Z",
+    "2026-07-24T10:00:00Z",
+  ],
+  streakDays: 5,
   totalMinutes: 1840,
   lessonsCompleted: ["flexbox-axes"],
   solvedBugs: [],
@@ -265,17 +488,14 @@ export const progressStore = createLocalStore<ProgressState>("forge:progress:v1"
   },
   notes: {},
   weekly: [42, 18, 65, 30, 90, 55, 78],
-  heatmap: seedHeatmap(),
-  skills: [
-    { name: "HTML/CSS", value: 82 },
-    { name: "JavaScript", value: 68 },
-    { name: "TypeScript", value: 54 },
-    { name: "React", value: 61 },
-    { name: "Architecture", value: 38 },
-    { name: "Performance", value: 42 },
-    { name: "Testing", value: 30 },
-    { name: "Interview", value: 25 },
-  ],
+  heatmap: deriveHeatmap([
+    "2026-07-28T14:30:00Z",
+    "2026-07-27T10:00:00Z",
+    "2026-07-26T10:15:00Z",
+    "2026-07-25T09:00:00Z",
+    "2026-07-24T10:00:00Z",
+  ]),
+  skills: deriveSkills({ lessonsCompleted: ["flexbox-axes"], solvedBugs: [] }),
   projectTasks: {
     "component-library:t1": true,
     "component-library:t2": true,
@@ -291,4 +511,12 @@ export const progressStore = createLocalStore<ProgressState>("forge:progress:v1"
   topicMasteryRecords: initialTopicMasteryRecords,
   readinessGoalPercent: 85,
   lastActiveLessonId: "closures-intro",
-});
+  completedQuizzes: [],
+  quizResults: [],
+  certificates: [],
+};
+
+export const progressStore = createLocalStore<ProgressState>(
+  "forge:progress:v1",
+  EMPTY_PROGRESS_STATE,
+);

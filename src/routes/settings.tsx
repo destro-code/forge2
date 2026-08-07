@@ -5,6 +5,18 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -14,6 +26,8 @@ import {
 } from "@/components/ui/select";
 import { useSettings } from "@/lib/hooks/use-settings";
 import { useTheme } from "@/lib/hooks/use-theme";
+import { progressStore, DEMO_PROGRESS_STATE } from "@/lib/providers/progress-provider";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -44,9 +58,17 @@ function Settings() {
       />
       <Tabs defaultValue="theme">
         <TabsList className="mb-4 flex flex-wrap">
-          {["theme", "editor", "ai", "learning", "notifications", "accessibility"].map((t) => (
-            <TabsTrigger key={t} value={t} className="capitalize">
-              {t}
+          {[
+            { id: "theme", label: "Theme" },
+            { id: "editor", label: "Editor" },
+            { id: "ai", label: "AI Mentor" },
+            { id: "learning", label: "Learning" },
+            { id: "notifications", label: "Notifications" },
+            { id: "accessibility", label: "Accessibility" },
+            { id: "demo", label: "Developer / Demo" },
+          ].map((t) => (
+            <TabsTrigger key={t.id} value={t.id}>
+              {t.label}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -273,6 +295,48 @@ function Settings() {
                 Forge follows WCAG AA. Keyboard shortcuts, focus rings, and reduced-motion are
                 enabled by default. Report accessibility issues via the profile menu.
               </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="demo">
+          <Card className="border-border/60">
+            <CardHeader>
+              <CardTitle className="text-sm">Developer / Demo</CardTitle>
+            </CardHeader>
+            <CardContent className="grid max-w-md gap-4">
+              <div className="space-y-3 text-sm">
+                <p className="text-muted-foreground">
+                  Load sample progress data into your store to populate streaks, learning hours,
+                  journal entries, and topic mastery records for testing or demonstration.
+                </p>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-fit">
+                      Load sample data
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Load Sample Demo Data?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will overwrite your current progress, streaks, journal entries, and
+                        topic mastery records with sample data. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => {
+                          progressStore.set(DEMO_PROGRESS_STATE);
+                          toast.success("Sample demo data loaded successfully");
+                        }}
+                      >
+                        Overwrite & Load Data
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

@@ -6,7 +6,19 @@ import { Button } from "@/components/ui/button";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { useLearningPaths, useModules, useLessons, useTopics } from "@/lib/hooks/use-content";
-import { Clock, ArrowRight, Target, Layers, Compass, BookOpen, Sparkles } from "lucide-react";
+import { useProgress } from "@/lib/hooks/use-progress";
+import { checkPathEligibility } from "@/lib/utils/path-eligibility";
+import {
+  Clock,
+  ArrowRight,
+  Target,
+  Layers,
+  Compass,
+  BookOpen,
+  Sparkles,
+  Award,
+  ShieldCheck,
+} from "lucide-react";
 
 export const Route = createFileRoute("/learn/paths")({
   head: () => ({
@@ -27,6 +39,8 @@ function LearningPathsRoute() {
   const modules = useModules();
   const lessons = useLessons();
   const topics = useTopics();
+  const progress = useProgress();
+  const certificates = progress.certificates || [];
 
   return (
     <div className="space-y-8">
@@ -36,6 +50,11 @@ function LearningPathsRoute() {
         description="Structured, goal-oriented roadmaps tailored for Staff Engineers, System Architects, and Performance Specialists."
         actions={
           <div className="flex gap-2">
+            <Button asChild variant="outline">
+              <Link to="/certificates" className="gap-1.5">
+                <Award className="h-4 w-4 text-primary" /> My Certificates
+              </Link>
+            </Button>
             <Button asChild variant="outline">
               <Link to="/learn">Curriculum Overview</Link>
             </Button>
@@ -59,24 +78,51 @@ function LearningPathsRoute() {
                 )
               : 0;
 
+          const eligibility = checkPathEligibility(
+            path.id,
+            progress.lessonsCompleted,
+            progress.quizResults,
+          );
+          const cert = certificates.find((c) => c.pathId === path.id);
+
           return (
             <Card
               key={path.id}
-              className="group relative flex flex-col justify-between overflow-hidden border-border/60 transition duration-200 hover:border-primary/50 hover:shadow-glow"
+              className={`group relative flex flex-col justify-between overflow-hidden border-border/60 transition duration-200 hover:border-primary/50 hover:shadow-glow ${
+                cert
+                  ? "border-emerald-500/40 bg-emerald-500/5"
+                  : eligibility.isEligible
+                    ? "border-primary/50 bg-primary/5"
+                    : ""
+              }`}
             >
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1.5 min-w-0">
                     <div className="flex items-center gap-2">
                       <DifficultyBadge difficulty={path.difficulty} />
-                      {path.featured && (
+                      {cert ? (
+                        <Badge
+                          variant="secondary"
+                          className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-500 text-[10px]"
+                        >
+                          <ShieldCheck className="h-3 w-3" /> Certified ({cert.score}%)
+                        </Badge>
+                      ) : eligibility.isEligible ? (
+                        <Badge
+                          variant="secondary"
+                          className="gap-1 border-primary/30 bg-primary/10 text-primary text-[10px] animate-pulse"
+                        >
+                          <Sparkles className="h-3 w-3" /> Assessment Ready
+                        </Badge>
+                      ) : path.featured ? (
                         <Badge
                           variant="secondary"
                           className="gap-1 border-primary/20 bg-primary/10 text-primary text-[10px]"
                         >
                           <Sparkles className="h-3 w-3" /> Featured Path
                         </Badge>
-                      )}
+                      ) : null}
                     </div>
                     <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
                       {path.title}
@@ -95,8 +141,14 @@ function LearningPathsRoute() {
 
                 {/* Included Modules preview */}
                 <div className="space-y-2 pt-2 border-t border-border/40">
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Included Modules ({pathModules.length})
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex justify-between">
+                    <span>Included Modules ({pathModules.length})</span>
+                    {!cert && (
+                      <span className="text-[11px] font-normal text-muted-foreground">
+                        Lessons: {eligibility.completedLessonsCount}/{eligibility.totalLessonsCount}{" "}
+                        · Quizzes: {eligibility.passedQuizzesCount}/{eligibility.totalQuizzesCount}
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {pathModules.map((m) => (
@@ -118,11 +170,32 @@ function LearningPathsRoute() {
                     </span>
                   </div>
 
-                  <Button asChild size="sm" className="gap-1.5 shadow-glow">
-                    <Link to="/learn/modules" search={{ pathId: path.id }}>
-                      Explore Path <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {cert ? (
+                      <Button
+                        asChild
+                        size="sm"
+                        variant="outline"
+                        className="gap-1.5 border-emerald-500/30 text-emerald-500"
+                      >
+                        <Link to="/certificate/$certificateId" params={{ certificateId: cert.id }}>
+                          <Award className="h-4 w-4" /> View Certificate
+                        </Link>
+                      </Button>
+                    ) : eligibility.isEligible ? (
+                      <Button asChild size="sm" className="gap-1.5 shadow-glow bg-primary">
+                        <Link to="/assessment/$pathId" params={{ pathId: path.id }}>
+                          <Sparkles className="h-4 w-4" /> Take Final Assessment
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button asChild size="sm" className="gap-1.5 shadow-glow">
+                        <Link to="/learn/modules" search={{ pathId: path.id }}>
+                          Explore Path <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>

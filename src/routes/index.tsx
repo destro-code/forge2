@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { progressStore } from "@/lib/providers/progress-provider";
+import { useProgress } from "@/lib/hooks/use-progress";
 import {
   useModules,
   useLessons,
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const [progress, setProgress] = progressStore.useStore();
+  const progress = useProgress();
   const modules = useModules();
   const lessons = useLessons();
   const projects = useProjects();
