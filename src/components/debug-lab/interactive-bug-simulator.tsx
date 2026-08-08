@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
 import {
   Play,
   RotateCcw,
@@ -16,45 +17,280 @@ import {
   Zap,
 } from "lucide-react";
 
+import type { Bug } from "@/lib/types";
+
 interface InteractiveBugSimulatorProps {
-  interactiveType:
-    | "counter_stale"
-    | "layout_shift"
-    | "memory_leak"
-    | "network_race"
-    | "a11y_button"
-    | "perf_renders"
-    | "console_null_map"
-    | "hooks_infinite";
-  isFixed: boolean;
+  bug: Bug;
+  userCode: string;
+  onAllTestsPass?: () => void;
+}
+
+function evaluateCode(bugId: string, testId: string, code: string): { pass: boolean; log: string } {
+  const c = code.replace(/\s+/g, " ");
+  try {
+    switch (bugId) {
+      case "stale-closure":
+        if (testId === "tc-1") {
+          const pass =
+            /setCount\s*\(\s*(?:\w+|\([^)]*\))\s*=>/.test(c) || /setCount\s*\(\s*function/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "Functional state updater detected."
+              : "Expected functional state updater (prev => prev + 1).",
+          };
+        }
+        if (testId === "tc-2") {
+          const pass = /return\s*\(\)\s*=>\s*clearInterval/.test(c);
+          return {
+            pass,
+            log: pass ? "Interval cleanup verified." : "Missing interval cleanup on unmount.",
+          };
+        }
+        break;
+      case "layout-shift":
+        if (testId === "tc-1") {
+          const pass =
+            !/height:\s*imageLoaded\s*\?\s*['"]180px['"]\s*:\s*['"]0px['"]/.test(c) &&
+            (/aspect-video/.test(c) ||
+              /aspect-ratio/.test(c) ||
+              /h-\[/.test(c) ||
+              /min-h/.test(c) ||
+              (/w-full/.test(c) && /rounded-md/.test(c) && !code.includes("0px")));
+          return {
+            pass,
+            log: pass ? "Container height stable." : "Dynamic height shift detected.",
+          };
+        }
+        if (testId === "tc-2") {
+          const pass =
+            /aspect-video/.test(c) || /aspect-ratio/.test(c) || /h-\w+/.test(c) || /min-h/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "Aspect ratio / height constraints found."
+              : "Missing height or aspect ratio class.",
+          };
+        }
+        break;
+      case "memory-leak-listener":
+        if (testId === "tc-1") {
+          const pass = /removeEventListener\s*\(\s*['"]resize['"]/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "removeEventListener invoked correctly."
+              : "Missing window.removeEventListener for resize.",
+          };
+        }
+        if (testId === "tc-2") {
+          const pass =
+            /return\s*\(\)\s*=>\s*\{\s*(?:window\.)?removeEventListener/.test(c) ||
+            /return\s*\(\)\s*=>\s*(?:window\.)?removeEventListener/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "Cleanup returns cleanup function."
+              : "Cleanup function not returned from useEffect.",
+          };
+        }
+        break;
+      case "network-race-condition":
+        if (testId === "tc-1") {
+          const pass = /AbortController/.test(c) && /signal/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "AbortController and signal implemented."
+              : "Missing AbortController implementation.",
+          };
+        }
+        if (testId === "tc-2") {
+          const pass = /abort\(\)/.test(c) && /return\s*\(\)\s*=>/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "controller.abort() called on cleanup."
+              : "Missing abort() call in cleanup.",
+          };
+        }
+        break;
+      case "a11y-missing-aria":
+        if (testId === "tc-1") {
+          const pass = /aria-label/.test(c) || /sr-only/.test(c);
+          return {
+            pass,
+            log: pass ? "Accessible text label found." : "Missing aria-label or .sr-only span.",
+          };
+        }
+        if (testId === "tc-2") {
+          const pass = /aria-hidden\s*=\s*(?:\{true\}|["']true["'])/.test(c);
+          return {
+            pass,
+            log: pass ? "aria-hidden='true' found on icon." : "Icon missing aria-hidden='true'.",
+          };
+        }
+        break;
+      case "excessive-re-renders":
+        if (testId === "tc-1") {
+          const pass = /useCallback/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "useCallback wraps the event handler."
+              : "Missing useCallback for event handler.",
+          };
+        }
+        if (testId === "tc-2") {
+          const pass = /useMemo/.test(c) || /React\.memo/.test(c);
+          return {
+            pass,
+            log: pass ? "useMemo wraps the filtered list." : "Missing useMemo for data filtering.",
+          };
+        }
+        break;
+      case "cannot-read-property-map":
+        if (testId === "tc-1") {
+          const pass =
+            /useState\s*(?:<[^>]+>)?\s*\(\s*\[\s*\]\s*\)/.test(c) ||
+            /\?\./.test(c) ||
+            /\?\?/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "Array initialized or fallback used."
+              : "Initial state is undefined, causing map to throw.",
+          };
+        }
+        if (testId === "tc-2") {
+          const pass = /\?\./.test(c) || /\?\?/.test(c) || /\[\s*\]/.test(c);
+          return {
+            pass,
+            log: pass ? "Map operation guarded safely." : "Map operation unprotected.",
+          };
+        }
+        break;
+      case "infinite-useeffect-loop":
+        if (testId === "tc-1") {
+          const pass = /\[\s*\]/.test(c) || !/\[.*settings.*\]/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "Effect dependency array is empty or stable."
+              : "Dependency array includes mutated state.",
+          };
+        }
+        if (testId === "tc-2") {
+          const pass =
+            /setSettings\s*\(\s*(?:\w+|\([^)]*\))\s*=>/.test(c) ||
+            /setSettings\s*\(\s*function/.test(c);
+          return {
+            pass,
+            log: pass
+              ? "Functional updater used for settings."
+              : "Missing functional state updater.",
+          };
+        }
+        break;
+    }
+  } catch (error) {
+    return { pass: false, log: `Evaluation error: ${(error as Error).message}` };
+  }
+  return { pass: false, log: "Test logic not implemented." };
 }
 
 export function InteractiveBugSimulator({
-  interactiveType,
-  isFixed,
+  bug,
+  userCode,
+  onAllTestsPass,
 }: InteractiveBugSimulatorProps) {
+  const testResults = (bug.testCases || []).map((tc) => {
+    return {
+      ...tc,
+      ...evaluateCode(bug.id, tc.id, userCode),
+    };
+  });
+
+  const allPass = testResults.length > 0 && testResults.every((tr) => tr.pass);
+  const interactiveType = bug.interactiveType;
+
+  useEffect(() => {
+    if (allPass && onAllTestsPass) {
+      onAllTestsPass();
+    }
+  }, [allPass, onAllTestsPass]);
+
   return (
-    <Card className="border-border/60 bg-card/50 overflow-hidden">
-      <CardHeader className="bg-muted/30 border-b border-border/40 py-3 px-4 flex flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Activity className="h-4 w-4 text-primary animate-pulse" />
-          <CardTitle className="text-sm font-medium">Interactive Bug Diagnostic Sandbox</CardTitle>
-        </div>
-        <Badge variant={isFixed ? "default" : "destructive"} className="text-xs">
-          {isFixed ? "Fixed Implementation" : "Broken Implementation"}
-        </Badge>
-      </CardHeader>
-      <CardContent className="p-4">
-        {interactiveType === "counter_stale" && <StaleCounterSandbox isFixed={isFixed} />}
-        {interactiveType === "layout_shift" && <LayoutShiftSandbox isFixed={isFixed} />}
-        {interactiveType === "memory_leak" && <MemoryLeakSandbox isFixed={isFixed} />}
-        {interactiveType === "network_race" && <NetworkRaceSandbox isFixed={isFixed} />}
-        {interactiveType === "a11y_button" && <A11yButtonSandbox isFixed={isFixed} />}
-        {interactiveType === "perf_renders" && <PerfRendersSandbox isFixed={isFixed} />}
-        {interactiveType === "console_null_map" && <ConsoleNullMapSandbox isFixed={isFixed} />}
-        {interactiveType === "hooks_infinite" && <HooksInfiniteSandbox isFixed={isFixed} />}
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      {/* Test Runner Panel */}
+      <Card className="border-border/60 bg-card/50 overflow-hidden">
+        <CardHeader className="bg-muted/30 border-b border-border/40 py-3 px-4 flex flex-row items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-primary" />
+            <CardTitle className="text-sm font-medium">Automated Test Runner</CardTitle>
+          </div>
+          <Badge variant={allPass ? "default" : "secondary"} className="text-xs">
+            {allPass ? "All Tests Passed" : "Tests Failing"}
+          </Badge>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y divide-border/40">
+            {testResults.map((tr) => (
+              <div key={tr.id} className="p-4 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 font-medium text-sm">
+                    {tr.pass ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-amber-500" />
+                    )}
+                    {tr.name}
+                  </div>
+                  <Badge variant={tr.pass ? "default" : "destructive"} className="text-[10px]">
+                    {tr.pass ? "PASS" : "FAIL"}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground ml-6">{tr.description}</p>
+                {!tr.pass && (
+                  <div className="ml-6 mt-1 p-2 bg-destructive/10 text-destructive text-xs font-mono rounded border border-destructive/20">
+                    {tr.log}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/60 bg-card/50 overflow-hidden">
+        <CardHeader className="bg-muted/30 border-b border-border/40 py-3 px-4 flex flex-row items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary animate-pulse" />
+            <CardTitle className="text-sm font-medium">
+              Interactive Bug Diagnostic Sandbox
+            </CardTitle>
+          </div>
+          <Badge variant={allPass ? "default" : "destructive"} className="text-xs">
+            {allPass ? "Fixed Implementation" : "Broken Implementation"}
+          </Badge>
+        </CardHeader>
+        <CardContent className="p-4">
+          <ErrorBoundary
+            title="Interactive Simulator Error"
+            description="An unexpected exception occurred inside this bug diagnostic simulator."
+          >
+            {interactiveType === "counter_stale" && <StaleCounterSandbox isFixed={allPass} />}
+            {interactiveType === "layout_shift" && <LayoutShiftSandbox isFixed={allPass} />}
+            {interactiveType === "memory_leak" && <MemoryLeakSandbox isFixed={allPass} />}
+            {interactiveType === "network_race" && <NetworkRaceSandbox isFixed={allPass} />}
+            {interactiveType === "a11y_button" && <A11yButtonSandbox isFixed={allPass} />}
+            {interactiveType === "perf_renders" && <PerfRendersSandbox isFixed={allPass} />}
+            {interactiveType === "console_null_map" && <ConsoleNullMapSandbox isFixed={allPass} />}
+            {interactiveType === "hooks_infinite" && <HooksInfiniteSandbox isFixed={allPass} />}
+          </ErrorBoundary>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

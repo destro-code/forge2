@@ -478,14 +478,14 @@ function LessonView() {
                 size="sm"
                 className="w-full sm:w-auto sm:max-w-[220px]"
               >
-                <Link to={`/lesson/${prevLesson.id}`} className="truncate justify-center">
+                <Link to="/lesson/$lessonId" params={{ lessonId: prevLesson.id }} className="truncate justify-center">
                   <ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
                   <span className="truncate">Prev: {prevLesson.title}</span>
                 </Link>
               </Button>
             ) : (
               <Button variant="ghost" asChild size="sm" className="w-full sm:w-auto">
-                <Link to="/learn/lessons">
+                <Link to="/learn/lessons" search={{}}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to library
                 </Link>
@@ -518,14 +518,14 @@ function LessonView() {
                 size="sm"
                 className="w-full sm:w-auto sm:max-w-[220px]"
               >
-                <Link to={`/lesson/${nextLesson.id}`} className="truncate justify-center">
+                <Link to="/lesson/$lessonId" params={{ lessonId: nextLesson.id }} className="truncate justify-center">
                   <span className="truncate">Next: {nextLesson.title}</span>
                   <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
                 </Link>
               </Button>
             ) : (
               <Button variant="outline" asChild size="sm" className="w-full sm:w-auto">
-                <Link to="/learn/lessons">
+                <Link to="/learn/lessons" search={{}}>
                   All lessons <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

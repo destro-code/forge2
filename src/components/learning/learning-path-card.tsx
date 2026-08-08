@@ -6,6 +6,8 @@ import { ProgressRing } from "@/components/shared/progress-ring";
 import { Clock, ArrowRight, Sparkles, Target, Layers } from "lucide-react";
 import type { LearningPath } from "@/lib/types";
 import { useModules } from "@/lib/hooks/use-content";
+import { useProgress } from "@/lib/hooks/use-progress";
+import { getModuleProgress } from "@/lib/hooks/use-curriculum";
 
 interface LearningPathCardProps {
   path: LearningPath;
@@ -15,12 +17,16 @@ interface LearningPathCardProps {
 
 export function LearningPathCard({ path, onSelectPath, activePathId }: LearningPathCardProps) {
   const allModules = useModules();
+  const { lessonsCompleted } = useProgress();
   const pathModules = allModules.filter((m) => path.moduleIds.includes(m.id));
 
-  // Calculate aggregate progress for path
+  // Calculate aggregate progress for path dynamically
   const avgProgress =
     pathModules.length > 0
-      ? Math.round((pathModules.reduce((acc, m) => acc + m.progress, 0) / pathModules.length) * 100)
+      ? Math.round(
+          pathModules.reduce((acc, m) => acc + getModuleProgress(m.id, lessonsCompleted), 0) /
+            pathModules.length,
+        )
       : 0;
 
   const isSelected = activePathId === path.id;

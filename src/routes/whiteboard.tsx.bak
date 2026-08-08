@@ -42,10 +42,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { WHITEBOARD_PRESETS, type WhiteboardPreset } from "@/data/whiteboard-presets";
-import { useProgress } from "@/lib/hooks/use-progress";
-import { useProgressStore } from "@/lib/stores/use-progress-store";
-import { FolderOpen, Image as ImageIcon } from "lucide-react";
-import type { WhiteboardSnapshot } from "@/lib/types";
+import { progressStore } from "@/lib/providers/progress-provider";
 
 export const Route = createFileRoute("/whiteboard")({
   component: WhiteboardPage,
@@ -76,10 +73,6 @@ interface ArchEdge {
 }
 
 export function WhiteboardPage() {
-  const { whiteboardSnapshots, saveWhiteboardSnapshot } = useProgress();
-  const [snapshotId, setSnapshotId] = useState<string>("");
-  const [currentTitle, setCurrentTitle] = useState("Untitled Whiteboard");
-  const [snapshotsDialogOpen, setSnapshotsDialogOpen] = useState(false);
   const [activeMode, setActiveMode] = useState<Mode>("explain");
   const [selectedPreset, setSelectedPreset] = useState<WhiteboardPreset | null>(
     WHITEBOARD_PRESETS[0],
@@ -117,23 +110,6 @@ export function WhiteboardPage() {
   const [presetsDialogOpen, setPresetsDialogOpen] = useState(false);
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
-  // Auto-save debounced
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const snap = saveWhiteboardSnapshot({
-        id: snapshotId || undefined,
-        title: currentTitle,
-        presetId: selectedPreset?.id,
-        elements: { code, activeMode, nodes, edges },
-      });
-      if (!snapshotId) {
-        setSnapshotId(snap.id);
-      }
-    }, 1000);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, activeMode, nodes, edges, saveWhiteboardSnapshot, selectedPreset, currentTitle]);
-
   // Sync preset when changed
   const loadPreset = (preset: WhiteboardPreset) => {
     setSelectedPreset(preset);
@@ -145,103 +121,7 @@ export function WhiteboardPage() {
     setHasExecuted(false);
     setUserPrediction("");
     setPresetsDialogOpen(false);
-    setSnapshotId("");
-    setCurrentTitle(preset.title);
     toast.success(`Loaded "${preset.title}"`);
-  };
-
-  const handleNewWhiteboard = () => {
-    setSnapshotId("");
-    setCurrentTitle("New Whiteboard");
-    setCode("");
-    setActiveMode("explain");
-    setNodes([]);
-    setEdges([]);
-    setSelectedPreset(null);
-    setSnapshotsDialogOpen(false);
-    toast.success("Created new whiteboard");
-  };
-
-  const loadSnapshot = (snap: WhiteboardSnapshot) => {
-    setSnapshotId(snap.id);
-    const elems = snap.elements as Record<string, unknown>;
-    if (elems) {
-      if (elems.code) setCode(elems.code as string);
-      if (elems.activeMode) setActiveMode(elems.activeMode as Mode);
-      if (elems.nodes) setNodes(elems.nodes as ArchNode[]);
-      if (elems.edges) setEdges(elems.edges as ArchEdge[]);
-    }
-    const preset = WHITEBOARD_PRESETS.find((p) => p.id === snap.presetId);
-    if (preset) setSelectedPreset(preset);
-
-    setSnapshotsDialogOpen(false);
-    toast.success(`Loaded snapshot "${snap.title}"`);
-  };
-
-  const buildSVG = () => {
-    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" style="background-color: #0f172a;">`;
-
-    edges.forEach((edge) => {
-      const from = nodes.find((n) => n.id === edge.from);
-      const to = nodes.find((n) => n.id === edge.to);
-      if (from && to) {
-        svg += `<line x1="${from.x + 50}" y1="${from.y + 25}" x2="${to.x + 50}" y2="${to.y + 25}" stroke="#475569" stroke-width="2" />`;
-        svg += `<text x="${(from.x + to.x) / 2}" y="${(from.y + to.y) / 2 - 5}" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">${edge.label}</text>`;
-      }
-    });
-
-    nodes.forEach((node) => {
-      const color = node.type === "client" ? "#0f172a" : node.type === "db" ? "#7f1d1d" : "#1e293b";
-      const stroke =
-        node.type === "client" ? "#cbd5e1" : node.type === "db" ? "#f87171" : "#475569";
-      svg += `<rect x="${node.x}" y="${node.y}" width="100" height="50" rx="8" fill="${color}" stroke="${stroke}" stroke-width="2" />`;
-      svg += `<text x="${node.x + 50}" y="${node.y + 30}" fill="#f8fafc" font-size="11" font-family="sans-serif" text-anchor="middle">${node.label}</text>`;
-    });
-
-    svg += `</svg>`;
-    return svg;
-  };
-
-  const handleExportSVG = () => {
-    const svgString = buildSVG();
-    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "architecture.svg";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    toast.success("Exported Architecture as SVG");
-  };
-
-  const handleExportPNG = () => {
-    const svgString = buildSVG();
-    const img = new Image();
-    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = 800;
-      canvas.height = 600;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.fillStyle = "#0f172a";
-        ctx.fillRect(0, 0, 800, 600);
-        ctx.drawImage(img, 0, 0);
-        const pngUrl = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.href = pngUrl;
-        link.download = "architecture.png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-      URL.revokeObjectURL(url);
-      toast.success("Exported Architecture as PNG");
-    };
-    img.src = url;
   };
 
   // Run JavaScript Live Execution in browser sandbox
@@ -302,7 +182,7 @@ export function WhiteboardPage() {
       setExecutionMatch(matches);
       if (matches) {
         toast.success("🎯 Spot on! Your output prediction matched JS execution perfectly!");
-        useProgressStore.getState().setProgress((s) => ({ ...s, xp: (s.xp ?? 0) + 25 }));
+        progressStore.update((s) => ({ xp: s.xp + 25 }));
       } else {
         toast.error("Output mismatch! Click 'Ask AI to Explain' to see why.");
       }
@@ -517,70 +397,7 @@ export function WhiteboardPage() {
           </Button>
         </div>
 
-        {/* Title Editor */}
-        <div className="flex items-center gap-2 mr-auto ml-4">
-          <Input
-            value={currentTitle}
-            onChange={(e) => setCurrentTitle(e.target.value)}
-            className="h-8 text-xs font-semibold bg-transparent border-transparent hover:border-border focus:border-primary focus:ring-1 w-48"
-          />
-        </div>
-
-        {/* Snapshot Manager */}
-        <Dialog open={snapshotsDialogOpen} onOpenChange={setSnapshotsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs mr-2">
-              <FolderOpen className="h-3.5 w-3.5" />
-              Snapshots ({(whiteboardSnapshots || []).length})
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader className="flex flex-row items-center justify-between">
-              <DialogTitle className="flex items-center gap-2">
-                <Bookmark className="h-5 w-5 text-primary" />
-                Saved Whiteboard Snapshots
-              </DialogTitle>
-              <Button size="sm" onClick={handleNewWhiteboard} className="gap-1.5 h-8">
-                <Plus className="h-3.5 w-3.5" /> New Whiteboard
-              </Button>
-            </DialogHeader>
-            <div className="grid gap-3 pt-2 max-h-[60vh] overflow-y-auto">
-              {(whiteboardSnapshots || []).length === 0 ? (
-                <div className="text-center text-sm text-muted-foreground py-8">
-                  No snapshots saved yet. Your work will auto-save here.
-                </div>
-              ) : (
-                (whiteboardSnapshots || []).map((snap) => (
-                  <Card
-                    key={snap.id}
-                    className="group flex cursor-pointer items-start justify-between p-3.5 transition hover:border-primary/50 hover:bg-muted/30"
-                    onClick={() => loadSnapshot(snap)}
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm">{snap.title || "Untitled"}</span>
-                        <Badge variant="outline" className="text-[10px]">
-                          {new Date(snap.updatedAt).toLocaleString()}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground font-mono">ID: {snap.id}</p>
-                    </div>
-                    <Button
-                      size="xs"
-                      variant="ghost"
-                      className="shrink-0 opacity-0 group-hover:opacity-100"
-                    >
-                      Load <ArrowRight className="ml-1 h-3 w-3" />
-                    </Button>
-                  </Card>
-                ))
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
-
         {/* Presets Modal Trigger */}
-
         <Dialog open={presetsDialogOpen} onOpenChange={setPresetsDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
@@ -713,23 +530,7 @@ export function WhiteboardPage() {
                       <option value="db">Database</option>
                       <option value="queue">Queue / Event</option>
                     </select>
-                    <Button
-                      size="xs"
-                      variant="outline"
-                      onClick={handleExportSVG}
-                      className="h-7 gap-1 ml-4"
-                    >
-                      <ImageIcon className="h-3 w-3" /> Export SVG
-                    </Button>
-                    <Button
-                      size="xs"
-                      variant="outline"
-                      onClick={handleExportPNG}
-                      className="h-7 gap-1"
-                    >
-                      <ImageIcon className="h-3 w-3" /> Export PNG
-                    </Button>
-                    <Button size="xs" onClick={handleAddNode} className="h-7 gap-1 ml-4">
+                    <Button size="xs" onClick={handleAddNode} className="h-7 gap-1">
                       <Plus className="h-3 w-3" /> Add Node
                     </Button>
                   </div>

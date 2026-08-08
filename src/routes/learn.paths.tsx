@@ -8,6 +8,7 @@ import { ProgressRing } from "@/components/shared/progress-ring";
 import { useLearningPaths, useModules, useLessons, useTopics } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { checkPathEligibility } from "@/lib/utils/path-eligibility";
+import { getModuleProgress } from "@/lib/hooks/use-progress";
 import {
   Clock,
   ArrowRight,
@@ -74,7 +75,10 @@ function LearningPathsRoute() {
           const avgProgress =
             pathModules.length > 0
               ? Math.round(
-                  (pathModules.reduce((acc, m) => acc + m.progress, 0) / pathModules.length) * 100,
+                  pathModules.reduce(
+                    (acc, m) => acc + getModuleProgress(m.id, lessonsCompleted),
+                    0,
+                  ) / pathModules.length,
                 )
               : 0;
 

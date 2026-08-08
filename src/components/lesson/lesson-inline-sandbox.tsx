@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Play, RefreshCw, Terminal, ExternalLink, Code2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { buildPlaygroundHtml } from "@/lib/playground-compiler";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 interface LessonInlineSandboxProps {
   initialCode: string;
@@ -102,14 +103,20 @@ export function LessonInlineSandbox({
           <div className="text-[10px] font-semibold text-muted-foreground uppercase mb-2">
             Live DOM Preview & Console
           </div>
-          <iframe
-            key={key}
-            ref={iframeRef}
-            srcDoc={buildPlaygroundHtml(sandboxFiles, { isInline: true, title })}
-            title="Lesson Inline Sandbox Preview"
-            sandbox="allow-scripts"
-            className="w-full h-40 rounded-lg border border-border/50 bg-[#090a0f]"
-          />
+          <ErrorBoundary
+            title="Inline Sandbox Execution Error"
+            description="The inline runner encountered an uncaught runtime exception."
+            onReset={handleRun}
+          >
+            <iframe
+              key={key}
+              ref={iframeRef}
+              srcDoc={buildPlaygroundHtml(sandboxFiles, { isInline: true, title })}
+              title="Lesson Inline Sandbox Preview"
+              sandbox="allow-scripts"
+              className="w-full h-40 rounded-lg border border-border/50 bg-[#090a0f]"
+            />
+          </ErrorBoundary>
 
           {/* Console Log area */}
           <div className="mt-2 rounded-lg border border-border/40 bg-black/60 p-2 font-mono text-[11px] max-h-24 overflow-y-auto">

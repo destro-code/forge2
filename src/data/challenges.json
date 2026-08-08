@@ -1,0 +1,38 @@
+[
+  {
+    "id": "c-001",
+    "date": "2026-08-07",
+    "title": "The counter that lies",
+    "description": "A React counter increments once and freezes. Diagnose the stale closure without spoiling the solution.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "counter_stale"
+  },
+  {
+    "id": "c-002",
+    "date": "2026-08-06",
+    "title": "Flexbox holy grail",
+    "description": "Recreate the classic three-column layout with just flex.",
+    "difficulty": "Beginner",
+    "linkType": "playground",
+    "linkId": "react-tailwind"
+  },
+  {
+    "id": "c-003",
+    "date": "2026-08-05",
+    "title": "Debounce it",
+    "description": "Implement a debounce function without lodash.",
+    "difficulty": "Intermediate",
+    "linkType": "playground",
+    "linkId": "react-basics"
+  },
+  {
+    "id": "c-004",
+    "date": "2026-08-04",
+    "title": "Type it",
+    "description": "Write a fully typed `pick` utility in TypeScript.",
+    "difficulty": "Advanced",
+    "linkType": "playground",
+    "linkId": "react-tailwind"
+  }
+]

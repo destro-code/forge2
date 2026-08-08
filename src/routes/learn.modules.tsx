@@ -7,7 +7,8 @@ import { ProgressRing } from "@/components/shared/progress-ring";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { CurriculumFilterBar } from "@/components/learning/curriculum-filter-bar";
 import { EmptyState } from "@/components/shared/empty-state";
-import { useCurriculum } from "@/lib/hooks/use-curriculum";
+import { useCurriculum, getModuleProgress } from "@/lib/hooks/use-curriculum";
+import { useProgress } from "@/lib/hooks/use-progress";
 import { useTopics, useLearningPaths, useLessons } from "@/lib/hooks/use-content";
 import { ArrowRight, Layers, GraduationCap, FolderTree, BookOpen, Clock } from "lucide-react";
 
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/learn/modules")({
 function ModulesRoute() {
   const { categories, learningPaths, modules, filter, setFilter, resetFilter, activeFiltersCount } =
     useCurriculum();
+  const { lessonsCompleted } = useProgress();
   const lessons = useLessons();
   const topics = useTopics();
 
@@ -94,6 +96,7 @@ function ModulesRoute() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => {
             const category = categories.find((c) => c.id === m.categoryId);
+            const moduleProgressPercent = getModuleProgress(m.id, lessonsCompleted);
 
             return (
               <Card
@@ -116,7 +119,7 @@ function ModulesRoute() {
                           {m.title}
                         </h3>
                       </div>
-                      <ProgressRing value={m.progress} size={48} />
+                      <ProgressRing value={moduleProgressPercent / 100} size={48} />
                     </div>
 
                     <p className="mt-3 text-xs text-muted-foreground leading-relaxed">

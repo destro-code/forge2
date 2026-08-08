@@ -89,13 +89,13 @@ function Dashboard() {
         actions={
           <>
             <Button asChild variant="outline">
-              <Link to="/learn">
+              <Link suppressHydrationWarning to="/learn">
                 <BookOpen className="mr-2 h-4 w-4" />
                 Browse library
               </Link>
             </Button>
             <Button asChild className="shadow-glow">
-              <Link to={`/lesson/${continueLesson?.id}`}>
+              <Link suppressHydrationWarning to="/lesson/$lessonId" params={{ lessonId: continueLesson?.id || "default" }}>
                 <Sparkles className="mr-2 h-4 w-4" />
                 Continue lesson
               </Link>
@@ -182,6 +182,7 @@ function Dashboard() {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold tracking-tight">Curriculum Modules</h2>
           <Link
+            suppressHydrationWarning
             to="/learn/modules"
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
           >
@@ -192,6 +193,7 @@ function Dashboard() {
           {modules.slice(0, 6).map((m) => {
             return (
               <Link
+                suppressHydrationWarning
                 key={m.id}
                 to="/learn/modules/$moduleId"
                 params={{ moduleId: m.id }}

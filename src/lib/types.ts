@@ -476,3 +476,71 @@ export interface CertificateRecord {
   score: number;
   issuedAt: string;
 }
+
+export interface FlashcardReviewState {
+  cardId: string;
+  deck: string;
+  easeFactor: number;
+  intervalDays: number;
+  repetitions: number;
+  dueAt: string;
+  lastReviewedAt: string | null;
+  lastRating: "again" | "hard" | "good" | "easy" | null;
+}
+
+export interface WhiteboardSnapshot {
+  id: string;
+  title: string;
+  presetId?: string;
+  elements: unknown;
+  updatedAt: string;
+}
+
+export interface PlaygroundCompletion {
+  templateId: string;
+  completedAt: string;
+}
+
+export interface DailyChallenge {
+  id: string;
+  date: string; // ISO date YYYY-MM-DD
+  title: string;
+  description: string;
+  difficulty: Difficulty;
+  linkType: "playground" | "debug-lab" | "quiz";
+  linkId: string;
+}
+
+export interface ProgressState {
+  xp: number;
+  streakDays: number;
+  totalMinutes: number;
+  lessonsCompleted: string[];
+  solvedBugs: string[];
+  bookmarks: string[];
+  mastery: Record<string, MasteryState>;
+  notes: Record<string, string>;
+  weekly: number[];
+  heatmap: { date: string; value: number }[];
+  skills: { name: string; value: number }[];
+  projectTasks: Record<string, boolean>;
+  projectCriteria: Record<string, boolean>;
+  projectReflections: Record<string, ProjectReflection>;
+  projectPortfolioNotes: Record<string, ProjectUserNotes>;
+  journalEntries: JournalEntry[];
+  interviewResults: InterviewSessionResult[];
+  topicMasteryRecords?: Record<string, TopicMasteryRecord>;
+  readinessGoalPercent?: number;
+  lastActiveLessonId?: string;
+  lessonCheckpoints?: Record<string, boolean>;
+  lessonHighlights?: Record<string, LessonHighlight[]>;
+  activityDates?: string[];
+  completedQuizzes?: string[];
+  quizResults?: QuizResultRecord[];
+  certificates?: CertificateRecord[];
+  flashcardReviews?: Record<string, FlashcardReviewState>;
+  challengesCompleted?: string[];
+  challengeStreakDays?: number;
+  whiteboardSnapshots?: WhiteboardSnapshot[];
+  playgroundCompletions?: PlaygroundCompletion[];
+}

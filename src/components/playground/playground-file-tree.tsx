@@ -14,11 +14,10 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { PlaygroundFile, PlaygroundPreset } from "@/lib/types/playground";
+import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 
 interface PlaygroundFileTreeProps {
-  files: PlaygroundFile[];
-  activeFileId: string;
-  onSelectFile: (fileId: string) => void;
+  onFileSelected?: (fileId: string) => void;
   onAddFile: (fileName: string) => void;
   onDeleteFile: (fileId: string) => void;
   presets: PlaygroundPreset[];
@@ -26,16 +25,18 @@ interface PlaygroundFileTreeProps {
   onSelectPreset: (presetId: string) => void;
 }
 
-export function PlaygroundFileTree({
-  files,
-  activeFileId,
-  onSelectFile,
-  onAddFile,
-  onDeleteFile,
-  presets,
-  currentPresetId,
-  onSelectPreset,
-}: PlaygroundFileTreeProps) {
+export function PlaygroundFileTree(props: PlaygroundFileTreeProps) {
+  const { onAddFile, onDeleteFile, presets, currentPresetId, onSelectPreset } = props;
+  const { files, activeFileId, setActiveFileId, openTabIds, setOpenTabIds } = usePlaygroundStore();
+
+  const { onFileSelected } = props;
+  const onSelectFile = (id: string) => {
+    setActiveFileId(id);
+    if (!openTabIds.includes(id)) {
+      setOpenTabIds([...openTabIds, id]);
+    }
+    if (onFileSelected) onFileSelected(id);
+  };
   const [isAdding, setIsAdding] = useState(false);
   const [newFileName, setNewFileName] = useState("");
 

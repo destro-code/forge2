@@ -3,6 +3,8 @@ import {
   getDerivedProgress,
   type ProgressState,
 } from "@/lib/providers/progress-provider";
+import { getModuleProgress, getTopicProgress } from "@/lib/hooks/use-curriculum";
+export { getModuleProgress, getTopicProgress };
 import type {
   MasteryState,
   ProjectReflection,
@@ -12,7 +14,9 @@ import type {
   QuizResultRecord,
   TopicMasteryRecord,
   CertificateRecord,
+  WhiteboardSnapshot,
 } from "@/lib/types";
+import { useProgressStore } from "@/lib/stores/use-progress-store";
 import topicsData from "@/data/topics.json";
 import learningPathsData from "@/data/learning-paths.json";
 
@@ -346,6 +350,20 @@ export function useProgress() {
         };
       });
       return newCert;
+    },
+    rateFlashcard(cardId: string, deck: string, rating: "again" | "hard" | "good" | "easy") {
+      useProgressStore.getState().rateFlashcard(cardId, deck, rating);
+    },
+    completeChallenge(challengeId: string) {
+      useProgressStore.getState().completeChallenge(challengeId);
+    },
+    saveWhiteboardSnapshot(
+      snapshot: Omit<WhiteboardSnapshot, "id" | "updatedAt"> & { id?: string },
+    ) {
+      return useProgressStore.getState().saveWhiteboardSnapshot(snapshot);
+    },
+    completePlaygroundExercise(templateId: string) {
+      useProgressStore.getState().completePlaygroundExercise(templateId);
     },
   };
 }

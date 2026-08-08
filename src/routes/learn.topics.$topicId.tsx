@@ -7,6 +7,7 @@ import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useTopic, useModule, useLessons, useTopics } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { getTopicProgress } from "@/lib/hooks/use-curriculum";
 import {
   ArrowLeft,
   ArrowRight,
@@ -65,6 +66,7 @@ function TopicHubRoute() {
 
   const topicLessons = allLessons.filter((l) => l.topicId === topic.id);
   const completedCount = topicLessons.filter((l) => lessonsCompleted.includes(l.id)).length;
+  const topicProgressPercent = getTopicProgress(topic.id, lessonsCompleted);
 
   const prereqTopics = allTopics.filter((t) => topic.prerequisites.includes(t.id));
 
@@ -153,7 +155,9 @@ function TopicHubRoute() {
             <div className="text-xs text-muted-foreground">Topic Completion</div>
             <div className="text-2xl font-bold text-foreground">
               {completedCount} / {topicLessons.length}{" "}
-              <span className="text-xs font-normal text-muted-foreground">Lessons</span>
+              <span className="text-xs font-normal text-muted-foreground">
+                Lessons ({topicProgressPercent}%)
+              </span>
             </div>
           </div>
         </div>

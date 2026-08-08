@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Wand2, Sun, Moon, FileCode, Copy, Check, Undo2, Redo2, Type, Command } from "lucide-react";
 import type { PlaygroundFile } from "@/lib/types/playground";
+import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
 
 const MonacoEditor = lazy(() =>
@@ -12,18 +13,15 @@ const MonacoEditor = lazy(() =>
 );
 
 interface PlaygroundEditorProps {
-  activeFile: PlaygroundFile;
-  onCodeChange: (newCode: string) => void;
+  onCodeChange?: (code: string) => void;
   onFormatCode?: () => void;
   onRunCode?: () => void;
 }
 
-export function PlaygroundEditor({
-  activeFile,
-  onCodeChange,
-  onFormatCode,
-  onRunCode,
-}: PlaygroundEditorProps) {
+export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: PlaygroundEditorProps) {
+  const { files, activeFileId, updateFileContent } = usePlaygroundStore();
+  const activeFile = files.find((f) => f.id === activeFileId);
+
   const [mounted, setMounted] = useState(false);
   const { theme: appTheme } = useTheme();
 
@@ -108,6 +106,14 @@ export function PlaygroundEditor({
     });
   };
 
+  if (!activeFile) {
+    return (
+      <div className="flex h-full items-center justify-center text-muted-foreground text-xs p-6">
+        No open file selected. Select a file in Files tab.
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full flex-col bg-background">
       {/* Editor Main */}
@@ -124,7 +130,13 @@ export function PlaygroundEditor({
               height="100%"
               language={getLanguage(activeFile.name)}
               value={activeFile.code}
-              onChange={(v) => onCodeChange(v ?? "")}
+              onChange={(v) => {
+                const newCode = v ?? "";
+                if (activeFile) {
+                  updateFileContent(activeFile.id, newCode);
+                  if (onCodeChange) onCodeChange(newCode);
+                }
+              }}
               onMount={handleEditorMount}
               theme={effectiveTheme}
               options={{

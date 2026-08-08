@@ -8,6 +8,7 @@ import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useModule, useTopics, useLessons, useCategory } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { getModuleProgress, getTopicProgress } from "@/lib/hooks/use-curriculum";
 import {
   ArrowLeft,
   ArrowRight,
@@ -68,8 +69,7 @@ function ModuleHubRoute() {
   const moduleTopicIds = moduleTopics.map((t) => t.id);
   const moduleLessons = allLessons.filter((l) => moduleTopicIds.includes(l.topicId));
   const completedCount = moduleLessons.filter((l) => lessonsCompleted.includes(l.id)).length;
-  const progressPercent =
-    moduleLessons.length > 0 ? Math.round((completedCount / moduleLessons.length) * 100) : 0;
+  const progressPercent = getModuleProgress(moduleItem.id, lessonsCompleted);
 
   return (
     <div className="space-y-8">
@@ -146,7 +146,7 @@ function ModuleHubRoute() {
               <div className="text-xs text-muted-foreground">Pillar Progress</div>
               <div className="text-lg font-bold">{progressPercent}%</div>
             </div>
-            <ProgressRing value={progressPercent} size={56} />
+            <ProgressRing value={progressPercent / 100} size={56} />
           </div>
         </div>
       </Card>
@@ -172,6 +172,7 @@ function ModuleHubRoute() {
               const topicCompleted = topicLessons.filter((l) =>
                 lessonsCompleted.includes(l.id),
               ).length;
+              const topicProgressPercent = getTopicProgress(topic.id, lessonsCompleted);
 
               return (
                 <Card
@@ -204,7 +205,7 @@ function ModuleHubRoute() {
                         </span>
                         <span className="inline-flex items-center gap-1">
                           <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
-                          {topicCompleted}/{topicLessons.length} Lessons
+                          {topicCompleted}/{topicLessons.length} Lessons ({topicProgressPercent}%)
                         </span>
                       </div>
 

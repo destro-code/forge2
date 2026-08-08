@@ -506,7 +506,7 @@ export function Mentor() {
                         <button
                           className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
                           onClick={() =>
-                            send(active.messages.findLast((x) => x.role === "user")?.content)
+                            send([...active.messages].reverse().find((x) => x.role === "user")?.content)
                           }
                         >
                           <RotateCcw className="h-3 w-3" />

@@ -1,24 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { X, Plus, FileCode2, FileSpreadsheet, FileText, Code2 } from "lucide-react";
 import type { PlaygroundFile } from "@/lib/types/playground";
+import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 
 interface PlaygroundTabsProps {
-  files: PlaygroundFile[];
-  openTabIds: string[];
-  activeFileId: string;
-  onSelectTab: (fileId: string) => void;
-  onCloseTab: (fileId: string) => void;
   onNewFileClick: () => void;
 }
 
-export function PlaygroundTabs({
-  files,
-  openTabIds,
-  activeFileId,
-  onSelectTab,
-  onCloseTab,
-  onNewFileClick,
-}: PlaygroundTabsProps) {
+export function PlaygroundTabs({ onNewFileClick }: PlaygroundTabsProps) {
+  const { files, openTabIds, activeFileId, setActiveFileId, closeTab } = usePlaygroundStore();
+
+  const onSelectTab = (id: string) => setActiveFileId(id);
+  const onCloseTab = (id: string) => closeTab(id);
   const openFiles = files.filter((f) => openTabIds.includes(f.id));
 
   const getFileIcon = (name: string) => {

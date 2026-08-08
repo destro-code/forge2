@@ -1,13 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, CheckCircle2, Clock, GraduationCap, Layers, Sparkles } from "lucide-react";
-import type { CurriculumStats } from "@/lib/hooks/use-curriculum";
+import { BookOpen, GraduationCap, Layers, Clock } from "lucide-react";
+import { useCurriculum, type CurriculumStats } from "@/lib/hooks/use-curriculum";
 
 interface CurriculumOverviewCardProps {
-  stats: CurriculumStats;
+  stats?: CurriculumStats;
 }
 
-export function CurriculumOverviewCard({ stats }: CurriculumOverviewCardProps) {
+export function CurriculumOverviewCard({ stats: propStats }: CurriculumOverviewCardProps) {
+  const { stats: derivedStats } = useCurriculum();
+  const stats = propStats || derivedStats;
   return (
     <Card className="relative overflow-hidden border-border/60 bg-gradient-to-br from-card via-card to-card/80 shadow-elegant">
       <div className="absolute right-0 top-0 -mr-12 -mt-12 h-48 w-48 rounded-full bg-primary/10 blur-3xl pointer-events-none" />

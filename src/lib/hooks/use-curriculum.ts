@@ -7,6 +7,7 @@ import {
   useLessons,
 } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { contentProvider } from "@/lib/providers/content-provider";
 import type { CurriculumFilter, Difficulty, Module, Topic, LearningPath } from "@/lib/types";
 
 export interface CurriculumStats {
@@ -18,11 +19,33 @@ export interface CurriculumStats {
   totalHours: number;
 }
 
+export function getTopicProgress(topicId: string, lessonsCompleted: string[] = []): number {
+  if (!topicId) return 0;
+  const allLessons = contentProvider.lessons();
+  const topicLessons = allLessons.filter((l) => l.topicId === topicId);
+  if (topicLessons.length === 0) return 0;
+  const completedCount = topicLessons.filter((l) => lessonsCompleted.includes(l.id)).length;
+  return Math.round((completedCount / topicLessons.length) * 100);
+}
+
+export function getModuleProgress(moduleId: string, lessonsCompleted: string[] = []): number {
+  if (!moduleId) return 0;
+  const allTopics = contentProvider.topics();
+  const moduleTopics = allTopics.filter((t) => t.moduleId === moduleId);
+  if (moduleTopics.length === 0) return 0;
+  const moduleTopicIds = new Set(moduleTopics.map((t) => t.id));
+  const allLessons = contentProvider.lessons();
+  const moduleLessons = allLessons.filter((l) => moduleTopicIds.has(l.topicId));
+  if (moduleLessons.length === 0) return 0;
+  const completedCount = moduleLessons.filter((l) => lessonsCompleted.includes(l.id)).length;
+  return Math.round((completedCount / moduleLessons.length) * 100);
+}
+
 export function useCurriculum(initialFilter?: CurriculumFilter) {
   const categories = useCategories();
   const learningPaths = useLearningPaths();
-  const allModules = useModules();
-  const allTopics = useTopics();
+  const rawModules = useModules();
+  const rawTopics = useTopics();
   const allLessons = useLessons();
   const progress = useProgress();
 
@@ -50,6 +73,30 @@ export function useCurriculum(initialFilter?: CurriculumFilter) {
       progressStatus: "All",
     });
   };
+
+  // Derive dynamic progress for all modules
+  const allModules = useMemo(() => {
+    return rawModules.map((m) => {
+      const pPercent = getModuleProgress(m.id, progress.lessonsCompleted);
+      return {
+        ...m,
+        progress: pPercent / 100, // 0 to 1 for ProgressRing
+        progressPercent: pPercent, // 0 to 100
+      };
+    });
+  }, [rawModules, progress.lessonsCompleted]);
+
+  // Derive dynamic progress for all topics
+  const allTopics = useMemo(() => {
+    return rawTopics.map((t) => {
+      const pPercent = getTopicProgress(t.id, progress.lessonsCompleted);
+      return {
+        ...t,
+        progress: pPercent / 100,
+        progressPercent: pPercent,
+      };
+    });
+  }, [rawTopics, progress.lessonsCompleted]);
 
   // Filter modules
   const filteredModules = useMemo(() => {
@@ -85,10 +132,11 @@ export function useCurriculum(initialFilter?: CurriculumFilter) {
 
       // Progress status filter
       if (filter.progressStatus && filter.progressStatus !== "All") {
-        if (filter.progressStatus === "Completed" && m.progress < 1) return false;
-        if (filter.progressStatus === "In Progress" && (m.progress === 0 || m.progress === 1))
+        const pPercent = m.progressPercent;
+        if (filter.progressStatus === "Completed" && pPercent < 100) return false;
+        if (filter.progressStatus === "In Progress" && (pPercent === 0 || pPercent === 100))
           return false;
-        if (filter.progressStatus === "Not Started" && m.progress > 0) return false;
+        if (filter.progressStatus === "Not Started" && pPercent > 0) return false;
       }
 
       return true;

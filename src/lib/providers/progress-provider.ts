@@ -515,6 +515,11 @@ export const progressStore = {
       completedQuizzes: rawProgress.completedQuizzes ?? [],
       quizResults: rawProgress.quizResults ?? [],
       certificates: rawProgress.certificates ?? [],
+      flashcardReviews: rawProgress.flashcardReviews ?? {},
+      challengesCompleted: rawProgress.challengesCompleted ?? [],
+      challengeStreakDays: rawProgress.challengeStreakDays ?? 0,
+      whiteboardSnapshots: rawProgress.whiteboardSnapshots ?? [],
+      playgroundCompletions: rawProgress.playgroundCompletions ?? [],
     };
 
     return [stateSlice, setProgress];

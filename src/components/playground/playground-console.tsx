@@ -13,13 +13,10 @@ import {
   Filter,
 } from "lucide-react";
 import type { PlaygroundConsoleLog } from "@/lib/types/playground";
+import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 
-interface PlaygroundConsoleProps {
-  logs: PlaygroundConsoleLog[];
-  onClearConsole: () => void;
-}
-
-export function PlaygroundConsole({ logs, onClearConsole }: PlaygroundConsoleProps) {
+export function PlaygroundConsole() {
+  const { consoleLogs: logs, clearLogs: onClearConsole } = usePlaygroundStore();
   const [filterLevel, setFilterLevel] = useState<"all" | "log" | "warn" | "error">("all");
   const [searchQuery, setSearchQuery] = useState("");
 

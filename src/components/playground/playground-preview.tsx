@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { RefreshCw, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { PlaygroundFile } from "@/lib/types/playground";
-import { buildPlaygroundHtml } from "@/lib/playground-compiler";
+import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 interface PlaygroundPreviewProps {
-  files: PlaygroundFile[];
   onLogCaptured: (level: "log" | "info" | "warn" | "error", message: string) => void;
 }
 
-export function PlaygroundPreview({ files, onLogCaptured }: PlaygroundPreviewProps) {
+export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
+  const { compilerOutput, isBuilding } = usePlaygroundStore();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [key, setKey] = useState(0);
 
@@ -41,14 +41,20 @@ export function PlaygroundPreview({ files, onLogCaptured }: PlaygroundPreviewPro
       </div>
 
       <div className="flex-1 relative p-2 bg-card/20">
-        <iframe
-          key={key}
-          ref={iframeRef}
-          srcDoc={buildPlaygroundHtml(files, { title: "Forge Playground Live Preview" })}
-          title="Forge Playground Live Preview"
-          sandbox="allow-scripts allow-modals"
-          className="h-full w-full rounded-lg border border-border/60 bg-background shadow-inner"
-        />
+        <ErrorBoundary
+          title="Playground Live Preview Crash"
+          description="The live execution surface encountered an error during rendering."
+          onReset={() => setKey((k) => k + 1)}
+        >
+          <iframe
+            key={key}
+            ref={iframeRef}
+            srcDoc={compilerOutput}
+            title="Forge Playground Live Preview"
+            sandbox="allow-scripts allow-modals"
+            className="h-full w-full rounded-lg border border-border/60 bg-background shadow-inner"
+          />
+        </ErrorBoundary>
       </div>
     </div>
   );

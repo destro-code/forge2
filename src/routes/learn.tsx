@@ -7,7 +7,7 @@ import { ProgressRing } from "@/components/shared/progress-ring";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { CurriculumOverviewCard } from "@/components/learning/curriculum-overview-card";
 import { LearningPathCard } from "@/components/learning/learning-path-card";
-import { useCurriculum } from "@/lib/hooks/use-curriculum";
+import { useCurriculum, getModuleProgress } from "@/lib/hooks/use-curriculum";
 import { useLessons, useTopics, useModules, useLearningPaths } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import {
@@ -42,10 +42,9 @@ export const Route = createFileRoute("/learn")({
 });
 
 function LearnRoute() {
-  const { learningPaths, stats } = useCurriculum();
+  const { learningPaths, stats, modules } = useCurriculum();
   const lessons = useLessons();
   const topics = useTopics();
-  const modules = useModules();
   const paths = useLearningPaths();
   const { lessonsCompleted, lastActiveLessonId } = useProgress();
 
@@ -68,11 +67,11 @@ function LearnRoute() {
           Level 1: Modules
         </Link>
         <span>→</span>
-        <Link to="/learn/topics" className="hover:text-foreground hover:underline">
+        <Link to="/learn/topics" search={{}} className="hover:text-foreground hover:underline">
           Level 2: Topics
         </Link>
         <span>→</span>
-        <Link to="/learn/lessons" className="hover:text-foreground hover:underline">
+        <Link to="/learn/lessons" search={{}} className="hover:text-foreground hover:underline">
           Level 3: Lessons
         </Link>
       </div>
@@ -91,13 +90,13 @@ function LearnRoute() {
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link to="/learn/topics" className="gap-1.5">
+              <Link to="/learn/topics" search={{}} className="gap-1.5">
                 <Network className="h-4 w-4 text-primary" />
                 Knowledge Graph (Topics)
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link to="/learn/lessons" className="gap-1.5">
+              <Link to="/learn/lessons" search={{}} className="gap-1.5">
                 <BookOpen className="h-4 w-4 text-primary" />
                 Lesson Catalog
               </Link>
@@ -204,7 +203,10 @@ function LearnRoute() {
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <DifficultyBadge difficulty={m.difficulty} />
-                      <ProgressRing value={m.progress} size={42} />
+                      <ProgressRing
+                        value={getModuleProgress(m.id, lessonsCompleted) / 100}
+                        size={42}
+                      />
                     </div>
                     <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
                       {m.title}

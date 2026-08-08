@@ -14,6 +14,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { CodeBlock } from "@/components/shared/code-block";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { InteractiveBugSimulator } from "@/components/debug-lab/interactive-bug-simulator";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
+const MonacoEditor = lazy(() =>
+  import("@monaco-editor/react").then((mod) => ({ default: mod.Editor })),
+);
 import { useBug } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import {
@@ -26,7 +30,7 @@ import {
   Activity,
   Award,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/debug-lab/$bugId")({
@@ -52,6 +56,13 @@ function BugView() {
   const [revealed, setRevealed] = useState(false);
   const [activeCodeTab, setActiveCodeTab] = useState<"broken" | "fixed">("broken");
   const [investigationNote, setInvestigationNote] = useState(notes[`bug:${bugId}`] || "");
+  const [userCode, setUserCode] = useState(bug?.brokenCode || "");
+
+  useEffect(() => {
+    if (bug && userCode === "") {
+      setUserCode(bug.brokenCode);
+    }
+  }, [bug, userCode]);
 
   if (!bug) {
     return (
@@ -71,9 +82,11 @@ function BugView() {
 
   const isSolved = solvedBugs.includes(bug.id);
 
-  const handleMarkSolved = () => {
-    completeBug(bug.id);
-    toast.success(`Challenge Completed! You solved '${bug.title}' 🎉`);
+  const handleTestsPass = () => {
+    if (!isSolved) {
+      completeBug(bug.id);
+      toast.success(`Challenge Completed! You solved '${bug.title}' 🎉`);
+    }
   };
 
   const handleNoteChange = (text: string) => {
@@ -92,14 +105,10 @@ function BugView() {
           </Link>
         </Button>
 
-        {isSolved ? (
+        {isSolved && (
           <Badge className="bg-emerald-600 hover:bg-emerald-600 gap-1 py-1 px-3">
             <CheckCircle2 className="h-3.5 w-3.5" /> Solved
           </Badge>
-        ) : (
-          <Button size="sm" onClick={handleMarkSolved} className="gap-2">
-            <Award className="h-4 w-4" /> Mark as Solved
-          </Button>
         )}
       </div>
 
@@ -126,30 +135,18 @@ function BugView() {
                 <span className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1.5">
                   <Activity className="h-3.5 w-3.5 text-primary" /> Live Diagnostic Simulation
                 </span>
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant={activeCodeTab === "broken" ? "destructive" : "ghost"}
-                    onClick={() => setActiveCodeTab("broken")}
-                    className="text-xs h-7"
-                  >
-                    Test Broken Bug
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={activeCodeTab === "fixed" ? "default" : "ghost"}
-                    onClick={() => setActiveCodeTab("fixed")}
-                    className="text-xs h-7"
-                  >
-                    Test Fixed Version
-                  </Button>
-                </div>
               </div>
 
-              <InteractiveBugSimulator
-                interactiveType={bug.interactiveType}
-                isFixed={activeCodeTab === "fixed"}
-              />
+              <ErrorBoundary
+                title="Interactive Simulator Error"
+                description="An unexpected exception occurred inside this bug diagnostic simulator."
+              >
+                <InteractiveBugSimulator
+                  bug={bug}
+                  userCode={activeCodeTab === "fixed" ? bug.fixedCode : userCode}
+                  onAllTestsPass={handleTestsPass}
+                />
+              </ErrorBoundary>
             </div>
           )}
 
@@ -167,7 +164,7 @@ function BugView() {
                   onClick={() => setActiveCodeTab("broken")}
                   className="text-xs h-7"
                 >
-                  Broken Code
+                  Your Fix
                 </Button>
                 <Button
                   size="sm"
@@ -186,9 +183,30 @@ function BugView() {
               {activeCodeTab === "broken" ? (
                 <div className="space-y-2">
                   <div className="text-xs text-destructive font-mono flex items-center gap-1.5 mb-1">
-                    <AlertTriangle className="h-3.5 w-3.5" /> Broken Code Implementation
+                    <AlertTriangle className="h-3.5 w-3.5" /> Your Fix Implementation
                   </div>
-                  <CodeBlock language="tsx" code={bug.brokenCode} />
+                  <div className="h-[400px] mt-2 rounded overflow-hidden border border-border">
+                    <Suspense
+                      fallback={
+                        <div className="p-4 text-xs text-muted-foreground">Loading editor...</div>
+                      }
+                    >
+                      <MonacoEditor
+                        height="100%"
+                        language="typescript"
+                        theme="vs-dark"
+                        value={userCode}
+                        onChange={(val) => setUserCode(val || "")}
+                        options={{
+                          minimap: { enabled: false },
+                          fontSize: 13,
+                          wordWrap: "on",
+                          scrollBeyondLastLine: false,
+                          padding: { top: 16 },
+                        }}
+                      />
+                    </Suspense>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-2">

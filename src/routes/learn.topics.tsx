@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { EmptyState } from "@/components/shared/empty-state";
-import { useCurriculum } from "@/lib/hooks/use-curriculum";
+import { useCurriculum, getTopicProgress } from "@/lib/hooks/use-curriculum";
+import { useProgress } from "@/lib/hooks/use-progress";
 import { useLessons, useModules, useLearningPaths } from "@/lib/hooks/use-content";
 import {
   Clock,
@@ -45,6 +46,7 @@ function TopicsRoute() {
   const searchParams = Route.useSearch();
   const navigate = Route.useNavigate();
   const { topics, categories } = useCurriculum();
+  const { lessonsCompleted } = useProgress();
   const lessons = useLessons();
   const modules = useModules();
   const learningPaths = useLearningPaths();
@@ -206,7 +208,12 @@ function TopicsRoute() {
           {filteredTopics.map((t) => {
             const category = categories.find((c) => c.id === t.categoryId);
             const parentModule = modules.find((m) => m.id === t.moduleId);
-            const topicLessonsCount = lessons.filter((l) => l.topicId === t.id).length;
+            const topicLessons = lessons.filter((l) => l.topicId === t.id);
+            const topicLessonsCount = topicLessons.length;
+            const topicCompletedCount = topicLessons.filter((l) =>
+              lessonsCompleted.includes(l.id),
+            ).length;
+            const topicProgressPercent = getTopicProgress(t.id, lessonsCompleted);
 
             return (
               <Card
@@ -249,7 +256,7 @@ function TopicsRoute() {
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
-                        {topicLessonsCount} Lessons
+                        {topicCompletedCount}/{topicLessonsCount} Lessons ({topicProgressPercent}%)
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <Network className="h-3.5 w-3.5 text-primary" />

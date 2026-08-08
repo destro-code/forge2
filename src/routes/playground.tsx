@@ -15,7 +15,10 @@ import {
   ShieldCheck,
   FileCode2,
 } from "lucide-react";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
+import { useProgressStore } from "@/lib/stores/use-progress-store";
+import { buildPlaygroundHtml } from "@/lib/playground-compiler";
 
 import type { PlaygroundFile, PlaygroundConsoleLog } from "@/lib/types/playground";
 import { PLAYGROUND_PRESETS } from "@/lib/playground-data";
@@ -48,31 +51,54 @@ export function Playground() {
   const activePreset =
     PLAYGROUND_PRESETS.find((p) => p.id === currentPresetId) || PLAYGROUND_PRESETS[0];
 
-  // Load initial files from localStorage if present
-  const [files, setFiles] = useState<PlaygroundFile[]>(() => {
-    if (typeof window === "undefined") return activePreset.files;
-    const key = `forge_playground_files_${activePreset.id}`;
-    const saved = localStorage.getItem(key);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {
-        // Fallback to preset defaults
-      }
-    }
-    return activePreset.files;
-  });
+  const {
+    files,
+    activeFileId,
+    openTabIds,
+    consoleLogs,
+    isBuilding,
+    compilerOutput,
+    setFiles,
+    setActiveFileId,
+    setOpenTabIds,
+    setConsoleLogs,
+    setIsBuilding,
+    setCompilerOutput,
+    updateFileContent,
+  } = usePlaygroundStore();
+  const { completePlaygroundExercise } = useProgressStore();
 
-  const [activeFileId, setActiveFileId] = useState<string>(files[0]?.id || "f-1");
-  const [openTabIds, setOpenTabIds] = useState<string[]>(files.map((f) => f.id));
-
-  // Console & execution state
-  const [consoleLogs, setConsoleLogs] = useState<PlaygroundConsoleLog[]>([]);
   const [executionStatus, setExecutionStatus] = useState<"idle" | "running" | "success" | "error">(
     "idle",
   );
   const [executionTime, setExecutionTime] = useState<number | null>(null);
+
+  // Initialize store on mount if empty
+  useEffect(() => {
+    if (files.length === 0) {
+      if (typeof window !== "undefined") {
+        const key = `forge_playground_files_${currentPresetId}`;
+        const saved = localStorage.getItem(key);
+        let loadedFiles = activePreset.files;
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) loadedFiles = parsed;
+          } catch (e) {
+            /* ignore */
+          }
+        }
+        setFiles(loadedFiles);
+        setActiveFileId(loadedFiles[0]?.id || "f-1");
+        setOpenTabIds(loadedFiles.map((f) => f.id));
+      } else {
+        setFiles(activePreset.files);
+        setActiveFileId(activePreset.files[0]?.id || "f-1");
+        setOpenTabIds(activePreset.files.map((f) => f.id));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Solution modal state
   const [solutionOpen, setSolutionOpen] = useState(false);
@@ -101,7 +127,6 @@ export function Playground() {
     if (!nextPreset) return;
     setCurrentPresetId(presetId);
 
-    // Check if there are saved edits in localStorage for this preset
     let nextFiles = nextPreset.files;
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(`forge_playground_files_${presetId}`);
@@ -109,12 +134,11 @@ export function Playground() {
         try {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) nextFiles = parsed;
-        } catch {
-          // ignore error
+        } catch (e) {
+          /* ignore */
         }
       }
     }
-
     setFiles(nextFiles);
     setActiveFileId(nextFiles[0]?.id || "f-1");
     setOpenTabIds(nextFiles.map((f) => f.id));
@@ -140,8 +164,9 @@ export function Playground() {
       language: lang,
     };
 
-    setFiles((prev) => [...prev, newFile]);
-    setOpenTabIds((prev) => [...prev, newFile.id]);
+    const state = usePlaygroundStore.getState();
+    setFiles([...state.files, newFile]);
+    setOpenTabIds([...usePlaygroundStore.getState().openTabIds, newFile.id]);
     setActiveFileId(newFile.id);
     toast.success(`Created ${fileName}`);
   };
@@ -151,8 +176,8 @@ export function Playground() {
     const fileToDelete = files.find((f) => f.id === fileId);
     if (!fileToDelete) return;
 
-    setFiles((prev) => prev.filter((f) => f.id !== fileId));
-    setOpenTabIds((prev) => prev.filter((id) => id !== fileId));
+    setFiles(usePlaygroundStore.getState().files.filter((f) => f.id !== fileId));
+    setOpenTabIds(usePlaygroundStore.getState().openTabIds.filter((id) => id !== fileId));
 
     if (activeFileId === fileId) {
       const remaining = files.filter((f) => f.id !== fileId);
@@ -163,9 +188,17 @@ export function Playground() {
     toast.info(`Deleted ${fileToDelete.name}`);
   };
 
+  const compileTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Code update handler
   const handleCodeChange = (newCode: string) => {
-    setFiles((prev) => prev.map((f) => (f.id === activeFileId ? { ...f, code: newCode } : f)));
+    updateFileContent(activeFileId, newCode);
+
+    // Debounce compiler execution calls by 300ms
+    if (compileTimeoutRef.current) clearTimeout(compileTimeoutRef.current);
+    compileTimeoutRef.current = setTimeout(() => {
+      handleRun(true);
+    }, 300);
   };
 
   // Format code handler
@@ -196,31 +229,49 @@ export function Playground() {
         },
       ]);
     },
-    [],
+    [setConsoleLogs],
   );
 
   // Run code handler
-  const handleRun = () => {
-    setExecutionStatus("running");
+  const handleRun = (isAuto = false) => {
+    setIsBuilding(true);
+    if (!isAuto) setExecutionStatus("running");
     const startTime = performance.now();
 
-    // Log run trigger
-    setConsoleLogs((prev) => [
-      ...prev,
-      {
-        id: `sys-${Date.now()}`,
-        level: "info",
-        message: `⚡ Compiling & executing playground project (${files.length} files)...`,
-        timestamp: new Date().toLocaleTimeString(),
-      },
-    ]);
+    if (!isAuto) {
+      setConsoleLogs((prev) => [
+        ...prev,
+        {
+          id: `sys-${Date.now()}`,
+          level: "info",
+          message: `⚡ Compiling & executing playground project (${usePlaygroundStore.getState().files.length} files)...`,
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
+    }
 
+    // We defer the heavy buildPlaygroundHtml to let UI render the 'building' state
     setTimeout(() => {
-      const duration = Math.round(performance.now() - startTime);
-      setExecutionTime(duration);
-      setExecutionStatus("success");
-      toast.success(`Compiled & executed in ${duration}ms`);
-    }, 250);
+      try {
+        const currentFiles = usePlaygroundStore.getState().files;
+        const html = buildPlaygroundHtml(currentFiles, { title: "Forge Playground Live Preview" });
+        setCompilerOutput(html, false);
+
+        const duration = Math.round(performance.now() - startTime);
+        if (!isAuto) {
+          setExecutionTime(duration);
+          setExecutionStatus("success");
+          toast.success(`Compiled & executed in ${duration}ms`);
+          completePlaygroundExercise(activePreset.id);
+        }
+      } catch (err) {
+        setIsBuilding(false);
+        if (!isAuto) {
+          setExecutionStatus("error");
+          toast.error("Compilation failed");
+        }
+      }
+    }, 10);
   };
 
   // Reset handler
@@ -397,15 +448,6 @@ export function Playground() {
           {mobileTab === "files" && (
             <div className="flex-1 overflow-y-auto">
               <PlaygroundFileTree
-                files={files}
-                activeFileId={activeFileId}
-                onSelectFile={(id) => {
-                  setActiveFileId(id);
-                  if (!openTabIds.includes(id)) {
-                    setOpenTabIds((prev) => [...prev, id]);
-                  }
-                  setMobileTab("editor");
-                }}
                 onAddFile={handleAddFile}
                 onDeleteFile={handleDeleteFile}
                 presets={PLAYGROUND_PRESETS}
@@ -418,26 +460,16 @@ export function Playground() {
           {mobileTab === "editor" && (
             <div className="flex-1 flex flex-col min-h-0">
               <PlaygroundTabs
-                files={files}
-                openTabIds={openTabIds}
-                activeFileId={activeFileId}
-                onSelectTab={(id) => setActiveFileId(id)}
-                onCloseTab={(id) => {
-                  setOpenTabIds((prev) => prev.filter((t) => t !== id));
-                  if (activeFileId === id && openTabIds.length > 1) {
-                    const remaining = openTabIds.filter((t) => t !== id);
-                    setActiveFileId(remaining[0]);
-                  }
-                }}
-                onNewFileClick={() => handleAddFile(`Component-${files.length + 1}.tsx`)}
+                onNewFileClick={() =>
+                  handleAddFile(`Component-${usePlaygroundStore.getState().files.length + 1}.tsx`)
+                }
               />
               <div className="flex-1 min-h-0">
                 {activeFile ? (
                   <PlaygroundEditor
-                    activeFile={activeFile}
                     onCodeChange={handleCodeChange}
                     onFormatCode={handleFormatCode}
-                    onRunCode={handleRun}
+                    onRunCode={() => handleRun()}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-muted-foreground text-xs p-6">
@@ -450,13 +482,13 @@ export function Playground() {
 
           {mobileTab === "preview" && (
             <div className="flex-1 flex flex-col bg-background min-h-0">
-              <PlaygroundPreview files={files} onLogCaptured={handleLogCaptured} />
+              <PlaygroundPreview onLogCaptured={handleLogCaptured} />
             </div>
           )}
 
           {mobileTab === "console" && (
             <div className="flex-1 flex flex-col bg-background min-h-0">
-              <PlaygroundConsole logs={consoleLogs} onClearConsole={() => setConsoleLogs([])} />
+              <PlaygroundConsole />
             </div>
           )}
 
@@ -497,14 +529,6 @@ export function Playground() {
           {showFileTree && (
             <div className="w-56 shrink-0 border-r border-border/60">
               <PlaygroundFileTree
-                files={files}
-                activeFileId={activeFileId}
-                onSelectFile={(id) => {
-                  setActiveFileId(id);
-                  if (!openTabIds.includes(id)) {
-                    setOpenTabIds((prev) => [...prev, id]);
-                  }
-                }}
                 onAddFile={handleAddFile}
                 onDeleteFile={handleDeleteFile}
                 presets={PLAYGROUND_PRESETS}
@@ -518,28 +542,18 @@ export function Playground() {
           <div className="flex-1 flex flex-col min-w-0 border-r border-border/60 min-h-[350px]">
             {/* Tabs Bar */}
             <PlaygroundTabs
-              files={files}
-              openTabIds={openTabIds}
-              activeFileId={activeFileId}
-              onSelectTab={(id) => setActiveFileId(id)}
-              onCloseTab={(id) => {
-                setOpenTabIds((prev) => prev.filter((t) => t !== id));
-                if (activeFileId === id && openTabIds.length > 1) {
-                  const remaining = openTabIds.filter((t) => t !== id);
-                  setActiveFileId(remaining[0]);
-                }
-              }}
-              onNewFileClick={() => handleAddFile(`Component-${files.length + 1}.tsx`)}
+              onNewFileClick={() =>
+                handleAddFile(`Component-${usePlaygroundStore.getState().files.length + 1}.tsx`)
+              }
             />
 
             {/* Monaco Editor */}
             <div className="flex-1 min-h-0">
               {activeFile ? (
                 <PlaygroundEditor
-                  activeFile={activeFile}
                   onCodeChange={handleCodeChange}
                   onFormatCode={handleFormatCode}
-                  onRunCode={handleRun}
+                  onRunCode={() => handleRun()}
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-muted-foreground text-xs p-6">
@@ -551,13 +565,9 @@ export function Playground() {
 
           {/* Right Pane Column (Preview / Console / Hints) */}
           <div className="w-[420px] shrink-0 flex flex-col bg-background min-h-[300px]">
-            {activePaneTab === "preview" && (
-              <PlaygroundPreview files={files} onLogCaptured={handleLogCaptured} />
-            )}
+            {activePaneTab === "preview" && <PlaygroundPreview onLogCaptured={handleLogCaptured} />}
 
-            {activePaneTab === "console" && (
-              <PlaygroundConsole logs={consoleLogs} onClearConsole={() => setConsoleLogs([])} />
-            )}
+            {activePaneTab === "console" && <PlaygroundConsole />}
 
             {activePaneTab === "hints" && (
               <div className="p-4 space-y-4 text-xs overflow-y-auto">
