@@ -1,268 +1,185 @@
 [
   {
-    "id": "html-foundations",
-    "moduleId": "html-css-foundations",
-    "title": "HTML Foundations & Semantics",
-    "description": "Elements, document structure, semantic tags, forms, accessibility attributes, and DOM trees.",
+    "id": "what-is-frontend-development",
+    "moduleId": "module-0-1",
+    "title": "What Is Frontend Development?",
+    "description": "What frontend engineers actually build, and how that differs from backend and design work.",
     "difficulty": "Beginner",
-    "estimatedMinutes": 35,
-    "interviewFrequency": "High",
+    "estimatedMinutes": 20,
+    "interviewFrequency": "Low",
     "prerequisites": [],
-    "next": ["css-box-model"],
-    "related": ["css-box-model"],
-    "categoryId": "core-web",
+    "next": [
+      "how-the-web-works"
+    ],
+    "related": [
+      "browser-server-and-client"
+    ],
     "order": 1
   },
   {
-    "id": "css-box-model",
-    "moduleId": "html-css-foundations",
-    "title": "CSS Box Model & Specificity",
-    "description": "Margin, padding, borders, content-box vs border-box, specificity calculation, and cascade rules.",
+    "id": "how-the-web-works",
+    "moduleId": "module-0-1",
+    "title": "How the Web Works",
+    "description": "The client-server request/response loop that underlies every website and web app.",
     "difficulty": "Beginner",
-    "estimatedMinutes": 40,
-    "interviewFrequency": "High",
-    "prerequisites": ["html-foundations"],
-    "next": ["flexbox"],
-    "related": ["flexbox"],
-    "categoryId": "core-web",
+    "estimatedMinutes": 20,
+    "interviewFrequency": "Medium",
+    "prerequisites": [
+      "what-is-frontend-development"
+    ],
+    "next": [
+      "what-happens-when-you-click-a-link"
+    ],
+    "related": [
+      "browser-server-and-client"
+    ],
     "order": 2
   },
   {
-    "id": "flexbox",
-    "moduleId": "html-css-foundations",
-    "title": "Flexbox Layouts",
-    "description": "One-dimensional flex layouts, main/cross axes, alignment, flex-grow/shrink/basis, and responsive patterns.",
+    "id": "what-happens-when-you-click-a-link",
+    "moduleId": "module-0-1",
+    "title": "What Happens When You Click a Link?",
+    "description": "The full DNS lookup, HTTP request, server response, and render sequence triggered by a single click.",
     "difficulty": "Beginner",
-    "estimatedMinutes": 40,
-    "interviewFrequency": "Medium",
-    "prerequisites": ["css-box-model"],
-    "next": ["grid"],
-    "related": ["grid"],
-    "categoryId": "core-web",
+    "estimatedMinutes": 20,
+    "interviewFrequency": "High",
+    "prerequisites": [
+      "how-the-web-works"
+    ],
+    "next": [
+      "browser-server-and-client"
+    ],
+    "related": [
+      "how-the-web-works"
+    ],
     "order": 3
   },
   {
-    "id": "grid",
-    "moduleId": "html-css-foundations",
-    "title": "CSS Grid System",
-    "description": "Two-dimensional track grid, named areas, auto-fill/fit, subgrid, and modern responsive layouts.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 55,
-    "interviewFrequency": "Medium",
-    "prerequisites": ["flexbox"],
-    "next": [],
-    "related": ["flexbox"],
-    "categoryId": "core-web",
-    "order": 4
-  },
-  {
-    "id": "js-fundamentals",
-    "moduleId": "javascript-deep-dive",
-    "title": "JavaScript Fundamentals & Primitive Types",
-    "description": "Variables, primitives vs objects, type coercion, strict equality, expressions, and evaluation.",
+    "id": "browser-server-and-client",
+    "moduleId": "module-0-1",
+    "title": "Browser, Server, and Client",
+    "description": "Where responsibility actually splits between what runs in the browser and what runs on a server.",
     "difficulty": "Beginner",
-    "estimatedMinutes": 40,
+    "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [],
-    "next": ["scope-hoisting"],
-    "related": ["scope-hoisting"],
-    "categoryId": "language-mastery",
-    "order": 1
-  },
-  {
-    "id": "scope-hoisting",
-    "moduleId": "javascript-deep-dive",
-    "title": "Lexical Scope & Hoisting",
-    "description": "Global/function/block scope, Temporal Dead Zone (TDZ), variable hoisting, and execution contexts.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 45,
-    "interviewFrequency": "High",
-    "prerequisites": ["js-fundamentals"],
-    "next": ["closures"],
-    "related": ["closures"],
-    "categoryId": "language-mastery",
-    "order": 2
-  },
-  {
-    "id": "closures",
-    "moduleId": "javascript-deep-dive",
-    "title": "Closures & Scope Capture",
-    "description": "Understand lexical scope retention, memory retention, module patterns, and function factories.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 45,
-    "interviewFrequency": "High",
-    "prerequisites": ["scope-hoisting"],
-    "next": ["promises-async"],
-    "related": ["promises-async", "event-loop"],
-    "categoryId": "language-mastery",
-    "order": 3
-  },
-  {
-    "id": "promises-async",
-    "moduleId": "javascript-deep-dive",
-    "title": "Promises & Async/Await",
-    "description": "Asynchronous primitives, promise states, microtasks, chaining, error handling, and Async/Await sugar.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 50,
-    "interviewFrequency": "Very High",
-    "prerequisites": ["closures"],
-    "next": ["event-loop"],
-    "related": ["event-loop"],
-    "categoryId": "language-mastery",
+    "prerequisites": [
+      "what-happens-when-you-click-a-link"
+    ],
+    "next": [
+      "how-forge-works"
+    ],
+    "related": [
+      "what-is-frontend-development"
+    ],
     "order": 4
   },
   {
-    "id": "event-loop",
-    "moduleId": "javascript-deep-dive",
-    "title": "The JavaScript Event Loop",
-    "description": "Call stack, task queue, microtask queue, requestAnimationFrame, and browser render phase.",
-    "difficulty": "Advanced",
-    "estimatedMinutes": 60,
-    "interviewFrequency": "Very High",
-    "prerequisites": ["promises-async"],
+    "id": "how-forge-works",
+    "moduleId": "module-0-1",
+    "title": "How Forge Works",
+    "description": "Forge's Learn / Practice / Grow loop, and how to use it as an active practice environment rather than a video course.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
+    "interviewFrequency": "Low",
+    "prerequisites": [
+      "browser-server-and-client"
+    ],
     "next": [],
-    "related": ["promises-async"],
-    "categoryId": "language-mastery",
+    "related": [],
     "order": 5
   },
   {
-    "id": "ts-types-interfaces",
-    "moduleId": "typescript-mastery",
-    "title": "Types & Interfaces",
-    "description": "Primitive type annotations, interfaces, type aliases, structural typing, and readonly properties.",
+    "id": "meet-your-browser-devtools",
+    "moduleId": "module-0-2",
+    "title": "Meet Your Browser DevTools",
+    "description": "A guided tour of the DevTools suite — Elements, Console, Network, and Sources — and how to open it in any modern browser.",
     "difficulty": "Beginner",
-    "estimatedMinutes": 40,
-    "interviewFrequency": "High",
+    "estimatedMinutes": 20,
+    "interviewFrequency": "Medium",
     "prerequisites": [],
-    "next": ["ts-unions-narrowing"],
-    "related": ["ts-unions-narrowing"],
-    "categoryId": "language-mastery",
+    "next": [
+      "inspecting-html-with-elements"
+    ],
+    "related": [
+      "understanding-the-console",
+      "understanding-network-requests"
+    ],
     "order": 1
   },
   {
-    "id": "ts-unions-narrowing",
-    "moduleId": "typescript-mastery",
-    "title": "Unions, Intersections & Type Narrowing",
-    "description": "Discriminated unions, type guards, typeof/instanceof/in operators, and strict null checks.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 45,
-    "interviewFrequency": "High",
-    "prerequisites": ["ts-types-interfaces"],
-    "next": ["generics"],
-    "related": ["generics"],
-    "categoryId": "language-mastery",
+    "id": "inspecting-html-with-elements",
+    "moduleId": "module-0-2",
+    "title": "Inspecting HTML with Elements",
+    "description": "Reading and live-editing the DOM tree and applied CSS using the Elements (Inspector) panel.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
+    "interviewFrequency": "Medium",
+    "prerequisites": [
+      "meet-your-browser-devtools"
+    ],
+    "next": [
+      "understanding-the-console"
+    ],
+    "related": [
+      "meet-your-browser-devtools"
+    ],
     "order": 2
   },
   {
-    "id": "generics",
-    "moduleId": "typescript-mastery",
-    "title": "Generics & Parametric Types",
-    "description": "Parametric polymorphism, constraints, inference, reusable type utilities, and extends key checks.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 50,
+    "id": "understanding-the-console",
+    "moduleId": "module-0-2",
+    "title": "Understanding the Console",
+    "description": "Running JavaScript live and reading logged output, warnings, and errors in the Console panel.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": ["ts-unions-narrowing"],
-    "next": [],
-    "related": ["ts-unions-narrowing"],
-    "categoryId": "language-mastery",
+    "prerequisites": [
+      "meet-your-browser-devtools"
+    ],
+    "next": [
+      "understanding-network-requests"
+    ],
+    "related": [
+      "inspecting-html-with-elements",
+      "your-first-debugging-exercise"
+    ],
     "order": 3
   },
   {
-    "id": "react-jsx-components",
-    "moduleId": "react-professional",
-    "title": "JSX & Component Composition",
-    "description": "JSX syntax transformation, component hierarchy, props passing, children composition, and purity.",
+    "id": "understanding-network-requests",
+    "moduleId": "module-0-2",
+    "title": "Understanding Network Requests",
+    "description": "Reading the Network panel to see every request a page makes, its status code, timing, and payload.",
     "difficulty": "Beginner",
-    "estimatedMinutes": 40,
+    "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [],
-    "next": ["react-state-props"],
-    "related": ["react-state-props"],
-    "categoryId": "framework-mastery",
-    "order": 1
+    "prerequisites": [
+      "meet-your-browser-devtools"
+    ],
+    "next": [
+      "your-first-debugging-exercise"
+    ],
+    "related": [
+      "understanding-the-console"
+    ],
+    "order": 4
   },
   {
-    "id": "react-state-props",
-    "moduleId": "react-professional",
-    "title": "State Management & Event Handlers",
-    "description": "useState hook, state immutability, batching updates, synthetic events, and controlled input forms.",
+    "id": "your-first-debugging-exercise",
+    "moduleId": "module-0-2",
+    "title": "Your First Debugging Exercise",
+    "description": "A guided first debugging pass combining Elements and Console to locate and explain a simple visual/logic bug.",
     "difficulty": "Beginner",
-    "estimatedMinutes": 45,
+    "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": ["react-jsx-components"],
-    "next": ["useeffect"],
-    "related": ["useeffect"],
-    "categoryId": "framework-mastery",
-    "order": 2
-  },
-  {
-    "id": "useeffect",
-    "moduleId": "react-professional",
-    "title": "useEffect & External Synchronization",
-    "description": "Effects, dependencies array, cleanup callbacks, Strict Mode double execution, and sync gotchas.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 55,
-    "interviewFrequency": "Very High",
-    "prerequisites": ["react-state-props"],
+    "prerequisites": [
+      "inspecting-html-with-elements",
+      "understanding-the-console"
+    ],
     "next": [],
-    "related": ["react-state-props"],
-    "categoryId": "framework-mastery",
-    "order": 3
-  },
-  {
-    "id": "rendering-strategies",
-    "moduleId": "frontend-architecture",
-    "title": "Rendering Strategies",
-    "description": "CSR, SSR, SSG, ISR, streaming and RSC — trade-offs and when to pick which.",
-    "difficulty": "Advanced",
-    "estimatedMinutes": 70,
-    "interviewFrequency": "Very High",
-    "prerequisites": [],
-    "next": [],
-    "related": [],
-    "categoryId": "architecture",
-    "order": 1
-  },
-  {
-    "id": "core-web-vitals",
-    "moduleId": "performance-and-a11y",
-    "title": "Core Web Vitals",
-    "description": "LCP, INP, CLS — what they measure, how to fix them, how to track them.",
-    "difficulty": "Advanced",
-    "estimatedMinutes": 60,
-    "interviewFrequency": "High",
-    "prerequisites": [],
-    "next": [],
-    "related": [],
-    "categoryId": "quality-perf",
-    "order": 1
-  },
-  {
-    "id": "testing-fundamentals",
-    "moduleId": "testing-and-tooling",
-    "title": "Unit & Integration Testing",
-    "description": "Vitest, mock functions, assertion libraries, and Test-Driven Development patterns.",
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 45,
-    "interviewFrequency": "High",
-    "prerequisites": [],
-    "next": [],
-    "related": [],
-    "categoryId": "quality-perf",
-    "order": 1
-  },
-  {
-    "id": "system-design-newsfeed",
-    "moduleId": "interview-prep",
-    "title": "System Design: News Feed",
-    "description": "Design a scalable feed — data model, pagination, caching, real-time and rendering.",
-    "difficulty": "Advanced",
-    "estimatedMinutes": 90,
-    "interviewFrequency": "Very High",
-    "prerequisites": [],
-    "next": [],
-    "related": [],
-    "categoryId": "career-interview",
-    "order": 1
+    "related": [
+      "understanding-network-requests"
+    ],
+    "order": 5
   }
 ]

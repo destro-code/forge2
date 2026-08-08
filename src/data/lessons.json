@@ -1,839 +1,1176 @@
 [
   {
-    "id": "html-foundations-lesson",
-    "topicId": "html-foundations",
-    "moduleId": "html-css-foundations",
-    "title": "HTML Foundations & Semantic Web",
-    "description": "Learn semantic elements, document hierarchy, forms, and accessibility defaults from the ground up.",
+    "id": "lesson-0-1-1",
+    "topicId": "what-is-frontend-development",
+    "moduleId": "module-0-1",
     "order": 1,
+    "title": "What Is Frontend Development?",
+    "description": "What frontend engineers actually build day to day, and why 'frontend' is a much bigger job than 'making it look nice.'",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of HTML Foundations & Semantic Web",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Explain, in your own words, what a frontend engineer is responsible for building.",
+      "Distinguish frontend responsibility from backend and design responsibility using a concrete example.",
+      "Name the three core technologies (HTML, CSS, JavaScript) and what each one is responsible for."
     ],
     "prerequisites": [],
     "sections": [
       {
         "type": "heading",
-        "text": "Semantic HTML vs Div Soup"
+        "text": "Frontend Is Everything the User Touches"
       },
       {
         "type": "paragraph",
-        "text": "HTML provides structural meaning to web documents. Semantic elements like <header>, <main>, <nav>, and <article> communicate role and hierarchy to browser engines, assistive technologies (screen readers), and search indexers."
+        "text": "Open any app on your phone right now. Everything you can see, tap, scroll, or type into is frontend. The button that turns blue when you press it, the list that scrolls smoothly, the form that tells you an email address is invalid before you even hit submit — someone built that, on purpose, with code. That's the job. Frontend development is the practice of building what a user sees and interacts with in a browser: layout, styling, and behavior."
+      },
+      {
+        "type": "paragraph",
+        "text": "That last word, behavior, is the part beginners most often miss. It's tempting to think frontend means 'the visual layer' — colors, fonts, spacing — and leave it there. But a login form that validates input, a chart that redraws when you filter data, a chat window that scrolls to the newest message automatically: none of that is just visual. It's logic, running in the user's browser, written by a frontend engineer."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "Three Layers of Every Interface",
+        "description": "HTML gives the page its structure and content — what elements exist and how they're organized. CSS gives it presentation — how those elements look and where they sit on screen. JavaScript gives it behavior — what happens when the user does something. A frontend engineer works across all three layers, not just the styling one."
       },
       {
         "type": "callout",
-        "variant": "tip",
-        "text": "Using a <button> instead of a <div onClick> gives you keyboard accessibility (Enter/Space triggers) and focus management for free without writing custom event handlers."
+        "variant": "mistake",
+        "text": "The most common beginner misconception: 'frontend' = 'design.' A designer decides what the interface should look like and how it should feel to use. A frontend engineer builds the thing that actually does that — handling real data, edge cases, slow networks, keyboard users, and screens that are the wrong size. Frontend engineers also write plenty of logic that has nothing to do with visuals at all: state management, data fetching, caching, form validation, routing."
       },
       {
         "type": "code",
         "language": "html",
-        "code": "<article class=\"card\">\n  <header>\n    <h2>Semantic Card Title</h2>\n  </header>\n  <p>Content goes here with proper accessibility structure.</p>\n  <button type=\"button\">Action</button>\n</article>"
+        "title": "One small interface, three layers working together",
+        "code": "<!-- HTML: structure and content -->\n<button id=\"save-btn\">Save changes</button>\n\n<style>\n  /* CSS: presentation */\n  #save-btn {\n    background: #2563eb;\n    color: white;\n    padding: 8px 16px;\n    border-radius: 6px;\n    border: none;\n  }\n  #save-btn:disabled {\n    background: #94a3b8;\n    cursor: not-allowed;\n  }\n</style>\n\n<script>\n  // JavaScript: behavior\n  const button = document.getElementById('save-btn');\n  button.addEventListener('click', () => {\n    button.disabled = true;\n    button.textContent = 'Saving...';\n    // In a real app this would call a server and\n    // re-enable the button once the response comes back.\n  });\n</script>"
+      },
+      {
+        "type": "paragraph",
+        "text": "Notice what each layer is doing. The HTML says 'there is a button here.' The CSS says 'and it should look like this.' The JavaScript says 'and when someone clicks it, disable it and show a saving state so they can't accidentally click it twice.' A frontend engineer is fluent in all three — not just the middle one."
+      },
+      {
+        "type": "collapsible",
+        "title": "So what does the backend do, then?",
+        "subtitle": "The other half of almost every app you use",
+        "variant": "deep-dive",
+        "content": "The backend is the part of the application that runs on a server the user never sees directly. It stores data (in a database), enforces business rules ('a user can't withdraw more money than they have'), handles authentication, and talks to other systems. When you click 'Save changes' in the example above, the frontend is responsible for the button and its states — but actually persisting that change usually means the frontend sends a request to a backend, which does the real work of writing to a database and sending back a response. Frontend and backend are different jobs with different skill sets, but they constantly hand off work to each other. You'll see exactly how that handoff works in the next lesson."
       },
       {
         "type": "checkpoint",
-        "id": "html-cp1",
-        "label": "I understand why semantic elements are crucial for accessibility and screen readers.",
-        "hint": "Semantic tags declare innate interactive roles and landmark regions."
-      },
-      {
-        "type": "interactive-sandbox",
-        "title": "Interactive Semantic Markup Sandbox",
-        "instructions": "Modify the HTML/JSX layout below to render accessible cards and buttons.",
-        "initialCode": "import React from 'react';\n\nexport default function HtmlDemo() {\n  return (\n    <main style={{ padding: '16px', background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <header style={{ borderBottom: '1px solid #30363d', paddingBottom: '12px', marginBottom: '16px' }}>\n        <h1 style={{ margin: 0, fontSize: '20px', color: '#58a6ff' }}>Forge HTML Foundations</h1>\n      </header>\n      <article style={{ background: '#161b22', padding: '16px', borderRadius: '8px', border: '1px solid #30363d' }}>\n        <h2 style={{ margin: '0 0 8px 0', fontSize: '16px' }}>Accessible Button Component</h2>\n        <p style={{ color: '#8b949e', fontSize: '14px' }}>Native buttons receive automatic keyboard focus and click synthesis.</p>\n        <button \n          onClick={() => alert('Native button triggered!')}\n          style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}\n        >\n          Click Native Button\n        </button>\n      </article>\n    </main>\n  );\n}"
+        "id": "cp-0-1-1",
+        "label": "Explain, unprompted and in your own words, the difference between what a frontend engineer builds and what a backend engineer builds — using a real app you use daily as your example.",
+        "hint": "Pick something you can see and tap (frontend) versus something that has to be true even when you're not looking at the screen, like your bank balance or your saved messages (backend)."
       }
     ],
     "exercises": [
       {
-        "id": "ex-html-1",
-        "title": "Refactor Div Soup to Semantic Tags",
-        "brief": "Replace generic <div> containers with <header>, <nav>, <main>, and <footer> tags."
+        "id": "ex-0-1-1-1",
+        "title": "Map an App You Use",
+        "brief": "Pick one app on your phone or laptop that you used today. Write down three things about it that are clearly 'frontend' — things you can see, tap, or type into — and three things that must be happening on a 'backend' you can't see, like data being saved, a password being checked, or a payment being processed. For each frontend item, note whether it's mostly structure, styling, or behavior."
       }
     ],
     "quiz": [
       {
-        "id": "q-html-1",
-        "question": "Which HTML element is most appropriate for a clickable action trigger?",
-        "options": ["<div class=\"btn\">", "<button>", "<span>", "<a> without href"],
-        "correctIndex": 1,
-        "explanation": "<button> inherently supports focus rings and Space/Enter key presses."
+        "id": "q-0-1-1-1",
+        "question": "A frontend engineer is asked to add a search box that filters a product list as the user types, with no page reload. Which statement best describes this task?",
+        "options": [
+          "It's a design task, not an engineering task, since it's about the search box's appearance.",
+          "It can only be done on the backend since it involves searching data.",
+          "It requires frontend logic (JavaScript) reacting to input events, not just HTML and CSS.",
+          "It isn't frontend work because no button is being clicked."
+        ],
+        "correctIndex": 2,
+        "explanation": "Filtering a list as the user types is behavior — code that listens for input and updates what's on screen in response. That's a core frontend responsibility, distinct from how the box looks (CSS) or where the underlying data lives (often backend, but the reactive filtering logic itself runs in the browser)."
+      },
+      {
+        "id": "q-0-1-1-2",
+        "question": "Which of these is the clearest example of frontend behavior, as opposed to frontend structure or presentation?",
+        "options": [
+          "The button has rounded corners and a blue background.",
+          "The page has a <header>, <main>, and <footer> section.",
+          "The heading text is 24 pixels tall.",
+          "The submit button becomes disabled while a form is being submitted."
+        ],
+        "correctIndex": 3,
+        "explanation": "Rounded corners, background color, and text size are all presentation (CSS). The section elements are structure (HTML). A button disabling itself in response to an event, based on application state, is behavior — written in JavaScript."
       }
     ],
-    "summary": "Semantic HTML forms the foundational skeleton of modern web applications, granting built-in accessibility, SEO, and native keyboard interaction.",
+    "summary": "Frontend development means building what a user sees and interacts with in a browser: structure (HTML), presentation (CSS), and behavior (JavaScript) — not just the visual layer. It's a distinct job from both design (deciding how the interface should look and feel) and backend engineering (storing data, enforcing rules, running on a server the user never sees).",
     "resources": [
       {
-        "label": "MDN — HTML Basics",
-        "url": "https://developer.mozilla.org/en-US/docs/Learn/HTML"
+        "label": "MDN — Getting Started with Web Development",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started"
       }
     ],
     "interviewQuestions": [
-      "Why is semantic HTML better than using nested <div> tags with custom onClick handlers?",
-      "How do landmark elements affect screen reader navigation?"
+      "How would you explain the difference between frontend and backend development to someone non-technical?",
+      "Is 'frontend engineer' the same job as 'UI designer'? Why or why not?"
     ],
     "previousLessonId": null,
-    "nextLessonId": "css-box-model-lesson"
+    "nextLessonId": "lesson-0-1-2"
   },
   {
-    "id": "css-box-model-lesson",
-    "topicId": "css-box-model",
-    "moduleId": "html-css-foundations",
-    "title": "CSS Box Model & Specificity Demystified",
-    "description": "Master margin, padding, border-box sizing, specificity scoring, and cascade rules.",
-    "order": 1,
+    "id": "lesson-0-1-2",
+    "topicId": "how-the-web-works",
+    "moduleId": "module-0-1",
+    "order": 2,
+    "title": "How the Web Works",
+    "description": "The request/response loop between a browser and a server — the mechanism underneath every website and web app.",
     "difficulty": "Beginner",
-    "estimatedMinutes": 22,
+    "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of CSS Box Model & Specificity Demystified",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Explain that a browser sends a request to a server and receives a response.",
+      "Describe why loading a page is a network exchange, not a file simply 'opening.'",
+      "Identify the roles of client and server in that exchange."
     ],
-    "prerequisites": ["html-foundations-lesson"],
+    "prerequisites": [
+      "lesson-0-1-1"
+    ],
     "sections": [
       {
         "type": "heading",
-        "text": "Understanding box-sizing: border-box"
+        "text": "It's a Conversation, Not a File Opening"
       },
       {
         "type": "paragraph",
-        "text": "Every element on a web page is represented as a rectangular box comprising content, padding, border, and margin. In default content-box sizing, padding and border ADD to the element's specified width, breaking layouts unexpectedly."
+        "text": "When you double-click a photo on your computer, the operating system just opens a file that was already sitting on your disk. Loading a webpage feels similar — you type an address, and a page appears — but almost nothing about it is the same underneath. A browser sends a request to a server and receives a response; this request/response loop is the backbone of the web."
+      },
+      {
+        "type": "paragraph",
+        "text": "Two machines are involved, and each has a name. The client is the device making the request — usually your browser. The server is a machine, somewhere else on the internet, that stores the website's files and data and knows how to respond to requests for them. Every single webpage you've ever visited involved your client asking a server, over a network, 'can I have this page?' and the server answering."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "The Request/Response Loop",
+        "description": "1) The client (browser) sends an HTTP request to a server, naming the resource it wants. 2) The request travels across the network to the server. 3) The server locates or generates the response — HTML, CSS, JS, data, images. 4) The server sends an HTTP response back across the network. 5) The browser receives the response and uses it to build the page you see."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "This is why a working internet connection is required to load a new page, but a page can keep working (briefly) if your connection drops after it's already loaded — the request/response exchange already happened, and the page is just running in your browser's memory now."
       },
       {
         "type": "code",
-        "language": "css",
-        "code": "/* Modern CSS Reset standard */\n*, *::before, *::after {\n  box-sizing: border-box;\n}"
+        "language": "text",
+        "title": "A simplified request and response",
+        "code": "REQUEST (client -> server)\nGET /index.html HTTP/1.1\nHost: example.com\n\nRESPONSE (server -> client)\nHTTP/1.1 200 OK\nContent-Type: text/html\n\n<!doctype html>\n<html>\n  <body><h1>Welcome</h1></body>\n</html>"
+      },
+      {
+        "type": "paragraph",
+        "text": "The request says, plainly: 'GET me the resource at path /index.html, from the host example.com.' The response starts with a status line — 200 OK means 'here you go, this worked' — followed by information about what kind of content is being sent, followed by the content itself. You'll work with status codes like 200, 404, and 500 directly once you start building applications that talk to APIs; for now, just recognize the shape: a request goes out, a response comes back."
+      },
+      {
+        "type": "collapsible",
+        "title": "Why does this matter if I'm not writing servers?",
+        "subtitle": "Frontend engineers live on the client side of this loop",
+        "variant": "senior-tip",
+        "content": "Almost every bug you'll debug as a frontend engineer — a page that hangs, a form that silently fails to submit, a spinner that never stops spinning — is a request/response problem somewhere in this loop. Did the request even get sent? Did it reach the server? Did the server respond in time? Did it respond with an error status? Did the browser fail to parse the response? Understanding this loop is what lets you look at a broken page and know where to start looking, instead of guessing."
       },
       {
         "type": "checkpoint",
-        "id": "css-cp1",
-        "label": "I know why border-box is essential for predictable layout math.",
-        "hint": "border-box includes padding and border inside the specified width and height."
-      },
-      {
-        "type": "interactive-sandbox",
-        "title": "Box Sizing Comparison Sandbox",
-        "instructions": "Toggle between content-box and border-box to see how width calculation changes.",
-        "initialCode": "import React, { useState } from 'react';\n\nexport default function BoxModelDemo() {\n  const [boxSizing, setBoxSizing] = useState('border-box');\n\n  return (\n    <div style={{ padding: '16px', background: '#0f172a', color: '#f8fafc', fontFamily: 'sans-serif' }}>\n      <div style={{ marginBottom: '16px' }}>\n        <button \n          onClick={() => setBoxSizing(b => b === 'border-box' ? 'content-box' : 'border-box')}\n          style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer' }}\n        >\n          Toggle Sizing: <strong>{boxSizing}</strong>\n        </button>\n      </div>\n      <div style={{\n        width: '200px',\n        padding: '20px',\n        border: '5px solid #60a5fa',\n        background: '#1e293b',\n        boxSizing: boxSizing\n      }}>\n        Specified Width: 200px<br />\n        Padding: 20px | Border: 5px\n      </div>\n    </div>\n  );\n}"
+        "id": "cp-0-1-2",
+        "label": "In your own words, explain why a webpage requires a working network connection to load for the first time, in a way that references 'client' and 'server' specifically.",
+        "hint": "What has to happen, and where, before the browser has anything to render at all?"
       }
     ],
     "exercises": [
       {
-        "id": "ex-css-1",
-        "title": "Calculate Specificity Scores",
-        "brief": "Calculate the specificity vector (inline, ID, class, element) for given selector chains."
+        "id": "ex-0-1-2-1",
+        "title": "Spot the Client and the Server",
+        "brief": "Think of three everyday actions that involve loading something over the internet — for example, refreshing a social media feed, checking the weather in an app, or loading a new page of search results. For each one, write one sentence identifying what plays the role of 'client' and one sentence identifying what plays the role of 'server.'"
       }
     ],
     "quiz": [
       {
-        "id": "q-css-1",
-        "question": "What happens when box-sizing is set to border-box?",
+        "id": "q-0-1-2-1",
+        "question": "Which statement correctly describes what happens when you load a webpage for the first time?",
         "options": [
-          "Padding is added outside the element width",
-          "Padding and border are included inside the element width",
-          "Margins are disabled",
-          "Borders become transparent"
+          "The browser (client) sends a request to a server, and the server sends back a response containing the page's content.",
+          "The browser opens a file that was already stored locally on your device.",
+          "The server sends a request to the browser asking what page it wants to see.",
+          "No network is involved as long as the website has been visited before."
         ],
-        "correctIndex": 1,
-        "explanation": "border-box ensures the specified width includes content, padding, and border."
+        "correctIndex": 0,
+        "explanation": "Loading a page for the first time always requires the client to send a request and the server to send back a response — there's no local file to simply open. (Caching can make repeat visits faster, but the first load always requires this exchange.)"
+      },
+      {
+        "id": "q-0-1-2-2",
+        "question": "In the client-server model, which of these is the best description of the 'server's' job?",
+        "options": [
+          "It is the device the end user is holding, like a phone or laptop.",
+          "It renders the final page the user sees on their screen.",
+          "It is only involved after the page has already loaded.",
+          "It stores the site's files or data and responds to requests for them."
+        ],
+        "correctIndex": 3,
+        "explanation": "The server's job is to store the resources (files, data) a site needs and respond to requests for them. Rendering what the user actually sees is the client's (browser's) job, using whatever the server sent back."
       }
     ],
-    "summary": "The box model dictates sizing math, while specificity controls which rules win when selectors compete.",
+    "summary": "Every webpage load is a conversation, not a file opening: the client (your browser) sends a request naming a resource, that request travels across the network to a server, and the server sends back a response the browser uses to build the page. This request/response loop is the mechanism underneath everything you'll build as a frontend engineer.",
     "resources": [
       {
-        "label": "MDN — Box Model",
-        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_box_model"
+        "label": "MDN — How the Web Works",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works"
       }
     ],
     "interviewQuestions": [
-      "Explain the difference between content-box and border-box.",
-      "How is selector specificity calculated in CSS?"
+      "What is the difference between a client and a server?",
+      "Why does a webpage fail to load when your internet connection drops, even if you've visited that page a hundred times before?"
     ],
-    "previousLessonId": "html-foundations-lesson",
-    "nextLessonId": "flexbox-fundamentals"
+    "previousLessonId": "lesson-0-1-1",
+    "nextLessonId": "lesson-0-1-3"
   },
   {
-    "id": "flexbox-fundamentals",
-    "topicId": "flexbox",
-    "moduleId": "html-css-foundations",
-    "title": "Flexbox in Practice",
-    "description": "Align items across main and cross axes with confidence.",
-    "order": 1,
+    "id": "lesson-0-1-3",
+    "topicId": "what-happens-when-you-click-a-link",
+    "moduleId": "module-0-1",
+    "order": 3,
+    "title": "What Happens When You Click a Link?",
+    "description": "A guided, step-by-step trace of everything that happens between a click and a rendered page — one of the most common questions asked in junior frontend interviews.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of Flexbox in Practice",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Describe and reproduce, in order, the sequence: DNS lookup, HTTP request, server response, browser rendering.",
+      "Explain what a DNS lookup does and why it happens before any request can be sent.",
+      "Reproduce this sequence unprompted for a new, unfamiliar URL."
     ],
-    "prerequisites": ["css-box-model-lesson"],
+    "prerequisites": [
+      "lesson-0-1-2"
+    ],
     "sections": [
       {
         "type": "heading",
-        "text": "Flexbox Axes"
+        "text": "The Question Every Interviewer Asks"
       },
       {
         "type": "paragraph",
-        "text": "Flexbox operates on two axes: main axis (defined by flex-direction) and cross axis (perpendicular to main axis)."
+        "text": "“What happens when you type a URL into the address bar and hit Enter?” is one of the oldest, most common questions in frontend interviews — precisely because it forces you to show you understand the whole system, not just the part you personally write code for. This lesson walks through it once, narrated step by step, then asks you to reproduce it yourself on a new example."
       },
       {
-        "type": "code",
-        "language": "css",
-        "code": ".container {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  align-items: center;\n}"
+        "type": "walkthrough",
+        "title": "From Click to Rendered Page",
+        "steps": [
+          {
+            "title": "1. You click a link (or hit Enter on a typed URL)",
+            "description": "The browser now has a full URL, e.g. https://example.com/products. It needs to turn the human-readable host name (example.com) into something machines can actually route traffic to: an IP address."
+          },
+          {
+            "title": "2. DNS lookup",
+            "description": "The browser asks a DNS (Domain Name System) server: “what IP address does example.com point to?” DNS is effectively the internet's phone book — it translates names humans use into numeric addresses machines use. This step happens before any request for the actual page can be sent, because the browser doesn't yet know which server to talk to."
+          },
+          {
+            "title": "3. HTTP request",
+            "description": "Now that the browser has an IP address, it opens a connection to that server and sends an HTTP request — the same GET request structure from the previous lesson — asking for the resource at the /products path."
+          },
+          {
+            "title": "4. Server response",
+            "description": "The server receives the request, does whatever work is needed (look up data, generate HTML, or simply read a file from disk), and sends back an HTTP response: a status code plus the actual content — typically HTML, with links out to CSS and JavaScript files the page also needs."
+          },
+          {
+            "title": "5. Browser rendering",
+            "description": "The browser receives the HTML and starts building the page. It requests any additional files the HTML references (CSS, JS, images), runs the JavaScript, applies the CSS, and paints pixels to the screen. Only now does the user actually see anything."
+          }
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "The most common mistake here is skipping straight from 'click' to 'page appears,' as if rendering were instant and DNS/connection setup didn't exist. In a real interview, naming DNS explicitly — and explaining why it has to happen before the request — is what separates a strong answer from a vague one."
       },
       {
         "type": "interactive-sandbox",
-        "title": "Flexbox Alignment Sandbox",
-        "instructions": "Change flex alignment rules live.",
-        "initialCode": "import React, { useState } from 'react';\n\nexport default function FlexDemo() {\n  const [justify, setJustify] = useState('space-between');\n  return (\n    <div style={{ padding: '16px', background: '#111827', color: '#fff' }}>\n      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>\n        {['flex-start', 'center', 'space-between', 'space-around'].map(j => (\n          <button key={j} onClick={() => setJustify(j)} style={{ background: justify === j ? '#2563eb' : '#374151', color: '#fff', border: 'none', padding: '4px 10px', borderRadius: '4px' }}>\n            {j}\n          </button>\n        ))}\n      </div>\n      <div style={{ display: 'flex', justifyContent: justify, alignItems: 'center', background: '#1f2937', padding: '12px', borderRadius: '8px' }}>\n        <div style={{ background: '#ef4444', padding: '12px 20px', borderRadius: '4px' }}>1</div>\n        <div style={{ background: '#10b981', padding: '12px 20px', borderRadius: '4px' }}>2</div>\n        <div style={{ background: '#3b82f6', padding: '12px 20px', borderRadius: '4px' }}>3</div>\n      </div>\n    </div>\n  );\n}"
-      }
-    ],
-    "exercises": [],
-    "quiz": [
-      {
-        "id": "q-flex-1",
-        "question": "Which property aligns flex items along the main axis?",
-        "options": ["align-items", "justify-content", "align-content", "flex-wrap"],
-        "correctIndex": 1,
-        "explanation": "justify-content controls main axis alignment."
-      }
-    ],
-    "summary": "Flexbox gives 1D control over layout alignment and space distribution.",
-    "resources": [],
-    "interviewQuestions": ["When should you choose Flexbox over CSS Grid?"],
-    "previousLessonId": "css-box-model-lesson",
-    "nextLessonId": "grid-tracks-areas"
-  },
-  {
-    "id": "grid-tracks-areas",
-    "topicId": "grid",
-    "moduleId": "html-css-foundations",
-    "title": "CSS Grid Systems",
-    "description": "Two-dimensional layout power with tracks, areas, auto-fit, and subgrid.",
-    "order": 1,
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 25,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of CSS Grid Systems",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["flexbox-fundamentals"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "Two-dimensional layout"
-      },
-      {
-        "type": "paragraph",
-        "text": "CSS Grid manages columns and rows simultaneously. Combine repeat(), auto-fit, and minmax() for fluid layouts without media queries."
-      },
-      {
-        "type": "code",
-        "language": "css",
-        "code": ".grid-layout {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n  gap: 1.5rem;\n}"
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "CSS Grid is built for 2D container layouts.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "flexbox-fundamentals",
-    "nextLessonId": "js-fundamentals-lesson"
-  },
-  {
-    "id": "js-fundamentals-lesson",
-    "topicId": "js-fundamentals",
-    "moduleId": "javascript-deep-dive",
-    "title": "JavaScript Fundamentals & Type System",
-    "description": "Understand primitive types, reference types, type coercion, and expression evaluation.",
-    "order": 1,
-    "difficulty": "Beginner",
-    "estimatedMinutes": 20,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of JavaScript Fundamentals & Type System",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["grid-tracks-areas"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "Primitives vs Reference Objects"
-      },
-      {
-        "type": "paragraph",
-        "text": "JavaScript has 7 primitive types (string, number, boolean, null, undefined, symbol, bigint) passed by value, and Objects passed by reference memory addresses."
+        "id": "sandbox-0-1-3",
+        "title": "Trace the Request Lifecycle",
+        "instructions": "This sandbox simulates the five-step sequence you just read. Click through each stage in order and watch what's happening at each one — then try to name the next stage before clicking to reveal it.",
+        "language": "jsx",
+        "initialCode": "import React, { useState } from 'react';\n\nconst STAGES = [\n  { name: 'Click', detail: 'Browser has a full URL and needs an IP address for the host.' },\n  { name: 'DNS Lookup', detail: 'example.com is resolved to an IP address like 93.184.216.34.' },\n  { name: 'HTTP Request', detail: 'Browser sends GET /products to that IP address.' },\n  { name: 'Server Response', detail: 'Server sends back status 200 and the page HTML.' },\n  { name: 'Render', detail: 'Browser fetches linked CSS/JS, runs them, and paints the page.' },\n];\n\nexport default function RequestLifecycleDemo() {\n  const [step, setStep] = useState(0);\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <h2 style={{ marginTop: 0, fontSize: 16, color: '#58a6ff' }}>example.com/products</h2>\n      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>\n        {STAGES.map((s, i) => (\n          <div\n            key={s.name}\n            style={{\n              flex: 1,\n              padding: '8px 4px',\n              textAlign: 'center',\n              fontSize: 12,\n              borderRadius: 6,\n              background: i <= step ? '#238636' : '#161b22',\n              border: '1px solid #30363d',\n            }}\n          >\n            {s.name}\n          </div>\n        ))}\n      </div>\n      <p style={{ color: '#8b949e', minHeight: 40 }}>{STAGES[step].detail}</p>\n      <button\n        onClick={() => setStep((s) => Math.min(s + 1, STAGES.length - 1))}\n        disabled={step === STAGES.length - 1}\n        style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: 6, cursor: 'pointer' }}\n      >\n        {step === STAGES.length - 1 ? 'Page fully rendered' : 'Next stage →'}\n      </button>\n    </div>\n  );\n}"
       },
       {
         "type": "checkpoint",
-        "id": "js-cp1",
-        "label": "I know why strict equality === prevents silent type coercion bugs.",
-        "hint": "=== compares both value and type without automatic conversion."
-      },
-      {
-        "type": "interactive-sandbox",
-        "title": "Type Coercion & Equality Sandbox",
-        "instructions": "Test JavaScript loose vs strict equality evaluations.",
-        "initialCode": "import React, { useState } from 'react';\n\nexport default function EqualityDemo() {\n  return (\n    <div style={{ padding: '16px', background: '#18181b', color: '#fafafa', fontFamily: 'monospace' }}>\n      <h3 style={{ margin: '0 0 12px 0', color: '#f43f5e' }}>JavaScript Equality Matrix</h3>\n      <p>0 == '0' ➔ <strong>{String(0 == '0')}</strong></p>\n      <p>0 === '0' ➔ <strong>{String(0 === '0')}</strong></p>\n      <p>[] == ![] ➔ <strong>{String([] == ![])}</strong></p>\n      <p>NaN === NaN ➔ <strong>{String(NaN === NaN)}</strong></p>\n    </div>\n  );\n}"
+        "id": "cp-0-1-3",
+        "label": "Without looking back at the walkthrough, name all five stages in order for a brand-new URL you choose yourself, and explain in one sentence why DNS has to come before the HTTP request.",
+        "hint": "The browser can't send a request to a name — it has to send it to an address. Where does that address come from?"
       }
     ],
-    "exercises": [],
+    "exercises": [
+      {
+        "id": "ex-0-1-3-1",
+        "title": "Narrate Your Own URL",
+        "brief": "Pick any website you use regularly (not example.com). Write out, in your own words, all five stages — click, DNS lookup, HTTP request, server response, render — as they'd apply to that specific site. Be specific about what the browser would be requesting (which page/path) at the HTTP request stage."
+      }
+    ],
     "quiz": [
       {
-        "id": "q-js-1",
-        "question": "What does typeof null return in JavaScript?",
-        "options": ["\"null\"", "\"undefined\"", "\"object\"", "\"boolean\""],
-        "correctIndex": 2,
-        "explanation": "typeof null returning \"object\" is a legacy JS design bug preserved for backwards compatibility."
-      }
-    ],
-    "summary": "Mastering JS primitives, reference memory, and strict equality avoids tricky runtime surprises.",
-    "resources": [],
-    "interviewQuestions": [
-      "Why does typeof null return \"object\"?",
-      "How does pass-by-value differ from pass-by-reference in JavaScript?"
-    ],
-    "previousLessonId": "grid-tracks-areas",
-    "nextLessonId": "scope-hoisting-lesson"
-  },
-  {
-    "id": "scope-hoisting-lesson",
-    "topicId": "scope-hoisting",
-    "moduleId": "javascript-deep-dive",
-    "title": "Lexical Scope & Hoisting Mechanics",
-    "description": "Explore execution contexts, variable declarations, and the Temporal Dead Zone.",
-    "order": 1,
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 22,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of Lexical Scope & Hoisting Mechanics",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["js-fundamentals-lesson"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "The Temporal Dead Zone (TDZ)"
-      },
-      {
-        "type": "paragraph",
-        "text": "let and const variables are hoisted to the top of their block scope, but remain uninitialized in the TDZ until execution reaches their declaration."
-      },
-      {
-        "type": "code",
-        "language": "javascript",
-        "code": "console.log(a); // undefined (var hoisted)\nvar a = 10;\n\n// console.log(b); // ReferenceError: Cannot access 'b' before initialization\nlet b = 20;"
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Block scoping with let/const prevents variable leaks and enforces disciplined declaration timing.",
-    "resources": [],
-    "interviewQuestions": ["What is the Temporal Dead Zone in JavaScript?"],
-    "previousLessonId": "js-fundamentals-lesson",
-    "nextLessonId": "closures-intro"
-  },
-  {
-    "id": "closures-intro",
-    "topicId": "closures",
-    "moduleId": "javascript-deep-dive",
-    "title": "Closures, from scratch",
-    "description": "Build an intuition for closures by watching one form under your fingertips.",
-    "order": 1,
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 18,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of Closures, from scratch",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["scope-hoisting-lesson"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "What is a closure?"
-      },
-      {
-        "type": "paragraph",
-        "text": "A closure is a function bundled together with references to its surrounding state — the lexical environment in which it was declared."
-      },
-      {
-        "type": "code",
-        "language": "javascript",
-        "code": "function counter() {\n  let count = 0;\n  return () => ++count;\n}\nconst next = counter();\nconsole.log(next()); // 1\nconsole.log(next()); // 2"
-      },
-      {
-        "type": "interactive-sandbox",
-        "title": "Try Closures Live in Mini Sandbox",
-        "instructions": "Modify the incrementer code below and click 'Run Code' to see live output.",
-        "initialCode": "import React, { useState } from 'react';\n\nexport default function ClosureApp() {\n  const [count, setCount] = useState(0);\n  return (\n    <div style={{ padding: '16px', background: '#111827', color: '#fff', borderRadius: '8px' }}>\n      <h3 style={{ margin: '0 0 8px 0', color: '#60a5fa' }}>Closure State Sandbox</h3>\n      <p>Captured Value: <strong>{count}</strong></p>\n      <button \n        onClick={() => setCount(c => c + 1)} \n        style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer' }}\n      >\n        Increment Counter\n      </button>\n    </div>\n  );\n}"
-      }
-    ],
-    "exercises": [],
-    "quiz": [
-      {
-        "id": "q1",
-        "question": "What does a closure capture?",
+        "id": "q-0-1-3-1",
+        "question": "Why must a DNS lookup happen before the browser can send an HTTP request for a page?",
         "options": [
-          "Values by copy",
-          "References to variables in the enclosing scope",
-          "The prototype chain",
-          "The this binding"
+          "The browser needs an IP address to connect to, and DNS is what translates the human-readable host name into that IP address.",
+          "DNS lookups and HTTP requests happen at the same time, not in sequence.",
+          "DNS is only needed if the site uses HTTPS instead of HTTP.",
+          "DNS lookups only happen the first time a browser is ever used, not per-site."
+        ],
+        "correctIndex": 0,
+        "explanation": "HTTP requests are sent to a network address (an IP address), not a name. DNS resolves the human-readable host name (like example.com) into that address, which is why it has to happen before the request can be sent — the browser doesn't know where to send it yet."
+      },
+      {
+        "id": "q-0-1-3-2",
+        "question": "Put these in the correct order: (A) Browser renders the page, (B) Server sends back HTML, (C) Browser sends an HTTP request, (D) DNS resolves the host name to an IP address.",
+        "options": [
+          "A, B, C, D",
+          "D, C, B, A",
+          "C, D, B, A",
+          "D, B, C, A"
         ],
         "correctIndex": 1,
-        "explanation": "Closures capture live bindings, not snapshotted values."
+        "explanation": "The correct sequence is: DNS resolves the name to an IP (D), the browser sends the HTTP request to that IP (C), the server sends back the HTML response (B), and only then does the browser render it (A)."
+      },
+      {
+        "id": "q-0-1-3-3",
+        "question": "A page's HTML has finished arriving at the browser, but the page still looks blank and unstyled for a moment. What's the most likely explanation?",
+        "options": [
+          "The DNS lookup for the page is still running.",
+          "The server sent the wrong status code.",
+          "The browser is still requesting and applying linked resources like CSS, and running JavaScript, before the final paint.",
+          "This can't happen — the page renders the instant HTML arrives."
+        ],
+        "correctIndex": 2,
+        "explanation": "Receiving the HTML is only the start of rendering, not the end of it. The browser still needs to fetch any linked CSS and JS files, apply styles, and run scripts before the final page appears — which is why a brief unstyled flash can happen."
       }
     ],
-    "summary": "Closures pair a function with the environment where it was declared.",
-    "resources": [],
-    "interviewQuestions": ["Explain closures to a junior engineer using an example."],
-    "previousLessonId": "scope-hoisting-lesson",
-    "nextLessonId": "promises-async-lesson"
+    "summary": "Clicking a link triggers a fixed sequence: a DNS lookup translates the host name to an IP address, the browser sends an HTTP request to that address, the server sends back a response, and the browser renders it — fetching any linked CSS/JS along the way. This is one of the most frequently asked frontend interview questions precisely because it tests whether you understand the full system end to end.",
+    "resources": [
+      {
+        "label": "MDN — How Browsers Load Websites",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_browsers_load_websites"
+      },
+      {
+        "label": "MDN — What Is a URL?",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_URL"
+      }
+    ],
+    "interviewQuestions": [
+      "Walk me through everything that happens when you type a URL into the browser and press Enter.",
+      "What is DNS, and why does it need to happen before the browser can request a page?",
+      "Why might a page's HTML arrive quickly but the visible page still take longer to appear?"
+    ],
+    "previousLessonId": "lesson-0-1-2",
+    "nextLessonId": "lesson-0-1-4"
   },
   {
-    "id": "promises-async-lesson",
-    "topicId": "promises-async",
-    "moduleId": "javascript-deep-dive",
-    "title": "Promises & Async/Await Primitives",
-    "description": "Master asynchronous flow, promise States, microtask scheduling, and error handling.",
-    "order": 1,
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 25,
+    "id": "lesson-0-1-4",
+    "topicId": "browser-server-and-client",
+    "moduleId": "module-0-1",
+    "order": 4,
+    "title": "Browser, Server, and Client",
+    "description": "Where responsibility actually splits between the browser and the server — and why frontend engineers need to know both sides even though they mostly work on one.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of Promises & Async/Await Primitives",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Explain that the browser (client) renders UI and runs JavaScript, while the server stores data and business logic.",
+      "Give an example of something that must happen on the server and could not safely happen only in the browser.",
+      "Explain why 'client' and 'browser' are often used interchangeably in frontend contexts."
     ],
-    "prerequisites": ["closures-intro"],
+    "prerequisites": [
+      "lesson-0-1-3"
+    ],
     "sections": [
       {
         "type": "heading",
-        "text": "Promise States & Chaining"
+        "text": "Two Machines, Two Jobs"
       },
       {
         "type": "paragraph",
-        "text": "A Promise is an object representing eventual completion or failure of an async operation. It resides in one of three states: pending, fulfilled, or rejected."
+        "text": "You've now seen the request/response loop and the full page-load sequence. This lesson zooms in on one piece of that picture: what, specifically, does each side of the loop own? The browser (client) renders UI and runs JS; the server stores data and business logic; each has distinct responsibilities."
+      },
+      {
+        "type": "paragraph",
+        "text": "The browser's job: take HTML, CSS, and JavaScript, and turn them into a page the user can see and interact with. It runs entirely on the user's own device — their laptop, their phone — using their device's memory and processing power. Every button click, every animation, every bit of client-side validation happens here, in code you as a frontend engineer write and ship to run on someone else's machine."
+      },
+      {
+        "type": "paragraph",
+        "text": "The server's job: store the data that needs to persist and stay correct regardless of who's looking at it — account balances, order history, passwords (hashed, never in plain text), inventory counts — and enforce the rules around that data. A server also usually generates or serves the initial files a browser needs, and responds to further requests for data as the user interacts with the page."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "Split of Responsibility",
+        "description": "Client (browser): renders the UI, runs JavaScript, holds temporary in-memory state, handles user input directly. Server: stores durable data, enforces business rules and permissions, is the source of truth when client and server disagree about what's true."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "text": "Never trust the client to be the final authority on anything that matters. A user can open their browser's developer tools and change JavaScript variables, remove 'disabled' attributes, or send requests directly, bypassing your UI entirely. Client-side validation (like a form saying 'this field is required') is there for a fast, friendly user experience — not security. Anything that actually matters (permissions, prices, ownership) must be re-checked on the server, because the server is the only side of this relationship the user doesn't fully control."
       },
       {
         "type": "code",
         "language": "javascript",
-        "code": "async function fetchData() {\n  try {\n    const res = await fetch('/api/user');\n    const data = await res.json();\n    return data;\n  } catch (err) {\n    console.error('Fetch error:', err);\n  }\n}"
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Promises replace callback hell with structured async task composition.",
-    "resources": [],
-    "interviewQuestions": ["How does async/await compare to raw Promises under the hood?"],
-    "previousLessonId": "closures-intro",
-    "nextLessonId": "event-loop-microtasks"
-  },
-  {
-    "id": "event-loop-microtasks",
-    "topicId": "event-loop",
-    "moduleId": "javascript-deep-dive",
-    "title": "Event Loop & Task Queues",
-    "description": "Call stack, task queue, microtasks and rendering — how the browser actually runs code.",
-    "order": 1,
-    "difficulty": "Advanced",
-    "estimatedMinutes": 30,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of Event Loop & Task Queues",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["promises-async-lesson"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "Microtasks vs Macrotasks"
+        "title": "Client-side validation is a courtesy, not a guarantee",
+        "code": "// Runs in the browser — gives the user instant feedback\nfunction validateAge(input) {\n  const age = Number(input.value);\n  if (age < 18) {\n    showError('You must be 18 or older.');\n    return false;\n  }\n  return true;\n}\n\n// A user could open DevTools and simply call the\n// underlying submit function directly, skipping\n// validateAge() entirely. That's why the SAME rule\n// (age >= 18) must also be enforced on the server\n// before the server actually saves anything."
       },
       {
-        "type": "paragraph",
-        "text": "Microtasks (Promises, queueMicrotask) run immediately after the current call stack clears, before macrotasks (setTimeout) or browser repaints."
+        "type": "collapsible",
+        "title": "Isn't the browser also 'the client'? Aren't those the same thing?",
+        "subtitle": "A quick note on terminology you'll see used interchangeably",
+        "variant": "default",
+        "content": "In frontend contexts, yes — 'client' and 'browser' are almost always used to mean the same thing, because the browser is the client software actually making requests on the user's behalf. You'll sometimes see 'client' used more broadly (a mobile app can also be a client to a server, for instance), but in the world of web frontend engineering, assume 'client' means 'the browser and the code running inside it' unless stated otherwise."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-1-4",
+        "label": "Give one concrete example of something that must be enforced on the server, not just the client, and explain why trusting the client alone would be unsafe.",
+        "hint": "Think about anything a user could change by editing values in their browser's developer tools."
       }
     ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Microtasks drain completely before the event loop advances to the next task.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "promises-async-lesson",
-    "nextLessonId": "ts-types-interfaces-lesson"
+    "exercises": [
+      {
+        "id": "ex-0-1-4-1",
+        "title": "Client or Server?",
+        "brief": "List five things a modern e-commerce checkout page needs to do — for example, showing a live shipping-cost estimate, or confirming a discount code is valid. For each one, decide whether it belongs primarily to the client, primarily to the server, or genuinely needs both (client for instant feedback, server for the real check), and justify each answer in one sentence."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-1-4-1",
+        "question": "A checkout form shows 'Discount applied!' the instant a user types a promo code, using only JavaScript running in the browser, with no server involved yet. What's the risk?",
+        "options": [
+          "There's no risk — client-side code can always be trusted for this.",
+          "Browsers can't run this kind of validation logic at all.",
+          "This should be handled entirely by the server, with no client-side feedback.",
+          "A user could edit that JavaScript in DevTools to always show 'Discount applied!' regardless of the actual code, so the server must independently verify the discount before finalizing an order."
+        ],
+        "correctIndex": 3,
+        "explanation": "Client-side feedback is great for user experience, but a user fully controls their own browser and can modify or bypass client-side JavaScript. The server must independently re-check that the discount code is real and valid before actually applying it to the order total — the client-side check is a UX nicety, not the security boundary."
+      },
+      {
+        "id": "q-0-1-4-2",
+        "question": "Which of these responsibilities most clearly belongs to the browser (client), not the server?",
+        "options": [
+          "Rendering the page's layout and running the JavaScript that animates a dropdown menu.",
+          "Storing a user's account balance so it stays consistent across devices.",
+          "Enforcing that a user cannot access another user's private data.",
+          "Hashing and storing a user's password securely."
+        ],
+        "correctIndex": 0,
+        "explanation": "Rendering UI and running JavaScript that only affects what's displayed (like a dropdown animation) is client-side work — it doesn't need to be durable or trusted the way account balances, access control, or password storage do, all of which must live on the server."
+      }
+    ],
+    "summary": "The browser (client) renders UI and runs JavaScript on the user's own device; the server stores durable data and enforces the rules around it, and is the only side of the relationship the user doesn't fully control. Client-side checks are for a fast, friendly experience — anything that actually matters must be independently enforced on the server.",
+    "resources": [
+      {
+        "label": "MDN — How the Web Works (Client and Server)",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works"
+      }
+    ],
+    "interviewQuestions": [
+      "Why shouldn't you rely only on client-side validation for something like an age restriction or a discount code?",
+      "What's the difference between something that belongs in browser memory versus something that must be stored on a server?"
+    ],
+    "previousLessonId": "lesson-0-1-3",
+    "nextLessonId": "lesson-0-1-5"
   },
   {
-    "id": "ts-types-interfaces-lesson",
-    "topicId": "ts-types-interfaces",
-    "moduleId": "typescript-mastery",
-    "title": "TypeScript Types & Interfaces",
-    "description": "Static typing, interfaces, type aliases, structural compatibility, and readonly modifiers.",
-    "order": 1,
+    "id": "lesson-0-1-5",
+    "topicId": "how-forge-works",
+    "moduleId": "module-0-1",
+    "order": 5,
+    "title": "How Forge Works",
+    "description": "A guided tour of Forge's Learn / Practice / Grow loop, and how to use the platform as an active practice environment instead of a video course.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of TypeScript Types & Interfaces",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Explain how Forge's Learn / Practice / Grow loop mirrors real skill-building: learn a concept, apply it, then get feedback and track mastery.",
+      "Locate the Learn, Practice, and Grow areas of the platform.",
+      "Describe what happens after finishing a lesson."
     ],
-    "prerequisites": ["event-loop-microtasks"],
+    "prerequisites": [
+      "lesson-0-1-4"
+    ],
     "sections": [
       {
         "type": "heading",
-        "text": "Interfaces vs Type Aliases"
+        "text": "Forge Is Not a Video Course"
       },
       {
         "type": "paragraph",
-        "text": "Interfaces excel at describing object shapes and support declaration merging. Type aliases support primitives, unions, and tuples."
-      },
-      {
-        "type": "code",
-        "language": "typescript",
-        "code": "interface User {\n  id: string;\n  name: string;\n  readonly role: 'admin' | 'user';\n}"
-      },
-      {
-        "type": "interactive-sandbox",
-        "title": "TypeScript Static Types Sandbox",
-        "instructions": "Test TS component props typing in the sandbox.",
-        "initialCode": "import React from 'react';\n\ninterface CardProps {\n  title: string;\n  status: 'active' | 'pending';\n}\n\nexport default function TsCard({ title = 'TypeScript Card', status = 'active' }: Partial<CardProps>) {\n  return (\n    <div style={{ padding: '16px', background: '#0284c7', color: '#fff', borderRadius: '8px' }}>\n      <h3 style={{ margin: 0 }}>{title}</h3>\n      <p>Status: <strong>{status}</strong></p>\n    </div>\n  );\n}"
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "TypeScript adds compile-time type safety over JavaScript runtime values.",
-    "resources": [],
-    "interviewQuestions": ["When should you use an interface vs a type alias in TypeScript?"],
-    "previousLessonId": "event-loop-microtasks",
-    "nextLessonId": "ts-unions-narrowing-lesson"
-  },
-  {
-    "id": "ts-unions-narrowing-lesson",
-    "topicId": "ts-unions-narrowing",
-    "moduleId": "typescript-mastery",
-    "title": "Unions & Type Narrowing",
-    "description": "Discriminated unions, type guards, and handling complex conditional state types.",
-    "order": 1,
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 22,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of Unions & Type Narrowing",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["ts-types-interfaces-lesson"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "Discriminated Unions"
+        "text": "You've just spent four lessons learning how the web actually works underneath the surface. Notice what those lessons had in common: a clear explanation, a concrete example, and then a checkpoint asking you to reproduce the idea yourself, unprompted. That's not an accident — it's Forge's whole design philosophy, repeated at every scale. Forge's Learn / Practice / Grow loop mirrors real skill-building: learn a concept, apply it, then get feedback and track mastery."
       },
       {
         "type": "paragraph",
-        "text": "A discriminant literal field (like type: 'success' | 'error') allows TypeScript to narrow union types inside switch or if blocks."
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Discriminated unions model mutually exclusive states with complete type safety.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "ts-types-interfaces-lesson",
-    "nextLessonId": "generics-foundations"
-  },
-  {
-    "id": "generics-foundations",
-    "topicId": "generics",
-    "moduleId": "typescript-mastery",
-    "title": "TypeScript Generics Mastery",
-    "description": "Write reusable, type-safe functions, data structures, and utilities.",
-    "order": 1,
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 25,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of TypeScript Generics Mastery",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["ts-unions-narrowing-lesson"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "Generic Functions"
+        "text": "Most learning platforms are built around watching. Forge is built around doing. You'll read short, focused explanations — but the real learning happens in the Playground, the Debug Lab, and the projects, where you write and run actual code, break things on purpose, and fix them. Skipping the practice parts and only reading the lesson text is like reading about how to ride a bike and assuming you can now ride one."
       },
       {
-        "type": "paragraph",
-        "text": "Generics act as type variables, allowing functions to operate over various types while preserving full return type inference."
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "The Learn / Practice / Grow Loop",
+        "description": "Learn: short lessons like this one introduce a concept with explanation and examples. Practice: you apply that concept directly — in the Playground, a Debug Lab challenge, a quiz, or a project — where you produce something and get feedback on it. Grow: your progress, mastery level, and interview-readiness are tracked over time across everything you've practiced, so you always know what to review next."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "If a lesson ever feels 'too easy,' that's often a signal you're about to hit the Practice stage for that same concept — which is where the real difficulty (and the real learning) tends to show up. Reading and doing are genuinely different skills; Forge deliberately separates them so you can tell which one you're weak on."
+      },
+      {
+        "type": "collapsible",
+        "title": "What actually happens after you finish a lesson?",
+        "subtitle": "So you know what to expect next",
+        "variant": "default",
+        "content": "Finishing a lesson's content is the 'Learn' step, not the finish line. Depending on the module, the next thing waiting for you might be a short quiz to check recall, a hands-on exercise in the Playground, a Debug Lab challenge with an intentionally broken piece of code, or — at the end of a module — a checkpoint that combines everything from that module into one assessment you need to pass before moving on. None of these are optional add-ons; they're where a concept actually becomes a skill."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-1-5",
+        "label": "In your own words, describe what happens at each of Forge's three loop stages — Learn, Practice, and Grow — and name one concrete example of each from a Forge feature you've now heard of.",
+        "hint": "You don't need to have used every feature yet — just be able to say what role each stage plays and point to one example (a lesson, an exercise type, or a tracking feature)."
       }
     ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Generics empower flexible abstraction without losing static type safety.",
+    "exercises": [
+      {
+        "id": "ex-0-1-5-1",
+        "title": "Predict Your Next Step",
+        "brief": "Based on this lesson and the four before it, write one paragraph predicting what you expect to happen next in module-0-2 (Developer Tools) — will it be more explanation-heavy like this module, or more hands-on? Justify your guess using what you now know about the Learn / Practice / Grow loop and the fact that module-0-2 is about using real browser tools."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-1-5-1",
+        "question": "What is the main design idea behind Forge's Learn / Practice / Grow loop?",
+        "options": [
+          "Learners should mostly watch videos and read explanations, with practice being optional.",
+          "Practice only matters at the very end of the entire curriculum, during the capstone project.",
+          "Explanation, hands-on application, and tracked feedback are treated as three distinct, necessary stages, not one combined step.",
+          "Grow is just a leaderboard with no connection to what you've actually practiced."
+        ],
+        "correctIndex": 2,
+        "explanation": "Forge deliberately separates learning a concept, applying it hands-on, and tracking mastery/feedback over time, because reading about a skill and actually being able to perform it are different things — and tracking lets you see which concepts still need review."
+      }
+    ],
+    "summary": "Forge's Learn / Practice / Grow loop deliberately separates explanation, hands-on application, and tracked feedback — mirroring how real skills are actually built. Finishing a lesson's reading is the start of that loop, not the end of it; the Practice stage (Playground, Debug Lab, quizzes, projects) is where a concept becomes a skill, and Grow is what tells you what to revisit.",
     "resources": [],
     "interviewQuestions": [],
-    "previousLessonId": "ts-unions-narrowing-lesson",
-    "nextLessonId": "react-jsx-components-lesson"
+    "previousLessonId": "lesson-0-1-4",
+    "nextLessonId": "lesson-0-2-1"
   },
   {
-    "id": "react-jsx-components-lesson",
-    "topicId": "react-jsx-components",
-    "moduleId": "react-professional",
-    "title": "JSX & React Component Composition",
-    "description": "Master JSX syntax, element trees, props flow, and component purity.",
+    "id": "lesson-0-2-1",
+    "topicId": "meet-your-browser-devtools",
+    "moduleId": "module-0-2",
     "order": 1,
+    "title": "Meet Your Browser DevTools",
+    "description": "A guided tour of the DevTools suite built into every modern browser, and how to open it wherever you're working.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of JSX & React Component Composition",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Describe and reproduce: DevTools is a suite of browser panels (Elements, Console, Network, Sources) for inspecting and debugging a live page.",
+      "Open DevTools in your own browser using a keyboard shortcut or the right-click menu.",
+      "Name which panel you'd reach for first for a given kind of problem (a layout issue, a JS error, a failed request)."
     ],
-    "prerequisites": ["generics-foundations"],
+    "prerequisites": [
+      "lesson-0-1-5"
+    ],
     "sections": [
       {
         "type": "heading",
-        "text": "JSX is Syntactic Sugar"
+        "text": "The Tool You'll Open More Than Any Other"
       },
       {
         "type": "paragraph",
-        "text": "JSX compiles down to React.createElement() calls. Components must remain pure functions regarding props and state."
+        "text": "Every modern browser ships with a full suite of developer tools built in — free, no install, no sales call from a rep named Chad. DevTools is a suite of browser panels (Elements, Console, Network, Sources) for inspecting and debugging a live page. Once you're building real interfaces, you'll have DevTools open more often than almost any other tool you own — probably more than your actual code editor, if we're being honest about it."
+      },
+      {
+        "type": "walkthrough",
+        "title": "Opening DevTools and Finding Your Way Around",
+        "steps": [
+          {
+            "title": "1. Open DevTools",
+            "description": "In Chrome, Edge, or Firefox, press F12, or Ctrl+Shift+I (Cmd+Option+I on Mac). You can also right-click any element on a page and choose 'Inspect' — the fast, satisfying way in, and also the move every developer makes on a stranger's website within four seconds of it loading badly."
+          },
+          {
+            "title": "2. Find the Elements (or Inspector) panel",
+            "description": "This tab shows the live DOM tree — the actual structure of the page right now, including anything JavaScript has changed since the page loaded — alongside the CSS applied to whatever's selected."
+          },
+          {
+            "title": "3. Find the Console panel",
+            "description": "This tab is a live JavaScript environment tied to the current page. It's also where errors and warnings the page produces show up automatically, in red and yellow — the browser's way of leaving you increasingly urgent sticky notes."
+          },
+          {
+            "title": "4. Find the Network panel",
+            "description": "This tab lists every request the page has made — for HTML, CSS, JS, images, API calls — along with its status code and how long it took. Note that Network only records activity from when you opened it, so if you don't see anything, try reloading the page while it's open."
+          },
+          {
+            "title": "5. Find the Sources panel",
+            "description": "This is where the page's actual JavaScript files live, and where you can set breakpoints to pause code mid-execution and step through it line by line. You won't need this in depth yet — think of it as the tool you'll grow into, like a jacket two sizes too big."
+          }
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "The most common habit to avoid: only ever opening DevTools after something visibly breaks, like it's a fire extinguisher instead of a daily tool. Experienced engineers leave it open constantly while working — it's how you catch a silent console warning or a failed request before it becomes a support ticket with an angry exclamation point in the subject line."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "Different problems point to different panels: a layout that looks wrong → Elements. A feature that silently does nothing → Console, for an error you haven't noticed yet. A page that seems to 'hang' waiting for data → Network. Guessing which panel to check is a bit like guessing which kitchen drawer has the tape in it — doable, but why, when you could just know."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-1",
+        "label": "Without looking back at the steps, open DevTools on any webpage right now and name which panel you'd check first for: (1) a button that's the wrong color, (2) a form that does nothing when submitted, (3) a page that never finishes loading its data.",
+        "hint": "Match the symptom to what each panel actually shows you: structure/style, live JS + errors, or network activity."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-0-2-1-1",
+        "title": "Open DevTools on Three Real Sites",
+        "brief": "Open DevTools (F12 or right-click → Inspect) on three different websites you use regularly. For each one, switch to the Elements, Console, and Network panels and write one sentence noting anything you notice — a warning in the console, a slow request in Network, or the general shape of the DOM tree in Elements. Bonus points if you find a console warning some poor developer forgot to clean up."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-2-1-1",
+        "question": "You reload a page with the Network panel already open, and a request that should have failed doesn't show up at all. What's the most likely explanation?",
+        "options": [
+          "The Network panel is broken and needs to be reinstalled.",
+          "Network only records activity that happens while it's open, so the request may have completed before you opened the panel.",
+          "Failed requests are never shown in the Network panel.",
+          "The request must have succeeded, since failed requests always crash the page."
+        ],
+        "correctIndex": 1,
+        "explanation": "The Network panel only logs requests made while it's actively open. If you opened it after the page already finished loading, you'll miss anything that already happened — which is why reloading the page with the panel open is the reliable way to see everything, rather than the fun way of just staring at an empty list wondering if you're cursed."
+      },
+      {
+        "id": "q-0-2-1-2",
+        "question": "A button on a page is supposed to submit a form, but clicking it does nothing at all — no visual change, no network request. Which panel should you check first?",
+        "options": [
+          "Elements, to check the button's CSS.",
+          "Console, to check for a JavaScript error that may be preventing the click handler from running.",
+          "Network, since nothing was requested.",
+          "Sources, to set a breakpoint before checking anything else."
+        ],
+        "correctIndex": 1,
+        "explanation": "'Does nothing at all' with no request even attempted is a classic symptom of a JavaScript error happening before the code that would trigger the request — the Console is where that error would surface first, usually in a font of red that seems personally disappointed in you."
+      }
+    ],
+    "summary": "DevTools is a free, built-in suite of panels for inspecting and debugging any live page: Elements for the DOM/CSS, Console for live JavaScript and error output, Network for every request the page makes, and Sources for stepping through code. Matching a symptom to the right panel — rather than only opening DevTools once something visibly breaks — is the habit that turns it into a daily tool instead of a smoke alarm.",
+    "resources": [
+      {
+        "label": "MDN — What Are Browser Developer Tools?",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/What_are_browser_developer_tools"
+      }
+    ],
+    "interviewQuestions": [
+      "Walk me through which DevTools panel you'd check first for a page that loads but shows stale data.",
+      "Why might a request not appear in the Network panel even though you're sure it happened?"
+    ],
+    "previousLessonId": "lesson-0-1-5",
+    "nextLessonId": "lesson-0-2-2"
+  },
+  {
+    "id": "lesson-0-2-2",
+    "topicId": "inspecting-html-with-elements",
+    "moduleId": "module-0-2",
+    "order": 2,
+    "title": "Inspecting HTML with Elements",
+    "description": "Using the Elements panel to read the live DOM tree and edit HTML and CSS in real time, without touching your source files.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Implement: the Elements panel shows the live DOM tree and lets you inspect/edit HTML and CSS in real time.",
+      "Select an element on the page and find its applied CSS rules.",
+      "Predict the visual effect of a CSS edit before making it, then verify by making the edit live."
+    ],
+    "prerequisites": [
+      "lesson-0-2-1"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "The DOM as It Actually Is Right Now"
+      },
+      {
+        "type": "paragraph",
+        "text": "The Elements panel shows the live DOM tree and lets you inspect/edit HTML and CSS in real time. 'Live' is the important word: this isn't your source code file, patiently sitting on disk exactly as you left it. It's what the browser actually built after running any JavaScript that modified the page — which is often wildly different from what you originally wrote, like comparing a recipe to whatever your roommate actually cooked."
+      },
+      {
+        "type": "paragraph",
+        "text": "Click any element in the tree (or right-click something on the page and choose 'Inspect') and a side panel shows every CSS rule currently applied to it, in the order the browser applied them — including which ones got overridden by a more specific or later rule. This is, in practice, the fastest way to answer 'why does this look like that?' for any element on any page, instead of the slow way, which involves staring and sighing."
       },
       {
         "type": "interactive-sandbox",
-        "title": "JSX Composition Sandbox",
-        "instructions": "Compose nested React components.",
-        "initialCode": "import React from 'react';\n\nfunction Header({ title }) {\n  return <h2 style={{ color: '#a855f7', margin: 0 }}>{title}</h2>;\n}\n\nexport default function App() {\n  return (\n    <div style={{ padding: '16px', background: '#18181b', color: '#fff', borderRadius: '8px' }}>\n      <Header title=\"JSX Component Tree\" />\n      <p>Props flow downward cleanly from parent to child.</p>\n    </div>\n  );\n}"
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "React components describe UI declarations using props and state.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "generics-foundations",
-    "nextLessonId": "react-state-props-lesson"
-  },
-  {
-    "id": "react-state-props-lesson",
-    "topicId": "react-state-props",
-    "moduleId": "react-professional",
-    "title": "State & Event Handlers in React",
-    "description": "useState hook, immutable updates, batching, and controlled forms.",
-    "order": 1,
-    "difficulty": "Beginner",
-    "estimatedMinutes": 22,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of State & Event Handlers in React",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["react-jsx-components-lesson"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "Immutability & State Updates"
+        "id": "sandbox-0-2-2",
+        "title": "A Live Card to Inspect",
+        "instructions": "This renders a real card in your browser — which means it's real DOM, inspectable with your actual DevTools. Open DevTools now (F12), switch to Elements, and click the card's title to select it. Look at the CSS panel: find the rule setting the color, and try toggling it off with its checkbox to see the change live. Then come back here and try editing the code below (e.g. change the border color or padding) to see the preview update.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function InspectableCard() {\n  return (\n    <div style={{ padding: 16, background: '#0d1117', fontFamily: 'sans-serif' }}>\n      <article\n        style={{\n          background: '#161b22',\n          border: '1px solid #30363d',\n          borderRadius: 8,\n          padding: 16,\n          maxWidth: 280,\n        }}\n      >\n        <h2 style={{ margin: '0 0 8px 0', fontSize: 18, color: '#58a6ff' }}>\n          Inspect Me\n        </h2>\n        <p style={{ margin: 0, color: '#8b949e', fontSize: 14 }}>\n          Right-click this text and choose \"Inspect\" to open DevTools\n          pointed directly at this element. It won't bite.\n        </p>\n      </article>\n    </div>\n  );\n}"
       },
       {
-        "type": "paragraph",
-        "text": "Never mutate state variables directly. Always call setFunction with new object/array references or update callbacks."
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "State updates schedule re-renders with fresh immutable values.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "react-jsx-components-lesson",
-    "nextLessonId": "useeffect-mental-model"
-  },
-  {
-    "id": "useeffect-mental-model",
-    "topicId": "useeffect",
-    "moduleId": "react-professional",
-    "title": "A mental model for useEffect",
-    "description": "Effects synchronize your component to external systems — think setup and cleanup.",
-    "order": 1,
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 22,
-    "mastery": "Practicing",
-    "learningObjectives": [
-      "Understand foundational concepts of A mental model for useEffect",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["react-state-props-lesson"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "Effects synchronize"
-      },
-      {
-        "type": "paragraph",
-        "text": "Every render, React compares the deps array. If anything changed, it runs cleanup for the old effect and setup for the new one."
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Edits you make directly in the Elements panel are not saved anywhere — they live only in the browser's current in-memory copy of the page. Reload, and they vanish like they were never your friend. This trips up beginners constantly: someone 'fixes' a bug by editing it live in Elements, feels triumphant, closes the laptop, comes back the next day, and the bug is smugly waiting for them. Elements is for experimenting and diagnosing, not for shipping a change — once you know what fix works, you still have to make it in your actual source code."
       },
       {
         "type": "code",
-        "language": "tsx",
-        "code": "useEffect(() => {\n  const ctrl = new AbortController();\n  fetch(url, { signal: ctrl.signal }).then(setData);\n  return () => ctrl.abort();\n}, [url]);"
+        "language": "css",
+        "title": "What you're actually looking at in the Styles pane",
+        "code": "/* Elements shows you rules in specificity/cascade order,\n   with strikethrough on anything overridden: */\n\narticle {\n  border: 1px solid #30363d;   /* applied */\n}\n\narticle.featured {\n  border: 1px solid gold;      /* overrides the rule above,\n                                   because a class selector beats\n                                   a plain element selector —\n                                   CSS has its own quiet hierarchy */\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-2",
+        "label": "Open DevTools on any real webpage, select an element with visible text styling, and correctly identify which single CSS rule (and which file or <style> block) is responsible for its color, before checking the answer in the Styles pane.",
+        "hint": "Predict first, then verify — that's the skill this lesson is building, not just clicking around and hoping for enlightenment."
       }
     ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Effects keep React components synchronized with external non-React systems.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "react-state-props-lesson",
-    "nextLessonId": "rendering-strategies-deep-dive"
+    "exercises": [
+      {
+        "id": "ex-0-2-2-1",
+        "title": "Predict, Then Verify a Live Edit",
+        "brief": "Open the sandbox above (or any real webpage) in DevTools. Pick one visible style — the card's border color, its padding, or the heading's font size. Before touching anything, write down what you predict will happen if you change that one CSS value in the Elements panel. Then make the change live and confirm whether your prediction was right (or hilariously wrong — both are useful data)."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-2-2-1",
+        "question": "You edit an element's text directly in the Elements panel, and it updates on screen immediately. You then reload the page. What happens to your edit?",
+        "options": [
+          "It's gone — Elements panel edits only exist in the browser's current in-memory copy of the page.",
+          "It's automatically saved back to the site's actual source files.",
+          "It stays until you manually undo it, even across reloads.",
+          "It's saved to your browser's local storage permanently."
+        ],
+        "correctIndex": 0,
+        "explanation": "The Elements panel lets you edit the browser's live, in-memory representation of the page — it never touches the actual source files on the server or your disk. Reloading rebuilds the page from scratch, discarding any live edits, no matter how proud of them you were."
+      },
+      {
+        "id": "q-0-2-2-2",
+        "question": "Two CSS rules both target the same element's border color, and they disagree. How does the Elements panel show you which one actually won?",
+        "options": [
+          "It only ever shows the winning rule and hides the other entirely.",
+          "It lists all matching rules in cascade order and shows the overridden one with a strikethrough.",
+          "It shows both rules with no indication of which applies.",
+          "It merges both rules into one average value."
+        ],
+        "correctIndex": 1,
+        "explanation": "The Styles pane in Elements shows every rule that matches the selected element, in the order the cascade applies them, with a strikethrough on any value that got overridden by a more specific or later rule — which is exactly what makes it useful for debugging 'why does this look wrong?' instead of just quietly resenting your CSS."
+      }
+    ],
+    "summary": "The Elements panel shows the browser's live DOM — what the page actually is right now, after any JavaScript changes — and lets you select any element to see and live-edit its applied CSS, with overridden rules shown struck through. Edits made there are temporary and gone on reload, which makes it a diagnostic tool for predicting and verifying fixes, not a place to ship changes from.",
+    "resources": [
+      {
+        "label": "MDN — What Are Browser Developer Tools? (Inspector)",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/What_are_browser_developer_tools"
+      }
+    ],
+    "interviewQuestions": [
+      "If you edit an element's styles live in DevTools and the change looks right, are you done? Why or why not?",
+      "How would you find out which of several conflicting CSS rules is actually being applied to an element?"
+    ],
+    "previousLessonId": "lesson-0-2-1",
+    "nextLessonId": "lesson-0-2-3"
   },
   {
-    "id": "rendering-strategies-deep-dive",
-    "topicId": "rendering-strategies",
-    "moduleId": "frontend-architecture",
-    "title": "Architectural Rendering Models",
-    "description": "Compare CSR, SSR, SSG, ISR, streaming, and Server Components.",
-    "order": 1,
-    "difficulty": "Advanced",
-    "estimatedMinutes": 30,
+    "id": "lesson-0-2-3",
+    "topicId": "understanding-the-console",
+    "moduleId": "module-0-2",
+    "order": 3,
+    "title": "Understanding the Console",
+    "description": "Running JavaScript live in the browser and reading the errors, warnings, and logged output that show up automatically.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of Architectural Rendering Models",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Implement: the Console executes JavaScript live and surfaces errors, warnings, and logged output.",
+      "Read a stack trace well enough to identify which line and file an error points to.",
+      "Distinguish an error (red) from a warning (yellow) and explain what each generally implies."
     ],
-    "prerequisites": ["useeffect-mental-model"],
+    "prerequisites": [
+      "lesson-0-2-1"
+    ],
     "sections": [
       {
         "type": "heading",
-        "text": "Rendering Spectrum"
+        "text": "A Live JavaScript Environment Attached to the Page"
       },
       {
         "type": "paragraph",
-        "text": "From client-rendered SPAs to server streaming, choosing the right rendering boundary optimizes TTFB, FCP, and interactive responsiveness."
+        "text": "The Console executes JavaScript live and surfaces errors, warnings, and logged output. It's two things at once: a place where the page itself reports problems automatically, unprompted, like a smoke detector with opinions, and a place where you can type and run your own JavaScript directly against the current page — with full access to whatever's already loaded."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "title": "The most common console methods",
+        "code": "console.log('Just a value, for general debugging');\nconsole.warn('Something is probably wrong, but execution continued');\nconsole.error('Something failed');\nconsole.table([{ id: 1, name: 'Ada' }, { id: 2, name: 'Grace' }]);\n// console.table is worth knowing early — it renders arrays\n// of objects as an actual readable table instead of a wall\n// of nested braces that makes your eyes cross."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-3",
+        "title": "Trigger Real Console Output",
+        "instructions": "This component logs to the console when you click each button — which means it's really writing to your actual browser's Console panel. Open DevTools now, switch to Console, then click each button and watch what appears. Notice the different colors and icons for log vs. warn vs. error.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function ConsoleDemo() {\n  const handleLog = () => console.log('Order submitted:', { id: 42, total: 19.99 });\n  const handleWarn = () => console.warn('Cart total exceeds free-shipping threshold check skipped');\n  const handleError = () => console.error('Failed to save order: network request timed out');\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', fontFamily: 'sans-serif', display: 'flex', gap: 8 }}>\n      <button onClick={handleLog} style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>\n        console.log\n      </button>\n      <button onClick={handleWarn} style={{ background: '#9e6a03', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>\n        console.warn\n      </button>\n      <button onClick={handleError} style={{ background: '#da3633', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>\n        console.error\n      </button>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "paragraph",
+        "text": "When something actually goes wrong in a page's own code — not something you manually logged, but a real uncaught error — the Console reports it automatically, in red, along with a stack trace: the chain of function calls that led to the error, with the file name and line number where it actually happened. That file/line reference is often the single fastest way to go from 'the page is broken, panic' to 'here's the exact line, calmly.'"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "When a page throws several errors at once, the natural instinct is to investigate whichever one is largest, reddest, or most recently arrived, like a very small, very stressful game of whack-a-mole. Resist that. Errors frequently cascade — one root failure early in the page's execution causes several unrelated-looking errors afterward. Always read the first error in the list first."
+      },
+      {
+        "type": "collapsible",
+        "title": "Error vs. warning: what's the real difference?",
+        "subtitle": "Red doesn't always mean 'broken'",
+        "variant": "pitfall",
+        "content": "An error (red) generally means something failed in a way JavaScript couldn't recover from on its own — execution of that code path stopped. A warning (yellow) means the browser or a library noticed something worth flagging, but execution continued anyway. Warnings are easy to develop a habit of ignoring because the page 'still works' — which is exactly how a warning quietly becomes the error you're debugging next month, once whatever it was gently trying to tell you finally comes due."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-3",
+        "label": "Open the Console on any real webpage and, if there's at least one warning or error present, identify which line and file it points to. If the page is clean, run one console.log() of your own targeting any variable or element on the page.",
+        "hint": "Click the error/warning text itself — most browsers make the file:line reference directly clickable, jumping you to Sources."
       }
     ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Select rendering models based on latency budgets, dynamic data freshness, and SEO requirements.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "useeffect-mental-model",
-    "nextLessonId": "core-web-vitals-mastery"
+    "exercises": [
+      {
+        "id": "ex-0-2-3-1",
+        "title": "Read a Real Stack Trace",
+        "brief": "Open DevTools Console on three real websites you use. If any of them show a warning or error, click through to the file/line it references and write one sentence describing what that line appears to be doing. If a site is completely clean, note that too — it's a rare and beautiful sight, treasure it."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-2-3-1",
+        "question": "A page shows five red errors in the Console at once, all appearing the instant the page loads. What's the best first move?",
+        "options": [
+          "Start with the last error, since it's freshest.",
+          "Start with the first error, since later ones may just be downstream failures caused by it.",
+          "Ignore all of them and only investigate errors the user directly reports.",
+          "Clear the console and reload until only one error remains."
+        ],
+        "correctIndex": 1,
+        "explanation": "Errors frequently cascade: an early failure can break the assumptions later code depends on, producing several more errors that are really just symptoms of the first one. Reading the first error first is the habit that avoids chasing five ghosts created by one actual problem."
+      },
+      {
+        "id": "q-0-2-3-2",
+        "question": "What's the key practical difference between console.warn() output and console.error() output?",
+        "options": [
+          "There is no real difference — they're purely cosmetic color choices.",
+          "console.error() always crashes the page; console.warn() never does.",
+          "An error generally indicates a failure that stopped that code path from continuing; a warning is a flagged concern where execution continued anyway.",
+          "console.warn() only appears in production, and console.error() only appears in development."
+        ],
+        "correctIndex": 2,
+        "explanation": "Errors and warnings both surface real information, but an error typically corresponds to a failure that halted execution somewhere, while a warning is the browser or a library flagging something worth noticing without stopping anything — which is exactly why warnings are easy to accumulate and ignore until, one day, they aren't."
+      }
+    ],
+    "summary": "The Console is a live JavaScript environment tied to the current page: you can run your own code against it directly, and it automatically surfaces errors and warnings the page produces, each with a stack trace pointing to the exact file and line. Reading the first error first — rather than the loudest or most recent one — is the single habit that most separates efficient debugging from chasing symptoms.",
+    "resources": [
+      {
+        "label": "MDN — console (Web API reference)",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/console"
+      }
+    ],
+    "interviewQuestions": [
+      "What's the difference between console.warn() and console.error(), practically speaking?",
+      "A page throws five errors at once when it loads. How do you decide where to start looking?",
+      "What information does a JavaScript stack trace actually give you, and how do you use it?"
+    ],
+    "previousLessonId": "lesson-0-2-2",
+    "nextLessonId": "lesson-0-2-4"
   },
   {
-    "id": "core-web-vitals-mastery",
-    "topicId": "core-web-vitals",
-    "moduleId": "performance-and-a11y",
-    "title": "Core Web Vitals & Web Performance",
-    "description": "Optimize LCP, INP, and CLS for production web applications.",
-    "order": 1,
-    "difficulty": "Advanced",
-    "estimatedMinutes": 28,
+    "id": "lesson-0-2-4",
+    "topicId": "understanding-network-requests",
+    "moduleId": "module-0-2",
+    "order": 4,
+    "title": "Understanding Network Requests",
+    "description": "Reading the Network panel to see exactly what a page requested, whether it succeeded, how long it took, and what came back.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of Core Web Vitals & Web Performance",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Describe and reproduce: the Network panel shows every request a page makes, its status, timing, and payload.",
+      "Identify a failed request's status code and explain, at a high level, what that code category means.",
+      "Explain why a page can 'look' like nothing happened when a request actually failed silently."
     ],
-    "prerequisites": ["rendering-strategies-deep-dive"],
+    "prerequisites": [
+      "lesson-0-2-1"
+    ],
     "sections": [
       {
         "type": "heading",
-        "text": "Measuring What Matters"
+        "text": "Every Request, Out in the Open"
       },
       {
         "type": "paragraph",
-        "text": "Largest Contentful Paint (LCP), Interaction to Next Paint (INP), and Cumulative Layout Shift (CLS) define real user experience quality."
+        "text": "The Network panel shows every request a page makes, its status, timing, and payload. Recall the request/response loop from Level 0's first module — every time a page fetches HTML, CSS, JS, an image, or data from an API, that's a request. The Network panel is where all of that becomes visible and inspectable, instead of invisible and assumed, which is a surprisingly common state for beginners to leave it in — quietly trusting that things are fine."
+      },
+      {
+        "type": "walkthrough",
+        "title": "Reading a Single Request in Network",
+        "steps": [
+          {
+            "title": "1. Open Network and reload",
+            "description": "Open DevTools, switch to the Network tab, then reload the page so it captures the full list of requests from the very start."
+          },
+          {
+            "title": "2. Find the status column",
+            "description": "Each request shows a status code: 200 (success), 304 (not modified, served from cache), 404 (not found), 500 (server error), among others. A quick scan of this column tells you immediately if anything failed."
+          },
+          {
+            "title": "3. Check the timing column",
+            "description": "Each request also shows how long it took. A request that's unusually slow — seconds instead of milliseconds — is often the real reason a page 'feels' slow, even if every request eventually succeeds. It's the difference between 'broken' and 'just really, really leisurely.'"
+          },
+          {
+            "title": "4. Click into a single request",
+            "description": "Selecting a request opens its details: the exact URL requested, the request headers sent, the response headers received, and — for API calls — the actual response payload (usually JSON)."
+          }
+        ]
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "title": "A quick status-code reading guide",
+        "code": "2xx  Success            200 OK, 201 Created\n3xx  Redirect           304 Not Modified (served from cache)\n4xx  Client error        404 Not Found, 401 Unauthorized\n5xx  Server error        500 Internal Server Error, 503 Unavailable"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Not checking the Network tab and assuming 'nothing happened' when a request actually failed silently is one of the most common beginner debugging mistakes. A button click can trigger a request that fails with a 404 or 500 — and if the code doesn't explicitly handle that failure, the interface can look completely unchanged, as if the click did nothing at all. The click did something. It just failed quietly, out of sight, like a package marked 'delivered' that never actually arrives."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-4",
+        "title": "Watch a Real Request Happen",
+        "instructions": "Open DevTools → Network, then click the button below. It makes a real fetch() call to a public test API. Watch the request appear in the Network panel, check its status code, click into it to see the response payload, and note the timing.",
+        "language": "jsx",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function NetworkDemo() {\n  const [result, setResult] = useState('Click the button, then check the Network tab.');\n\n  const loadData = async () => {\n    setResult('Loading...');\n    try {\n      const response = await fetch('https://jsonplaceholder.typicode.com/todos/1');\n      const data = await response.json();\n      setResult(`Status ${response.status} — got: ${JSON.stringify(data)}`);\n    } catch (err) {\n      setResult('Request failed: ' + err.message);\n    }\n  };\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <button\n        onClick={loadData}\n        style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: 6, cursor: 'pointer', marginBottom: 12 }}\n      >\n        Fetch a Todo\n      </button>\n      <pre style={{ background: '#161b22', padding: 12, borderRadius: 6, fontSize: 13, whiteSpace: 'pre-wrap' }}>\n        {result}\n      </pre>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-4",
+        "label": "Open the Network panel on a real page that loads data (a news site, a social feed, a shop), reload it, and find one request that isn't for HTML/CSS/JS/images — identify its status code and roughly how long it took.",
+        "hint": "Look for requests with a type like 'fetch', 'xhr', or a response type of JSON — those are usually data requests, not asset requests."
       }
     ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "High Web Vitals performance directly improves conversion rates and user retention.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "rendering-strategies-deep-dive",
-    "nextLessonId": "testing-vitest-tdd"
+    "exercises": [
+      {
+        "id": "ex-0-2-4-1",
+        "title": "Diagnose a Status Code",
+        "brief": "Using the sandbox above or a real webpage, find three different requests in the Network panel with three different status codes (or look up what 404, 401, and 500 mean if you can't find live examples of each). For each code, write one sentence explaining what it tells you about where the failure happened — client-side mistake, missing resource, or server-side problem."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-2-4-1",
+        "question": "A user clicks 'Save' on a form, the button briefly shows a loading state, then returns to normal — but nothing was actually saved. What should you check first?",
+        "options": [
+          "The Elements panel, to check if the button's CSS is correct.",
+          "The Network panel, to check whether the save request was sent, and if so, what status code it returned.",
+          "There's nothing to check — if the button animated correctly, the save must have worked.",
+          "The Console, since network failures never appear there."
+        ],
+        "correctIndex": 1,
+        "explanation": "A 'silent' failure like this — UI behaves normally but the actual effect didn't happen — is a classic sign of a request that failed without being handled. The Network panel will show whether the request was even sent, and if so, its status code, rather than leaving you to just trust the button's very convincing performance."
+      },
+      {
+        "id": "q-0-2-4-2",
+        "question": "A request in the Network panel shows status 404. What does that most specifically indicate?",
+        "options": [
+          "The server crashed while handling the request.",
+          "The request succeeded but was redirected.",
+          "The requested resource could not be found at that URL.",
+          "The user isn't authenticated."
+        ],
+        "correctIndex": 2,
+        "explanation": "404 specifically means 'not found' — the server received the request fine but has nothing at that URL to return. That's a different failure mode than a 500 (server-side crash/error) or a 401 (authentication problem), and distinguishing between them is often the fastest path to the actual fix."
+      }
+    ],
+    "summary": "The Network panel makes every request a page sends visible: its URL, status code, timing, and payload. A page that 'looks like nothing happened' after an action is frequently a request that failed silently — and the Network panel, not guesswork, is how you find out whether a request was even sent and what came back.",
+    "resources": [
+      {
+        "label": "MDN — HTTP Response Status Codes",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status"
+      }
+    ],
+    "interviewQuestions": [
+      "A button click seems to do nothing. How would you use the Network panel to figure out why?",
+      "What's the practical difference between a 404 and a 500 status code, and how does that change what you'd investigate?"
+    ],
+    "previousLessonId": "lesson-0-2-3",
+    "nextLessonId": "lesson-0-2-5"
   },
   {
-    "id": "testing-vitest-tdd",
-    "topicId": "testing-fundamentals",
-    "moduleId": "testing-and-tooling",
-    "title": "Unit & Integration Testing with Vitest",
-    "description": "TDD patterns, mocks, assertions, and test harness setup.",
-    "order": 1,
-    "difficulty": "Intermediate",
-    "estimatedMinutes": 25,
+    "id": "lesson-0-2-5",
+    "topicId": "your-first-debugging-exercise",
+    "moduleId": "module-0-2",
+    "order": 5,
+    "title": "Your First Debugging Exercise",
+    "description": "A guided first debugging pass using Elements and Console together, through two escalating live bugs.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 20,
     "mastery": "Learning",
     "learningObjectives": [
-      "Understand foundational concepts of Unit & Integration Testing with Vitest",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
+      "Apply a guided first debugging pass: use Elements + Console together to locate and explain a simple visual/logic bug.",
+      "Confirm a bug's cause by inspecting it before attempting a fix.",
+      "Complete both drill items in the Playground without hints."
     ],
-    "prerequisites": ["core-web-vitals-mastery"],
+    "prerequisites": [
+      "lesson-0-2-2",
+      "lesson-0-2-3"
+    ],
     "sections": [
       {
         "type": "heading",
-        "text": "Test-Driven Development"
+        "text": "Same Two Panels, Now Working Together"
       },
       {
         "type": "paragraph",
-        "text": "Write failing tests first to establish clear spec boundaries before implementing component logic."
-      }
-    ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Reliable test suites give environments confidence during refactoring.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "core-web-vitals-mastery",
-    "nextLessonId": "system-design-newsfeed-lesson"
-  },
-  {
-    "id": "system-design-newsfeed-lesson",
-    "topicId": "system-design-newsfeed",
-    "moduleId": "interview-prep",
-    "title": "System Design: Scalable News Feed",
-    "description": "Design an enterprise news feed architecture with pagination, fanout, and caching.",
-    "order": 1,
-    "difficulty": "Advanced",
-    "estimatedMinutes": 35,
-    "mastery": "Learning",
-    "learningObjectives": [
-      "Understand foundational concepts of System Design: Scalable News Feed",
-      "Apply code patterns in hands-on exercises",
-      "Identify common pitfalls and interview questions"
-    ],
-    "prerequisites": ["testing-vitest-tdd"],
-    "sections": [
-      {
-        "type": "heading",
-        "text": "Fanout on Write vs Read"
+        "text": "You now know Elements shows the live DOM and CSS, and Console shows live JavaScript output and errors. Real debugging almost always means moving between both: Console tells you something is wrong, and Elements shows you what actually rendered as a result. This lesson has no new theory — just two escalating live bugs for you to actually hunt down, using the two panels together like the world's least dramatic detective duo."
       },
       {
-        "type": "paragraph",
-        "text": "Compare pushing feed updates to follower caches on write versus pulling on demand during read requests."
+        "type": "callout",
+        "variant": "tip",
+        "text": "The rule for both drills below: confirm the cause before you 'fix' anything. Open DevTools, read whatever the Console tells you, inspect the relevant element in Elements, and form a specific theory — 'this is wrong because X' — before touching the code. Guessing at a fix without confirming the cause first is the single most common mistake at this stage, and also a great way to 'fix' a bug into a slightly different, more confusing bug."
+      },
+      {
+        "type": "walkthrough",
+        "title": "Drill 1: A Silent Logic Bug",
+        "steps": [
+          {
+            "title": "1. Open DevTools on the sandbox below",
+            "description": "Switch to Console before clicking anything, so you catch output from the very first click."
+          },
+          {
+            "title": "2. Click the counter button a few times",
+            "description": "Watch both the number displayed on screen and whatever appears in the Console."
+          },
+          {
+            "title": "3. Form a specific theory",
+            "description": "Something about the displayed count and the logged count won't match after a couple of clicks. Before reading the code, write down in your own words what you think is happening and why."
+          },
+          {
+            "title": "4. Confirm by reading the code",
+            "description": "Then look at the sandbox code itself to check whether your theory was right. This is the habit: observe and form a theory in the live tool first, confirm in the source second — not the other way around, however tempting."
+          }
+        ]
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-5-1",
+        "title": "Drill 1: Counter",
+        "instructions": "Open Console first. Click the button several times and compare the on-screen count to what's logged.",
+        "language": "jsx",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function BuggyCounter() {\n  const [count, setCount] = useState(0);\n\n  const handleClick = () => {\n    setCount(count + 1);\n    // Bug: this reads the OLD `count` from this render's closure,\n    // not the freshly updated value — so it always logs one click\n    // behind, like a friend who's perpetually one text message\n    // behind in the conversation.\n    console.log('Count is now:', count);\n  };\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <p style={{ fontSize: 24 }}>{count}</p>\n      <button\n        onClick={handleClick}\n        style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: 6, cursor: 'pointer' }}\n      >\n        Click me\n      </button>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "collapsible",
+        "title": "Drill 1 answer — open only after you've formed your own theory",
+        "subtitle": "No peeking before step 3",
+        "variant": "pitfall",
+        "content": "The on-screen count updates correctly, but the Console always logs the count from before the click, one step behind. That's because handleClick reads the `count` variable from its own render's closure — by the time console.log runs, setCount has scheduled an update for the next render, but the `count` variable inside this already-running function is still the old value. You don't need to fully understand closures yet (that's coming later in the curriculum) — the debugging skill this drill is building is noticing the mismatch between what you see on screen and what's logged, and treating that mismatch as the clue, rather than assuming the Console is always the honest one in the relationship."
+      },
+      {
+        "type": "walkthrough",
+        "title": "Drill 2: A Visual Bug with a Console Clue",
+        "steps": [
+          {
+            "title": "1. Open Console, then look at the card below",
+            "description": "One piece of text is barely visible. Check the Console before assuming it's a CSS typo."
+          },
+          {
+            "title": "2. Read whatever the Console shows",
+            "description": "It's telling you something specific about why a value is missing, not just that something is wrong."
+          },
+          {
+            "title": "3. Use Elements to confirm",
+            "description": "Select the faint text in Elements and check its applied CSS — confirm whether the actual color rule matches what the Console hinted at."
+          }
+        ]
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-5-2",
+        "title": "Drill 2: Faint Price Tag",
+        "instructions": "Open Console before looking closely at the card. The price text is barely readable — find out why using both panels before checking the code.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nconst product = { name: 'Wireless Mouse', price: undefined };\n\nexport default function ProductCard() {\n  // Bug: `price` never got set on the product object above,\n  // so the template literal below renders the literal string\n  // \"undefined\", and a CSS rule further down happens to color\n  // any text containing \"undefined\" almost invisibly — a\n  // deliberately exaggerated stand-in for a real low-contrast bug.\n  console.log('Rendering product:', product);\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', fontFamily: 'sans-serif' }}>\n      <article style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 8, padding: 16, maxWidth: 260 }}>\n        <h3 style={{ margin: '0 0 8px 0', color: '#e6edf3' }}>{product.name}</h3>\n        <p className=\"price-tag\" style={{ margin: 0, color: '#161b22', fontSize: 18 }}>\n          ${product.price}\n        </p>\n      </article>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "collapsible",
+        "title": "Drill 2 answer — open only after forming your own theory",
+        "subtitle": "No peeking before step 3",
+        "variant": "pitfall",
+        "content": "The Console log shows `price: undefined` on the logged product object — that's the clue that something is missing before you even look at styling. In Elements, selecting the price text shows its color is set almost identical to the card's own background, which is what makes '$undefined' nearly invisible rather than just visually wrong (arguably the world's most understated bug report). Two separate problems compound here: missing data and a styling choice that happened to hide the resulting bug instead of surfacing it. Notice that Console pointed you at the data problem before Elements even came into it — that ordering is worth keeping as a default habit."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-5",
+        "label": "For both drills, state your theory of the bug's cause — in your own words, before reading the provided answer — and confirm whether reading the answer matched what you found using Console + Elements yourself.",
+        "hint": "Being right isn't actually the point of this checkpoint. Having formed a specific, checkable theory before looking is — confidently wrong still beats vaguely hopeful."
       }
     ],
-    "exercises": [],
-    "quiz": [],
-    "summary": "Scalable frontend design requires balancing server push/pull strategies with client caching.",
-    "resources": [],
-    "interviewQuestions": [],
-    "previousLessonId": "testing-vitest-tdd",
+    "exercises": [
+      {
+        "id": "ex-0-2-5-1",
+        "title": "Drill 1: Diagnose the Off-by-One Log",
+        "brief": "Using Console + Elements on the Drill 1 sandbox, determine why the logged count is always one click behind the number displayed on screen. Write your theory before opening the answer."
+      },
+      {
+        "id": "ex-0-2-5-2",
+        "title": "Drill 2: Diagnose the Invisible Price",
+        "brief": "Using Console + Elements on the Drill 2 sandbox, determine both why the price shows as \"$undefined\" and why it's nearly impossible to read. Identify each of the two separate causes before opening the answer."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-2-5-1",
+        "question": "In Drill 1, the on-screen counter is correct but the Console log always shows the previous value. What does this tell you about where to look?",
+        "options": [
+          "The bug is in the CSS styling of the counter display.",
+          "The bug is unrelated to the click handler and is caused by a Network request.",
+          "The mismatch between what's displayed and what's logged points specifically at the logic inside the click handler, not at rendering or styling.",
+          "Console logs are always one step behind and this is expected browser behavior."
+        ],
+        "correctIndex": 2,
+        "explanation": "Because the visible UI is correct but the logged value lags behind, the bug isn't in rendering or CSS — it has to be in the logic that produces the logged value, which is exactly what points you at the click handler's code rather than anywhere else."
+      },
+      {
+        "id": "q-0-2-5-2",
+        "question": "What is the core habit this lesson is trying to build, beyond fixing these two specific bugs?",
+        "options": [
+          "Memorizing that closures cause off-by-one logging bugs.",
+          "Confirming a bug's actual cause using DevTools before attempting a fix, rather than guessing.",
+          "Always checking the Network panel first for any bug.",
+          "Avoiding the Console panel in favor of reading source code directly."
+        ],
+        "correctIndex": 1,
+        "explanation": "Both drills are built around the same sequence — observe, form a specific theory using DevTools, then confirm — because guessing at a fix without confirming the cause first is the habit this exercise is explicitly designed to counter."
+      }
+    ],
+    "summary": "Real debugging means moving between Console (what the app believes is true, and what's erroring) and Elements (what actually rendered) rather than treating them as separate tools. Both drills in this lesson reward the same sequence: observe, form a specific theory using DevTools, then confirm — confirming the cause before attempting a fix is the single habit this lesson exists to build.",
+    "resources": [
+      {
+        "label": "MDN — What Are Browser Developer Tools?",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/What_are_browser_developer_tools"
+      }
+    ],
+    "interviewQuestions": [
+      "Walk me through your process for debugging a UI element that displays an unexpected value.",
+      "Why is it useful to check the Console before assuming a visual bug is purely a CSS problem?"
+    ],
+    "previousLessonId": "lesson-0-2-4",
     "nextLessonId": null
   }
 ]
