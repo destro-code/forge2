@@ -43,13 +43,13 @@ function Flashcards() {
     return cards
       .filter((c) => selectedDeck === "All" || c.deck === selectedDeck)
       .filter((c) => {
-        const review = flashcardReviews[c.id];
+        const review = (flashcardReviews || {})[c.id];
         if (!review) return true; // New card, due now
         return new Date(review.dueAt) <= now;
       })
       .sort((a, b) => {
-        const aRev = flashcardReviews[a.id];
-        const bRev = flashcardReviews[b.id];
+        const aRev = (flashcardReviews || {})[a.id];
+        const bRev = (flashcardReviews || {})[b.id];
         const aDue = aRev ? new Date(aRev.dueAt).getTime() : 0;
         const bDue = bRev ? new Date(bRev.dueAt).getTime() : 0;
         return aDue - bDue;
@@ -64,7 +64,7 @@ function Flashcards() {
     setFlipped(false);
   };
 
-  const currentReview = card ? flashcardReviews[card.id] : undefined;
+  const currentReview = card ? (flashcardReviews || {})[card.id] : undefined;
 
   return (
     <div className="space-y-6">

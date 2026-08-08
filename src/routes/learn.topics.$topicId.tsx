@@ -202,7 +202,7 @@ function TopicHubRoute() {
                           </Badge>
                         ) : (
                           <Badge variant="secondary" className="text-[10px]">
-                            {lesson.type}
+                            {lesson.difficulty}
                           </Badge>
                         )}
                       </div>
@@ -221,7 +221,7 @@ function TopicHubRoute() {
                           <Clock className="h-3.5 w-3.5 text-amber-400" />
                           {lesson.estimatedMinutes} mins
                         </span>
-                        <span>{lesson.type}</span>
+                        <span>{lesson.difficulty}</span>
                       </div>
 
                       <Button
@@ -230,7 +230,7 @@ function TopicHubRoute() {
                         variant={isDone ? "outline" : "default"}
                         size="sm"
                       >
-                        <Link to={`/lesson/${lesson.id}`}>
+                        <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }}>
                           <PlayCircle className="h-3.5 w-3.5 fill-current" /> Open Lesson Reader
                         </Link>
                       </Button>

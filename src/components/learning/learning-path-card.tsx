@@ -59,7 +59,7 @@ export function LearningPathCard({ path, onSelectPath, activePathId }: LearningP
               <span>Target: {path.targetRole}</span>
             </div>
           </div>
-          <ProgressRing value={avgProgress / 100} size={54} strokeWidth={4} />
+          <ProgressRing value={avgProgress / 100} size={54} stroke={4} />
         </div>
 
         <p className="mt-3 line-clamp-2 text-sm text-muted-foreground leading-relaxed">

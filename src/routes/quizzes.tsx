@@ -29,7 +29,7 @@ function Quizzes() {
       />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {quizzes.map((q) => (
-          <Link key={q.id} to={`/quizzes/${q.id}`}>
+          <Link key={q.id} to="/quizzes/$quizId" params={{ quizId: q.id }}>
             <Card className="h-full border-border/60 transition hover:border-primary/40 hover:shadow-glow">
               <CardContent className="p-5">
                 <div className="flex items-center gap-2">

@@ -33,7 +33,7 @@ export function ContinueLearningCard({ lesson, progressPercent = 65 }: ContinueL
               {lesson.title}
             </CardTitle>
           </div>
-          <ProgressRing value={progressPercent / 100} size={58} strokeWidth={4} />
+          <ProgressRing value={progressPercent / 100} size={58} stroke={4} />
         </div>
       </CardHeader>
 
@@ -57,7 +57,7 @@ export function ContinueLearningCard({ lesson, progressPercent = 65 }: ContinueL
 
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <Button asChild className="gap-1.5 shadow-glow">
-            <Link to={`/lesson/${lesson.id}`}>
+            <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id}}>
               Resume Lesson
               <ArrowRight className="h-4 w-4" />
             </Link>

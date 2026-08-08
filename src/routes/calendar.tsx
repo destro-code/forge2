@@ -59,10 +59,10 @@ function CalendarPage() {
     if (q.completedAt) activityDatesSet.add(q.completedAt.slice(0, 10));
   });
   (progress.journalEntries || []).forEach((j) => {
-    if (j.date) activityDatesSet.add(j.date.slice(0, 10));
+    if (j.createdAt) activityDatesSet.add(j.createdAt.slice(0, 10));
   });
   (progress.interviewResults || []).forEach((i) => {
-    if (i.date) activityDatesSet.add(i.date.slice(0, 10));
+    if (i.completedAt) activityDatesSet.add(i.completedAt.slice(0, 10));
   });
 
   const selectedDateStr = selectedDate ? formatDateToYYYYMMDD(selectedDate) : "";
@@ -75,11 +75,11 @@ function CalendarPage() {
   );
 
   const journalsForDate = (progress.journalEntries || []).filter(
-    (j) => j.date && j.date.slice(0, 10) === selectedDateStr,
+    (j) => j.createdAt && j.createdAt.slice(0, 10) === selectedDateStr,
   );
 
   const interviewsForDate = (progress.interviewResults || []).filter(
-    (i) => i.date && i.date.slice(0, 10) === selectedDateStr,
+    (i) => i.completedAt && i.completedAt.slice(0, 10) === selectedDateStr,
   );
 
   const hasRecordedActivity = activityDatesSet.has(selectedDateStr);

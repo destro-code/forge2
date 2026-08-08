@@ -1,88 +1,59 @@
 import { Link } from "@tanstack/react-router";
+import { ArrowRight, PlayCircle, Clock, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Bug, FolderGit2, Briefcase, Bot } from "lucide-react";
-import type { Lesson, Project, Bug as BugType } from "@/lib/types";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { Lesson } from "@/lib/types";
 
 interface QuickResumeBarProps {
-  continueLesson?: Lesson;
-  activeProject?: Project;
-  latestBug?: BugType;
+  lesson: Lesson;
+  progressPercent: number;
 }
 
-export function QuickResumeBar({ continueLesson, activeProject, latestBug }: QuickResumeBarProps) {
+export function QuickResumeBar({ lesson, progressPercent }: QuickResumeBarProps) {
   return (
-    <div className="rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-sm shadow-sm">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold">Quick Resume</h3>
-            <p className="text-xs text-muted-foreground">
-              Jump directly back into your active workspace
-            </p>
-          </div>
+    <Card className="border-primary/20 bg-primary/5 shadow-md flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-xl relative overflow-hidden group">
+      {/* Dynamic Progress Background */}
+      <div 
+        className="absolute left-0 top-0 bottom-0 bg-primary/10 transition-all duration-1000 ease-out z-0" 
+        style={{ width: `${progressPercent}%` }}
+      />
+      
+      <div className="flex items-center gap-4 z-10 w-full md:w-auto">
+        <div className="h-10 w-10 shrink-0 rounded-full bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+          <BookOpen className="h-5 w-5" />
         </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {continueLesson && (
-            <Button asChild size="sm" className="gap-1.5 shadow-sm text-xs">
-              <Link to={`/lesson/${continueLesson.id}`}>
-                <Sparkles className="h-3.5 w-3.5" />
-                Resume Lesson
-              </Link>
-            </Button>
-          )}
-
-          {activeProject && (
-            <Button
-              asChild
-              size="sm"
-              variant="outline"
-              className="gap-1.5 text-xs bg-background/60"
-            >
-              <Link to="/projects">
-                <FolderGit2 className="h-3.5 w-3.5 text-primary" />
-                Project
-              </Link>
-            </Button>
-          )}
-
-          {latestBug && (
-            <Button
-              asChild
-              size="sm"
-              variant="outline"
-              className="gap-1.5 text-xs bg-background/60"
-            >
-              <Link to="/debug-lab">
-                <Bug className="h-3.5 w-3.5 text-amber-500" />
-                Debug Lab
-              </Link>
-            </Button>
-          )}
-
-          <Button asChild size="sm" variant="outline" className="gap-1.5 text-xs bg-background/60">
-            <Link to="/interview">
-              <Briefcase className="h-3.5 w-3.5 text-emerald-500" />
-              Interview Prep
-            </Link>
-          </Button>
-
-          <Button
-            asChild
-            size="sm"
-            variant="ghost"
-            className="gap-1.5 text-xs text-muted-foreground"
-          >
-            <Link to="/mentor">
-              <Bot className="h-3.5 w-3.5 text-primary" />
-              Ask AI
-            </Link>
-          </Button>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <Badge variant="outline" className="text-[10px] bg-background/50 backdrop-blur-sm border-primary/30 text-primary">
+              Up Next
+            </Badge>
+            <span className="text-xs text-muted-foreground font-mono flex items-center gap-1">
+              <Clock className="h-3 w-3" /> {lesson.estimatedMinutes}m
+            </span>
+          </div>
+          <h3 className="font-semibold text-foreground text-sm truncate">{lesson.title}</h3>
         </div>
       </div>
-    </div>
+      
+      <div className="flex items-center gap-4 z-10 w-full md:w-auto shrink-0">
+        <div className="hidden md:flex flex-col items-end gap-1">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">Path Progress</span>
+          <div className="flex items-center gap-2">
+            <div className="w-24 h-1.5 bg-background rounded-full overflow-hidden border border-border/50">
+              <div className="h-full bg-primary" style={{ width: `${progressPercent}%` }} />
+            </div>
+            <span className="text-xs font-mono font-medium">{progressPercent}%</span>
+          </div>
+        </div>
+        
+        <Button asChild className="w-full md:w-auto shadow-glow gap-2" size="sm">
+          <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }}>
+            <PlayCircle className="h-4 w-4 fill-current" />
+            Resume
+          </Link>
+        </Button>
+      </div>
+    </Card>
   );
 }

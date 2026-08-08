@@ -24,13 +24,14 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/learn/lessons")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    query: typeof search.query === "string" ? search.query : "",
-    moduleId: typeof search.moduleId === "string" ? search.moduleId : "all",
-    topicId: typeof search.topicId === "string" ? search.topicId : "all",
-    pathId: typeof search.pathId === "string" ? search.pathId : "all",
+  validateSearch: (search: Record<string, unknown>): { query?: string, moduleId?: string, topicId?: string, pathId?: string, difficulty?: string, status?: string } => ({
+
+    query: (search.query as string) || undefined,
+    moduleId: (search.moduleId as string) || undefined,
+    topicId: (search.topicId as string) || undefined,
+    pathId: (search.pathId as string) || undefined,
     difficulty: typeof search.difficulty === "string" ? search.difficulty : "All",
-    status: typeof search.status === "string" ? search.status : "all",
+    status: (search.status as string) || undefined,
   }),
   head: () => ({
     meta: [
@@ -210,7 +211,7 @@ function Lessons() {
           </div>
           {firstFilteredLesson && (
             <Button asChild size="lg" className="shrink-0 gap-2 shadow-glow">
-              <Link to={`/lesson/${firstFilteredLesson.id}`}>
+              <Link to="/lesson/$lessonId" params={{ lessonId: firstFilteredLesson.id }}>
                 <BookOpen className="h-4 w-4" /> Start Learning <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -237,7 +238,7 @@ function Lessons() {
           </div>
           {firstFilteredLesson && (
             <Button asChild size="lg" className="shrink-0 gap-2 shadow-glow">
-              <Link to={`/lesson/${firstFilteredLesson.id}`}>
+              <Link to="/lesson/$lessonId" params={{ lessonId: firstFilteredLesson.id }}>
                 <BookOpen className="h-4 w-4" /> Start Module <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -344,7 +345,7 @@ function Lessons() {
             const topic = topics.find((t) => t.id === l.topicId);
 
             return (
-              <Link key={l.id} to={`/lesson/${l.id}`} className="group">
+              <Link key={l.id} to="/lesson/$lessonId" params={{ lessonId: l.id }} className="group">
                 <Card className="border-border/60 transition hover:border-primary/40 hover:shadow-glow">
                   <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0 space-y-1.5">

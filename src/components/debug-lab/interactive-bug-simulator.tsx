@@ -17,10 +17,10 @@ import {
   Zap,
 } from "lucide-react";
 
-import type { Bug } from "@/lib/types";
+import type { Bug as SimBug } from "@/lib/types";
 
 interface InteractiveBugSimulatorProps {
-  bug: Bug;
+  bug: SimBug;
   userCode: string;
   onAllTestsPass?: () => void;
 }
@@ -204,14 +204,14 @@ export function InteractiveBugSimulator({
   userCode,
   onAllTestsPass,
 }: InteractiveBugSimulatorProps) {
-  const testResults = (bug.testCases || []).map((tc) => {
+  const testResults = (bug.testCases || []).map((tc: any) => {
     return {
       ...tc,
       ...evaluateCode(bug.id, tc.id, userCode),
     };
   });
 
-  const allPass = testResults.length > 0 && testResults.every((tr) => tr.pass);
+  const allPass = testResults.length > 0 && testResults.every((tr: any) => tr.pass);
   const interactiveType = bug.interactiveType;
 
   useEffect(() => {
@@ -235,7 +235,7 @@ export function InteractiveBugSimulator({
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y divide-border/40">
-            {testResults.map((tr) => (
+            {testResults.map((tr: any) => (
               <div key={tr.id} className="p-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 font-medium text-sm">
@@ -837,7 +837,7 @@ function HooksInfiniteSandbox({ isFixed }: { isFixed: boolean }) {
             <CheckCircle2 className="h-4 w-4" />
             <span>Effect mounted cleanly with 0 loop re-triggers</span>
           </div>
-          <div className="text-xs font-mono text-muted-foreground">
+          <div suppressHydrationWarning className="text-xs font-mono text-muted-foreground">
             Last synced: {new Date().toLocaleTimeString()}
           </div>
         </div>

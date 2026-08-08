@@ -135,7 +135,7 @@ function LearnRoute() {
             </div>
 
             <Button asChild size="lg" className="shrink-0 gap-2 shadow-glow">
-              <Link to={`/lesson/${currentLesson.id}`}>
+              <Link to="/lesson/$lessonId" params={{ lessonId: currentLesson.id }}>
                 <PlayCircle className="h-5 w-5 fill-current" />
                 Resume Lesson Reader
               </Link>

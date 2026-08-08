@@ -48,11 +48,7 @@ export function RecentLessonsCard({ lessons, masteryMap = {} }: RecentLessonsCar
                   <DifficultyBadge difficulty={lesson.difficulty} />
                   <Badge
                     variant={isMastered ? "default" : "secondary"}
-                    className={`text-[10px] gap-1 ${
-                      isMastered
-                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                        : ""
-                    }`}
+                    className={`text-[10px] gap-1 ${isMastered ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" : ""}`}
                   >
                     {isMastered ? (
                       <CheckCircle2 className="h-3 w-3" />
@@ -77,7 +73,7 @@ export function RecentLessonsCard({ lessons, masteryMap = {} }: RecentLessonsCar
                   variant={isMastered ? "outline" : "default"}
                   className="h-8 text-xs gap-1"
                 >
-                  <Link to={`/lesson/${lesson.id}`}>
+                  <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }}>
                     {isMastered ? "Review" : "Continue"}
                     <ArrowRight className="h-3 w-3" />
                   </Link>

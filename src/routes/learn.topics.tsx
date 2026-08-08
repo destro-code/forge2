@@ -23,9 +23,10 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/learn/topics")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    query: typeof search.query === "string" ? search.query : "",
-    moduleId: typeof search.moduleId === "string" ? search.moduleId : "all",
+  validateSearch: (search: Record<string, unknown>): { query?: string, moduleId?: string } => ({
+
+    query: (search.query as string) || undefined,
+    moduleId: (search.moduleId as string) || undefined,
   }),
   head: () => ({
     meta: [

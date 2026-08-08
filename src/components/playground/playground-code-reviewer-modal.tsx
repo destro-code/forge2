@@ -31,7 +31,7 @@ interface PlaygroundCodeReviewerModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   files: PlaygroundFile[];
-  activeFile: PlaygroundFile;
+  activeFile?: PlaygroundFile;
   onApplyRefactoredCode: (newCode: string) => void;
 }
 
@@ -80,7 +80,7 @@ export function PlaygroundCodeReviewerModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           files: files.map((f) => ({ name: f.name, code: f.code, language: f.language })),
-          activeFileName: activeFile.name,
+          activeFileName: activeFile?.name || "unknown",
           focusAreas: selectedAreas,
           customInstructions: notes.trim(),
         }),
@@ -144,7 +144,7 @@ export function PlaygroundCodeReviewerModal({
   const handleApplyRefactored = () => {
     if (!refactoredSnippet) return;
     onApplyRefactoredCode(refactoredSnippet);
-    toast.success(`Applied refactored code to ${activeFile.name}`);
+    toast.success(`Applied refactored code to ${activeFile?.name || "file"}`);
     onOpenChange(false);
   };
 
@@ -256,7 +256,8 @@ export function PlaygroundCodeReviewerModal({
                 </>
               ) : (
                 <>
-                  <ShieldCheck className="h-4 w-4" /> Run AI Code Review ({activeFile.name})
+                  <ShieldCheck className="h-4 w-4" /> Run AI Code Review (
+                  {activeFile?.name || "unknown file"})
                 </>
               )}
             </Button>
@@ -291,7 +292,7 @@ export function PlaygroundCodeReviewerModal({
                         onClick={handleApplyRefactored}
                         className="h-7 text-[11px] gap-1 shadow-sm"
                       >
-                        <Wand2 className="h-3 w-3" /> Apply to {activeFile.name}
+                        <Wand2 className="h-3 w-3" /> Apply to {activeFile?.name || "file"}
                       </Button>
                     </div>
                   )}

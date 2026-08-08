@@ -184,7 +184,7 @@ function DebugLab() {
           filteredBugs.map((b) => {
             const isSolved = solvedBugs.includes(b.id);
             return (
-              <Link key={b.id} to={`/debug-lab/${b.id}`}>
+              <Link key={b.id} to="/debug-lab/$bugId" params={{ bugId: b.id }}>
                 <Card className="border-border/60 transition hover:border-primary/40 relative overflow-hidden group">
                   <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5">
                     <div className="min-w-0 flex-1 space-y-2">

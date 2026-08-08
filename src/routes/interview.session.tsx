@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInterviewQuestions } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { mentorProvider } from "@/lib/providers/mentor-provider";
 import type { InterviewQuestion } from "@/lib/types";
 import {
   ArrowLeft,
@@ -119,6 +120,18 @@ function SessionComponent() {
 
   const currentQuestion: InterviewQuestion | undefined = sessionQuestions[currentIndex];
 
+  const getParsedFeedback = (raw: string) => {
+    try {
+      const match = raw.match(/\{([\s\S]*)\}/);
+      const toParse = match ? match[0] : raw;
+      return JSON.parse(toParse);
+    } catch {
+      return null;
+    }
+  };
+
+
+  
   // Request AI Staff Interviewer Evaluation
   const handleRequestAiEvaluation = async (q: InterviewQuestion) => {
     setIsAiEvaluating((prev) => ({ ...prev, [q.id]: true }));
@@ -126,46 +139,38 @@ function SessionComponent() {
     setRevealedAnswers((prev) => ({ ...prev, [q.id]: true }));
 
     try {
-      const res = await fetch("/api/interview", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: "evaluate",
-          question: q.question,
-          category: q.category,
-          userAnswer: userAnswers[q.id] || "",
-          codeDraft: codeDrafts[q.id] || "",
-          rubric: q.rubric || [],
-        }),
-      });
+      const prompt = `MOCK INTERVIEW CANDIDATE EVALUATION:
+Topic/Category: ${q.category || "Frontend Engineering"}
+Question: ${q.question}
+Candidate Written Response:
+${userAnswers[q.id] || "(No written explanation provided)"}
+Candidate Code Draft:
+\`\`\`
+${codeDrafts[q.id] || "// No code draft provided"}
+\`\`\`
+Expected Evaluation Rubric Criteria:
+${(q.rubric || []).map((r) => `- ${r}`).join("\n")}
+Please provide a complete AI Staff Interviewer evaluation in JSON format containing criteria ratings, STAR methodology scoring, identified strengths, and actionable improvement points.`;
 
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({ error: "AI Interviewer failed" }));
-        toast.error(errJson.error || "AI Interviewer unavailable");
-        return;
-      }
-
-      const reader = res.body?.getReader();
-      const decoder = new TextDecoder();
+      const stream = mentorProvider.stream([{ role: "user", content: prompt, id: String(Date.now()), createdAt: Date.now() }], { mode: "interview-eval" });
+      
       let streamText = "";
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          streamText += chunk;
-          setAiFeedback((prev) => ({ ...prev, [q.id]: streamText }));
-        }
+      for await (const chunk of stream) {
+        streamText += chunk;
+        setAiFeedback((prev) => ({ ...prev, [q.id]: streamText }));
       }
 
-      // Extract numerical score e.g. "88/100" or "Score: 88"
-      const scoreMatch = streamText.match(
-        /(?:score|overall candidate score).*?(\d{1,3})\s*(?:\/100|%)/i,
-      );
-      if (scoreMatch && scoreMatch[1]) {
-        const extracted = Math.min(100, Math.max(0, parseInt(scoreMatch[1], 10)));
-        setAiScores((prev) => ({ ...prev, [q.id]: extracted }));
+      // Try parsing immediately to set score if valid
+      try {
+        // Strip markdown backticks if present
+        const jsonMatch = streamText.match(/\{([\s\S]*)\}/);
+        const toParse = jsonMatch ? jsonMatch[0] : streamText;
+        const parsed = JSON.parse(toParse);
+        if (parsed.overallScore !== undefined) {
+          setAiScores((prev) => ({ ...prev, [q.id]: parsed.overallScore }));
+        }
+      } catch (e) {
+        console.warn("Failed to parse evaluation JSON", e);
       }
 
       toast.success("AI Interviewer feedback & score generated!");
@@ -176,8 +181,7 @@ function SessionComponent() {
       setIsAiEvaluating((prev) => ({ ...prev, [q.id]: false }));
     }
   };
-
-  // Request AI Evaluation for Follow-Up Question Probe
+// Request AI Evaluation for Follow-Up Question Probe
   const handleRequestFollowUpEval = async (q: InterviewQuestion, followUpQ: string) => {
     const ansKey = `${q.id}-${followUpQ}`;
     const userFollowUpAns = followUpAnswers[ansKey] || "";
@@ -666,18 +670,90 @@ function SessionComponent() {
                       </div>
 
                       <div className="text-xs text-foreground space-y-2 leading-relaxed max-h-[400px] overflow-y-auto pr-1">
-                        {aiFeedback[currentQuestion.id] ? (
-                          <div className="markdown-body">
-                            <Markdown>{aiFeedback[currentQuestion.id]}</Markdown>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2 py-4 text-muted-foreground justify-center">
-                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                            <span>
-                              Analyzing candidate answer, type safety, and architecture...
-                            </span>
-                          </div>
-                        )}
+                        
+                        {(() => {
+                          const raw = aiFeedback[currentQuestion.id];
+                          if (!raw) {
+                            return (
+                              <div className="flex items-center gap-2 py-4 text-muted-foreground justify-center">
+                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                                <span>
+                                  Analyzing candidate answer, type safety, and architecture...
+                                </span>
+                              </div>
+                            );
+                          }
+                          const parsed = getParsedFeedback(raw);
+                          if (parsed) {
+                            return (
+                              <div className="space-y-4 text-sm mt-4">
+                                <div className="p-3 bg-secondary/20 rounded-md border border-border/40">
+                                  <h6 className="font-semibold text-foreground mb-1">Executive Assessment</h6>
+                                  <p className="text-muted-foreground">{parsed.executiveAssessment}</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <h6 className="font-semibold text-foreground mb-2 flex items-center gap-2"><Award className="w-4 h-4"/> Criteria Ratings</h6>
+                                    <ul className="space-y-1">
+                                      {Object.entries(parsed.criteriaRatings || {}).map(([key, val]) => (
+                                        <li key={key} className="flex justify-between">
+                                          <span className="capitalize text-muted-foreground">{key}</span>
+                                          <span className="font-mono text-primary">{val as number}/100</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                  <div>
+                                    <h6 className="font-semibold text-foreground mb-2 flex items-center gap-2"><Trophy className="w-4 h-4"/> STAR Scoring</h6>
+                                    <ul className="space-y-1">
+                                      {Object.entries(parsed.starScoring || {}).map(([key, val]) => (
+                                        <li key={key} className="flex justify-between">
+                                          <span className="capitalize text-muted-foreground">{key}</span>
+                                          <span className="font-mono text-primary">{val as number}/100</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="p-3 bg-green-500/10 rounded-md border border-green-500/20">
+                                    <h6 className="font-semibold text-green-600 dark:text-green-400 mb-2">Strengths</h6>
+                                    <ul className="list-disc pl-4 space-y-1 text-green-700 dark:text-green-300">
+                                      {(parsed.strengths || []).map((s: string, i: number) => <li key={i}>{s}</li>)}
+                                    </ul>
+                                  </div>
+                                  <div className="p-3 bg-red-500/10 rounded-md border border-red-500/20">
+                                    <h6 className="font-semibold text-red-600 dark:text-red-400 mb-2">Areas for Improvement</h6>
+                                    <ul className="list-disc pl-4 space-y-1 text-red-700 dark:text-red-300">
+                                      {(parsed.improvements || []).map((s: string, i: number) => <li key={i}>{s}</li>)}
+                                    </ul>
+                                  </div>
+                                </div>
+                                {parsed.refactoredSolution && parsed.refactoredSolution !== "N/A" && (
+                                  <div>
+                                    <h6 className="font-semibold text-foreground mb-2">Refactored Solution</h6>
+                                    <div className="markdown-body text-xs">
+                                      <Markdown>{`\`\`tsx\n${parsed.refactoredSolution}\n\`\`\``}</Markdown>
+                                    </div>
+                                  </div>
+                                )}
+                                {parsed.followUpQuestions && parsed.followUpQuestions.length > 0 && (
+                                  <div className="p-3 bg-cyan-500/10 rounded-md border border-cyan-500/20">
+                                    <h6 className="font-semibold text-cyan-600 dark:text-cyan-400 mb-2">Targeted Follow-Up Questions</h6>
+                                    <ul className="list-disc pl-4 space-y-1 text-cyan-700 dark:text-cyan-300">
+                                      {parsed.followUpQuestions.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+                          return (
+                            <div className="font-mono text-xs whitespace-pre-wrap mt-4 text-muted-foreground bg-black/5 p-4 rounded-md border border-border/40 overflow-hidden">
+                              {raw}
+                            </div>
+                          );
+                        })()}
                       </div>
                     </Card>
                   )}
@@ -689,30 +765,23 @@ function SessionComponent() {
                         <div className="flex items-center gap-2 border-b border-border/40 pb-2">
                           <MessageSquareCode className="h-4 w-4 text-cyan-400" />
                           <h5 className="text-xs font-bold text-foreground">
-                            Interviewer Follow-up Probes ({currentQuestion.followUpQuestions.length}
-                            )
+                            Targeted Follow-Up Probes
                           </h5>
                         </div>
-
                         <div className="space-y-4">
-                          {currentQuestion.followUpQuestions.map((followUpQ, idx) => {
+                          {currentQuestion.followUpQuestions.map((followUpQ, i) => {
                             const ansKey = `${currentQuestion.id}-${followUpQ}`;
                             const isEvaluatingThis = isAiEvaluating[ansKey];
                             const feedback = followUpFeedbacks[ansKey];
 
                             return (
-                              <div
-                                key={idx}
-                                className="space-y-2 bg-muted/20 p-3 rounded-lg border border-border/40"
-                              >
-                                <p className="text-xs font-semibold text-foreground flex items-start gap-1.5">
-                                  <span className="text-cyan-400 font-mono">Q{idx + 1}:</span>{" "}
+                              <div key={i} className="space-y-2">
+                                <p className="text-sm font-medium text-foreground">
                                   {followUpQ}
                                 </p>
-
-                                <div className="space-y-2 pt-1">
+                                <div className="space-y-2">
                                   <Textarea
-                                    placeholder="Type your response to this follow-up probe..."
+                                    placeholder="Your answer to this follow-up..."
                                     value={followUpAnswers[ansKey] || ""}
                                     onChange={(e) =>
                                       setFollowUpAnswers((prev) => ({

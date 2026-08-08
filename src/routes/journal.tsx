@@ -575,7 +575,7 @@ function EngineeringJournal() {
                   {entry.title}
                 </CardTitle>
 
-                <p className="text-[11px] text-muted-foreground font-mono">
+                <p suppressHydrationWarning className="text-[11px] text-muted-foreground font-mono">
                   {new Date(entry.createdAt).toLocaleDateString(undefined, {
                     month: "short",
                     day: "numeric",

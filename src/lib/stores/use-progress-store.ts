@@ -290,7 +290,7 @@ export const useProgressStore = create<ProgressStore>()(
       migrate: (persistedState: unknown, version: number): ProgressState => {
         const state = (
           persistedState && typeof persistedState === "object" ? persistedState : {}
-        ) as Record<string, unknown>;
+        ) as any;
 
         if (version === undefined || version < 1) {
           return {

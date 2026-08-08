@@ -111,7 +111,7 @@ function CertificatesRoute() {
                           </span>
                         </div>
                       </div>
-                      <ProgressRing value={cert.score / 100} size={52} strokeWidth={4} />
+                      <ProgressRing value={cert.score / 100} size={52} stroke={4} />
                     </div>
 
                     <div className="pt-3 border-t border-border/40 flex items-center justify-between text-xs">

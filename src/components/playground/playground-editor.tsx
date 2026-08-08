@@ -63,13 +63,13 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     return "javascript";
   };
 
-  const lineCount = activeFile.code.split("\n").length;
-  const charCount = activeFile.code.length;
+  const lineCount = activeFile?.code || "".split("\n").length;
+  const charCount = activeFile?.code || "".length;
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(activeFile.code);
+    navigator.clipboard.writeText(activeFile?.code || "");
     setCopied(true);
-    toast.success(`Copied ${activeFile.name} to clipboard`);
+    toast.success(`Copied ${activeFile?.name} to clipboard`);
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -128,8 +128,8 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
           >
             <MonacoEditor
               height="100%"
-              language={getLanguage(activeFile.name)}
-              value={activeFile.code}
+              language={getLanguage(activeFile?.name)}
+              value={activeFile?.code || ""}
               onChange={(v) => {
                 const newCode = v ?? "";
                 if (activeFile) {
@@ -165,10 +165,10 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 font-medium text-foreground">
             <FileCode className="h-3.5 w-3.5 text-primary" />
-            {activeFile.name}
+            {activeFile?.name}
           </span>
           <Badge variant="outline" className="text-[10px] px-1.5 h-4 border-border/60">
-            {getLanguage(activeFile.name)}
+            {getLanguage(activeFile?.name)}
           </Badge>
           <span className="hidden sm:inline">{lineCount} lines</span>
           <span className="hidden sm:inline">{charCount} chars</span>

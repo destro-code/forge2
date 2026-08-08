@@ -184,7 +184,7 @@ function Projects() {
             projectTaskCount > 0 && completedProjectTaskCount === projectTaskCount;
 
           return (
-            <Link key={project.id} to={`/projects/${project.id}`}>
+            <Link key={project.id} to="/projects/$projectId" params={{ projectId: project.id }}>
               <Card className="h-full border-border/60 transition-all hover:border-primary/50 hover:shadow-glow flex flex-col justify-between group overflow-hidden relative">
                 {isFullyCompleted && (
                   <div className="absolute top-3 right-3 z-10">

@@ -124,7 +124,7 @@ function AssessmentRoute() {
       }
       case "drag_drop": {
         if (typeof ans !== "object") return false;
-        return q.pairs.every((p) => ans[p.id] === p.right);
+        return q.pairs.every((p) => (ans as any)[p.id] === p.right);
       }
       case "fill_in_blank": {
         if (typeof ans !== "string") return false;
@@ -370,7 +370,7 @@ function AssessmentRoute() {
 
         <div className="flex items-center gap-3">
           <QuizTimer
-            totalMinutes={30}
+            durationMinutes={30} onTogglePause={() => {}}
             isPaused={false}
             onTimeExpired={handleSubmitAssessment}
             onTick={(seconds) => setTimeSpentSeconds(seconds)}
@@ -379,9 +379,9 @@ function AssessmentRoute() {
             questions={activeQuestions}
             currentIndex={currentIndex}
             userAnswers={userAnswers}
-            flaggedIds={flaggedIds}
+            flaggedQuestionIds={flaggedIds}
             onSelectQuestion={(idx) => setCurrentIndex(idx)}
-            onSubmit={handleSubmitAssessment}
+            onSubmitQuiz={handleSubmitAssessment} isReviewMode={false} onToggleReviewMode={() => {}} onToggleFlag={(qId: string) => handleToggleFlag(qId)}
           />
         </div>
       </div>
@@ -402,55 +402,43 @@ function AssessmentRoute() {
         {currentQuestion.type === "mcq" && (
           <MCQQuestionCard
             question={currentQuestion}
-            userAnswer={userAnswers[currentQuestion.id] as number | undefined}
-            onChangeAnswer={(ans) => handleAnswerChange(currentQuestion.id, ans)}
-            isFlagged={flaggedIds.has(currentQuestion.id)}
-            onToggleFlag={() => handleToggleFlag(currentQuestion.id)}
+            selectedAnswer={(userAnswers as Record<string, any>)[currentQuestion.id] as number | undefined}
+            onSelectAnswer={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "multiple" && (
           <MultipleQuestionCard
             question={currentQuestion}
-            userAnswer={userAnswers[currentQuestion.id] as number[] | undefined}
-            onChangeAnswer={(ans) => handleAnswerChange(currentQuestion.id, ans)}
-            isFlagged={flaggedIds.has(currentQuestion.id)}
-            onToggleFlag={() => handleToggleFlag(currentQuestion.id)}
+            selectedAnswers={(userAnswers as Record<string, any>)[currentQuestion.id] as number[] | undefined}
+            onSelectAnswer={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "ordering" && (
           <OrderingQuestionCard
             question={currentQuestion}
-            userAnswer={userAnswers[currentQuestion.id] as string[] | undefined}
-            onChangeAnswer={(ans) => handleAnswerChange(currentQuestion.id, ans)}
-            isFlagged={flaggedIds.has(currentQuestion.id)}
-            onToggleFlag={() => handleToggleFlag(currentQuestion.id)}
+            currentOrder={(userAnswers as Record<string, any>)[currentQuestion.id] as string[] | undefined}
+            onOrderChange={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "drag_drop" && (
           <DragDropQuestionCard
             question={currentQuestion}
-            userAnswer={userAnswers[currentQuestion.id] as Record<string, string> | undefined}
-            onChangeAnswer={(ans) => handleAnswerChange(currentQuestion.id, ans)}
-            isFlagged={flaggedIds.has(currentQuestion.id)}
-            onToggleFlag={() => handleToggleFlag(currentQuestion.id)}
+            currentMatches={(userAnswers as Record<string, any>)[currentQuestion.id] as Record<string, string> | undefined}
+            onMatchChange={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "code" && (
           <CodeQuestionCard
             question={currentQuestion}
-            userAnswer={userAnswers[currentQuestion.id] as number | undefined}
-            onChangeAnswer={(ans) => handleAnswerChange(currentQuestion.id, ans)}
-            isFlagged={flaggedIds.has(currentQuestion.id)}
-            onToggleFlag={() => handleToggleFlag(currentQuestion.id)}
+            selectedAnswer={(userAnswers as Record<string, any>)[currentQuestion.id] as number | undefined}
+            onSelectAnswer={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "fill_in_blank" && (
           <FillInBlankQuestionCard
             question={currentQuestion}
-            userAnswer={userAnswers[currentQuestion.id] as string | undefined}
-            onChangeAnswer={(ans) => handleAnswerChange(currentQuestion.id, ans)}
-            isFlagged={flaggedIds.has(currentQuestion.id)}
-            onToggleFlag={() => handleToggleFlag(currentQuestion.id)}
+            userAnswer={(userAnswers as Record<string, any>)[currentQuestion.id] as string | undefined}
+            onAnswerChange={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
       </div>

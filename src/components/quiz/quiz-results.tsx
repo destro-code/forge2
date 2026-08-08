@@ -72,7 +72,7 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
 
   // Helper to check correctness per question type
   const checkQuestionCorrectness = (q: QuizQuestion): boolean => {
-    const ans = userAnswers[q.id];
+    const ans = (userAnswers as Record<string, any>)[q.id];
     if (ans === undefined || ans === null) return false;
 
     switch (q.type) {
@@ -300,7 +300,7 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
                 </div>
 
                 <div className="font-mono text-foreground">
-                  {formatUserAnswer(q, userAnswers[q.id])}
+                  {formatUserAnswer(q, (userAnswers as Record<string, any>)[q.id])}
                 </div>
               </div>
 

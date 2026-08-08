@@ -246,11 +246,14 @@ function InterviewAcademy() {
   // Handler to launch session
   const handleStartSession = (category?: string) => {
     if (category) {
-      navigate({ to: "/interview/session", search: { category, mode: "single" } });
+      navigate({
+        to: "/interview/session",
+        search: { category, mode: "single", preset: "", duration: "" },
+      });
     } else {
       navigate({
         to: "/interview/session",
-        search: { mode: "mock", preset: mockPreset, duration: mockDuration },
+        search: { mode: "mock", preset: mockPreset, duration: mockDuration, category: "" },
       });
     }
   };
@@ -691,7 +694,7 @@ function InterviewAcademy() {
                         <h4 className="text-xs font-semibold text-foreground truncate">
                           {targetQ ? targetQ.question : `Question ID: ${res.questionId}`}
                         </h4>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p suppressHydrationWarning className="text-[11px] text-muted-foreground">
                           Completed on {new Date(res.completedAt).toLocaleString()}
                         </p>
                       </div>

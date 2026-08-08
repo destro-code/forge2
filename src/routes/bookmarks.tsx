@@ -38,7 +38,7 @@ function Bookmarks() {
       ) : (
         <div className="grid gap-3">
           {lessons.map((l) => (
-            <Link key={l.id} to={`/lesson/${l.id}`}>
+            <Link key={l.id} to="/lesson/$lessonId" params={{ lessonId: l.id }}>
               <Card className="border-border/60 transition hover:border-primary/40">
                 <CardContent className="flex items-center justify-between p-5">
                   <div>

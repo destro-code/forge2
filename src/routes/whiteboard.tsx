@@ -559,7 +559,7 @@ export function WhiteboardPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-sm">{snap.title || "Untitled"}</span>
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge suppressHydrationWarning variant="outline" className="text-[10px]">
                           {new Date(snap.updatedAt).toLocaleString()}
                         </Badge>
                       </div>

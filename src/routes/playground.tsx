@@ -340,7 +340,7 @@ export function Playground() {
               Reset
             </Button>
 
-            <Button size="sm" onClick={handleRun} className="gap-1.5 shadow-glow text-xs">
+            <Button size="sm" onClick={() => handleRun()} className="gap-1.5 shadow-glow text-xs">
               <Play className="h-3.5 w-3.5" />
               Run Code
             </Button>

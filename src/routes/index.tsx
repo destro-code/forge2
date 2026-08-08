@@ -1,3 +1,4 @@
+import { useProgressStore } from "@/lib/stores/use-progress-store";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
@@ -60,7 +61,7 @@ function Dashboard() {
   const latestBug = bugs[0];
 
   const handleAddMinutes = (addedMins: number) => {
-    setProgress((prev) => ({
+    useProgressStore.getState().setProgress((prev: any) => ({
       ...prev,
       totalMinutes: prev.totalMinutes + addedMins,
       weekly: [
@@ -106,9 +107,7 @@ function Dashboard() {
 
       {/* Quick Resume Action Bar */}
       <QuickResumeBar
-        continueLesson={continueLesson}
-        activeProject={activeProject}
-        latestBug={latestBug}
+        lesson={continueLesson} progressPercent={80}
       />
 
       {/* Stats Grid */}

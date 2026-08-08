@@ -76,7 +76,7 @@ function LearningPathsRoute() {
             pathModules.length > 0
               ? Math.round(
                   pathModules.reduce(
-                    (acc, m) => acc + getModuleProgress(m.id, lessonsCompleted),
+                    (acc, m) => acc + getModuleProgress(m.id, progress.lessonsCompleted),
                     0,
                   ) / pathModules.length,
                 )
@@ -138,7 +138,7 @@ function LearningPathsRoute() {
                       </span>
                     </div>
                   </div>
-                  <ProgressRing value={avgProgress / 100} size={58} strokeWidth={4} />
+                  <ProgressRing value={avgProgress / 100} size={58} stroke={4} />
                 </div>
 
                 <p className="text-sm text-muted-foreground leading-relaxed">{path.description}</p>

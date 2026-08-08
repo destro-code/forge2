@@ -55,7 +55,7 @@ function Achievements() {
         break;
       case "interviewQuestions":
         current = (progress.interviewResults || []).reduce(
-          (acc, r) => acc + (r.questionsAnswered || 1),
+          (acc, r) => acc + ((r as any).questionsAnswered || 1),
           0,
         );
         break;

@@ -26,6 +26,17 @@ const CANNED_REPLIES: Record<string, string> = {
 };
 
 function pickReply(text: string, mode?: MentorMode) {
+  if (mode === ("interview-eval" as any)) return `{
+  "overallScore": 85,
+  "hireLevel": "Senior Engineer (L5)",
+  "executiveAssessment": "Strong theoretical understanding but could improve on concrete examples.",
+  "criteriaRatings": { "accuracy": 90, "architecture": 80, "edgeCases": 75, "performance": 85 },
+  "starScoring": { "situationTask": 80, "action": 90, "result": 85 },
+  "strengths": ["Clear communication", "Good understanding of React hooks", "Solid debugging approach"],
+  "improvements": ["Missed some edge cases in error handling", "Could have mentioned accessibility"],
+  "refactoredSolution": "function Example() {\n  return <div>Improved</div>;\n}",
+  "followUpQuestions": ["How would you scale this to handle 10,000 concurrent users?", "What are the security implications of this approach?"]
+}`;
   if (mode === "code-review") return CANNED_REPLIES.code_review;
   if (mode === "debug-help") return CANNED_REPLIES.debug;
   const lower = text.toLowerCase();
@@ -70,13 +81,13 @@ export const geminiMentorProvider: MentorProvider = {
       });
 
       if (!response.ok || !response.body) {
+        console.warn("API Error or limit reached, falling back to mock");
         yield* mockMentorProvider.stream(messages, opts);
         return;
       }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -89,6 +100,7 @@ export const geminiMentorProvider: MentorProvider = {
       }
     } catch (err) {
       if ((err as Error).name === "AbortError") return;
+      console.warn("API Connection Error, falling back to mock", err);
       yield* mockMentorProvider.stream(messages, opts);
     }
   },

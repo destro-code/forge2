@@ -474,7 +474,10 @@ export function Mentor() {
                           {m.mode || activeMode}
                         </Badge>
                       </div>
-                      <span className="text-[10px] text-muted-foreground font-mono">
+                      <span
+                        suppressHydrationWarning
+                        className="text-[10px] text-muted-foreground font-mono"
+                      >
                         {new Date(m.createdAt).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -506,7 +509,10 @@ export function Mentor() {
                         <button
                           className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
                           onClick={() =>
-                            send([...active.messages].reverse().find((x) => x.role === "user")?.content)
+                            send(
+                              [...active.messages].reverse().find((x) => x.role === "user")
+                                ?.content,
+                            )
                           }
                         >
                           <RotateCcw className="h-3 w-3" />
