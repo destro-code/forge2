@@ -198,10 +198,13 @@ export function deriveSkills(
 
 export function getDerivedProgress(state: ProgressState): ProgressState {
   const activityDates = state.activityDates || [];
+  const currentStreak = deriveStreakDays(activityDates);
+  const bestStreakDays = Math.max(state.bestStreakDays ?? 0, currentStreak);
   return {
     ...state,
     activityDates,
-    streakDays: deriveStreakDays(activityDates),
+    streakDays: currentStreak,
+    bestStreakDays,
     heatmap: deriveHeatmap(activityDates),
     skills: deriveSkills(state, state.skills),
     certificates: state.certificates || [],
@@ -424,6 +427,7 @@ export const DEMO_PROGRESS_STATE: ProgressState = {
     "2026-07-24T10:00:00Z",
   ],
   streakDays: 5,
+  bestStreakDays: 5,
   totalMinutes: 1840,
   lessonsCompleted: ["flexbox-axes"],
   solvedBugs: [],
@@ -491,6 +495,7 @@ export const progressStore = {
     const stateSlice: ProgressState = {
       xp: rawProgress.xp ?? 0,
       streakDays: rawProgress.streakDays ?? 0,
+      bestStreakDays: rawProgress.bestStreakDays ?? 0,
       totalMinutes: rawProgress.totalMinutes ?? 0,
       lessonsCompleted: rawProgress.lessonsCompleted ?? [],
       solvedBugs: rawProgress.solvedBugs ?? [],

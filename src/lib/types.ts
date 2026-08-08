@@ -538,6 +538,7 @@ export interface ProgressState {
   topicMasteryRecords?: Record<string, TopicMasteryRecord>;
   readinessGoalPercent?: number;
   lastActiveLessonId?: string;
+  bestStreakDays?: number;
   lessonCheckpoints?: Record<string, boolean>;
   lessonHighlights?: Record<string, LessonHighlight[]>;
   activityDates?: string[];

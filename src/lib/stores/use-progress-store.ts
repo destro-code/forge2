@@ -22,6 +22,7 @@ export const EMPTY_PROGRESS_STATE: ProgressState = {
   xp: 0,
   activityDates: [],
   streakDays: 0,
+  bestStreakDays: 0,
   totalMinutes: 0,
   lessonsCompleted: [],
   solvedBugs: [],
@@ -155,6 +156,7 @@ export const useProgressStore = create<ProgressStore>()(
         const currentState: ProgressState = {
           xp: current.xp ?? 0,
           streakDays: current.streakDays ?? 0,
+          bestStreakDays: current.bestStreakDays ?? 0,
           totalMinutes: current.totalMinutes ?? 0,
           lessonsCompleted: current.lessonsCompleted ?? [],
           solvedBugs: current.solvedBugs ?? [],
@@ -295,6 +297,8 @@ export const useProgressStore = create<ProgressStore>()(
         if (version === undefined || version < 1) {
           return {
             ...state,
+            bestStreakDays:
+              typeof state.bestStreakDays === "number" ? state.bestStreakDays : (state.streakDays ?? 0),
             flashcardReviews:
               (state.flashcardReviews as Record<string, FlashcardReviewState>) ?? {},
             challengesCompleted: (state.challengesCompleted as string[]) ?? [],
@@ -312,6 +316,7 @@ export const useProgressStore = create<ProgressStore>()(
         return {
           ...currentState,
           ...pState,
+          bestStreakDays: pState.bestStreakDays ?? currentState.bestStreakDays ?? 0,
           flashcardReviews: pState.flashcardReviews ?? currentState.flashcardReviews ?? {},
           challengesCompleted: pState.challengesCompleted ?? currentState.challengesCompleted ?? [],
           challengeStreakDays: pState.challengeStreakDays ?? currentState.challengeStreakDays ?? 0,

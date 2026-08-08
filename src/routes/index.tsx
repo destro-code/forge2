@@ -26,6 +26,7 @@ import { WeeklyProgressCard } from "@/components/dashboard/weekly-progress-card"
 import { HeatmapCard } from "@/components/dashboard/heatmap-card";
 import { RecommendedTopicsCard } from "@/components/dashboard/recommended-topics-card";
 import { ProgressRing } from "@/components/shared/progress-ring";
+import { getModuleProgress, getTopicProgress } from "@/lib/hooks/use-curriculum";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -59,6 +60,16 @@ function Dashboard() {
     lessons[0];
   const activeProject = projects[0];
   const latestBug = bugs[0];
+
+  const continueLessonModuleId =
+    continueLesson?.moduleId ||
+    topics.find((t) => t.id === continueLesson?.topicId)?.moduleId;
+
+  const continueProgressPercent = continueLessonModuleId
+    ? getModuleProgress(continueLessonModuleId, progress.lessonsCompleted)
+    : continueLesson?.topicId
+      ? getTopicProgress(continueLesson.topicId, progress.lessonsCompleted)
+      : 0;
 
   const handleAddMinutes = (addedMins: number) => {
     useProgressStore.getState().setProgress((prev: any) => ({
@@ -107,7 +118,7 @@ function Dashboard() {
 
       {/* Quick Resume Action Bar */}
       <QuickResumeBar
-        lesson={continueLesson} progressPercent={80}
+        lesson={continueLesson} progressPercent={continueProgressPercent}
       />
 
       {/* Stats Grid */}
@@ -115,7 +126,7 @@ function Dashboard() {
         <StatCard
           label="Current streak"
           value={`${progress.streakDays} days`}
-          delta="Best: 21 days"
+          delta={`Best: ${progress.bestStreakDays ?? progress.streakDays} days`}
           icon={<Flame className="h-4 w-4" />}
           tone="primary"
         />
@@ -141,15 +152,23 @@ function Dashboard() {
       {/* Row 1: Continue Learning & Daily Goal + Streak */}
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          {continueLesson && <ContinueLearningCard lesson={continueLesson} progressPercent={65} />}
+          {continueLesson && (
+            <ContinueLearningCard
+              lesson={continueLesson}
+              progressPercent={continueProgressPercent}
+            />
+          )}
         </div>
         <div className="space-y-6">
           <DailyGoalCard
-            todayMinutes={progress.weekly[6] || 25}
+            todayMinutes={progress.weekly[6] || 0}
             dailyTargetMinutes={30}
             onAddMinutes={handleAddMinutes}
           />
-          <StreakCard streakDays={progress.streakDays} bestStreak={21} />
+          <StreakCard
+            streakDays={progress.streakDays}
+            bestStreak={progress.bestStreakDays ?? progress.streakDays}
+          />
         </div>
       </div>
 
@@ -190,6 +209,7 @@ function Dashboard() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {modules.slice(0, 6).map((m) => {
+            const moduleProgress = getModuleProgress(m.id, progress.lessonsCompleted) / 100;
             return (
               <Link
                 suppressHydrationWarning
@@ -210,7 +230,7 @@ function Dashboard() {
                             {m.title}
                           </div>
                         </div>
-                        <ProgressRing value={m.progress} />
+                        <ProgressRing value={moduleProgress} />
                       </div>
                       <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
                         {m.description}
