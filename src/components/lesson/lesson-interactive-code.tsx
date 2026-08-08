@@ -21,6 +21,7 @@ export function LessonInteractiveCode({
 }: LessonInteractiveCodeProps) {
   const [copied, setCopied] = useState(false);
   const [outputLog, setOutputLog] = useState<string | null>(null);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -32,36 +33,142 @@ export function LessonInteractiveCode({
   const lines = code.split("\n");
 
   const handleQuickRun = () => {
-    try {
-      // Intercept console output for simple snippet evaluation
-      const logs: string[] = [];
-      const dummyConsole = {
-        log: (...args: unknown[]) =>
-          logs.push(
-            args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
-          ),
-        warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
-        error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
-      };
+    const lang = (language || "").toLowerCase();
+    setOutputLog("");
+    setPreviewHtml(null);
 
-      // Strip import / export statements to allow quick eval if simple JS/TS
-      const cleanCode = code
-        .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
-        .replace(/^export\s+default\s+/gm, "")
-        .replace(/^export\s+/gm, "");
-
-      const fn = new Function("console", cleanCode);
-      fn(dummyConsole);
-
-      if (logs.length > 0) {
-        setOutputLog(logs.join("\n"));
-        toast.success("Snippet executed cleanly");
-      } else {
-        setOutputLog("✓ Executed cleanly (no console output).");
+    if (lang === "css") {
+      try {
+        const template = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 16px;
+      margin: 0;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+    .preview-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 4px;
+    }
+    .demo-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    /* User CSS begins */
+    ${code}
+    /* User CSS ends */
+  </style>
+</head>
+<body>
+  <div class="preview-title">Live CSS Preview</div>
+  <div class="demo-container">
+    <div class="box">
+      <strong>.box element</strong> - Useful for padding, margin, borders, and box-sizing checks.
+    </div>
+    <div class="container">
+      <div class="item">Flex Item A</div>
+      <div class="item">Flex Item B</div>
+    </div>
+    <button class="btn">Demo Button</button>
+  </div>
+</body>
+</html>`;
+        setPreviewHtml(template);
+        setOutputLog("CSS Applied successfully to live preview element.");
+        toast.success("CSS applied successfully to live preview");
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setOutputLog(`Failed to apply CSS: ${errMsg}`);
       }
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : String(err);
-      setOutputLog(`Runtime Note: ${errMsg}`);
+    } else if (lang === "html") {
+      try {
+        let template = code;
+        if (!code.includes("<html") && !code.includes("<body")) {
+          template = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 16px;
+      margin: 0;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+  ${code}
+</body>
+</html>`;
+        }
+        setPreviewHtml(template);
+        setOutputLog("HTML Rendered successfully inside preview frame.");
+        toast.success("HTML rendered successfully");
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setOutputLog(`Failed to render HTML: ${errMsg}`);
+      }
+    } else {
+      // JS / TS / JSX / TSX
+      try {
+        const logs: string[] = [];
+        const dummyConsole = {
+          log: (...args: unknown[]) =>
+            logs.push(
+              args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
+            ),
+          warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
+          error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
+        };
+
+        // Strip imports/exports to allow quick eval of basic JS/TS
+        const cleanCode = code
+          .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
+          .replace(/^export\s+default\s+/gm, "")
+          .replace(/^export\s+/gm, "");
+
+        // Detect complex code (JSX tags, types) that raw browser 'new Function()' would throw syntax error on
+        const hasJSX = /<[a-zA-Z]+[^>]*>/.test(cleanCode) || /<\/ [a-zA-Z]+>/.test(cleanCode);
+        const hasTS =
+          /interface\s+\w+|type\s+\w+\s*=|:\s*(string|number|boolean|any|unknown|void|Record<)/.test(
+            cleanCode,
+          );
+
+        if (hasJSX || hasTS) {
+          throw new SyntaxError(
+            "Standard JS evaluation is optimized for plain vanilla JavaScript/ES6 snippets. For complex React/TSX/JSX features, use the interactive 'Sandbox' button above to compile and run with full React context.",
+          );
+        }
+
+        const fn = new Function("console", cleanCode);
+        fn(dummyConsole);
+
+        if (logs.length > 0) {
+          setOutputLog(logs.join("\n"));
+          toast.success("Snippet executed cleanly");
+        } else {
+          setOutputLog("✓ Executed cleanly (no console output).");
+        }
+      } catch (err: unknown) {
+        let errMsg = err instanceof Error ? err.message : String(err);
+        if (err instanceof SyntaxError && !errMsg.includes("Sandbox")) {
+          errMsg = `${errMsg}\n\n💡 Tip: If this snippet contains modern TypeScript, JSX, or external package imports, click the "Sandbox" button on the top right to run it in a full-featured browser playground!`;
+        }
+        setOutputLog(`Runtime Note:\n${errMsg}`);
+      }
     }
   };
 
@@ -140,21 +247,45 @@ export function LessonInteractiveCode({
         </pre>
       </div>
 
-      {/* Console output drawer if quick run executed */}
-      {outputLog !== null && (
-        <div className="border-t border-border/50 bg-black/60 p-3 text-[11px] font-mono text-emerald-300">
-          <div className="flex items-center justify-between text-muted-foreground text-[10px] mb-1 font-sans">
+      {/* Console output & preview drawer if quick run executed */}
+      {(outputLog !== null || previewHtml !== null) && (
+        <div className="border-t border-border/50 bg-[#07080a] p-4 text-[11px] font-mono text-emerald-300">
+          <div className="flex items-center justify-between text-muted-foreground text-[10px] mb-2 font-sans">
             <span className="flex items-center gap-1 font-semibold text-foreground">
               <Terminal className="h-3 w-3 text-emerald-400" /> Quick Output Log
             </span>
             <button
-              onClick={() => setOutputLog(null)}
-              className="text-muted-foreground hover:text-foreground"
+              onClick={() => {
+                setOutputLog(null);
+                setPreviewHtml(null);
+              }}
+              className="text-muted-foreground hover:text-foreground text-xs"
             >
               Dismiss
             </button>
           </div>
-          <div className="whitespace-pre-wrap">{outputLog}</div>
+
+          <div className="space-y-3">
+            {outputLog && (
+              <div className="whitespace-pre-wrap bg-black/40 p-2.5 rounded border border-border/20 text-emerald-300">
+                {outputLog}
+              </div>
+            )}
+
+            {previewHtml && (
+              <div className="space-y-1">
+                <div className="text-[10px] text-muted-foreground font-sans uppercase font-semibold">
+                  Live Preview
+                </div>
+                <iframe
+                  srcDoc={previewHtml}
+                  title="Quick Run HTML/CSS Preview"
+                  sandbox="allow-scripts"
+                  className="w-full h-44 rounded border border-border/30 bg-[#0f172a]"
+                />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
