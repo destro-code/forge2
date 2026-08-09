@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,12 +7,7 @@ import { Wand2, Sun, Moon, FileCode, Copy, Check, Undo2, Redo2, Type, Command, A
 import type { PlaygroundFile } from "@/lib/types/playground";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
-
-const MonacoEditor = lazy(async () => {
-  await import("@/lib/monaco-setup");
-  const m = await import("@monaco-editor/react");
-  return { default: m.default };
-});
+import { MonacoEditor } from "@/components/shared/monaco-editor";
 
 interface PlaygroundEditorProps {
   onCodeChange?: (code: string) => void;
@@ -52,16 +47,26 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   // Set 5-second loading timeout to catch Monaco mount failures
   useEffect(() => {
     if (!mounted) return;
+
+    // Clear stale editorRef for the new mount attempt cycle
+    editorRef.current = null;
     setEditorError(false);
     setEditorLoaded(false);
 
+    let active = true;
+
     const timer = setTimeout(() => {
-      if (!editorRef.current) {
+      if (active && !editorRef.current) {
         setEditorError(true);
       }
     }, 5000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      // Clear reference when unmounting or retrying
+      editorRef.current = null;
+    };
   }, [mounted, retryKey]);
 
   const handleFontSizeChange = (newSize: number) => {
@@ -111,6 +116,14 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     setEditorError(false);
     editorRef.current = editor;
 
+    if (editor && typeof editor.onDidDispose === "function") {
+      editor.onDidDispose(() => {
+        if (editorRef.current === editor) {
+          editorRef.current = null;
+        }
+      });
+    }
+
     // Cmd/Ctrl + S -> Save & Format
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       onFormatCode?.();
@@ -137,7 +150,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   }
 
   return (
-    <div className="flex h-full flex-col bg-background">
+    <div className="flex h-full flex-col bg-background w-full min-w-0 overflow-hidden">
       {/* Editor Main */}
       <div className="flex-1 relative overflow-hidden">
         {editorError ? (
@@ -156,6 +169,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
               size="sm"
               className="gap-2 text-xs"
               onClick={() => {
+                editorRef.current = null;
                 setEditorError(false);
                 setEditorLoaded(false);
                 setRetryKey((prev) => prev + 1);
@@ -283,7 +297,8 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
               onClick={onFormatCode}
               title="Auto-format code (Ctrl/Cmd+Shift+F)"
             >
-              <Wand2 className="h-3 w-3 text-primary" /> Format
+              <Wand2 className="h-3 w-3 text-primary" />
+              <span className="hidden sm:inline">Format</span>
             </Button>
           )}
 
@@ -304,7 +319,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
             ) : (
               <Moon className="h-3 w-3 text-sky-400" />
             )}
-            <span className="capitalize">
+            <span className="capitalize hidden sm:inline">
               {editorThemeMode === "auto"
                 ? "Sync"
                 : effectiveTheme === "vs-dark"

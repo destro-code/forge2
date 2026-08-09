@@ -28,8 +28,8 @@ export function PlaygroundTabs({ onNewFileClick }: PlaygroundTabsProps) {
   };
 
   return (
-    <div className="flex items-center overflow-x-auto border-b border-border/60 bg-muted/20 px-1 text-xs">
-      <div className="flex items-center gap-1">
+    <div className="flex items-center overflow-x-auto border-b border-border/60 bg-muted/20 px-1 text-xs w-full min-w-0 scrollbar-none flex-nowrap">
+      <div className="flex items-center gap-1 flex-nowrap shrink-0">
         {openFiles.map((file) => {
           const isActive = file.id === activeFileId;
 

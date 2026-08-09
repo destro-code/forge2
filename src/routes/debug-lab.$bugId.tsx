@@ -15,9 +15,7 @@ import { CodeBlock } from "@/components/shared/code-block";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { InteractiveBugSimulator } from "@/components/debug-lab/interactive-bug-simulator";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
-const MonacoEditor = lazy(() =>
-  import("@monaco-editor/react").then((mod) => ({ default: mod.Editor })),
-);
+import { MonacoEditor } from "@/components/shared/monaco-editor";
 import { useBug } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import {

@@ -408,6 +408,9 @@ export interface InterviewSessionResult {
   timeSpentSeconds: number;
   notes?: string;
   completedAt: string;
+  topicTitle?: string;
+  score?: number;
+  feedbackGrade?: string;
 }
 
 export interface Resource {

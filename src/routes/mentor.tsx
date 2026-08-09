@@ -94,6 +94,12 @@ const MODE_DESCRIPTIONS: Record<
     icon: <Bug className="h-4 w-4 text-rose-500" />,
     badgeColor: "bg-rose-500/10 text-rose-500 border-rose-500/30",
   },
+  "interview-eval": {
+    title: "Interview Evaluation",
+    desc: "Mock technical interview evaluation, rubric scoring, and structured feedback on code answers.",
+    icon: <GraduationCap className="h-4 w-4 text-indigo-500" />,
+    badgeColor: "bg-indigo-500/10 text-indigo-500 border-indigo-500/30",
+  },
 };
 
 const MODE_PROMPTS: Record<MentorMode, string[]> = {
@@ -127,6 +133,12 @@ const MODE_PROMPTS: Record<MentorMode, string[]> = {
     "Fix memory leak in WebSocket listener missing cleanup",
     "Analyze stack trace: Uncaught TypeError: Cannot read properties of undefined",
   ],
+  "interview-eval": [
+    "Evaluate my response to designing an accessible autocomplete search bar",
+    "Score my explanation of virtual DOM diffing algorithm",
+    "Review my answer on handling async state with React Query vs Context",
+    "Conduct a mock system design review for a live collaboration board",
+  ],
 };
 
 const CODE_TEMPLATES: Record<MentorMode, string> = {
@@ -158,6 +170,7 @@ function Counter() {
 
   return <div>Count: {count}</div>;
 }`,
+  "interview-eval": "",
 };
 
 export function Mentor() {

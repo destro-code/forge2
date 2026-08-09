@@ -88,15 +88,16 @@ export function useProgress() {
             };
           } else {
             const topic = topicsData.find((t) => t.id === topicId);
-            const category = topic
-              ? topic.categoryId === "core-web"
+            const topicObj = topic as Record<string, unknown> | undefined;
+            const categoryId = (topicObj?.categoryId || topicObj?.moduleId) as string | undefined;
+            const category =
+              categoryId === "core-web"
                 ? "HTML/CSS"
-                : topic.categoryId === "language-mastery"
+                : categoryId === "language-mastery" || categoryId === "js-foundation"
                   ? "JavaScript"
-                  : topic.categoryId === "framework-mastery"
+                  : categoryId === "framework-mastery" || categoryId === "react-deep-dive"
                     ? "React"
-                    : "Architecture"
-              : "General";
+                    : "Architecture";
 
             const confidence = Math.min(100, Math.max(0, Math.round(scorePercent)));
             updatedTopicRecords[topicId] = {

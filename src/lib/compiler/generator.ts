@@ -27,9 +27,9 @@ export function generateOutput(
 <head>
   <meta charset="UTF-8" />
   <title>${title}</title>
-  <script src="/vendor/react.development.js" crossorigin="anonymous"></script>
-  <script src="/vendor/react-dom.development.js" crossorigin="anonymous"></script>
-  <script src="/vendor/babel.min.js" crossorigin="anonymous"></script>
+  <script src="/vendor/react.development.js"></script>
+  <script src="/vendor/react-dom.development.js"></script>
+  <script src="/vendor/babel.min.js"></script>
   <style>
     ${cssBundle}
     body {
@@ -194,7 +194,7 @@ export function generateOutput(
         styleEl.id = 'playground-styles';
         document.head.appendChild(styleEl);
       }
-      styleEl.textContent = FILES.filter(function(f) { return f.name.endsWith('.css'); }).map(function(f) { return f.code; }).join('\n\n');
+      styleEl.textContent = FILES.filter(function(f) { return f.name.endsWith('.css'); }).map(function(f) { return f.code; }).join('\\n\\n');
 
       const compiledModules = {};
       const moduleCache = {};
@@ -212,7 +212,7 @@ export function generateOutput(
             presets: [
               ['env', { modules: 'commonjs' }],
               ['react', { runtime: 'classic' }],
-              ['typescript', { isTSX: true, allExtensions: true }]
+              ['typescript', { ignoreExtensions: false }]
             ],
             filename: file.name
           });

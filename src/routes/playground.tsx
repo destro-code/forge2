@@ -359,7 +359,8 @@ export function Playground() {
               className="gap-1.5 text-xs border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
-              Explain / AI Code Review
+              <span className="hidden sm:inline">Explain / AI Code Review</span>
+              <span className="inline sm:hidden">AI Review</span>
             </Button>
 
             <Button
@@ -369,7 +370,8 @@ export function Playground() {
               className="gap-1.5 text-xs"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Compare Solution
+              <span className="hidden sm:inline">Compare Solution</span>
+              <span className="inline sm:hidden">Solution</span>
             </Button>
 
             <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 text-xs">
@@ -379,14 +381,15 @@ export function Playground() {
 
             <Button size="sm" onClick={() => handleRun()} className="gap-1.5 shadow-glow text-xs">
               <Play className="h-3.5 w-3.5" />
-              Run Code
+              <span className="hidden sm:inline">Run Code</span>
+              <span className="inline sm:hidden">Run</span>
             </Button>
           </div>
         }
       />
 
       {/* Main Playground Editor & Panel Window */}
-      <div className="rounded-xl border border-border/60 bg-card overflow-hidden shadow-elegant flex flex-col min-h-[600px] lg:h-[750px]">
+      <div className="w-full max-w-full min-w-0 rounded-xl border border-border/60 bg-card overflow-hidden shadow-elegant flex flex-col min-h-[600px] lg:h-[750px]">
         {/* Top Control Bar */}
         <div className="flex flex-wrap items-center justify-between border-b border-border/60 bg-muted/30 px-3 py-2 text-xs gap-2">
           <div className="flex items-center gap-2">
@@ -437,7 +440,7 @@ export function Playground() {
         </div>
 
         {/* Mobile Single-Pane Tab Bar */}
-        <div className="flex lg:hidden items-center border-b border-border/60 bg-muted/40 p-1 text-xs gap-1 overflow-x-auto">
+        <div className="flex lg:hidden items-center border-b border-border/60 bg-muted/40 p-1 text-xs gap-1 overflow-x-auto w-full min-w-0 flex-nowrap scrollbar-none">
           <Button
             variant={mobileTab === "editor" ? "secondary" : "ghost"}
             size="sm"
@@ -481,9 +484,9 @@ export function Playground() {
         </div>
 
         {/* Mobile Single-Pane View (< lg) */}
-        <div className="flex-1 flex flex-col overflow-hidden lg:hidden min-h-[500px]">
+        <div className="flex-1 flex flex-col overflow-hidden lg:hidden min-h-[500px] w-full max-w-full min-w-0">
           {mobileTab === "files" && (
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto w-full min-w-0">
               <PlaygroundFileTree
                 onAddFile={handleAddFile}
                 onDeleteFile={handleDeleteFile}
@@ -495,13 +498,13 @@ export function Playground() {
           )}
 
           {mobileTab === "editor" && (
-            <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex-1 flex flex-col min-h-0 w-full min-w-0 overflow-hidden">
               <PlaygroundTabs
                 onNewFileClick={() =>
                   handleAddFile(`Component-${usePlaygroundStore.getState().files.length + 1}.tsx`)
                 }
               />
-              <div className="flex-1 min-h-0">
+              <div className="flex-1 min-h-0 w-full min-w-0 overflow-hidden">
                 {activeFile ? (
                   <PlaygroundEditor
                     onCodeChange={handleCodeChange}
@@ -518,19 +521,19 @@ export function Playground() {
           )}
 
           {mobileTab === "preview" && (
-            <div className="flex-1 flex flex-col bg-background min-h-0">
+            <div className="flex-1 flex flex-col bg-background min-h-0 w-full min-w-0 overflow-hidden">
               <PlaygroundPreview onLogCaptured={handleLogCaptured} />
             </div>
           )}
 
           {mobileTab === "console" && (
-            <div className="flex-1 flex flex-col bg-background min-h-0">
+            <div className="flex-1 flex flex-col bg-background min-h-0 w-full min-w-0 overflow-hidden">
               <PlaygroundConsole />
             </div>
           )}
 
           {mobileTab === "hints" && (
-            <div className="flex-1 flex flex-col bg-background p-4 space-y-4 text-xs overflow-y-auto min-h-0">
+            <div className="flex-1 flex flex-col bg-background p-4 space-y-4 text-xs overflow-y-auto min-h-0 w-full min-w-0">
               <div className="flex items-center gap-2 text-amber-400 font-semibold text-sm">
                 <Lightbulb className="h-4 w-4" /> Lab Hints & Key Concepts
               </div>
@@ -561,7 +564,7 @@ export function Playground() {
         </div>
 
         {/* Desktop Multi-Column IDE Grid (>= lg) */}
-        <div className="hidden lg:flex flex-1 flex-row overflow-hidden">
+        <div className="hidden lg:flex flex-1 flex-row overflow-hidden w-full min-w-0">
           {/* Sidebar File Explorer */}
           {showFileTree && (
             <div className="w-56 shrink-0 border-r border-border/60">
@@ -585,7 +588,7 @@ export function Playground() {
             />
 
             {/* Monaco Editor */}
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 w-full min-w-0 overflow-hidden">
               {activeFile ? (
                 <PlaygroundEditor
                   onCodeChange={handleCodeChange}
