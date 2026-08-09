@@ -261,7 +261,6 @@ function Lessons() {
 
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <select
-              suppressHydrationWarning
               value={selectedModule}
               onChange={(e) => updateFilter({ moduleId: e.target.value }, false)}
               className="h-10 w-full sm:w-auto rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
@@ -275,7 +274,6 @@ function Lessons() {
             </select>
 
             <select
-              suppressHydrationWarning
               value={selectedTopic}
               onChange={(e) => updateFilter({ topicId: e.target.value }, false)}
               className="h-10 w-full sm:w-auto rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
@@ -289,7 +287,6 @@ function Lessons() {
             </select>
 
             <select
-              suppressHydrationWarning
               value={selectedDifficulty}
               onChange={(e) => updateFilter({ difficulty: e.target.value }, false)}
               className="h-10 w-full sm:w-auto rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
@@ -301,7 +298,6 @@ function Lessons() {
             </select>
 
             <select
-              suppressHydrationWarning
               value={selectedStatus}
               onChange={(e) => updateFilter({ status: e.target.value }, false)}
               className="h-10 w-full sm:w-auto rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"

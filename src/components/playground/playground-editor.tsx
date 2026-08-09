@@ -261,7 +261,6 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
           <div className="flex items-center gap-0.5 rounded border border-border/50 bg-background/50 px-1">
             <Type className="h-3 w-3 text-muted-foreground" />
             <select
-              suppressHydrationWarning
               value={fontSize}
               onChange={(e) => handleFontSizeChange(parseInt(e.target.value, 10))}
               className="bg-transparent text-[10px] text-foreground focus:outline-none cursor-pointer"

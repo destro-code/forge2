@@ -9,7 +9,7 @@ interface PlaygroundPreviewProps {
 }
 
 export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
-  const { compilerOutput, compilerError, isBuilding } = usePlaygroundStore();
+  const { compilerOutput, isBuilding } = usePlaygroundStore();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [key, setKey] = useState(0);
 
@@ -41,27 +41,20 @@ export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
       </div>
 
       <div className="flex-1 relative p-2 bg-card/20">
-        {compilerError ? (
-          <div className="h-full w-full rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive font-mono flex flex-col gap-2 overflow-auto">
-            <h3 className="font-bold text-sm">Compilation Error</h3>
-            <pre className="text-xs whitespace-pre-wrap">{compilerError}</pre>
-          </div>
-        ) : (
-          <ErrorBoundary
-            title="Playground Live Preview Crash"
-            description="The live execution surface encountered an error during rendering."
-            onReset={() => setKey((k) => k + 1)}
-          >
-            <iframe
-              key={key}
-              ref={iframeRef}
-              srcDoc={compilerOutput}
-              title="Forge Playground Live Preview"
-              sandbox="allow-scripts allow-modals"
-              className="h-full w-full rounded-lg border border-border/60 bg-background shadow-inner"
-            />
-          </ErrorBoundary>
-        )}
+        <ErrorBoundary
+          title="Playground Live Preview Crash"
+          description="The live execution surface encountered an error during rendering."
+          onReset={() => setKey((k) => k + 1)}
+        >
+          <iframe
+            key={key}
+            ref={iframeRef}
+            srcDoc={compilerOutput}
+            title="Forge Playground Live Preview"
+            sandbox="allow-scripts allow-modals"
+            className="h-full w-full rounded-lg border border-border/60 bg-background shadow-inner"
+          />
+        </ErrorBoundary>
       </div>
     </div>
   );

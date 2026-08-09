@@ -8,7 +8,6 @@ export interface PlaygroundStore {
   consoleLogs: PlaygroundConsoleLog[];
   isBuilding: boolean;
   compilerOutput: string;
-  compilerError: string | null;
 
   updateFileContent: (fileId: string, content: string) => void;
   setActiveFileId: (fileId: string) => void;
@@ -16,7 +15,7 @@ export interface PlaygroundStore {
   closeTab: (fileId: string) => void;
   addConsoleLog: (log: Omit<PlaygroundConsoleLog, "id" | "timestamp">) => void;
   clearLogs: () => void;
-  setCompilerOutput: (output: string, error?: string | null, isBuilding?: boolean) => void;
+  setCompilerOutput: (output: string, isBuilding?: boolean) => void;
   setFiles: (files: PlaygroundFile[]) => void;
   setOpenTabIds: (ids: string[]) => void;
   setIsBuilding: (isBuilding: boolean) => void;
@@ -32,7 +31,6 @@ export const usePlaygroundStore = create<PlaygroundStore>((set) => ({
   consoleLogs: [],
   isBuilding: false,
   compilerOutput: "",
-  compilerError: null,
 
   updateFileContent: (fileId, content) =>
     set((state) => ({
@@ -69,10 +67,9 @@ export const usePlaygroundStore = create<PlaygroundStore>((set) => ({
       ],
     })),
   clearLogs: () => set({ consoleLogs: [] }),
-  setCompilerOutput: (output, error = null, isBuilding) =>
+  setCompilerOutput: (output, isBuilding) =>
     set((state) => ({
       compilerOutput: output,
-      compilerError: error,
       isBuilding: isBuilding !== undefined ? isBuilding : state.isBuilding,
     })),
   setFiles: (files) => set({ files }),

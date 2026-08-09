@@ -702,7 +702,6 @@ export function WhiteboardPage() {
                       className="h-7 text-xs w-40"
                     />
                     <select
-                      suppressHydrationWarning
                       value={newNodeType}
                       onChange={(e) => setNewNodeType(e.target.value as ArchNode["type"])}
                       className="h-7 text-xs rounded-md border bg-background px-2"
