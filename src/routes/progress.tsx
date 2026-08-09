@@ -446,6 +446,7 @@ export function MasteryEnginePage() {
                     Category
                   </label>
                   <select
+                    suppressHydrationWarning
                     value={newTopicCategory}
                     onChange={(e) => setNewTopicCategory(e.target.value)}
                     className="w-full h-9 rounded-md border bg-background px-3 text-xs"
@@ -479,6 +480,7 @@ export function MasteryEnginePage() {
                     Initial Mastery Stage
                   </label>
                   <select
+                    suppressHydrationWarning
                     value={newTopicMastery}
                     onChange={(e) => setNewTopicMastery(e.target.value as MasteryState)}
                     className="w-full h-9 rounded-md border bg-background px-3 text-xs"
@@ -681,6 +683,7 @@ export function MasteryEnginePage() {
                           {/* Action Controls */}
                           <div className="flex items-center gap-2 md:w-1/4 justify-end">
                             <select
+                              suppressHydrationWarning
                               value={record.mastery}
                               onChange={(e) =>
                                 handleUpdateMastery(record.topicId, e.target.value as MasteryState)

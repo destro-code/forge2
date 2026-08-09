@@ -11,11 +11,11 @@ export default defineConfig({
     optimizeDeps: {
       include: [
         "monaco-editor",
-        "monaco-editor/editor/editor.worker.js",
-        "monaco-editor/language/json/json.worker.js",
-        "monaco-editor/language/css/css.worker.js",
-        "monaco-editor/language/html/html.worker.js",
-        "monaco-editor/language/typescript/ts.worker.js",
+        "monaco-editor/editor/editor.worker",
+        "monaco-editor/language/json/json.worker",
+        "monaco-editor/language/css/css.worker",
+        "monaco-editor/language/html/html.worker",
+        "monaco-editor/language/typescript/ts.worker",
       ],
     },
   },

@@ -74,6 +74,7 @@ export function PlaygroundFileTree(props: PlaygroundFileTreeProps) {
           </span>
         </div>
         <select
+          suppressHydrationWarning
           value={currentPresetId}
           onChange={(e) => onSelectPreset(e.target.value)}
           className="w-full rounded-md border border-border/60 bg-background/80 px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
