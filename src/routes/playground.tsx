@@ -103,6 +103,7 @@ export function Playground() {
     // Build initial compilerOutput for initial mount so iframe has srcDoc
     const initialHtml = buildPlaygroundHtml(loadedFiles, {
       title: "Forge Playground Live Preview",
+      baseUrl: typeof window !== "undefined" ? window.location.origin : "",
     });
     setCompilerOutput(initialHtml, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -155,7 +156,10 @@ export function Playground() {
     setExecutionTime(null);
 
     // Full iframe reload for preset change
-    const html = buildPlaygroundHtml(nextFiles, { title: "Forge Playground Live Preview" });
+    const html = buildPlaygroundHtml(nextFiles, {
+      title: "Forge Playground Live Preview",
+      baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+    });
     setCompilerOutput(html, false);
 
     toast.success(`Loaded preset: ${nextPreset.title}`);
@@ -272,6 +276,7 @@ export function Playground() {
         try {
           const html = buildPlaygroundHtml(currentFiles, {
             title: "Forge Playground Live Preview",
+            baseUrl: typeof window !== "undefined" ? window.location.origin : "",
           });
           setCompilerOutput(html, false);
 
@@ -295,12 +300,26 @@ export function Playground() {
       const iframes = document.querySelectorAll<HTMLIFrameElement>(
         "iframe[title='Forge Playground Live Preview']",
       );
-      iframes.forEach((iframe) => {
-        iframe.contentWindow?.postMessage(
-          { type: "PLAYGROUND_UPDATE_FILES", files: currentFiles },
-          "*",
-        );
-      });
+      if (iframes.length === 0) {
+        // No mounted iframe in DOM (e.g. mobile Code tab active).
+        // Rebuild compilerOutput so switching to Preview tab displays updated code.
+        try {
+          const html = buildPlaygroundHtml(currentFiles, {
+            title: "Forge Playground Live Preview",
+            baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+          });
+          setCompilerOutput(html, false);
+        } catch (e) {
+          /* ignore */
+        }
+      } else {
+        iframes.forEach((iframe) => {
+          iframe.contentWindow?.postMessage(
+            { type: "PLAYGROUND_UPDATE_FILES", files: currentFiles },
+            "*",
+          );
+        });
+      }
       setIsBuilding(false);
     }
   };
@@ -320,6 +339,7 @@ export function Playground() {
     // Full iframe reload for reset
     const html = buildPlaygroundHtml(activePreset.files, {
       title: "Forge Playground Live Preview",
+      baseUrl: typeof window !== "undefined" ? window.location.origin : "",
     });
     setCompilerOutput(html, false);
 
@@ -333,7 +353,10 @@ export function Playground() {
     setOpenTabIds(solutionFiles.map((f) => f.id));
 
     // Full iframe reload for applied solution
-    const html = buildPlaygroundHtml(solutionFiles, { title: "Forge Playground Live Preview" });
+    const html = buildPlaygroundHtml(solutionFiles, {
+      title: "Forge Playground Live Preview",
+      baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+    });
     setCompilerOutput(html, false);
 
     toast.success("Applied reference solution to playground!");

@@ -4,6 +4,7 @@ export interface CompilerOptions {
   isInline?: boolean;
   title?: string;
   theme?: "dark" | "light";
+  baseUrl?: string;
 }
 
 export type CompilerInput = PlaygroundFile[];

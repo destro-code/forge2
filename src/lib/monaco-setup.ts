@@ -35,26 +35,31 @@ export function initMonaco(): Promise<typeof import("monaco-editor")> {
 
     self.MonacoEnvironment = {
       getWorker(_: unknown, label: string) {
-        if (label === "json") {
-          return new JsonWorker();
+        try {
+          if (label === "json") {
+            return new JsonWorker();
+          }
+          if (label === "css" || label === "scss" || label === "less") {
+            return new CssWorker();
+          }
+          if (label === "html" || label === "handlebars" || label === "razor") {
+            return new HtmlWorker();
+          }
+          if (
+            label === "typescript" ||
+            label === "javascript" ||
+            label === "typescriptreact" ||
+            label === "javascriptreact" ||
+            label === "tsx" ||
+            label === "jsx"
+          ) {
+            return new TsWorker();
+          }
+          return new EditorWorker();
+        } catch (err) {
+          console.warn("Monaco worker creation failed, falling back to main thread:", err);
+          return undefined as any;
         }
-        if (label === "css" || label === "scss" || label === "less") {
-          return new CssWorker();
-        }
-        if (label === "html" || label === "handlebars" || label === "razor") {
-          return new HtmlWorker();
-        }
-        if (
-          label === "typescript" ||
-          label === "javascript" ||
-          label === "typescriptreact" ||
-          label === "javascriptreact" ||
-          label === "tsx" ||
-          label === "jsx"
-        ) {
-          return new TsWorker();
-        }
-        return new EditorWorker();
       },
     };
 

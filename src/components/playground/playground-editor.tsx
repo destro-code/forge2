@@ -62,20 +62,21 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   useEffect(() => {
     if (!containerRef.current) return;
     const observer = new ResizeObserver(() => {
-      if (editorRef.current) {
+      if (editorRef.current && typeof editorRef.current.layout === "function") {
         editorRef.current.layout();
       }
     });
     observer.observe(containerRef.current);
+    if (editorRef.current && typeof editorRef.current.layout === "function") {
+      editorRef.current.layout();
+    }
     return () => observer.disconnect();
-  }, []);
+  }, [editorLoaded]);
 
-  // Set 5-second loading timeout to catch Monaco mount failures
+  // Set 12-second loading timeout to catch Monaco mount failures on slow mobile networks
   useEffect(() => {
     if (!mounted) return;
 
-    // Clear stale editorRef for the new mount attempt cycle
-    editorRef.current = null;
     setEditorError(false);
     setEditorLoaded(false);
 
@@ -85,13 +86,11 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
       if (active && !editorRef.current) {
         setEditorError(true);
       }
-    }, 5000);
+    }, 12000);
 
     return () => {
       active = false;
       clearTimeout(timer);
-      // Clear reference when unmounting or retrying
-      editorRef.current = null;
     };
   }, [mounted, retryKey]);
 
@@ -141,12 +140,16 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     setEditorError(false);
     editorRef.current = editor;
 
-    // Trigger explicit layout call after DOM frame paint
-    requestAnimationFrame(() => {
+    const triggerLayout = () => {
       if (editor && typeof editor.layout === "function") {
         editor.layout();
       }
-    });
+    };
+
+    triggerLayout();
+    requestAnimationFrame(triggerLayout);
+    setTimeout(triggerLayout, 100);
+    setTimeout(triggerLayout, 300);
 
     if (editor && typeof editor.onDidDispose === "function") {
       editor.onDidDispose(() => {

@@ -9,7 +9,11 @@ export function generateOutput(
   _validation: ValidationResult,
   options: CompilerOptions = {},
 ): GeneratedOutput {
-  const { isInline = false, title = "Forge Playground Preview" } = options;
+  const {
+    isInline = false,
+    title = "Forge Playground Preview",
+    baseUrl = typeof window !== "undefined" ? window.location.origin : "",
+  } = options;
 
   const cssBundle = parsed.cssModules.map((m) => m.code).join("\n\n");
 
@@ -22,10 +26,13 @@ export function generateOutput(
     })),
   ).replace(/<\/script>/g, "<\\/script>");
 
+  const baseTag = baseUrl ? `<base href="${baseUrl}/" />` : `<base href="/" />`;
+
   const html = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8" />
+  ${baseTag}
   <title>${title}</title>
   <script src="/vendor/react.development.js?v=18.3.1"></script>
   <script src="/vendor/react-dom.development.js?v=18.3.1"></script>
