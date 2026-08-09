@@ -101,7 +101,9 @@ export function Playground() {
     }
 
     // Build initial compilerOutput for initial mount so iframe has srcDoc
-    const initialHtml = buildPlaygroundHtml(loadedFiles, { title: "Forge Playground Live Preview" });
+    const initialHtml = buildPlaygroundHtml(loadedFiles, {
+      title: "Forge Playground Live Preview",
+    });
     setCompilerOutput(initialHtml, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -268,7 +270,9 @@ export function Playground() {
       // Full srcDoc rebuild for explicit Run Code click, initial mount, or missing compilerOutput
       setTimeout(() => {
         try {
-          const html = buildPlaygroundHtml(currentFiles, { title: "Forge Playground Live Preview" });
+          const html = buildPlaygroundHtml(currentFiles, {
+            title: "Forge Playground Live Preview",
+          });
           setCompilerOutput(html, false);
 
           const duration = Math.round(performance.now() - startTime);
@@ -314,7 +318,9 @@ export function Playground() {
     setExecutionTime(null);
 
     // Full iframe reload for reset
-    const html = buildPlaygroundHtml(activePreset.files, { title: "Forge Playground Live Preview" });
+    const html = buildPlaygroundHtml(activePreset.files, {
+      title: "Forge Playground Live Preview",
+    });
     setCompilerOutput(html, false);
 
     toast.info("Playground reset to default preset code.");
@@ -504,7 +510,7 @@ export function Playground() {
                   handleAddFile(`Component-${usePlaygroundStore.getState().files.length + 1}.tsx`)
                 }
               />
-              <div className="flex-1 min-h-0 w-full min-w-0 overflow-hidden">
+              <div className="flex-1 flex flex-col min-h-0 w-full min-w-0 overflow-hidden">
                 {activeFile ? (
                   <PlaygroundEditor
                     onCodeChange={handleCodeChange}

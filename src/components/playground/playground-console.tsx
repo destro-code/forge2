@@ -53,7 +53,7 @@ export function PlaygroundConsole() {
   };
 
   return (
-    <div className="flex h-full flex-col bg-background font-mono text-xs">
+    <div className="flex-1 flex flex-col h-full min-h-[400px] bg-background font-mono text-xs w-full min-w-0 overflow-hidden">
       {/* Console Bar Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 bg-card/60 px-3 py-2">
         <div className="flex items-center gap-2">

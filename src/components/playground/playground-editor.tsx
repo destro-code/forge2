@@ -3,7 +3,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Wand2, Sun, Moon, FileCode, Copy, Check, Undo2, Redo2, Type, Command, AlertTriangle, RotateCcw } from "lucide-react";
+import {
+  Wand2,
+  Sun,
+  Moon,
+  FileCode,
+  Copy,
+  Check,
+  Undo2,
+  Redo2,
+  Type,
+  Command,
+  AlertTriangle,
+  RotateCcw,
+} from "lucide-react";
 import type { PlaygroundFile } from "@/lib/types/playground";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
@@ -37,7 +50,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   const [copied, setCopied] = useState(false);
 
   // Monaco editor instance ref for command bindings (Undo / Redo)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const editorRef = useRef<any>(null);
 
   useEffect(() => {
@@ -110,7 +123,6 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEditorMount = (editor: any, monaco: any) => {
     setEditorLoaded(true);
     setEditorError(false);
@@ -150,18 +162,21 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   }
 
   return (
-    <div className="flex h-full flex-col bg-background w-full min-w-0 overflow-hidden">
+    <div className="flex-1 flex flex-col h-full min-h-[400px] bg-background w-full min-w-0 overflow-hidden">
       {/* Editor Main */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative min-h-0 w-full overflow-hidden">
         {editorError ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-card/80 p-6 text-center border border-border/50 rounded-lg">
             <div className="rounded-full bg-destructive/10 p-3 text-destructive">
               <AlertTriangle className="h-6 w-6" />
             </div>
             <div className="space-y-1 max-w-sm">
-              <h3 className="font-semibold text-sm text-foreground">Editor failed to load — reload the page</h3>
+              <h3 className="font-semibold text-sm text-foreground">
+                Editor failed to load — reload the page
+              </h3>
               <p className="text-xs text-muted-foreground">
-                The code editor could not initialize. This may be due to restricted iframe environment or network timeout.
+                The code editor could not initialize. This may be due to restricted iframe
+                environment or network timeout.
               </p>
             </div>
             <Button

@@ -24,8 +24,8 @@ export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
   }, [onLogCaptured]);
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="flex items-center justify-between border-b border-border/60 bg-card/60 px-3 py-2 text-xs">
+    <div className="flex-1 flex flex-col h-full min-h-[400px] bg-background w-full min-w-0 overflow-hidden">
+      <div className="flex items-center justify-between border-b border-border/60 bg-card/60 px-3 py-2 text-xs shrink-0">
         <span className="flex items-center gap-1.5 font-medium text-foreground">
           <Monitor className="h-4 w-4 text-primary" /> Live Render Preview
         </span>
@@ -40,7 +40,7 @@ export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
         </Button>
       </div>
 
-      <div className="flex-1 relative p-2 bg-card/20">
+      <div className="flex-1 relative p-2 bg-card/20 min-h-0 w-full">
         <ErrorBoundary
           title="Playground Live Preview Crash"
           description="The live execution surface encountered an error during rendering."
