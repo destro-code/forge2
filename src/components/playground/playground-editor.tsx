@@ -52,9 +52,22 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   // Monaco editor instance ref for command bindings (Undo / Redo)
 
   const editorRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  // ResizeObserver for container element to trigger Monaco layout on visibility / tab / viewport change
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver(() => {
+      if (editorRef.current) {
+        editorRef.current.layout();
+      }
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
   }, []);
 
   // Set 5-second loading timeout to catch Monaco mount failures
@@ -128,6 +141,13 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     setEditorError(false);
     editorRef.current = editor;
 
+    // Trigger explicit layout call after DOM frame paint
+    requestAnimationFrame(() => {
+      if (editor && typeof editor.layout === "function") {
+        editor.layout();
+      }
+    });
+
     if (editor && typeof editor.onDidDispose === "function") {
       editor.onDidDispose(() => {
         if (editorRef.current === editor) {
@@ -164,7 +184,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   return (
     <div className="flex-1 flex flex-col h-full min-h-[400px] bg-background w-full min-w-0 overflow-hidden">
       {/* Editor Main */}
-      <div className="flex-1 relative min-h-0 w-full overflow-hidden">
+      <div ref={containerRef} className="flex-1 relative min-h-0 w-full overflow-hidden">
         {editorError ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-card/80 p-6 text-center border border-border/50 rounded-lg">
             <div className="rounded-full bg-destructive/10 p-3 text-destructive">

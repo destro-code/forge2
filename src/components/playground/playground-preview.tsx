@@ -40,7 +40,7 @@ export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
         </Button>
       </div>
 
-      <div className="flex-1 relative p-2 bg-card/20 min-h-0 w-full">
+      <div className="flex-1 relative p-2 bg-card/20 min-h-[350px] w-full flex flex-col">
         <ErrorBoundary
           title="Playground Live Preview Crash"
           description="The live execution surface encountered an error during rendering."
@@ -52,7 +52,8 @@ export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
             srcDoc={compilerOutput}
             title="Forge Playground Live Preview"
             sandbox="allow-scripts allow-modals"
-            className="h-full w-full rounded-lg border border-border/60 bg-background shadow-inner"
+            className="flex-1 h-full w-full min-h-[350px] rounded-lg border border-border/60 bg-background shadow-inner"
+            style={{ width: "100%", height: "100%" }}
           />
         </ErrorBoundary>
       </div>

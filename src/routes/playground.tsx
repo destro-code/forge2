@@ -504,7 +504,7 @@ export function Playground() {
           )}
 
           {mobileTab === "editor" && (
-            <div className="flex-1 flex flex-col min-h-0 w-full min-w-0 overflow-hidden">
+            <div className="flex-1 flex flex-col min-h-[450px] w-full min-w-0 overflow-hidden">
               <PlaygroundTabs
                 onNewFileClick={() =>
                   handleAddFile(`Component-${usePlaygroundStore.getState().files.length + 1}.tsx`)
@@ -527,7 +527,7 @@ export function Playground() {
           )}
 
           {mobileTab === "preview" && (
-            <div className="flex-1 flex flex-col bg-background min-h-0 w-full min-w-0 overflow-hidden">
+            <div className="flex-1 flex flex-col bg-background min-h-[450px] w-full min-w-0 overflow-hidden">
               <PlaygroundPreview onLogCaptured={handleLogCaptured} />
             </div>
           )}
