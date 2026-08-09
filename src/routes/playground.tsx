@@ -101,8 +101,8 @@ export function Playground() {
     }
 
     // Build initial compilerOutput for initial mount so iframe has srcDoc
-    const initialHtml = buildPlaygroundHtml(loadedFiles, { title: "Forge Playground Live Preview" });
-    setCompilerOutput(initialHtml, false);
+    const result = buildPlaygroundHtml(loadedFiles, { title: "Forge Playground Live Preview" });
+    setCompilerOutput(result.code || "", result.error, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -153,8 +153,8 @@ export function Playground() {
     setExecutionTime(null);
 
     // Full iframe reload for preset change
-    const html = buildPlaygroundHtml(nextFiles, { title: "Forge Playground Live Preview" });
-    setCompilerOutput(html, false);
+    const result = buildPlaygroundHtml(nextFiles, { title: "Forge Playground Live Preview" });
+    setCompilerOutput(result.code || "", result.error, false);
 
     toast.success(`Loaded preset: ${nextPreset.title}`);
   };
@@ -268,15 +268,18 @@ export function Playground() {
       // Full srcDoc rebuild for explicit Run Code click, initial mount, or missing compilerOutput
       setTimeout(() => {
         try {
-          const html = buildPlaygroundHtml(currentFiles, { title: "Forge Playground Live Preview" });
-          setCompilerOutput(html, false);
+          const result = buildPlaygroundHtml(currentFiles, { title: "Forge Playground Live Preview" });
+          setCompilerOutput(result.code || "", result.error, false);
 
           const duration = Math.round(performance.now() - startTime);
           if (!isAuto) {
             setExecutionTime(duration);
-            setExecutionStatus("success");
-            toast.success(`Compiled & executed in ${duration}ms`);
-            completePlaygroundExercise(activePreset.id);
+            setExecutionStatus(result.error ? "error" : "success");
+            if (result.error) toast.error("Compilation failed");
+            else {
+              toast.success(`Compiled & executed in ${duration}ms`);
+              completePlaygroundExercise(activePreset.id);
+            }
           }
         } catch (err) {
           setIsBuilding(false);
@@ -287,17 +290,31 @@ export function Playground() {
         }
       }, 10);
     } else {
-      // Auto-run on debounced keystroke: postMessage to mounted iframe without reloading iframe document
-      const iframes = document.querySelectorAll<HTMLIFrameElement>(
-        "iframe[title='Forge Playground Live Preview']",
-      );
-      iframes.forEach((iframe) => {
-        iframe.contentWindow?.postMessage(
-          { type: "PLAYGROUND_UPDATE_FILES", files: currentFiles },
-          "*",
-        );
-      });
-      setIsBuilding(false);
+      // Auto-run on debounced keystroke
+      setTimeout(() => {
+        try {
+          const result = buildPlaygroundHtml(currentFiles, { title: "Forge Playground Live Preview" });
+          
+          if (result.error) {
+            // Display compilation error without postMessage
+            setCompilerOutput(result.code || "", result.error, false);
+          } else {
+            // Code is valid, update output state and postMessage to running iframe
+            setCompilerOutput(result.code || "", null, false);
+            const iframes = document.querySelectorAll<HTMLIFrameElement>(
+              "iframe[title='Forge Playground Live Preview']",
+            );
+            iframes.forEach((iframe) => {
+              iframe.contentWindow?.postMessage(
+                { type: "PLAYGROUND_UPDATE_FILES", files: currentFiles },
+                "*",
+              );
+            });
+          }
+        } catch (err) {
+           setIsBuilding(false);
+        }
+      }, 10);
     }
   };
 
@@ -314,8 +331,8 @@ export function Playground() {
     setExecutionTime(null);
 
     // Full iframe reload for reset
-    const html = buildPlaygroundHtml(activePreset.files, { title: "Forge Playground Live Preview" });
-    setCompilerOutput(html, false);
+    const result = buildPlaygroundHtml(activePreset.files, { title: "Forge Playground Live Preview" });
+    setCompilerOutput(result.code || "", result.error, false);
 
     toast.info("Playground reset to default preset code.");
   };
@@ -327,8 +344,8 @@ export function Playground() {
     setOpenTabIds(solutionFiles.map((f) => f.id));
 
     // Full iframe reload for applied solution
-    const html = buildPlaygroundHtml(solutionFiles, { title: "Forge Playground Live Preview" });
-    setCompilerOutput(html, false);
+    const result = buildPlaygroundHtml(solutionFiles, { title: "Forge Playground Live Preview" });
+    setCompilerOutput(result.code || "", result.error, false);
 
     toast.success("Applied reference solution to playground!");
   };

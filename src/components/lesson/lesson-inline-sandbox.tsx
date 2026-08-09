@@ -108,14 +108,27 @@ export function LessonInlineSandbox({
             description="The inline runner encountered an uncaught runtime exception."
             onReset={handleRun}
           >
-            <iframe
-              key={key}
-              ref={iframeRef}
-              srcDoc={buildPlaygroundHtml(sandboxFiles, { isInline: true, title })}
-              title="Lesson Inline Sandbox Preview"
-              sandbox="allow-scripts"
-              className="w-full h-40 rounded-lg border border-border/50 bg-[#090a0f]"
-            />
+            {(() => {
+              const result = buildPlaygroundHtml(sandboxFiles, { isInline: true, title });
+              if (result.error) {
+                return (
+                  <div className="w-full h-40 rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-destructive font-mono text-xs overflow-auto">
+                    <strong className="block mb-1">Compilation Error</strong>
+                    {result.error}
+                  </div>
+                );
+              }
+              return (
+                <iframe
+                  key={key}
+                  ref={iframeRef}
+                  srcDoc={result.code || ""}
+                  title="Lesson Inline Sandbox Preview"
+                  sandbox="allow-scripts"
+                  className="w-full h-40 rounded-lg border border-border/50 bg-[#090a0f]"
+                />
+              );
+            })()}
           </ErrorBoundary>
 
           {/* Console Log area */}
