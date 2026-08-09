@@ -27,9 +27,9 @@ export function generateOutput(
 <head>
   <meta charset="UTF-8" />
   <title>${title}</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js" crossorigin></script>
+  <script src="/vendor/react.development.js"></script>
+  <script src="/vendor/react-dom.development.js"></script>
+  <script src="/vendor/babel.min.js"></script>
   <style>
     ${cssBundle}
     body {
@@ -174,18 +174,34 @@ export function generateOutput(
   </script>
 
   <script>
-    const FILES = ${safeFilesJson};
+    let FILES = ${safeFilesJson};
 
-    function runCompilerAndExecute() {
+    function runCompilerAndExecute(newFiles) {
+      if (newFiles) {
+        FILES = newFiles;
+      }
       if (!window.Babel) {
-        setTimeout(runCompilerAndExecute, 30);
+        setTimeout(function() { runCompilerAndExecute(newFiles); }, 30);
         return;
       }
+
+      const overlay = document.getElementById('error-overlay');
+      if (overlay) overlay.style.display = 'none';
+
+      let styleEl = document.getElementById('playground-styles');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'playground-styles';
+        document.head.appendChild(styleEl);
+      }
+      styleEl.textContent = FILES.filter(function(f) { return f.name.endsWith('.css'); }).map(function(f) { return f.code; }).join('\n\n');
 
       const compiledModules = {};
       const moduleCache = {};
 
       for (const file of FILES) {
+        if (file.name.endsWith('.css')) continue;
+
         if (file.name.endsWith('.json')) {
           compiledModules[file.name] = { type: 'json', content: file.code };
           continue;
@@ -341,8 +357,14 @@ export function generateOutput(
             ? ComponentToRender 
             : React.createElement(ComponentToRender);
           
-          const root = ReactDOM.createRoot(container);
-          root.render(element);
+          if (!window.__reactRoot && ReactDOM.createRoot) {
+            window.__reactRoot = ReactDOM.createRoot(container);
+          }
+          if (window.__reactRoot) {
+            window.__reactRoot.render(element);
+          } else if (ReactDOM.render) {
+            ReactDOM.render(element, container);
+          }
         } else if (container && container.children.length === 0) {
           container.innerHTML = '<div style="padding: 16px; color: #a1a1aa; font-size: 13px;">Code compiled successfully.</div>';
         }
@@ -351,8 +373,14 @@ export function generateOutput(
       }
     }
 
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'PLAYGROUND_UPDATE_FILES' && Array.isArray(event.data.files)) {
+        runCompilerAndExecute(event.data.files);
+      }
+    });
+
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', runCompilerAndExecute);
+      document.addEventListener('DOMContentLoaded', function() { runCompilerAndExecute(); });
     } else {
       runCompilerAndExecute();
     }

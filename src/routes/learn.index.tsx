@@ -60,18 +60,18 @@ function LearnIndexRoute() {
       <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
         <GraduationCap className="h-4 w-4 text-primary" />
         <span className="font-semibold text-foreground">Curriculum Hierarchy:</span>
-        <span className="text-primary font-medium">Level 0: Roadmap</span>
+        <span className="text-primary font-medium">Roadmap</span>
         <span>→</span>
         <Link to="/learn/modules" className="hover:text-foreground hover:underline">
-          Level 1: Modules
+          Modules
         </Link>
         <span>→</span>
         <Link to="/learn/topics" search={{}} className="hover:text-foreground hover:underline">
-          Level 2: Topics
+          Topics
         </Link>
         <span>→</span>
         <Link to="/learn/lessons" search={{}} className="hover:text-foreground hover:underline">
-          Level 3: Lessons
+          Lessons
         </Link>
       </div>
 
@@ -181,7 +181,7 @@ function LearnIndexRoute() {
               Curriculum Pillars ({modules.length} Core Modules)
             </h2>
             <p className="text-xs text-muted-foreground">
-              Level 1: Core engineering domains. Click any pillar to explore its chapter topics.
+              Core engineering domains. Click any pillar to explore its chapter topics.
             </p>
           </div>
           <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs">

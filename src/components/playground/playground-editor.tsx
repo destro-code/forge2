@@ -3,14 +3,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Wand2, Sun, Moon, FileCode, Copy, Check, Undo2, Redo2, Type, Command } from "lucide-react";
+import { Wand2, Sun, Moon, FileCode, Copy, Check, Undo2, Redo2, Type, Command, AlertTriangle, RotateCcw } from "lucide-react";
 import type { PlaygroundFile } from "@/lib/types/playground";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
 
-const MonacoEditor = lazy(() =>
-  import("@monaco-editor/react").then((m) => ({ default: m.default })),
-);
+const MonacoEditor = lazy(async () => {
+  await import("@/lib/monaco-setup");
+  const m = await import("@monaco-editor/react");
+  return { default: m.default };
+});
 
 interface PlaygroundEditorProps {
   onCodeChange?: (code: string) => void;
@@ -23,6 +25,9 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   const activeFile = files.find((f) => f.id === activeFileId);
 
   const [mounted, setMounted] = useState(false);
+  const [editorLoaded, setEditorLoaded] = useState(false);
+  const [editorError, setEditorError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const { theme: appTheme } = useTheme();
 
   // Font size setting stored in state & persisted in localStorage
@@ -44,6 +49,21 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     setMounted(true);
   }, []);
 
+  // Set 5-second loading timeout to catch Monaco mount failures
+  useEffect(() => {
+    if (!mounted) return;
+    setEditorError(false);
+    setEditorLoaded(false);
+
+    const timer = setTimeout(() => {
+      if (!editorRef.current) {
+        setEditorError(true);
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [mounted, retryKey]);
+
   const handleFontSizeChange = (newSize: number) => {
     setFontSize(newSize);
     if (typeof window !== "undefined") {
@@ -63,8 +83,8 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     return "javascript";
   };
 
-  const lineCount = activeFile?.code || "".split("\n").length;
-  const charCount = activeFile?.code || "".length;
+  const lineCount = (activeFile?.code || "").split("\n").length;
+  const charCount = (activeFile?.code || "").length;
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(activeFile?.code || "");
@@ -87,6 +107,8 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEditorMount = (editor: any, monaco: any) => {
+    setEditorLoaded(true);
+    setEditorError(false);
     editorRef.current = editor;
 
     // Cmd/Ctrl + S -> Save & Format
@@ -118,7 +140,32 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     <div className="flex h-full flex-col bg-background">
       {/* Editor Main */}
       <div className="flex-1 relative overflow-hidden">
-        {mounted ? (
+        {editorError ? (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-card/80 p-6 text-center border border-border/50 rounded-lg">
+            <div className="rounded-full bg-destructive/10 p-3 text-destructive">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+            <div className="space-y-1 max-w-sm">
+              <h3 className="font-semibold text-sm text-foreground">Editor failed to load — reload the page</h3>
+              <p className="text-xs text-muted-foreground">
+                The code editor could not initialize. This may be due to restricted iframe environment or network timeout.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 text-xs"
+              onClick={() => {
+                setEditorError(false);
+                setEditorLoaded(false);
+                setRetryKey((prev) => prev + 1);
+              }}
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Reload Editor
+            </Button>
+          </div>
+        ) : mounted ? (
           <Suspense
             fallback={
               <div className="flex h-full w-full items-center justify-center bg-card p-6">
@@ -127,6 +174,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
             }
           >
             <MonacoEditor
+              key={retryKey}
               height="100%"
               language={getLanguage(activeFile?.name)}
               value={activeFile?.code || ""}

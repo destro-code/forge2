@@ -34,7 +34,7 @@ export const Route = createFileRoute("/learn/topics")({
       {
         name: "description",
         content:
-          "Level 2 Chapter Topics — concept chapters inside modules, prerequisite graphs, and interview frequencies.",
+          "Chapter Topics — concept chapters inside modules, prerequisite graphs, and interview frequencies.",
       },
       { property: "og:title", content: "Chapter Topics · Forge" },
       { property: "og:description", content: "The full topic knowledge graph." },
@@ -94,22 +94,22 @@ function TopicsRoute() {
       <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
         <GraduationCap className="h-4 w-4 text-primary" />
         <Link to="/learn" className="hover:text-foreground hover:underline">
-          Level 0: Roadmap
+          Roadmap
         </Link>
         <span>→</span>
         <Link to="/learn/modules" className="hover:text-foreground hover:underline">
-          Level 1: Modules
+          Modules
         </Link>
         <span>→</span>
-        <span className="font-semibold text-primary">Level 2: Topics (Chapters)</span>
+        <span className="font-semibold text-primary">Topics</span>
         <span>→</span>
         <Link to="/learn/lessons" className="hover:text-foreground hover:underline">
-          Level 3: Lessons
+          Lessons
         </Link>
       </div>
 
       <PageHeader
-        eyebrow="Level 2 Knowledge Graph"
+        eyebrow="Knowledge Graph"
         title="Chapter Topics"
         description="Concepts organized into distinct chapter units within curriculum modules — complete with prerequisite graph nodes and interview frequency weights."
         actions={

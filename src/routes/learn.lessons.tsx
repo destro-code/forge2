@@ -35,11 +35,11 @@ export const Route = createFileRoute("/learn/lessons")({
   }),
   head: () => ({
     meta: [
-      { title: "Lesson Catalog (Level 3) · Forge" },
+      { title: "Lesson Catalog · Forge" },
       {
         name: "description",
         content:
-          "Level 3 Lesson Catalog — searchable, filterable reading and practice units with code sandboxes and interview exercises.",
+          "Lesson Catalog — searchable, filterable reading and practice units with code sandboxes and interview exercises.",
       },
       { property: "og:title", content: "Lesson Catalog · Forge" },
       { property: "og:description", content: "The full lesson library catalog." },
@@ -154,22 +154,22 @@ function Lessons() {
       <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
         <GraduationCap className="h-4 w-4 text-primary" />
         <Link to="/learn" className="hover:text-foreground hover:underline">
-          Level 0: Roadmap
+          Roadmap
         </Link>
         <span>→</span>
         <Link to="/learn/modules" className="hover:text-foreground hover:underline">
-          Level 1: Modules
+          Modules
         </Link>
         <span>→</span>
         <Link to="/learn/topics" className="hover:text-foreground hover:underline">
-          Level 2: Topics
+          Topics
         </Link>
         <span>→</span>
-        <span className="font-semibold text-primary">Level 3: Lesson Catalog</span>
+        <span className="font-semibold text-primary">Lesson Catalog</span>
       </div>
 
       <PageHeader
-        eyebrow="Level 3 Catalog"
+        eyebrow="Lesson Catalog"
         title="Lesson Catalog & Index"
         description="Searchable, bite-sized lesson units engineered for staff-level retention, deep mental models, and interactive code sandboxes."
         actions={
