@@ -6,7 +6,24 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi", "public", ".tanstack", "node_modules"] },
+  {
+    ignores: [
+      "dist",
+      ".output",
+      ".vinxi",
+      "public",
+      ".tanstack",
+      "node_modules",
+      "src/lib/compiler/vendor",
+      "fix_assessment.ts",
+      "fix_assessment_flagged.ts",
+      "fix_assessment_syntax.ts",
+      "fix_link.js",
+      "fix_links.ts",
+      "fix_search.js",
+      "fix_search.ts",
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -34,6 +51,7 @@ export default tseslint.config(
       ],
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   eslintPluginPrettier,

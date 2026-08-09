@@ -18,6 +18,7 @@ import { CommandPalette } from "@/components/layout/command-palette";
 import { KeyboardShortcutsModal } from "@/components/layout/keyboard-shortcuts-modal";
 import { Toaster } from "@/components/ui/sonner";
 import { useTheme } from "@/lib/hooks/use-theme";
+import { MobileConsole } from "@/components/shared/mobile-console";
 
 function NotFoundComponent() {
   return (
@@ -149,6 +150,7 @@ function AppLayout() {
         <CommandPalette />
         <KeyboardShortcutsModal />
         <Toaster />
+        <MobileConsole />
       </div>
     </SidebarProvider>
   );
