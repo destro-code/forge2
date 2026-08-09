@@ -27,9 +27,9 @@ export function generateOutput(
 <head>
   <meta charset="UTF-8" />
   <title>${title}</title>
-  <script src="/vendor/react.development.js"></script>
-  <script src="/vendor/react-dom.development.js"></script>
-  <script src="/vendor/babel.min.js"></script>
+  <script src="/vendor/react.development.js" crossorigin="anonymous"></script>
+  <script src="/vendor/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="/vendor/babel.min.js" crossorigin="anonymous"></script>
   <style>
     ${cssBundle}
     body {
