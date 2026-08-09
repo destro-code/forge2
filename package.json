@@ -4,8 +4,9 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --host 0.0.0.0 --port 3000",
-    "build": "vite build",
+    "dev": "npm run copy-vendor && vite dev --host 0.0.0.0 --port 3000",
+    "build": "npm run copy-vendor && vite build",
+    "copy-vendor": "cp node_modules/@babel/standalone/babel.min.js public/vendor/babel.min.js && cp node_modules/@babel/standalone/babel.min.js src/lib/compiler/vendor/babel.min.js",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
