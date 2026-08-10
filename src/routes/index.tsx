@@ -88,9 +88,10 @@ function Dashboard() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       {/* Header */}
       <PageHeader
+        className="mb-0 sm:mb-0"
         eyebrow="Welcome back"
         title={
           <>
@@ -99,20 +100,12 @@ function Dashboard() {
         }
         description={`You're on a ${progress.streakDays}-day streak — complete a lesson or exercise to keep the momentum going.`}
         actions={
-          <>
-            <Button asChild variant="outline">
-              <Link suppressHydrationWarning to="/learn">
-                <BookOpen className="mr-2 h-4 w-4" />
-                Browse library
-              </Link>
-            </Button>
-            <Button asChild className="shadow-glow">
-              <Link suppressHydrationWarning to="/lesson/$lessonId" params={{ lessonId: continueLesson?.id || "default" }}>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Continue lesson
-              </Link>
-            </Button>
-          </>
+          <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+            <Link suppressHydrationWarning to="/learn">
+              <BookOpen className="mr-1.5 h-3.5 w-3.5" />
+              Browse library
+            </Link>
+          </Button>
         }
       />
 
@@ -218,25 +211,25 @@ function Dashboard() {
                 params={{ moduleId: m.id }}
                 className="group"
               >
-                <Card className="h-full border-border/60 transition hover:border-primary/40 hover:shadow-glow">
+                <Card className="h-full border-border/50 bg-card/80 transition duration-200 hover:border-border">
                   <CardContent className="p-5 flex flex-col justify-between h-full">
                     <div>
                       <div className="flex items-start justify-between">
                         <div>
-                          <div className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                          <div className="text-xs font-medium text-muted-foreground">
                             {m.difficulty}
                           </div>
                           <div className="mt-1 text-base font-semibold group-hover:text-primary transition-colors">
                             {m.title}
                           </div>
                         </div>
-                        <ProgressRing value={moduleProgress} />
+                        <ProgressRing value={moduleProgress} size={40} />
                       </div>
                       <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
                         {m.description}
                       </p>
                     </div>
-                    <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/40">
+                    <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/40">
                       <span>
                         {m.lessonCount} lessons · ~{m.estimatedHours}h
                       </span>

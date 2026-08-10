@@ -26,7 +26,7 @@ export function DailyGoalCard({
   };
 
   return (
-    <Card className="border-border/60 shadow-sm transition duration-200 hover:border-primary/40">
+    <Card className="border-border/50 bg-card/80 transition duration-200 hover:border-border">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -45,11 +45,11 @@ export function DailyGoalCard({
             <span className="text-muted-foreground">Today's Progress</span>
             <span className="font-medium text-foreground">{percent}%</span>
           </div>
-          <Progress value={percent} className="h-2.5" />
+          <Progress value={percent} className="h-2" />
         </div>
 
         {isGoalMet ? (
-          <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-400">
+          <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-xs text-emerald-400">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
             <span>Daily goal completed! You earned +50 XP today.</span>
           </div>
@@ -64,7 +64,7 @@ export function DailyGoalCard({
           onClick={handleLogStudy}
           variant="outline"
           size="sm"
-          className="w-full gap-1.5 text-xs bg-background/60"
+          className="w-full gap-1.5 text-xs border-border/60"
         >
           <Zap className="h-3.5 w-3.5 text-amber-500" />
           Log +15 Min Practice Session

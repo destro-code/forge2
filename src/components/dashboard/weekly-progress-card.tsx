@@ -29,33 +29,33 @@ export function WeeklyProgressCard({
   const avgDailyMins = Math.round(totalWeeklyMins / 7);
 
   return (
-    <Card className="border-border/60 shadow-sm transition duration-200 hover:border-primary/40">
+    <Card className="border-border/50 bg-card/80 transition duration-200 hover:border-border">
       <CardHeader className="pb-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-primary" />
-              Weekly Progress & Activity
+              Weekly Activity
             </CardTitle>
             <p className="text-xs text-muted-foreground mt-0.5">
               Study minutes logged over the past 7 days
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="gap-1 border-primary/30 text-primary text-xs">
-              <Clock className="h-3 w-3" />
-              {totalWeeklyHours} Hours Total
-            </Badge>
-            <Badge variant="secondary" className="gap-1 text-xs">
-              <TrendingUp className="h-3 w-3 text-emerald-500" />
-              Avg: {avgDailyMins} m/day
-            </Badge>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1 rounded-md bg-muted/40 px-2.5 py-1">
+              <Clock className="h-3.5 w-3.5 text-primary" />
+              {totalWeeklyHours}h Total
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-md bg-muted/40 px-2.5 py-1">
+              <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+              Avg {avgDailyMins}m/day
+            </span>
           </div>
         </div>
       </CardHeader>
 
       <CardContent>
-        <div className="h-56 w-full pt-4">
+        <div className="h-52 w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <XAxis
@@ -86,7 +86,7 @@ export function WeeklyProgressCard({
                   <Cell
                     key={`cell-${index}`}
                     fill={
-                      entry.minutes >= 30 ? "var(--color-primary)" : "oklch(0.72 0.19 45 / 40%)"
+                      entry.minutes >= 30 ? "var(--color-primary)" : "oklch(0.72 0.19 45 / 30%)"
                     }
                   />
                 ))}

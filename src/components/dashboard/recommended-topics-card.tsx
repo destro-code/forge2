@@ -16,7 +16,7 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
   const lessons = useLessons();
 
   return (
-    <Card className="border-border/60 shadow-xs transition duration-200 hover:border-primary/40">
+    <Card className="border-border/50 bg-card/80 transition duration-200 hover:border-border">
       <CardHeader className="pb-3 flex flex-row items-center justify-between">
         <div>
           <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -31,7 +31,7 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
           asChild
           variant="ghost"
           size="sm"
-          className="text-xs gap-1 text-muted-foreground hover:text-foreground"
+          className="text-xs gap-1 text-muted-foreground hover:text-foreground h-8 px-2"
         >
           <Link to="/learn/topics">
             Knowledge Graph <ArrowRight className="h-3.5 w-3.5" />
@@ -41,20 +41,18 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
 
       <CardContent className="grid gap-3 sm:grid-cols-3">
         {recommendedList.map((topic) => {
-          const firstLesson = lessons.find((l) => l.topicId === topic.id);
-
           return (
             <div
               key={topic.id}
-              className="flex flex-col justify-between rounded-lg border border-border/50 bg-card/60 p-3.5 transition hover:border-primary/40"
+              className="flex flex-col justify-between rounded-lg bg-muted/30 p-3.5 transition-colors hover:bg-muted/50"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-1">
                   <DifficultyBadge difficulty={topic.difficulty} />
-                  <Badge variant="secondary" className="gap-1 text-[10px] shrink-0">
+                  <span className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1">
                     <TrendingUp className="h-3 w-3 text-primary" />
                     {topic.interviewFrequency}
-                  </Badge>
+                  </span>
                 </div>
 
                 <h4 className="font-semibold text-sm text-foreground leading-snug">

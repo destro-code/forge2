@@ -23,7 +23,7 @@ export function PageHeader({
     >
       <div className="min-w-0">
         {eyebrow && (
-          <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/80">
+          <div className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-primary/80">
             {eyebrow}
           </div>
         )}

@@ -20,12 +20,12 @@ export function ContinueProjectCard({ project }: ContinueProjectCardProps) {
     totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
 
   return (
-    <Card className="border-border/60 shadow-sm transition duration-200 hover:border-primary/40">
+    <Card className="border-border/50 bg-card/80 transition duration-200 hover:border-border">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-medium text-primary">
             <FolderGit2 className="h-4 w-4" />
-            Active Engineering Project
+            Active Project
           </div>
           <DifficultyBadge difficulty={project.difficulty} />
         </div>
@@ -40,7 +40,7 @@ export function ContinueProjectCard({ project }: ContinueProjectCardProps) {
         {/* Milestone Progress */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Milestone Progress</span>
+            <span className="text-muted-foreground">Milestones</span>
             <span className="font-semibold text-foreground">
               {completedMilestones}/{totalMilestones} ({progressPercent}%)
             </span>
@@ -49,9 +49,9 @@ export function ContinueProjectCard({ project }: ContinueProjectCardProps) {
         </div>
 
         {/* Next Uncompleted Milestone preview */}
-        <div className="space-y-1.5 rounded-lg border border-border/50 bg-muted/20 p-2.5 text-xs">
-          <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
-            Next Milestone:
+        <div className="space-y-1.5 rounded-lg bg-muted/30 p-3 text-xs">
+          <span className="text-xs font-medium text-muted-foreground block">
+            Milestone Checklist
           </span>
           {project.milestones.map((m) => (
             <div key={m.id} className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export function ContinueProjectCard({ project }: ContinueProjectCardProps) {
             <Clock className="h-3.5 w-3.5 text-primary" />
             <span>~{project.estimatedHours}h total</span>
           </div>
-          <Button asChild size="sm" variant="default" className="gap-1 h-8 text-xs">
+          <Button asChild size="sm" variant="outline" className="gap-1 h-8 text-xs border-border/60">
             <Link to="/projects">
               Resume Project
               <ArrowRight className="h-3.5 w-3.5" />

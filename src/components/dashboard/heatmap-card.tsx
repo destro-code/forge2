@@ -8,12 +8,12 @@ interface HeatmapCardProps {
 
 export function HeatmapCard({ heatmapData }: HeatmapCardProps) {
   return (
-    <Card className="border-border/60 shadow-sm transition duration-200 hover:border-primary/40">
+    <Card className="border-border/50 bg-card/80 transition duration-200 hover:border-border">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
             <CalendarDays className="h-4 w-4 text-primary" />
-            Learning Calendar Heat Map
+            Learning Activity
           </CardTitle>
           <span className="text-xs text-muted-foreground flex items-center gap-1">
             <Info className="h-3 w-3" /> Past 12 Weeks

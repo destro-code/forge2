@@ -60,33 +60,42 @@ export function TopBar() {
   const crumbs = useCrumbs();
 
   return (
-    <header className="glass-panel sticky top-0 z-30 flex h-14 items-center gap-2 border-b px-3 sm:px-4">
-      <SidebarTrigger className="h-8 w-8" />
+    <header className="glass-panel sticky top-0 z-30 flex h-14 items-center justify-between gap-2 border-b px-3 sm:px-4">
+      <div className="flex items-center gap-2 min-w-0 shrink">
+        <SidebarTrigger className="h-8 w-8 shrink-0" />
 
-      <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-sm sm:flex">
-        {crumbs.map((c, i) => (
-          <div key={c.to + i} className="flex min-w-0 items-center gap-1.5">
-            {i > 0 && <span className="text-muted-foreground/50">/</span>}
-            <Link
-              to={c.to}
-              className="truncate text-muted-foreground transition hover:text-foreground"
-            >
-              {c.label}
-            </Link>
-          </div>
-        ))}
-      </nav>
+        <nav
+          aria-label="Breadcrumb"
+          className="hidden min-w-0 items-center gap-1.5 text-xs font-medium sm:flex max-w-[200px] sm:max-w-xs md:max-w-md"
+        >
+          {crumbs.map((c, i) => (
+            <div key={c.to + i} className="flex min-w-0 items-center gap-1.5 shrink">
+              {i > 0 && <span className="text-muted-foreground/40 shrink-0">/</span>}
+              <Link
+                to={c.to}
+                className={
+                  i === crumbs.length - 1
+                    ? "truncate text-foreground font-semibold min-w-0"
+                    : "truncate text-muted-foreground/80 transition hover:text-foreground min-w-0"
+                }
+              >
+                {c.label}
+              </Link>
+            </div>
+          ))}
+        </nav>
+      </div>
 
-      <div className="ml-auto flex items-center gap-1.5">
+      <div className="ml-auto flex items-center gap-1.5 shrink-0">
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="hidden h-9 items-center gap-2 rounded-lg border bg-background/40 px-3 text-sm text-muted-foreground transition hover:bg-accent/60 md:flex md:w-72"
+          className="hidden h-8 items-center gap-2 rounded-lg border border-border/50 bg-muted/20 px-2.5 text-xs text-muted-foreground transition hover:bg-muted/40 md:flex md:w-64"
           aria-label="Open command palette"
         >
-          <Search className="h-4 w-4" />
+          <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground/70" />
           <span className="flex-1 text-left">Search or jump to…</span>
-          <kbd className="ml-2 inline-flex items-center gap-0.5 rounded border border-border/60 bg-muted px-1.5 py-0.5 text-[10px] font-medium">
+          <kbd className="ml-2 inline-flex items-center gap-0.5 rounded border border-border/50 bg-muted/50 px-1.5 py-0.5 text-xs font-medium">
             <Command className="h-3 w-3" /> K
           </kbd>
         </button>
