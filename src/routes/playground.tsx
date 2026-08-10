@@ -420,18 +420,18 @@ export function Playground() {
       {/* Main Playground Editor & Panel Window */}
       <div className="w-full max-w-full min-w-0 rounded-xl border border-border/60 bg-card overflow-hidden shadow-elegant flex flex-col min-h-[600px] lg:h-[750px]">
         {/* Top Control Bar */}
-        <div className="flex flex-wrap items-center justify-between border-b border-border/60 bg-muted/30 px-3 py-2 text-xs gap-2">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between border-b border-border/60 bg-muted/30 px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs gap-1 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <Button
               variant="ghost"
               size="icon"
-              className={`h-7 w-7 ${showFileTree ? "text-primary bg-primary/10" : "text-muted-foreground"}`}
+              className={`h-6 w-6 sm:h-7 sm:w-7 ${showFileTree ? "text-primary bg-primary/10" : "text-muted-foreground"}`}
               onClick={() => setShowFileTree(!showFileTree)}
               title="Toggle File Explorer"
             >
-              <PanelLeft className="h-4 w-4" />
+              <PanelLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
-            <span className="font-semibold text-foreground truncate max-w-[200px] sm:max-w-none">
+            <span className="font-semibold text-foreground truncate max-w-[160px] sm:max-w-none text-xs sm:text-xs">
               {activePreset.title}
             </span>
             <Badge variant="secondary" className="text-[10px] hidden sm:inline-flex">
@@ -469,46 +469,47 @@ export function Playground() {
         </div>
 
         {/* Mobile Single-Pane Tab Bar */}
-        <div className="flex lg:hidden items-center border-b border-border/60 bg-muted/40 p-1 text-xs gap-1 overflow-x-auto w-full min-w-0 flex-nowrap scrollbar-none">
+        <div className="flex lg:hidden items-center border-b border-border/60 bg-muted/40 p-0.5 text-[11px] sm:text-xs gap-0.5 overflow-x-auto w-full min-w-0 flex-nowrap scrollbar-none">
           <Button
             variant={mobileTab === "editor" ? "secondary" : "ghost"}
             size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            className="flex-1 h-7 text-[11px] sm:text-xs px-2 py-0.5 gap-1 shrink-0"
             onClick={() => setMobileTab("editor")}
           >
-            <FileCode2 className="h-3.5 w-3.5 text-primary" /> Code
+            <FileCode2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" /> Code
           </Button>
           <Button
             variant={mobileTab === "preview" ? "secondary" : "ghost"}
             size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            className="flex-1 h-7 text-[11px] sm:text-xs px-2 py-0.5 gap-1 shrink-0"
             onClick={() => setMobileTab("preview")}
           >
-            <Monitor className="h-3.5 w-3.5 text-primary" /> Preview
+            <Monitor className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" /> Preview
           </Button>
           <Button
             variant={mobileTab === "console" ? "secondary" : "ghost"}
             size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            className="flex-1 h-7 text-[11px] sm:text-xs px-2 py-0.5 gap-1 shrink-0"
             onClick={() => setMobileTab("console")}
           >
-            <Terminal className="h-3.5 w-3.5 text-primary" /> Console ({consoleLogs.length})
+            <Terminal className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" /> Console (
+            {consoleLogs.length})
           </Button>
           <Button
             variant={mobileTab === "hints" ? "secondary" : "ghost"}
             size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            className="flex-1 h-7 text-[11px] sm:text-xs px-2 py-0.5 gap-1 shrink-0"
             onClick={() => setMobileTab("hints")}
           >
-            <Lightbulb className="h-3.5 w-3.5 text-amber-400" /> Hints
+            <Lightbulb className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-400" /> Hints
           </Button>
           <Button
             variant={mobileTab === "files" ? "secondary" : "ghost"}
             size="sm"
-            className="flex-1 h-8 text-xs gap-1 shrink-0"
+            className="flex-1 h-7 text-[11px] sm:text-xs px-2 py-0.5 gap-1 shrink-0"
             onClick={() => setMobileTab("files")}
           >
-            <PanelLeft className="h-3.5 w-3.5 text-primary" /> Files
+            <PanelLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" /> Files
           </Button>
         </div>
 

@@ -16,20 +16,20 @@ export function PlaygroundTabs({ onNewFileClick }: PlaygroundTabsProps) {
 
   const getFileIcon = (name: string) => {
     if (name.endsWith(".tsx") || name.endsWith(".jsx")) {
-      return <FileCode2 className="h-3.5 w-3.5 text-sky-400" />;
+      return <FileCode2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-sky-400" />;
     }
     if (name.endsWith(".ts") || name.endsWith(".js")) {
-      return <Code2 className="h-3.5 w-3.5 text-amber-400" />;
+      return <Code2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-400" />;
     }
     if (name.endsWith(".css")) {
-      return <FileSpreadsheet className="h-3.5 w-3.5 text-pink-400" />;
+      return <FileSpreadsheet className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-pink-400" />;
     }
-    return <FileText className="h-3.5 w-3.5 text-emerald-400" />;
+    return <FileText className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-400" />;
   };
 
   return (
-    <div className="flex items-center overflow-x-auto border-b border-border/60 bg-muted/20 px-1 text-xs w-full min-w-0 scrollbar-none flex-nowrap">
-      <div className="flex items-center gap-1 flex-nowrap shrink-0">
+    <div className="flex items-center overflow-x-auto border-b border-border/60 bg-muted/20 px-0.5 sm:px-1 text-[11px] sm:text-xs w-full min-w-0 scrollbar-none flex-nowrap">
+      <div className="flex items-center gap-0.5 sm:gap-1 flex-nowrap shrink-0">
         {openFiles.map((file) => {
           const isActive = file.id === activeFileId;
 
@@ -37,7 +37,7 @@ export function PlaygroundTabs({ onNewFileClick }: PlaygroundTabsProps) {
             <div
               key={file.id}
               onClick={() => onSelectTab(file.id)}
-              className={`group flex items-center gap-2 border-t-2 border-r border-border/40 px-3 py-2 cursor-pointer transition select-none ${
+              className={`group flex items-center gap-1.5 border-t-2 border-r border-border/40 px-2 py-1 sm:px-3 sm:py-2 text-[11px] sm:text-xs cursor-pointer transition select-none ${
                 isActive
                   ? "border-t-primary bg-background text-foreground font-medium"
                   : "border-t-transparent text-muted-foreground hover:bg-card/60 hover:text-foreground"
@@ -56,7 +56,7 @@ export function PlaygroundTabs({ onNewFileClick }: PlaygroundTabsProps) {
                   }}
                   title="Close tab"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                 </button>
               )}
             </div>
@@ -67,11 +67,11 @@ export function PlaygroundTabs({ onNewFileClick }: PlaygroundTabsProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-7 w-7 text-muted-foreground hover:text-foreground ml-1"
+        className="h-6 w-6 sm:h-7 sm:w-7 text-muted-foreground hover:text-foreground ml-0.5 shrink-0"
         onClick={onNewFileClick}
         title="New tab"
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
       </Button>
     </div>
   );

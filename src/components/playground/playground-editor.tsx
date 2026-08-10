@@ -45,6 +45,20 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     return saved ? parseInt(saved, 10) : 13;
   });
 
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 1024;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Editor theme setting: "auto" (synced with app) | "vs-dark" | "light"
   const [editorThemeMode, setEditorThemeMode] = useState<"auto" | "vs-dark" | "light">("auto");
   const [copied, setCopied] = useState(false);
@@ -279,7 +293,8 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
               onMount={handleEditorMount}
               theme={effectiveTheme}
               options={{
-                fontSize: fontSize,
+                fontSize: isMobile ? 12 : fontSize,
+                lineHeight: isMobile ? 18 : undefined,
                 fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace",
                 minimap: { enabled: false },
                 tabSize: 2,
@@ -287,7 +302,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
                 scrollBeyondLastLine: false,
                 smoothScrolling: true,
                 automaticLayout: true,
-                padding: { top: 12, bottom: 12 },
+                padding: isMobile ? { top: 6, bottom: 6 } : { top: 12, bottom: 12 },
                 lineNumbersMinChars: 3,
               }}
             />
@@ -300,13 +315,16 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
       </div>
 
       {/* Editor Status & Action Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border/50 bg-card/60 px-3 py-1.5 text-[11px] text-muted-foreground">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-1 sm:gap-2 border-t border-border/50 bg-card/60 px-2 py-1 sm:px-3 sm:py-1.5 text-[10px] sm:text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <span className="flex items-center gap-1 font-medium text-foreground">
-            <FileCode className="h-3.5 w-3.5 text-primary" />
+            <FileCode className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" />
             {activeFile?.name}
           </span>
-          <Badge variant="outline" className="text-[10px] px-1.5 h-4 border-border/60">
+          <Badge
+            variant="outline"
+            className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 h-3.5 sm:h-4 border-border/60"
+          >
             {getLanguage(activeFile?.name)}
           </Badge>
           <span className="hidden sm:inline">{lineCount} lines</span>
@@ -316,45 +334,49 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
           </span>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           {/* Undo / Redo */}
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-foreground"
             onClick={handleUndo}
             title="Undo (Ctrl/Cmd+Z)"
           >
-            <Undo2 className="h-3 w-3" />
+            <Undo2 className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-foreground"
             onClick={handleRedo}
             title="Redo (Ctrl/Cmd+Y)"
           >
-            <Redo2 className="h-3 w-3" />
+            <Redo2 className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
           </Button>
 
           {/* Copy Code */}
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-foreground"
             onClick={handleCopyCode}
             title="Copy file code"
           >
-            {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+            {copied ? (
+              <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-emerald-400" />
+            ) : (
+              <Copy className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+            )}
           </Button>
 
           {/* Font Size Selector */}
-          <div className="flex items-center gap-0.5 rounded border border-border/50 bg-background/50 px-1">
-            <Type className="h-3 w-3 text-muted-foreground" />
+          <div className="flex items-center gap-0.5 rounded border border-border/50 bg-background/50 px-1 py-0">
+            <Type className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-muted-foreground" />
             <select
-              value={fontSize}
+              value={isMobile ? 12 : fontSize}
               onChange={(e) => handleFontSizeChange(parseInt(e.target.value, 10))}
-              className="bg-transparent text-[10px] text-foreground focus:outline-none cursor-pointer"
+              className="bg-transparent text-[9px] sm:text-[10px] text-foreground focus:outline-none cursor-pointer"
               title="Font Size"
             >
               <option value={12}>12px</option>
@@ -370,11 +392,11 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 px-1.5 text-[10px] gap-1 hover:text-foreground"
+              className="h-5 sm:h-6 px-1 sm:px-1.5 text-[9px] sm:text-[10px] gap-0.5 sm:gap-1 hover:text-foreground"
               onClick={onFormatCode}
               title="Auto-format code (Ctrl/Cmd+Shift+F)"
             >
-              <Wand2 className="h-3 w-3 text-primary" />
+              <Wand2 className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-primary" />
               <span className="hidden sm:inline">Format</span>
             </Button>
           )}
@@ -383,7 +405,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 px-1.5 text-[10px] gap-1"
+            className="h-5 sm:h-6 px-1 sm:px-1.5 text-[9px] sm:text-[10px] gap-0.5 sm:gap-1"
             onClick={() => {
               if (editorThemeMode === "auto") setEditorThemeMode("vs-dark");
               else if (editorThemeMode === "vs-dark") setEditorThemeMode("light");
@@ -392,9 +414,9 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
             title={`Editor Theme: ${editorThemeMode} (Click to toggle)`}
           >
             {effectiveTheme === "vs-dark" ? (
-              <Sun className="h-3 w-3 text-amber-400" />
+              <Sun className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-amber-400" />
             ) : (
-              <Moon className="h-3 w-3 text-sky-400" />
+              <Moon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-sky-400" />
             )}
             <span className="capitalize hidden sm:inline">
               {editorThemeMode === "auto"
