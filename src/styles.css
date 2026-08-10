@@ -199,3 +199,12 @@ body {
     border-radius: 8px;
   }
 }
+
+/* Prevent iOS Safari auto-zoom on focusing Monaco editor's hidden input area */
+@media (max-width: 1023px) {
+  .monaco-editor .inputarea,
+  .monaco-editor textarea,
+  .monaco-editor .ime-text-area {
+    font-size: 16px !important;
+  }
+}
