@@ -37,5 +37,25 @@
     "prerequisites": [
       "module-0-1"
     ]
+  },
+  {
+    "id": "module-1-1",
+    "title": "HTML Fundamentals",
+    "description": "The real starting line: building valid, semantic HTML from scratch — document structure, text, links, images, lists, tables, forms, and the semantic elements that hold it all together — ending in a capstone page built from all of it.",
+    "icon": "FileCode",
+    "difficulty": "Beginner",
+    "topicCount": 8,
+    "lessonCount": 8,
+    "estimatedHours": 4.0,
+    "progress": 0,
+    "color": "chart-2",
+    "tags": [
+      "Web Foundations",
+      "HTML"
+    ],
+    "order": 3,
+    "prerequisites": [
+      "module-0-2"
+    ]
   }
 ]

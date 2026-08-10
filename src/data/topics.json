@@ -1,185 +1,2024 @@
 [
   {
-    "id": "what-is-frontend-development",
+    "id": "lesson-0-1-1",
+    "topicId": "what-is-frontend-development",
     "moduleId": "module-0-1",
+    "order": 1,
     "title": "What Is Frontend Development?",
-    "description": "What frontend engineers actually build, and how that differs from backend and design work.",
+    "description": "What frontend engineers actually build day to day, and why 'frontend' is a much bigger job than 'making it look nice.'",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "Low",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Explain, in your own words, what a frontend engineer is responsible for building.",
+      "Distinguish frontend responsibility from backend and design responsibility using a concrete example.",
+      "Name the three core technologies (HTML, CSS, JavaScript) and what each one is responsible for."
+    ],
     "prerequisites": [],
-    "next": [
-      "how-the-web-works"
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Frontend Is Everything the User Touches"
+      },
+      {
+        "type": "paragraph",
+        "text": "Open any app on your phone right now. Everything you can see, tap, scroll, or type into is frontend. The button that turns blue when you press it, the list that scrolls smoothly, the form that tells you an email address is invalid before you even hit submit — someone built that, on purpose, with code. That's the job. Frontend development is the practice of building what a user sees and interacts with in a browser: layout, styling, and behavior."
+      },
+      {
+        "type": "paragraph",
+        "text": "That last word, behavior, is the part beginners most often miss. It's tempting to think frontend means 'the visual layer' — colors, fonts, spacing — and leave it there. But a login form that validates input, a chart that redraws when you filter data, a chat window that scrolls to the newest message automatically: none of that is just visual. It's logic, running in the user's browser, written by a frontend engineer."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "Three Layers of Every Interface",
+        "description": "HTML gives the page its structure and content — what elements exist and how they're organized. CSS gives it presentation — how those elements look and where they sit on screen. JavaScript gives it behavior — what happens when the user does something. A frontend engineer works across all three layers, not just the styling one."
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "The most common beginner misconception: 'frontend' = 'design.' A designer decides what the interface should look like and how it should feel to use. A frontend engineer builds the thing that actually does that — handling real data, edge cases, slow networks, keyboard users, and screens that are the wrong size. Frontend engineers also write plenty of logic that has nothing to do with visuals at all: state management, data fetching, caching, form validation, routing."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "One small interface, three layers working together",
+        "code": "<!-- HTML: structure and content -->\n<button id=\"save-btn\">Save changes</button>\n\n<style>\n  /* CSS: presentation */\n  #save-btn {\n    background: #2563eb;\n    color: white;\n    padding: 8px 16px;\n    border-radius: 6px;\n    border: none;\n  }\n  #save-btn:disabled {\n    background: #94a3b8;\n    cursor: not-allowed;\n  }\n</style>\n\n<script>\n  // JavaScript: behavior\n  const button = document.getElementById('save-btn');\n  button.addEventListener('click', () => {\n    button.disabled = true;\n    button.textContent = 'Saving...';\n    // In a real app this would call a server and\n    // re-enable the button once the response comes back.\n  });\n</script>"
+      },
+      {
+        "type": "paragraph",
+        "text": "Notice what each layer is doing. The HTML says 'there is a button here.' The CSS says 'and it should look like this.' The JavaScript says 'and when someone clicks it, disable it and show a saving state so they can't accidentally click it twice.' A frontend engineer is fluent in all three — not just the middle one."
+      },
+      {
+        "type": "collapsible",
+        "title": "So what does the backend do, then?",
+        "subtitle": "The other half of almost every app you use",
+        "variant": "deep-dive",
+        "content": "The backend is the part of the application that runs on a server the user never sees directly. It stores data (in a database), enforces business rules ('a user can't withdraw more money than they have'), handles authentication, and talks to other systems. When you click 'Save changes' in the example above, the frontend is responsible for the button and its states — but actually persisting that change usually means the frontend sends a request to a backend, which does the real work of writing to a database and sending back a response. Frontend and backend are different jobs with different skill sets, but they constantly hand off work to each other. You'll see exactly how that handoff works in the next lesson."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-1-1",
+        "label": "Explain, unprompted and in your own words, the difference between what a frontend engineer builds and what a backend engineer builds — using a real app you use daily as your example.",
+        "hint": "Pick something you can see and tap (frontend) versus something that has to be true even when you're not looking at the screen, like your bank balance or your saved messages (backend)."
+      }
     ],
-    "related": [
-      "browser-server-and-client"
+    "exercises": [
+      {
+        "id": "ex-0-1-1-1",
+        "title": "Map an App You Use",
+        "brief": "Pick one app on your phone or laptop that you used today. Write down three things about it that are clearly 'frontend' — things you can see, tap, or type into — and three things that must be happening on a 'backend' you can't see, like data being saved, a password being checked, or a payment being processed. For each frontend item, note whether it's mostly structure, styling, or behavior."
+      }
     ],
-    "order": 1
+    "quiz": [
+      {
+        "id": "q-0-1-1-1",
+        "question": "A frontend engineer is asked to add a search box that filters a product list as the user types, with no page reload. Which statement best describes this task?",
+        "options": [
+          "It's a design task, not an engineering task, since it's about the search box's appearance.",
+          "It can only be done on the backend since it involves searching data.",
+          "It requires frontend logic (JavaScript) reacting to input events, not just HTML and CSS.",
+          "It isn't frontend work because no button is being clicked."
+        ],
+        "correctIndex": 2,
+        "explanation": "Filtering a list as the user types is behavior — code that listens for input and updates what's on screen in response. That's a core frontend responsibility, distinct from how the box looks (CSS) or where the underlying data lives (often backend, but the reactive filtering logic itself runs in the browser)."
+      },
+      {
+        "id": "q-0-1-1-2",
+        "question": "Which of these is the clearest example of frontend behavior, as opposed to frontend structure or presentation?",
+        "options": [
+          "The button has rounded corners and a blue background.",
+          "The page has a <header>, <main>, and <footer> section.",
+          "The heading text is 24 pixels tall.",
+          "The submit button becomes disabled while a form is being submitted."
+        ],
+        "correctIndex": 3,
+        "explanation": "Rounded corners, background color, and text size are all presentation (CSS). The section elements are structure (HTML). A button disabling itself in response to an event, based on application state, is behavior — written in JavaScript."
+      }
+    ],
+    "summary": "Frontend development means building what a user sees and interacts with in a browser: structure (HTML), presentation (CSS), and behavior (JavaScript) — not just the visual layer. It's a distinct job from both design (deciding how the interface should look and feel) and backend engineering (storing data, enforcing rules, running on a server the user never sees).",
+    "resources": [
+      {
+        "label": "MDN — Getting Started with Web Development",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started"
+      }
+    ],
+    "interviewQuestions": [
+      "How would you explain the difference between frontend and backend development to someone non-technical?",
+      "Is 'frontend engineer' the same job as 'UI designer'? Why or why not?"
+    ],
+    "previousLessonId": null,
+    "nextLessonId": "lesson-0-1-2"
   },
   {
-    "id": "how-the-web-works",
+    "id": "lesson-0-1-2",
+    "topicId": "how-the-web-works",
     "moduleId": "module-0-1",
+    "order": 2,
     "title": "How the Web Works",
-    "description": "The client-server request/response loop that underlies every website and web app.",
+    "description": "The request/response loop between a browser and a server — the mechanism underneath every website and web app.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "Medium",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Explain that a browser sends a request to a server and receives a response.",
+      "Describe why loading a page is a network exchange, not a file simply 'opening.'",
+      "Identify the roles of client and server in that exchange."
+    ],
     "prerequisites": [
-      "what-is-frontend-development"
+      "lesson-0-1-1"
     ],
-    "next": [
-      "what-happens-when-you-click-a-link"
+    "sections": [
+      {
+        "type": "heading",
+        "text": "It's a Conversation, Not a File Opening"
+      },
+      {
+        "type": "paragraph",
+        "text": "When you double-click a photo on your computer, the operating system just opens a file that was already sitting on your disk. Loading a webpage feels similar — you type an address, and a page appears — but almost nothing about it is the same underneath. A browser sends a request to a server and receives a response; this request/response loop is the backbone of the web."
+      },
+      {
+        "type": "paragraph",
+        "text": "Two machines are involved, and each has a name. The client is the device making the request — usually your browser. The server is a machine, somewhere else on the internet, that stores the website's files and data and knows how to respond to requests for them. Every single webpage you've ever visited involved your client asking a server, over a network, 'can I have this page?' and the server answering."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "The Request/Response Loop",
+        "description": "1) The client (browser) sends an HTTP request to a server, naming the resource it wants. 2) The request travels across the network to the server. 3) The server locates or generates the response — HTML, CSS, JS, data, images. 4) The server sends an HTTP response back across the network. 5) The browser receives the response and uses it to build the page you see."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "This is why a working internet connection is required to load a new page, but a page can keep working (briefly) if your connection drops after it's already loaded — the request/response exchange already happened, and the page is just running in your browser's memory now."
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "title": "A simplified request and response",
+        "code": "REQUEST (client -> server)\nGET /index.html HTTP/1.1\nHost: example.com\n\nRESPONSE (server -> client)\nHTTP/1.1 200 OK\nContent-Type: text/html\n\n<!doctype html>\n<html>\n  <body><h1>Welcome</h1></body>\n</html>"
+      },
+      {
+        "type": "paragraph",
+        "text": "The request says, plainly: 'GET me the resource at path /index.html, from the host example.com.' The response starts with a status line — 200 OK means 'here you go, this worked' — followed by information about what kind of content is being sent, followed by the content itself. You'll work with status codes like 200, 404, and 500 directly once you start building applications that talk to APIs; for now, just recognize the shape: a request goes out, a response comes back."
+      },
+      {
+        "type": "collapsible",
+        "title": "Why does this matter if I'm not writing servers?",
+        "subtitle": "Frontend engineers live on the client side of this loop",
+        "variant": "senior-tip",
+        "content": "Almost every bug you'll debug as a frontend engineer — a page that hangs, a form that silently fails to submit, a spinner that never stops spinning — is a request/response problem somewhere in this loop. Did the request even get sent? Did it reach the server? Did the server respond in time? Did it respond with an error status? Did the browser fail to parse the response? Understanding this loop is what lets you look at a broken page and know where to start looking, instead of guessing."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-1-2",
+        "label": "In your own words, explain why a webpage requires a working network connection to load for the first time, in a way that references 'client' and 'server' specifically.",
+        "hint": "What has to happen, and where, before the browser has anything to render at all?"
+      }
     ],
-    "related": [
-      "browser-server-and-client"
+    "exercises": [
+      {
+        "id": "ex-0-1-2-1",
+        "title": "Spot the Client and the Server",
+        "brief": "Think of three everyday actions that involve loading something over the internet — for example, refreshing a social media feed, checking the weather in an app, or loading a new page of search results. For each one, write one sentence identifying what plays the role of 'client' and one sentence identifying what plays the role of 'server.'"
+      }
     ],
-    "order": 2
+    "quiz": [
+      {
+        "id": "q-0-1-2-1",
+        "question": "Which statement correctly describes what happens when you load a webpage for the first time?",
+        "options": [
+          "The browser (client) sends a request to a server, and the server sends back a response containing the page's content.",
+          "The browser opens a file that was already stored locally on your device.",
+          "The server sends a request to the browser asking what page it wants to see.",
+          "No network is involved as long as the website has been visited before."
+        ],
+        "correctIndex": 0,
+        "explanation": "Loading a page for the first time always requires the client to send a request and the server to send back a response — there's no local file to simply open. (Caching can make repeat visits faster, but the first load always requires this exchange.)"
+      },
+      {
+        "id": "q-0-1-2-2",
+        "question": "In the client-server model, which of these is the best description of the 'server's' job?",
+        "options": [
+          "It is the device the end user is holding, like a phone or laptop.",
+          "It renders the final page the user sees on their screen.",
+          "It is only involved after the page has already loaded.",
+          "It stores the site's files or data and responds to requests for them."
+        ],
+        "correctIndex": 3,
+        "explanation": "The server's job is to store the resources (files, data) a site needs and respond to requests for them. Rendering what the user actually sees is the client's (browser's) job, using whatever the server sent back."
+      }
+    ],
+    "summary": "Every webpage load is a conversation, not a file opening: the client (your browser) sends a request naming a resource, that request travels across the network to a server, and the server sends back a response the browser uses to build the page. This request/response loop is the mechanism underneath everything you'll build as a frontend engineer.",
+    "resources": [
+      {
+        "label": "MDN — How the Web Works",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works"
+      }
+    ],
+    "interviewQuestions": [
+      "What is the difference between a client and a server?",
+      "Why does a webpage fail to load when your internet connection drops, even if you've visited that page a hundred times before?"
+    ],
+    "previousLessonId": "lesson-0-1-1",
+    "nextLessonId": "lesson-0-1-3"
   },
   {
-    "id": "what-happens-when-you-click-a-link",
+    "id": "lesson-0-1-3",
+    "topicId": "what-happens-when-you-click-a-link",
     "moduleId": "module-0-1",
+    "order": 3,
     "title": "What Happens When You Click a Link?",
-    "description": "The full DNS lookup, HTTP request, server response, and render sequence triggered by a single click.",
+    "description": "A guided, step-by-step trace of everything that happens between a click and a rendered page — one of the most common questions asked in junior frontend interviews.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "High",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Describe and reproduce, in order, the sequence: DNS lookup, HTTP request, server response, browser rendering.",
+      "Explain what a DNS lookup does and why it happens before any request can be sent.",
+      "Reproduce this sequence unprompted for a new, unfamiliar URL."
+    ],
     "prerequisites": [
-      "how-the-web-works"
+      "lesson-0-1-2"
     ],
-    "next": [
-      "browser-server-and-client"
+    "sections": [
+      {
+        "type": "heading",
+        "text": "The Question Every Interviewer Asks"
+      },
+      {
+        "type": "paragraph",
+        "text": "“What happens when you type a URL into the address bar and hit Enter?” is one of the oldest, most common questions in frontend interviews — precisely because it forces you to show you understand the whole system, not just the part you personally write code for. This lesson walks through it once, narrated step by step, then asks you to reproduce it yourself on a new example."
+      },
+      {
+        "type": "walkthrough",
+        "title": "From Click to Rendered Page",
+        "steps": [
+          {
+            "title": "1. You click a link (or hit Enter on a typed URL)",
+            "description": "The browser now has a full URL, e.g. https://example.com/products. It needs to turn the human-readable host name (example.com) into something machines can actually route traffic to: an IP address."
+          },
+          {
+            "title": "2. DNS lookup",
+            "description": "The browser asks a DNS (Domain Name System) server: “what IP address does example.com point to?” DNS is effectively the internet's phone book — it translates names humans use into numeric addresses machines use. This step happens before any request for the actual page can be sent, because the browser doesn't yet know which server to talk to."
+          },
+          {
+            "title": "3. HTTP request",
+            "description": "Now that the browser has an IP address, it opens a connection to that server and sends an HTTP request — the same GET request structure from the previous lesson — asking for the resource at the /products path."
+          },
+          {
+            "title": "4. Server response",
+            "description": "The server receives the request, does whatever work is needed (look up data, generate HTML, or simply read a file from disk), and sends back an HTTP response: a status code plus the actual content — typically HTML, with links out to CSS and JavaScript files the page also needs."
+          },
+          {
+            "title": "5. Browser rendering",
+            "description": "The browser receives the HTML and starts building the page. It requests any additional files the HTML references (CSS, JS, images), runs the JavaScript, applies the CSS, and paints pixels to the screen. Only now does the user actually see anything."
+          }
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "The most common mistake here is skipping straight from 'click' to 'page appears,' as if rendering were instant and DNS/connection setup didn't exist. In a real interview, naming DNS explicitly — and explaining why it has to happen before the request — is what separates a strong answer from a vague one."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-1-3",
+        "title": "Trace the Request Lifecycle",
+        "instructions": "This sandbox simulates the five-step sequence you just read. Click through each stage in order and watch what's happening at each one — then try to name the next stage before clicking to reveal it.",
+        "language": "jsx",
+        "initialCode": "import React, { useState } from 'react';\n\nconst STAGES = [\n  { name: 'Click', detail: 'Browser has a full URL and needs an IP address for the host.' },\n  { name: 'DNS Lookup', detail: 'example.com is resolved to an IP address like 93.184.216.34.' },\n  { name: 'HTTP Request', detail: 'Browser sends GET /products to that IP address.' },\n  { name: 'Server Response', detail: 'Server sends back status 200 and the page HTML.' },\n  { name: 'Render', detail: 'Browser fetches linked CSS/JS, runs them, and paints the page.' },\n];\n\nexport default function RequestLifecycleDemo() {\n  const [step, setStep] = useState(0);\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <h2 style={{ marginTop: 0, fontSize: 16, color: '#58a6ff' }}>example.com/products</h2>\n      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>\n        {STAGES.map((s, i) => (\n          <div\n            key={s.name}\n            style={{\n              flex: 1,\n              padding: '8px 4px',\n              textAlign: 'center',\n              fontSize: 12,\n              borderRadius: 6,\n              background: i <= step ? '#238636' : '#161b22',\n              border: '1px solid #30363d',\n            }}\n          >\n            {s.name}\n          </div>\n        ))}\n      </div>\n      <p style={{ color: '#8b949e', minHeight: 40 }}>{STAGES[step].detail}</p>\n      <button\n        onClick={() => setStep((s) => Math.min(s + 1, STAGES.length - 1))}\n        disabled={step === STAGES.length - 1}\n        style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: 6, cursor: 'pointer' }}\n      >\n        {step === STAGES.length - 1 ? 'Page fully rendered' : 'Next stage →'}\n      </button>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-1-3",
+        "label": "Without looking back at the walkthrough, name all five stages in order for a brand-new URL you choose yourself, and explain in one sentence why DNS has to come before the HTTP request.",
+        "hint": "The browser can't send a request to a name — it has to send it to an address. Where does that address come from?"
+      }
     ],
-    "related": [
-      "how-the-web-works"
+    "exercises": [
+      {
+        "id": "ex-0-1-3-1",
+        "title": "Narrate Your Own URL",
+        "brief": "Pick any website you use regularly (not example.com). Write out, in your own words, all five stages — click, DNS lookup, HTTP request, server response, render — as they'd apply to that specific site. Be specific about what the browser would be requesting (which page/path) at the HTTP request stage."
+      }
     ],
-    "order": 3
+    "quiz": [
+      {
+        "id": "q-0-1-3-1",
+        "question": "Why must a DNS lookup happen before the browser can send an HTTP request for a page?",
+        "options": [
+          "The browser needs an IP address to connect to, and DNS is what translates the human-readable host name into that IP address.",
+          "DNS lookups and HTTP requests happen at the same time, not in sequence.",
+          "DNS is only needed if the site uses HTTPS instead of HTTP.",
+          "DNS lookups only happen the first time a browser is ever used, not per-site."
+        ],
+        "correctIndex": 0,
+        "explanation": "HTTP requests are sent to a network address (an IP address), not a name. DNS resolves the human-readable host name (like example.com) into that address, which is why it has to happen before the request can be sent — the browser doesn't know where to send it yet."
+      },
+      {
+        "id": "q-0-1-3-2",
+        "question": "Put these in the correct order: (A) Browser renders the page, (B) Server sends back HTML, (C) Browser sends an HTTP request, (D) DNS resolves the host name to an IP address.",
+        "options": [
+          "A, B, C, D",
+          "D, C, B, A",
+          "C, D, B, A",
+          "D, B, C, A"
+        ],
+        "correctIndex": 1,
+        "explanation": "The correct sequence is: DNS resolves the name to an IP (D), the browser sends the HTTP request to that IP (C), the server sends back the HTML response (B), and only then does the browser render it (A)."
+      },
+      {
+        "id": "q-0-1-3-3",
+        "question": "A page's HTML has finished arriving at the browser, but the page still looks blank and unstyled for a moment. What's the most likely explanation?",
+        "options": [
+          "The DNS lookup for the page is still running.",
+          "The server sent the wrong status code.",
+          "The browser is still requesting and applying linked resources like CSS, and running JavaScript, before the final paint.",
+          "This can't happen — the page renders the instant HTML arrives."
+        ],
+        "correctIndex": 2,
+        "explanation": "Receiving the HTML is only the start of rendering, not the end of it. The browser still needs to fetch any linked CSS and JS files, apply styles, and run scripts before the final page appears — which is why a brief unstyled flash can happen."
+      }
+    ],
+    "summary": "Clicking a link triggers a fixed sequence: a DNS lookup translates the host name to an IP address, the browser sends an HTTP request to that address, the server sends back a response, and the browser renders it — fetching any linked CSS/JS along the way. This is one of the most frequently asked frontend interview questions precisely because it tests whether you understand the full system end to end.",
+    "resources": [
+      {
+        "label": "MDN — How Browsers Load Websites",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_browsers_load_websites"
+      },
+      {
+        "label": "MDN — What Is a URL?",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_URL"
+      }
+    ],
+    "interviewQuestions": [
+      "Walk me through everything that happens when you type a URL into the browser and press Enter.",
+      "What is DNS, and why does it need to happen before the browser can request a page?",
+      "Why might a page's HTML arrive quickly but the visible page still take longer to appear?"
+    ],
+    "previousLessonId": "lesson-0-1-2",
+    "nextLessonId": "lesson-0-1-4"
   },
   {
-    "id": "browser-server-and-client",
+    "id": "lesson-0-1-4",
+    "topicId": "browser-server-and-client",
     "moduleId": "module-0-1",
+    "order": 4,
     "title": "Browser, Server, and Client",
-    "description": "Where responsibility actually splits between what runs in the browser and what runs on a server.",
+    "description": "Where responsibility actually splits between the browser and the server — and why frontend engineers need to know both sides even though they mostly work on one.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "Medium",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Explain that the browser (client) renders UI and runs JavaScript, while the server stores data and business logic.",
+      "Give an example of something that must happen on the server and could not safely happen only in the browser.",
+      "Explain why 'client' and 'browser' are often used interchangeably in frontend contexts."
+    ],
     "prerequisites": [
-      "what-happens-when-you-click-a-link"
+      "lesson-0-1-3"
     ],
-    "next": [
-      "how-forge-works"
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Two Machines, Two Jobs"
+      },
+      {
+        "type": "paragraph",
+        "text": "You've now seen the request/response loop and the full page-load sequence. This lesson zooms in on one piece of that picture: what, specifically, does each side of the loop own? The browser (client) renders UI and runs JS; the server stores data and business logic; each has distinct responsibilities."
+      },
+      {
+        "type": "paragraph",
+        "text": "The browser's job: take HTML, CSS, and JavaScript, and turn them into a page the user can see and interact with. It runs entirely on the user's own device — their laptop, their phone — using their device's memory and processing power. Every button click, every animation, every bit of client-side validation happens here, in code you as a frontend engineer write and ship to run on someone else's machine."
+      },
+      {
+        "type": "paragraph",
+        "text": "The server's job: store the data that needs to persist and stay correct regardless of who's looking at it — account balances, order history, passwords (hashed, never in plain text), inventory counts — and enforce the rules around that data. A server also usually generates or serves the initial files a browser needs, and responds to further requests for data as the user interacts with the page."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "Split of Responsibility",
+        "description": "Client (browser): renders the UI, runs JavaScript, holds temporary in-memory state, handles user input directly. Server: stores durable data, enforces business rules and permissions, is the source of truth when client and server disagree about what's true."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "text": "Never trust the client to be the final authority on anything that matters. A user can open their browser's developer tools and change JavaScript variables, remove 'disabled' attributes, or send requests directly, bypassing your UI entirely. Client-side validation (like a form saying 'this field is required') is there for a fast, friendly user experience — not security. Anything that actually matters (permissions, prices, ownership) must be re-checked on the server, because the server is the only side of this relationship the user doesn't fully control."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "title": "Client-side validation is a courtesy, not a guarantee",
+        "code": "// Runs in the browser — gives the user instant feedback\nfunction validateAge(input) {\n  const age = Number(input.value);\n  if (age < 18) {\n    showError('You must be 18 or older.');\n    return false;\n  }\n  return true;\n}\n\n// A user could open DevTools and simply call the\n// underlying submit function directly, skipping\n// validateAge() entirely. That's why the SAME rule\n// (age >= 18) must also be enforced on the server\n// before the server actually saves anything."
+      },
+      {
+        "type": "collapsible",
+        "title": "Isn't the browser also 'the client'? Aren't those the same thing?",
+        "subtitle": "A quick note on terminology you'll see used interchangeably",
+        "variant": "default",
+        "content": "In frontend contexts, yes — 'client' and 'browser' are almost always used to mean the same thing, because the browser is the client software actually making requests on the user's behalf. You'll sometimes see 'client' used more broadly (a mobile app can also be a client to a server, for instance), but in the world of web frontend engineering, assume 'client' means 'the browser and the code running inside it' unless stated otherwise."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-1-4",
+        "label": "Give one concrete example of something that must be enforced on the server, not just the client, and explain why trusting the client alone would be unsafe.",
+        "hint": "Think about anything a user could change by editing values in their browser's developer tools."
+      }
     ],
-    "related": [
-      "what-is-frontend-development"
+    "exercises": [
+      {
+        "id": "ex-0-1-4-1",
+        "title": "Client or Server?",
+        "brief": "List five things a modern e-commerce checkout page needs to do — for example, showing a live shipping-cost estimate, or confirming a discount code is valid. For each one, decide whether it belongs primarily to the client, primarily to the server, or genuinely needs both (client for instant feedback, server for the real check), and justify each answer in one sentence."
+      }
     ],
-    "order": 4
+    "quiz": [
+      {
+        "id": "q-0-1-4-1",
+        "question": "A checkout form shows 'Discount applied!' the instant a user types a promo code, using only JavaScript running in the browser, with no server involved yet. What's the risk?",
+        "options": [
+          "There's no risk — client-side code can always be trusted for this.",
+          "Browsers can't run this kind of validation logic at all.",
+          "This should be handled entirely by the server, with no client-side feedback.",
+          "A user could edit that JavaScript in DevTools to always show 'Discount applied!' regardless of the actual code, so the server must independently verify the discount before finalizing an order."
+        ],
+        "correctIndex": 3,
+        "explanation": "Client-side feedback is great for user experience, but a user fully controls their own browser and can modify or bypass client-side JavaScript. The server must independently re-check that the discount code is real and valid before actually applying it to the order total — the client-side check is a UX nicety, not the security boundary."
+      },
+      {
+        "id": "q-0-1-4-2",
+        "question": "Which of these responsibilities most clearly belongs to the browser (client), not the server?",
+        "options": [
+          "Rendering the page's layout and running the JavaScript that animates a dropdown menu.",
+          "Storing a user's account balance so it stays consistent across devices.",
+          "Enforcing that a user cannot access another user's private data.",
+          "Hashing and storing a user's password securely."
+        ],
+        "correctIndex": 0,
+        "explanation": "Rendering UI and running JavaScript that only affects what's displayed (like a dropdown animation) is client-side work — it doesn't need to be durable or trusted the way account balances, access control, or password storage do, all of which must live on the server."
+      }
+    ],
+    "summary": "The browser (client) renders UI and runs JavaScript on the user's own device; the server stores durable data and enforces the rules around it, and is the only side of the relationship the user doesn't fully control. Client-side checks are for a fast, friendly experience — anything that actually matters must be independently enforced on the server.",
+    "resources": [
+      {
+        "label": "MDN — How the Web Works (Client and Server)",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works"
+      }
+    ],
+    "interviewQuestions": [
+      "Why shouldn't you rely only on client-side validation for something like an age restriction or a discount code?",
+      "What's the difference between something that belongs in browser memory versus something that must be stored on a server?"
+    ],
+    "previousLessonId": "lesson-0-1-3",
+    "nextLessonId": "lesson-0-1-5"
   },
   {
-    "id": "how-forge-works",
+    "id": "lesson-0-1-5",
+    "topicId": "how-forge-works",
     "moduleId": "module-0-1",
+    "order": 5,
     "title": "How Forge Works",
-    "description": "Forge's Learn / Practice / Grow loop, and how to use it as an active practice environment rather than a video course.",
+    "description": "A guided tour of Forge's Learn / Practice / Grow loop, and how to use the platform as an active practice environment instead of a video course.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "Low",
-    "prerequisites": [
-      "browser-server-and-client"
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Explain how Forge's Learn / Practice / Grow loop mirrors real skill-building: learn a concept, apply it, then get feedback and track mastery.",
+      "Locate the Learn, Practice, and Grow areas of the platform.",
+      "Describe what happens after finishing a lesson."
     ],
-    "next": [],
-    "related": [],
-    "order": 5
+    "prerequisites": [
+      "lesson-0-1-4"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Forge Is Not a Video Course"
+      },
+      {
+        "type": "paragraph",
+        "text": "You've just spent four lessons learning how the web actually works underneath the surface. Notice what those lessons had in common: a clear explanation, a concrete example, and then a checkpoint asking you to reproduce the idea yourself, unprompted. That's not an accident — it's Forge's whole design philosophy, repeated at every scale. Forge's Learn / Practice / Grow loop mirrors real skill-building: learn a concept, apply it, then get feedback and track mastery."
+      },
+      {
+        "type": "paragraph",
+        "text": "Most learning platforms are built around watching. Forge is built around doing. You'll read short, focused explanations — but the real learning happens in the Playground, the Debug Lab, and the projects, where you write and run actual code, break things on purpose, and fix them. Skipping the practice parts and only reading the lesson text is like reading about how to ride a bike and assuming you can now ride one."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "The Learn / Practice / Grow Loop",
+        "description": "Learn: short lessons like this one introduce a concept with explanation and examples. Practice: you apply that concept directly — in the Playground, a Debug Lab challenge, a quiz, or a project — where you produce something and get feedback on it. Grow: your progress, mastery level, and interview-readiness are tracked over time across everything you've practiced, so you always know what to review next."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "If a lesson ever feels 'too easy,' that's often a signal you're about to hit the Practice stage for that same concept — which is where the real difficulty (and the real learning) tends to show up. Reading and doing are genuinely different skills; Forge deliberately separates them so you can tell which one you're weak on."
+      },
+      {
+        "type": "collapsible",
+        "title": "What actually happens after you finish a lesson?",
+        "subtitle": "So you know what to expect next",
+        "variant": "default",
+        "content": "Finishing a lesson's content is the 'Learn' step, not the finish line. Depending on the module, the next thing waiting for you might be a short quiz to check recall, a hands-on exercise in the Playground, a Debug Lab challenge with an intentionally broken piece of code, or — at the end of a module — a checkpoint that combines everything from that module into one assessment you need to pass before moving on. None of these are optional add-ons; they're where a concept actually becomes a skill."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-1-5",
+        "label": "In your own words, describe what happens at each of Forge's three loop stages — Learn, Practice, and Grow — and name one concrete example of each from a Forge feature you've now heard of.",
+        "hint": "You don't need to have used every feature yet — just be able to say what role each stage plays and point to one example (a lesson, an exercise type, or a tracking feature)."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-0-1-5-1",
+        "title": "Predict Your Next Step",
+        "brief": "Based on this lesson and the four before it, write one paragraph predicting what you expect to happen next in module-0-2 (Developer Tools) — will it be more explanation-heavy like this module, or more hands-on? Justify your guess using what you now know about the Learn / Practice / Grow loop and the fact that module-0-2 is about using real browser tools."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-1-5-1",
+        "question": "What is the main design idea behind Forge's Learn / Practice / Grow loop?",
+        "options": [
+          "Learners should mostly watch videos and read explanations, with practice being optional.",
+          "Practice only matters at the very end of the entire curriculum, during the capstone project.",
+          "Explanation, hands-on application, and tracked feedback are treated as three distinct, necessary stages, not one combined step.",
+          "Grow is just a leaderboard with no connection to what you've actually practiced."
+        ],
+        "correctIndex": 2,
+        "explanation": "Forge deliberately separates learning a concept, applying it hands-on, and tracking mastery/feedback over time, because reading about a skill and actually being able to perform it are different things — and tracking lets you see which concepts still need review."
+      }
+    ],
+    "summary": "Forge's Learn / Practice / Grow loop deliberately separates explanation, hands-on application, and tracked feedback — mirroring how real skills are actually built. Finishing a lesson's reading is the start of that loop, not the end of it; the Practice stage (Playground, Debug Lab, quizzes, projects) is where a concept becomes a skill, and Grow is what tells you what to revisit.",
+    "resources": [],
+    "interviewQuestions": [],
+    "previousLessonId": "lesson-0-1-4",
+    "nextLessonId": "lesson-0-2-1"
   },
   {
-    "id": "meet-your-browser-devtools",
+    "id": "lesson-0-2-1",
+    "topicId": "meet-your-browser-devtools",
     "moduleId": "module-0-2",
+    "order": 1,
     "title": "Meet Your Browser DevTools",
-    "description": "A guided tour of the DevTools suite — Elements, Console, Network, and Sources — and how to open it in any modern browser.",
+    "description": "A guided tour of the DevTools suite built into every modern browser, and how to open it wherever you're working.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "Medium",
-    "prerequisites": [],
-    "next": [
-      "inspecting-html-with-elements"
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Describe and reproduce: DevTools is a suite of browser panels (Elements, Console, Network, Sources) for inspecting and debugging a live page.",
+      "Open DevTools in your own browser using a keyboard shortcut or the right-click menu.",
+      "Name which panel you'd reach for first for a given kind of problem (a layout issue, a JS error, a failed request)."
     ],
-    "related": [
-      "understanding-the-console",
-      "understanding-network-requests"
+    "prerequisites": [
+      "lesson-0-1-5"
     ],
-    "order": 1
+    "sections": [
+      {
+        "type": "heading",
+        "text": "The Tool You'll Open More Than Any Other"
+      },
+      {
+        "type": "paragraph",
+        "text": "Every modern browser ships with a full suite of developer tools built in — free, no install, no sales call from a rep named Chad. DevTools is a suite of browser panels (Elements, Console, Network, Sources) for inspecting and debugging a live page. Once you're building real interfaces, you'll have DevTools open more often than almost any other tool you own — probably more than your actual code editor, if we're being honest about it."
+      },
+      {
+        "type": "walkthrough",
+        "title": "Opening DevTools and Finding Your Way Around",
+        "steps": [
+          {
+            "title": "1. Open DevTools",
+            "description": "In Chrome, Edge, or Firefox, press F12, or Ctrl+Shift+I (Cmd+Option+I on Mac). You can also right-click any element on a page and choose 'Inspect' — the fast, satisfying way in, and also the move every developer makes on a stranger's website within four seconds of it loading badly."
+          },
+          {
+            "title": "2. Find the Elements (or Inspector) panel",
+            "description": "This tab shows the live DOM tree — the actual structure of the page right now, including anything JavaScript has changed since the page loaded — alongside the CSS applied to whatever's selected."
+          },
+          {
+            "title": "3. Find the Console panel",
+            "description": "This tab is a live JavaScript environment tied to the current page. It's also where errors and warnings the page produces show up automatically, in red and yellow — the browser's way of leaving you increasingly urgent sticky notes."
+          },
+          {
+            "title": "4. Find the Network panel",
+            "description": "This tab lists every request the page has made — for HTML, CSS, JS, images, API calls — along with its status code and how long it took. Note that Network only records activity from when you opened it, so if you don't see anything, try reloading the page while it's open."
+          },
+          {
+            "title": "5. Find the Sources panel",
+            "description": "This is where the page's actual JavaScript files live, and where you can set breakpoints to pause code mid-execution and step through it line by line. You won't need this in depth yet — think of it as the tool you'll grow into, like a jacket two sizes too big."
+          }
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "The most common habit to avoid: only ever opening DevTools after something visibly breaks, like it's a fire extinguisher instead of a daily tool. Experienced engineers leave it open constantly while working — it's how you catch a silent console warning or a failed request before it becomes a support ticket with an angry exclamation point in the subject line."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "Different problems point to different panels: a layout that looks wrong → Elements. A feature that silently does nothing → Console, for an error you haven't noticed yet. A page that seems to 'hang' waiting for data → Network. Guessing which panel to check is a bit like guessing which kitchen drawer has the tape in it — doable, but why, when you could just know."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-1",
+        "label": "Without looking back at the steps, open DevTools on any webpage right now and name which panel you'd check first for: (1) a button that's the wrong color, (2) a form that does nothing when submitted, (3) a page that never finishes loading its data.",
+        "hint": "Match the symptom to what each panel actually shows you: structure/style, live JS + errors, or network activity."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-0-2-1-1",
+        "title": "Open DevTools on Three Real Sites",
+        "brief": "Open DevTools (F12 or right-click → Inspect) on three different websites you use regularly. For each one, switch to the Elements, Console, and Network panels and write one sentence noting anything you notice — a warning in the console, a slow request in Network, or the general shape of the DOM tree in Elements. Bonus points if you find a console warning some poor developer forgot to clean up."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-2-1-1",
+        "question": "You reload a page with the Network panel already open, and a request that should have failed doesn't show up at all. What's the most likely explanation?",
+        "options": [
+          "The Network panel is broken and needs to be reinstalled.",
+          "Network only records activity that happens while it's open, so the request may have completed before you opened the panel.",
+          "Failed requests are never shown in the Network panel.",
+          "The request must have succeeded, since failed requests always crash the page."
+        ],
+        "correctIndex": 1,
+        "explanation": "The Network panel only logs requests made while it's actively open. If you opened it after the page already finished loading, you'll miss anything that already happened — which is why reloading the page with the panel open is the reliable way to see everything, rather than the fun way of just staring at an empty list wondering if you're cursed."
+      },
+      {
+        "id": "q-0-2-1-2",
+        "question": "A button on a page is supposed to submit a form, but clicking it does nothing at all — no visual change, no network request. Which panel should you check first?",
+        "options": [
+          "Elements, to check the button's CSS.",
+          "Console, to check for a JavaScript error that may be preventing the click handler from running.",
+          "Network, since nothing was requested.",
+          "Sources, to set a breakpoint before checking anything else."
+        ],
+        "correctIndex": 1,
+        "explanation": "'Does nothing at all' with no request even attempted is a classic symptom of a JavaScript error happening before the code that would trigger the request — the Console is where that error would surface first, usually in a font of red that seems personally disappointed in you."
+      }
+    ],
+    "summary": "DevTools is a free, built-in suite of panels for inspecting and debugging any live page: Elements for the DOM/CSS, Console for live JavaScript and error output, Network for every request the page makes, and Sources for stepping through code. Matching a symptom to the right panel — rather than only opening DevTools once something visibly breaks — is the habit that turns it into a daily tool instead of a smoke alarm.",
+    "resources": [
+      {
+        "label": "MDN — What Are Browser Developer Tools?",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/What_are_browser_developer_tools"
+      }
+    ],
+    "interviewQuestions": [
+      "Walk me through which DevTools panel you'd check first for a page that loads but shows stale data.",
+      "Why might a request not appear in the Network panel even though you're sure it happened?"
+    ],
+    "previousLessonId": "lesson-0-1-5",
+    "nextLessonId": "lesson-0-2-2"
   },
   {
-    "id": "inspecting-html-with-elements",
+    "id": "lesson-0-2-2",
+    "topicId": "inspecting-html-with-elements",
     "moduleId": "module-0-2",
+    "order": 2,
     "title": "Inspecting HTML with Elements",
-    "description": "Reading and live-editing the DOM tree and applied CSS using the Elements (Inspector) panel.",
+    "description": "Using the Elements panel to read the live DOM tree and edit HTML and CSS in real time, without touching your source files.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "Medium",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Implement: the Elements panel shows the live DOM tree and lets you inspect/edit HTML and CSS in real time.",
+      "Select an element on the page and find its applied CSS rules.",
+      "Predict the visual effect of a CSS edit before making it, then verify by making the edit live."
+    ],
     "prerequisites": [
-      "meet-your-browser-devtools"
+      "lesson-0-2-1"
     ],
-    "next": [
-      "understanding-the-console"
+    "sections": [
+      {
+        "type": "heading",
+        "text": "The DOM as It Actually Is Right Now"
+      },
+      {
+        "type": "paragraph",
+        "text": "The Elements panel shows the live DOM tree and lets you inspect/edit HTML and CSS in real time. 'Live' is the important word: this isn't your source code file, patiently sitting on disk exactly as you left it. It's what the browser actually built after running any JavaScript that modified the page — which is often wildly different from what you originally wrote, like comparing a recipe to whatever your roommate actually cooked."
+      },
+      {
+        "type": "paragraph",
+        "text": "Click any element in the tree (or right-click something on the page and choose 'Inspect') and a side panel shows every CSS rule currently applied to it, in the order the browser applied them — including which ones got overridden by a more specific or later rule. This is, in practice, the fastest way to answer 'why does this look like that?' for any element on any page, instead of the slow way, which involves staring and sighing."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-2",
+        "title": "A Live Card to Inspect",
+        "instructions": "This renders a real card in your browser — which means it's real DOM, inspectable with your actual DevTools. Open DevTools now (F12), switch to Elements, and click the card's title to select it. Look at the CSS panel: find the rule setting the color, and try toggling it off with its checkbox to see the change live. Then come back here and try editing the code below (e.g. change the border color or padding) to see the preview update.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function InspectableCard() {\n  return (\n    <div style={{ padding: 16, background: '#0d1117', fontFamily: 'sans-serif' }}>\n      <article\n        style={{\n          background: '#161b22',\n          border: '1px solid #30363d',\n          borderRadius: 8,\n          padding: 16,\n          maxWidth: 280,\n        }}\n      >\n        <h2 style={{ margin: '0 0 8px 0', fontSize: 18, color: '#58a6ff' }}>\n          Inspect Me\n        </h2>\n        <p style={{ margin: 0, color: '#8b949e', fontSize: 14 }}>\n          Right-click this text and choose \"Inspect\" to open DevTools\n          pointed directly at this element. It won't bite.\n        </p>\n      </article>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Edits you make directly in the Elements panel are not saved anywhere — they live only in the browser's current in-memory copy of the page. Reload, and they vanish like they were never your friend. This trips up beginners constantly: someone 'fixes' a bug by editing it live in Elements, feels triumphant, closes the laptop, comes back the next day, and the bug is smugly waiting for them. Elements is for experimenting and diagnosing, not for shipping a change — once you know what fix works, you still have to make it in your actual source code."
+      },
+      {
+        "type": "code",
+        "language": "css",
+        "title": "What you're actually looking at in the Styles pane",
+        "code": "/* Elements shows you rules in specificity/cascade order,\n   with strikethrough on anything overridden: */\n\narticle {\n  border: 1px solid #30363d;   /* applied */\n}\n\narticle.featured {\n  border: 1px solid gold;      /* overrides the rule above,\n                                   because a class selector beats\n                                   a plain element selector —\n                                   CSS has its own quiet hierarchy */\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-2",
+        "label": "Open DevTools on any real webpage, select an element with visible text styling, and correctly identify which single CSS rule (and which file or <style> block) is responsible for its color, before checking the answer in the Styles pane.",
+        "hint": "Predict first, then verify — that's the skill this lesson is building, not just clicking around and hoping for enlightenment."
+      }
     ],
-    "related": [
-      "meet-your-browser-devtools"
+    "exercises": [
+      {
+        "id": "ex-0-2-2-1",
+        "title": "Predict, Then Verify a Live Edit",
+        "brief": "Open the sandbox above (or any real webpage) in DevTools. Pick one visible style — the card's border color, its padding, or the heading's font size. Before touching anything, write down what you predict will happen if you change that one CSS value in the Elements panel. Then make the change live and confirm whether your prediction was right (or hilariously wrong — both are useful data)."
+      }
     ],
-    "order": 2
+    "quiz": [
+      {
+        "id": "q-0-2-2-1",
+        "question": "You edit an element's text directly in the Elements panel, and it updates on screen immediately. You then reload the page. What happens to your edit?",
+        "options": [
+          "It's gone — Elements panel edits only exist in the browser's current in-memory copy of the page.",
+          "It's automatically saved back to the site's actual source files.",
+          "It stays until you manually undo it, even across reloads.",
+          "It's saved to your browser's local storage permanently."
+        ],
+        "correctIndex": 0,
+        "explanation": "The Elements panel lets you edit the browser's live, in-memory representation of the page — it never touches the actual source files on the server or your disk. Reloading rebuilds the page from scratch, discarding any live edits, no matter how proud of them you were."
+      },
+      {
+        "id": "q-0-2-2-2",
+        "question": "Two CSS rules both target the same element's border color, and they disagree. How does the Elements panel show you which one actually won?",
+        "options": [
+          "It only ever shows the winning rule and hides the other entirely.",
+          "It lists all matching rules in cascade order and shows the overridden one with a strikethrough.",
+          "It shows both rules with no indication of which applies.",
+          "It merges both rules into one average value."
+        ],
+        "correctIndex": 1,
+        "explanation": "The Styles pane in Elements shows every rule that matches the selected element, in the order the cascade applies them, with a strikethrough on any value that got overridden by a more specific or later rule — which is exactly what makes it useful for debugging 'why does this look wrong?' instead of just quietly resenting your CSS."
+      }
+    ],
+    "summary": "The Elements panel shows the browser's live DOM — what the page actually is right now, after any JavaScript changes — and lets you select any element to see and live-edit its applied CSS, with overridden rules shown struck through. Edits made there are temporary and gone on reload, which makes it a diagnostic tool for predicting and verifying fixes, not a place to ship changes from.",
+    "resources": [
+      {
+        "label": "MDN — What Are Browser Developer Tools? (Inspector)",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/What_are_browser_developer_tools"
+      }
+    ],
+    "interviewQuestions": [
+      "If you edit an element's styles live in DevTools and the change looks right, are you done? Why or why not?",
+      "How would you find out which of several conflicting CSS rules is actually being applied to an element?"
+    ],
+    "previousLessonId": "lesson-0-2-1",
+    "nextLessonId": "lesson-0-2-3"
   },
   {
-    "id": "understanding-the-console",
+    "id": "lesson-0-2-3",
+    "topicId": "understanding-the-console",
     "moduleId": "module-0-2",
+    "order": 3,
     "title": "Understanding the Console",
-    "description": "Running JavaScript live and reading logged output, warnings, and errors in the Console panel.",
+    "description": "Running JavaScript live in the browser and reading the errors, warnings, and logged output that show up automatically.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "High",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Implement: the Console executes JavaScript live and surfaces errors, warnings, and logged output.",
+      "Read a stack trace well enough to identify which line and file an error points to.",
+      "Distinguish an error (red) from a warning (yellow) and explain what each generally implies."
+    ],
     "prerequisites": [
-      "meet-your-browser-devtools"
+      "lesson-0-2-1"
     ],
-    "next": [
-      "understanding-network-requests"
+    "sections": [
+      {
+        "type": "heading",
+        "text": "A Live JavaScript Environment Attached to the Page"
+      },
+      {
+        "type": "paragraph",
+        "text": "The Console executes JavaScript live and surfaces errors, warnings, and logged output. It's two things at once: a place where the page itself reports problems automatically, unprompted, like a smoke detector with opinions, and a place where you can type and run your own JavaScript directly against the current page — with full access to whatever's already loaded."
+      },
+      {
+        "type": "code",
+        "language": "javascript",
+        "title": "The most common console methods",
+        "code": "console.log('Just a value, for general debugging');\nconsole.warn('Something is probably wrong, but execution continued');\nconsole.error('Something failed');\nconsole.table([{ id: 1, name: 'Ada' }, { id: 2, name: 'Grace' }]);\n// console.table is worth knowing early — it renders arrays\n// of objects as an actual readable table instead of a wall\n// of nested braces that makes your eyes cross."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-3",
+        "title": "Trigger Real Console Output",
+        "instructions": "This component logs to the console when you click each button — which means it's really writing to your actual browser's Console panel. Open DevTools now, switch to Console, then click each button and watch what appears. Notice the different colors and icons for log vs. warn vs. error.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function ConsoleDemo() {\n  const handleLog = () => console.log('Order submitted:', { id: 42, total: 19.99 });\n  const handleWarn = () => console.warn('Cart total exceeds free-shipping threshold check skipped');\n  const handleError = () => console.error('Failed to save order: network request timed out');\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', fontFamily: 'sans-serif', display: 'flex', gap: 8 }}>\n      <button onClick={handleLog} style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>\n        console.log\n      </button>\n      <button onClick={handleWarn} style={{ background: '#9e6a03', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>\n        console.warn\n      </button>\n      <button onClick={handleError} style={{ background: '#da3633', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>\n        console.error\n      </button>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "paragraph",
+        "text": "When something actually goes wrong in a page's own code — not something you manually logged, but a real uncaught error — the Console reports it automatically, in red, along with a stack trace: the chain of function calls that led to the error, with the file name and line number where it actually happened. That file/line reference is often the single fastest way to go from 'the page is broken, panic' to 'here's the exact line, calmly.'"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "When a page throws several errors at once, the natural instinct is to investigate whichever one is largest, reddest, or most recently arrived, like a very small, very stressful game of whack-a-mole. Resist that. Errors frequently cascade — one root failure early in the page's execution causes several unrelated-looking errors afterward. Always read the first error in the list first."
+      },
+      {
+        "type": "collapsible",
+        "title": "Error vs. warning: what's the real difference?",
+        "subtitle": "Red doesn't always mean 'broken'",
+        "variant": "pitfall",
+        "content": "An error (red) generally means something failed in a way JavaScript couldn't recover from on its own — execution of that code path stopped. A warning (yellow) means the browser or a library noticed something worth flagging, but execution continued anyway. Warnings are easy to develop a habit of ignoring because the page 'still works' — which is exactly how a warning quietly becomes the error you're debugging next month, once whatever it was gently trying to tell you finally comes due."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-3",
+        "label": "Open the Console on any real webpage and, if there's at least one warning or error present, identify which line and file it points to. If the page is clean, run one console.log() of your own targeting any variable or element on the page.",
+        "hint": "Click the error/warning text itself — most browsers make the file:line reference directly clickable, jumping you to Sources."
+      }
     ],
-    "related": [
-      "inspecting-html-with-elements",
-      "your-first-debugging-exercise"
+    "exercises": [
+      {
+        "id": "ex-0-2-3-1",
+        "title": "Read a Real Stack Trace",
+        "brief": "Open DevTools Console on three real websites you use. If any of them show a warning or error, click through to the file/line it references and write one sentence describing what that line appears to be doing. If a site is completely clean, note that too — it's a rare and beautiful sight, treasure it."
+      }
     ],
-    "order": 3
+    "quiz": [
+      {
+        "id": "q-0-2-3-1",
+        "question": "A page shows five red errors in the Console at once, all appearing the instant the page loads. What's the best first move?",
+        "options": [
+          "Start with the last error, since it's freshest.",
+          "Start with the first error, since later ones may just be downstream failures caused by it.",
+          "Ignore all of them and only investigate errors the user directly reports.",
+          "Clear the console and reload until only one error remains."
+        ],
+        "correctIndex": 1,
+        "explanation": "Errors frequently cascade: an early failure can break the assumptions later code depends on, producing several more errors that are really just symptoms of the first one. Reading the first error first is the habit that avoids chasing five ghosts created by one actual problem."
+      },
+      {
+        "id": "q-0-2-3-2",
+        "question": "What's the key practical difference between console.warn() output and console.error() output?",
+        "options": [
+          "There is no real difference — they're purely cosmetic color choices.",
+          "console.error() always crashes the page; console.warn() never does.",
+          "An error generally indicates a failure that stopped that code path from continuing; a warning is a flagged concern where execution continued anyway.",
+          "console.warn() only appears in production, and console.error() only appears in development."
+        ],
+        "correctIndex": 2,
+        "explanation": "Errors and warnings both surface real information, but an error typically corresponds to a failure that halted execution somewhere, while a warning is the browser or a library flagging something worth noticing without stopping anything — which is exactly why warnings are easy to accumulate and ignore until, one day, they aren't."
+      }
+    ],
+    "summary": "The Console is a live JavaScript environment tied to the current page: you can run your own code against it directly, and it automatically surfaces errors and warnings the page produces, each with a stack trace pointing to the exact file and line. Reading the first error first — rather than the loudest or most recent one — is the single habit that most separates efficient debugging from chasing symptoms.",
+    "resources": [
+      {
+        "label": "MDN — console (Web API reference)",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/console"
+      }
+    ],
+    "interviewQuestions": [
+      "What's the difference between console.warn() and console.error(), practically speaking?",
+      "A page throws five errors at once when it loads. How do you decide where to start looking?",
+      "What information does a JavaScript stack trace actually give you, and how do you use it?"
+    ],
+    "previousLessonId": "lesson-0-2-2",
+    "nextLessonId": "lesson-0-2-4"
   },
   {
-    "id": "understanding-network-requests",
+    "id": "lesson-0-2-4",
+    "topicId": "understanding-network-requests",
     "moduleId": "module-0-2",
+    "order": 4,
     "title": "Understanding Network Requests",
-    "description": "Reading the Network panel to see every request a page makes, its status code, timing, and payload.",
+    "description": "Reading the Network panel to see exactly what a page requested, whether it succeeded, how long it took, and what came back.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "High",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Describe and reproduce: the Network panel shows every request a page makes, its status, timing, and payload.",
+      "Identify a failed request's status code and explain, at a high level, what that code category means.",
+      "Explain why a page can 'look' like nothing happened when a request actually failed silently."
+    ],
     "prerequisites": [
-      "meet-your-browser-devtools"
+      "lesson-0-2-1"
     ],
-    "next": [
-      "your-first-debugging-exercise"
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Every Request, Out in the Open"
+      },
+      {
+        "type": "paragraph",
+        "text": "The Network panel shows every request a page makes, its status, timing, and payload. Recall the request/response loop from Level 0's first module — every time a page fetches HTML, CSS, JS, an image, or data from an API, that's a request. The Network panel is where all of that becomes visible and inspectable, instead of invisible and assumed, which is a surprisingly common state for beginners to leave it in — quietly trusting that things are fine."
+      },
+      {
+        "type": "walkthrough",
+        "title": "Reading a Single Request in Network",
+        "steps": [
+          {
+            "title": "1. Open Network and reload",
+            "description": "Open DevTools, switch to the Network tab, then reload the page so it captures the full list of requests from the very start."
+          },
+          {
+            "title": "2. Find the status column",
+            "description": "Each request shows a status code: 200 (success), 304 (not modified, served from cache), 404 (not found), 500 (server error), among others. A quick scan of this column tells you immediately if anything failed."
+          },
+          {
+            "title": "3. Check the timing column",
+            "description": "Each request also shows how long it took. A request that's unusually slow — seconds instead of milliseconds — is often the real reason a page 'feels' slow, even if every request eventually succeeds. It's the difference between 'broken' and 'just really, really leisurely.'"
+          },
+          {
+            "title": "4. Click into a single request",
+            "description": "Selecting a request opens its details: the exact URL requested, the request headers sent, the response headers received, and — for API calls — the actual response payload (usually JSON)."
+          }
+        ]
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "title": "A quick status-code reading guide",
+        "code": "2xx  Success            200 OK, 201 Created\n3xx  Redirect           304 Not Modified (served from cache)\n4xx  Client error        404 Not Found, 401 Unauthorized\n5xx  Server error        500 Internal Server Error, 503 Unavailable"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Not checking the Network tab and assuming 'nothing happened' when a request actually failed silently is one of the most common beginner debugging mistakes. A button click can trigger a request that fails with a 404 or 500 — and if the code doesn't explicitly handle that failure, the interface can look completely unchanged, as if the click did nothing at all. The click did something. It just failed quietly, out of sight, like a package marked 'delivered' that never actually arrives."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-4",
+        "title": "Watch a Real Request Happen",
+        "instructions": "Open DevTools → Network, then click the button below. It makes a real fetch() call to a public test API. Watch the request appear in the Network panel, check its status code, click into it to see the response payload, and note the timing.",
+        "language": "jsx",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function NetworkDemo() {\n  const [result, setResult] = useState('Click the button, then check the Network tab.');\n\n  const loadData = async () => {\n    setResult('Loading...');\n    try {\n      const response = await fetch('https://jsonplaceholder.typicode.com/todos/1');\n      const data = await response.json();\n      setResult(`Status ${response.status} — got: ${JSON.stringify(data)}`);\n    } catch (err) {\n      setResult('Request failed: ' + err.message);\n    }\n  };\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <button\n        onClick={loadData}\n        style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: 6, cursor: 'pointer', marginBottom: 12 }}\n      >\n        Fetch a Todo\n      </button>\n      <pre style={{ background: '#161b22', padding: 12, borderRadius: 6, fontSize: 13, whiteSpace: 'pre-wrap' }}>\n        {result}\n      </pre>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-4",
+        "label": "Open the Network panel on a real page that loads data (a news site, a social feed, a shop), reload it, and find one request that isn't for HTML/CSS/JS/images — identify its status code and roughly how long it took.",
+        "hint": "Look for requests with a type like 'fetch', 'xhr', or a response type of JSON — those are usually data requests, not asset requests."
+      }
     ],
-    "related": [
-      "understanding-the-console"
+    "exercises": [
+      {
+        "id": "ex-0-2-4-1",
+        "title": "Diagnose a Status Code",
+        "brief": "Using the sandbox above or a real webpage, find three different requests in the Network panel with three different status codes (or look up what 404, 401, and 500 mean if you can't find live examples of each). For each code, write one sentence explaining what it tells you about where the failure happened — client-side mistake, missing resource, or server-side problem."
+      }
     ],
-    "order": 4
+    "quiz": [
+      {
+        "id": "q-0-2-4-1",
+        "question": "A user clicks 'Save' on a form, the button briefly shows a loading state, then returns to normal — but nothing was actually saved. What should you check first?",
+        "options": [
+          "The Elements panel, to check if the button's CSS is correct.",
+          "The Network panel, to check whether the save request was sent, and if so, what status code it returned.",
+          "There's nothing to check — if the button animated correctly, the save must have worked.",
+          "The Console, since network failures never appear there."
+        ],
+        "correctIndex": 1,
+        "explanation": "A 'silent' failure like this — UI behaves normally but the actual effect didn't happen — is a classic sign of a request that failed without being handled. The Network panel will show whether the request was even sent, and if so, its status code, rather than leaving you to just trust the button's very convincing performance."
+      },
+      {
+        "id": "q-0-2-4-2",
+        "question": "A request in the Network panel shows status 404. What does that most specifically indicate?",
+        "options": [
+          "The server crashed while handling the request.",
+          "The request succeeded but was redirected.",
+          "The requested resource could not be found at that URL.",
+          "The user isn't authenticated."
+        ],
+        "correctIndex": 2,
+        "explanation": "404 specifically means 'not found' — the server received the request fine but has nothing at that URL to return. That's a different failure mode than a 500 (server-side crash/error) or a 401 (authentication problem), and distinguishing between them is often the fastest path to the actual fix."
+      }
+    ],
+    "summary": "The Network panel makes every request a page sends visible: its URL, status code, timing, and payload. A page that 'looks like nothing happened' after an action is frequently a request that failed silently — and the Network panel, not guesswork, is how you find out whether a request was even sent and what came back.",
+    "resources": [
+      {
+        "label": "MDN — HTTP Response Status Codes",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status"
+      }
+    ],
+    "interviewQuestions": [
+      "A button click seems to do nothing. How would you use the Network panel to figure out why?",
+      "What's the practical difference between a 404 and a 500 status code, and how does that change what you'd investigate?"
+    ],
+    "previousLessonId": "lesson-0-2-3",
+    "nextLessonId": "lesson-0-2-5"
   },
   {
-    "id": "your-first-debugging-exercise",
+    "id": "lesson-0-2-5",
+    "topicId": "your-first-debugging-exercise",
     "moduleId": "module-0-2",
+    "order": 5,
     "title": "Your First Debugging Exercise",
-    "description": "A guided first debugging pass combining Elements and Console to locate and explain a simple visual/logic bug.",
+    "description": "A guided first debugging pass using Elements and Console together, through two escalating live bugs.",
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
-    "interviewFrequency": "High",
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Apply a guided first debugging pass: use Elements + Console together to locate and explain a simple visual/logic bug.",
+      "Confirm a bug's cause by inspecting it before attempting a fix.",
+      "Complete both drill items in the Playground without hints."
+    ],
     "prerequisites": [
-      "inspecting-html-with-elements",
-      "understanding-the-console"
+      "lesson-0-2-2",
+      "lesson-0-2-3"
     ],
-    "next": [],
-    "related": [
-      "understanding-network-requests"
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Same Two Panels, Now Working Together"
+      },
+      {
+        "type": "paragraph",
+        "text": "You now know Elements shows the live DOM and CSS, and Console shows live JavaScript output and errors. Real debugging almost always means moving between both: Console tells you something is wrong, and Elements shows you what actually rendered as a result. This lesson has no new theory — just two escalating live bugs for you to actually hunt down, using the two panels together like the world's least dramatic detective duo."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "The rule for both drills below: confirm the cause before you 'fix' anything. Open DevTools, read whatever the Console tells you, inspect the relevant element in Elements, and form a specific theory — 'this is wrong because X' — before touching the code. Guessing at a fix without confirming the cause first is the single most common mistake at this stage, and also a great way to 'fix' a bug into a slightly different, more confusing bug."
+      },
+      {
+        "type": "walkthrough",
+        "title": "Drill 1: A Silent Logic Bug",
+        "steps": [
+          {
+            "title": "1. Open DevTools on the sandbox below",
+            "description": "Switch to Console before clicking anything, so you catch output from the very first click."
+          },
+          {
+            "title": "2. Click the counter button a few times",
+            "description": "Watch both the number displayed on screen and whatever appears in the Console."
+          },
+          {
+            "title": "3. Form a specific theory",
+            "description": "Something about the displayed count and the logged count won't match after a couple of clicks. Before reading the code, write down in your own words what you think is happening and why."
+          },
+          {
+            "title": "4. Confirm by reading the code",
+            "description": "Then look at the sandbox code itself to check whether your theory was right. This is the habit: observe and form a theory in the live tool first, confirm in the source second — not the other way around, however tempting."
+          }
+        ]
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-5-1",
+        "title": "Drill 1: Counter",
+        "instructions": "Open Console first. Click the button several times and compare the on-screen count to what's logged.",
+        "language": "jsx",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function BuggyCounter() {\n  const [count, setCount] = useState(0);\n\n  const handleClick = () => {\n    setCount(count + 1);\n    // Bug: this reads the OLD `count` from this render's closure,\n    // not the freshly updated value — so it always logs one click\n    // behind, like a friend who's perpetually one text message\n    // behind in the conversation.\n    console.log('Count is now:', count);\n  };\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <p style={{ fontSize: 24 }}>{count}</p>\n      <button\n        onClick={handleClick}\n        style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: 6, cursor: 'pointer' }}\n      >\n        Click me\n      </button>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "collapsible",
+        "title": "Drill 1 answer — open only after you've formed your own theory",
+        "subtitle": "No peeking before step 3",
+        "variant": "pitfall",
+        "content": "The on-screen count updates correctly, but the Console always logs the count from before the click, one step behind. That's because handleClick reads the `count` variable from its own render's closure — by the time console.log runs, setCount has scheduled an update for the next render, but the `count` variable inside this already-running function is still the old value. You don't need to fully understand closures yet (that's coming later in the curriculum) — the debugging skill this drill is building is noticing the mismatch between what you see on screen and what's logged, and treating that mismatch as the clue, rather than assuming the Console is always the honest one in the relationship."
+      },
+      {
+        "type": "walkthrough",
+        "title": "Drill 2: A Visual Bug with a Console Clue",
+        "steps": [
+          {
+            "title": "1. Open Console, then look at the card below",
+            "description": "One piece of text is barely visible. Check the Console before assuming it's a CSS typo."
+          },
+          {
+            "title": "2. Read whatever the Console shows",
+            "description": "It's telling you something specific about why a value is missing, not just that something is wrong."
+          },
+          {
+            "title": "3. Use Elements to confirm",
+            "description": "Select the faint text in Elements and check its applied CSS — confirm whether the actual color rule matches what the Console hinted at."
+          }
+        ]
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-0-2-5-2",
+        "title": "Drill 2: Faint Price Tag",
+        "instructions": "Open Console before looking closely at the card. The price text is barely readable — find out why using both panels before checking the code.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nconst product = { name: 'Wireless Mouse', price: undefined };\n\nexport default function ProductCard() {\n  // Bug: `price` never got set on the product object above,\n  // so the template literal below renders the literal string\n  // \"undefined\", and a CSS rule further down happens to color\n  // any text containing \"undefined\" almost invisibly — a\n  // deliberately exaggerated stand-in for a real low-contrast bug.\n  console.log('Rendering product:', product);\n\n  return (\n    <div style={{ padding: 16, background: '#0d1117', fontFamily: 'sans-serif' }}>\n      <article style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: 8, padding: 16, maxWidth: 260 }}>\n        <h3 style={{ margin: '0 0 8px 0', color: '#e6edf3' }}>{product.name}</h3>\n        <p className=\"price-tag\" style={{ margin: 0, color: '#161b22', fontSize: 18 }}>\n          ${product.price}\n        </p>\n      </article>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "collapsible",
+        "title": "Drill 2 answer — open only after forming your own theory",
+        "subtitle": "No peeking before step 3",
+        "variant": "pitfall",
+        "content": "The Console log shows `price: undefined` on the logged product object — that's the clue that something is missing before you even look at styling. In Elements, selecting the price text shows its color is set almost identical to the card's own background, which is what makes '$undefined' nearly invisible rather than just visually wrong (arguably the world's most understated bug report). Two separate problems compound here: missing data and a styling choice that happened to hide the resulting bug instead of surfacing it. Notice that Console pointed you at the data problem before Elements even came into it — that ordering is worth keeping as a default habit."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-0-2-5",
+        "label": "For both drills, state your theory of the bug's cause — in your own words, before reading the provided answer — and confirm whether reading the answer matched what you found using Console + Elements yourself.",
+        "hint": "Being right isn't actually the point of this checkpoint. Having formed a specific, checkable theory before looking is — confidently wrong still beats vaguely hopeful."
+      }
     ],
-    "order": 5
+    "exercises": [
+      {
+        "id": "ex-0-2-5-1",
+        "title": "Drill 1: Diagnose the Off-by-One Log",
+        "brief": "Using Console + Elements on the Drill 1 sandbox, determine why the logged count is always one click behind the number displayed on screen. Write your theory before opening the answer."
+      },
+      {
+        "id": "ex-0-2-5-2",
+        "title": "Drill 2: Diagnose the Invisible Price",
+        "brief": "Using Console + Elements on the Drill 2 sandbox, determine both why the price shows as \"$undefined\" and why it's nearly impossible to read. Identify each of the two separate causes before opening the answer."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-0-2-5-1",
+        "question": "In Drill 1, the on-screen counter is correct but the Console log always shows the previous value. What does this tell you about where to look?",
+        "options": [
+          "The bug is in the CSS styling of the counter display.",
+          "The bug is unrelated to the click handler and is caused by a Network request.",
+          "The mismatch between what's displayed and what's logged points specifically at the logic inside the click handler, not at rendering or styling.",
+          "Console logs are always one step behind and this is expected browser behavior."
+        ],
+        "correctIndex": 2,
+        "explanation": "Because the visible UI is correct but the logged value lags behind, the bug isn't in rendering or CSS — it has to be in the logic that produces the logged value, which is exactly what points you at the click handler's code rather than anywhere else."
+      },
+      {
+        "id": "q-0-2-5-2",
+        "question": "What is the core habit this lesson is trying to build, beyond fixing these two specific bugs?",
+        "options": [
+          "Memorizing that closures cause off-by-one logging bugs.",
+          "Confirming a bug's actual cause using DevTools before attempting a fix, rather than guessing.",
+          "Always checking the Network panel first for any bug.",
+          "Avoiding the Console panel in favor of reading source code directly."
+        ],
+        "correctIndex": 1,
+        "explanation": "Both drills are built around the same sequence — observe, form a specific theory using DevTools, then confirm — because guessing at a fix without confirming the cause first is the habit this exercise is explicitly designed to counter."
+      }
+    ],
+    "summary": "Real debugging means moving between Console (what the app believes is true, and what's erroring) and Elements (what actually rendered) rather than treating them as separate tools. Both drills in this lesson reward the same sequence: observe, form a specific theory using DevTools, then confirm — confirming the cause before attempting a fix is the single habit this lesson exists to build.",
+    "resources": [
+      {
+        "label": "MDN — What Are Browser Developer Tools?",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/What_are_browser_developer_tools"
+      }
+    ],
+    "interviewQuestions": [
+      "Walk me through your process for debugging a UI element that displays an unexpected value.",
+      "Why is it useful to check the Console before assuming a visual bug is purely a CSS problem?"
+    ],
+    "previousLessonId": "lesson-0-2-4",
+    "nextLessonId": "lesson-1-1-1"
+  },
+  {
+    "id": "lesson-1-1-1",
+    "topicId": "html-structure-of-the-web",
+    "moduleId": "module-1-1",
+    "order": 1,
+    "title": "HTML: The Structure of the Web",
+    "description": "HTML as the semantic skeleton of a webpage — a tree of elements describing content and meaning, not appearance.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 25,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Explain, unprompted, that HTML describes content and meaning rather than appearance.",
+      "Distinguish an HTML element's job from CSS's job using a concrete example.",
+      "Recognize that a document is a tree of nested elements, not a flat list."
+    ],
+    "prerequisites": [
+      "lesson-0-2-5"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "The Skeleton, Not the Skin"
+      },
+      {
+        "type": "paragraph",
+        "text": "HTML is the semantic skeleton of a webpage — a tree of elements describing content and meaning, not appearance. That's worth sitting with, because it's the single most common thing beginners get backwards. HTML doesn't say 'make this text big and bold blue.' It says 'this is the main heading' or 'this is a list of steps' or 'this is a quotation.' What that ends up looking like is an entirely separate job, one you already met back in module-0-1: CSS's job, not HTML's."
+      },
+      {
+        "type": "paragraph",
+        "text": "Think of a house's skeleton — the framing. A framer doesn't choose paint colors. They decide 'this is a load-bearing wall,' 'this is a doorway,' 'this is a window.' HTML is exactly that kind of decision-making, applied to a document: 'this is a heading,' 'this is a paragraph,' 'this is a navigation menu.' Skip this step or do it carelessly, and everything built on top of it — styling, accessibility, SEO — gets shakier."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "The same content, meaningfully structured",
+        "code": "<h1>Weekend Hiking Trails</h1>\n<p>\n  A short guide to three trails near town, ranked by difficulty.\n</p>\n<h2>Beginner: Overlook Loop</h2>\n<p>2.1 miles, mostly flat, great views near the end.</p>"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Treating HTML tags as purely visual containers instead of meaningful structure is the trap to watch for here — picking an <h1> because 'it looks big' rather than because it's actually the main heading, or wrapping something in a tag purely for a font size you'll fix in CSS anyway. A screen reader, a search engine, and a future developer reading your code all lean on what your tags actually mean, and none of them care what you were picturing visually when you chose one."
+      },
+      {
+        "type": "diagram",
+        "diagramType": "custom",
+        "title": "A Document Is a Tree, Not a List",
+        "description": "An HTML document isn't a flat sequence of tags — it's a nested tree. A <body> contains an <h1> and a <p>; that <p> might contain an <a> link inside it. Elements can contain other elements, and that nesting is itself meaningful: it says 'this is part of that.' You'll come back to this tree structure constantly — it's exactly what the Elements panel from module-0-2 was showing you."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-1-1-1",
+        "label": "Explain, in your own words and without looking back, why HTML is described as 'semantic skeleton, not appearance' — using an example that isn't the house-framing one from this lesson.",
+        "hint": "Pick any two elements that could visually look identical after styling, but mean different things structurally."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-1-1-1-1",
+        "title": "Find Three Meaningful Choices",
+        "brief": "Open DevTools (from module-0-2 — you knew this was coming back) on any article or blog post online. In the Elements panel, find three tags whose choice reflects meaning rather than appearance — for example a <blockquote>, an <h2>, or a <time>. For each one, write one sentence on what meaning that tag is communicating, separate from how it happens to be styled."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-1-1-1-1",
+        "question": "A developer wraps a word in a custom tag purely to make it appear a certain shade of blue, with no regard for what the word actually represents. What does this most clearly violate?",
+        "options": [
+          "Nothing — HTML tags exist to control appearance.",
+          "The rule that all text must be wrapped in a <div>.",
+          "Browser compatibility rules.",
+          "The principle that HTML should describe content and meaning, leaving appearance to CSS."
+        ],
+        "correctIndex": 3,
+        "explanation": "HTML's job is to describe what something is (a heading, a quotation, emphasis) — how it looks is CSS's job. Choosing a tag purely for a visual side effect, with no regard for meaning, inverts that responsibility and is exactly the mistake this lesson calls out."
+      },
+      {
+        "id": "q-1-1-1-2",
+        "question": "Why is an HTML document usually described as a 'tree' rather than a flat list of tags?",
+        "options": [
+          "Because elements can be nested inside other elements, and that nesting itself carries meaning.",
+          "Because browsers render pages from the bottom up.",
+          "Because HTML files must be saved with a .tree extension.",
+          "It's not really a tree — that's just a casual metaphor with no technical basis."
+        ],
+        "correctIndex": 0,
+        "explanation": "Elements contain other elements — a paragraph can contain a link, a list can contain list items — and that containment is meaningful, not incidental. That nested structure is precisely what the Elements panel visualizes as an indented tree."
+      }
+    ],
+    "summary": "HTML is the semantic skeleton of a webpage: a nested tree of elements that describes what content is — a heading, a paragraph, a quotation — not what it looks like. Appearance is CSS's job. Treating tags as visual containers instead of meaningful structure is the single most common beginner mistake, and it's one that quietly costs you accessibility and SEO down the line.",
+    "resources": [
+      {
+        "label": "MDN — Structuring Content with HTML",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content"
+      }
+    ],
+    "interviewQuestions": [
+      "How would you explain the difference between HTML's job and CSS's job to someone new to web development?",
+      "Why does it matter whether a heading is marked up as an <h1> versus just large, bold text?"
+    ],
+    "previousLessonId": "lesson-0-2-5",
+    "nextLessonId": "lesson-1-1-2"
+  },
+  {
+    "id": "lesson-1-1-2",
+    "topicId": "elements-tags-and-attributes",
+    "moduleId": "module-1-1",
+    "order": 2,
+    "title": "Elements, Tags, and Attributes",
+    "description": "How elements are built from tags and attributes, and why invalid markup causes real, sometimes invisible problems.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 25,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Explain, unprompted, that elements are made of tags and attributes, and what job each plays.",
+      "Identify an unclosed tag or unquoted attribute as invalid markup.",
+      "Write a correctly closed, correctly quoted element from a plain-English description."
+    ],
+    "prerequisites": [
+      "lesson-1-1-1"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Tags Build Elements; Attributes Configure Them"
+      },
+      {
+        "type": "paragraph",
+        "text": "Elements are made of tags and attributes; attributes configure or describe an element without changing its core meaning. An element is usually an opening tag, some content, and a closing tag — <p>like this</p>. The tag name (p, in this case) says what the element fundamentally is. Attributes, written inside the opening tag, add detail without changing that fundamental identity: a paragraph is still a paragraph whether or not it has a class attribute on it."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "Anatomy of an element",
+        "code": "<a href=\"https://example.com\" target=\"_blank\">Visit Example</a>\n<!--\n  ^tag  ^attribute  ^attribute value       ^content    ^closing tag\n  \"a\" is still fundamentally a link (an anchor), no matter\n  what attributes you add — href just tells it WHERE to go.\n-->"
+      },
+      {
+        "type": "paragraph",
+        "text": "Some elements don't wrap content at all — they're self-contained, like <img src=\"cat.jpg\" alt=\"A cat\"> or <br>. These are called void elements, and they never get a separate closing tag, because there's no content between an opening and closing tag to close around. Everything else — the vast majority of HTML — needs both an opening and a closing tag."
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Forgetting to close tags or quote attribute values, producing invalid markup, is this lesson's headline mistake — and browsers are frustratingly forgiving about it, which is exactly why it's dangerous. A browser will often silently guess what you meant and render something anyway, so a missing closing tag can sit in your code for months, quietly breaking your document's actual structure (nesting content inside the wrong parent) without ever throwing a visible error."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-1-1-2",
+        "title": "Spot and Fix the Invalid Markup",
+        "instructions": "This preview is rendering React elements built from the invalid HTML pattern below, translated so you can see the effect live. The card's border is supposed to wrap all three lines of text, but it doesn't — edit the JSX to properly nest and close every element the way valid HTML would require, and watch the border catch up.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\n// Imagine this represents HTML with a missing closing tag:\n// <div class=\"card\">\n//   <p>Line one\n//   <p>Line two</p>\n// </div>\n// Only \"Line one\" ends up truly inside the card, because the\n// first <p> was never closed — the browser silently closes it\n// FOR you, right before the second <p> starts, collapsing the\n// nesting you intended.\n\nexport default function MarkupDemo() {\n  return (\n    <div style={{ padding: 16, background: '#0d1117', fontFamily: 'sans-serif' }}>\n      <div style={{ border: '2px solid #58a6ff', borderRadius: 8, padding: 12, color: '#e6edf3' }}>\n        <p style={{ margin: 0 }}>Line one</p>\n      </div>\n      <p style={{ margin: '4px 0 0 0', color: '#8b949e' }}>Line two (should be inside the card — move it in!)</p>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "collapsible",
+        "title": "Why does the browser even allow this?",
+        "subtitle": "HTML parsers are built to guess, not to reject",
+        "variant": "deep-dive",
+        "content": "Unlike a programming language, where a syntax error usually stops execution outright, HTML parsers are specified to recover from broken markup by making a best guess and continuing — because the web had to stay usable even as millions of hand-written pages, written by beginners and typo-prone experts alike, went live with mistakes in them. That forgiveness is a feature for keeping the web running, but it's a trap for you as a developer: it means invalid markup rarely announces itself. Getting in the habit of writing valid markup from the start — rather than relying on the browser's autocorrect instincts — is what keeps your actual document structure matching what you intended."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-1-1-2",
+        "label": "Write, from scratch, a valid <a> element linking the text 'Forge homepage' to \"https://forge.dev\", opening in a new tab — correctly closed and with correctly quoted attribute values.",
+        "hint": "You need href for the destination and target=\"_blank\" for opening in a new tab."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-1-1-2-1",
+        "title": "Break It, Then Fix It",
+        "brief": "Write three small, valid HTML snippets of your choosing (a paragraph, a link, an image). For each one, deliberately introduce one mistake — an unclosed tag, an unquoted attribute, a misspelled tag name — and note in one sentence what you'd expect to visibly break versus what might silently misbehave instead."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-1-1-2-1",
+        "question": "What is the core relationship between a tag and an attribute in HTML?",
+        "options": [
+          "They're interchangeable terms for the same thing.",
+          "Attributes define what the element is; tags are purely decorative.",
+          "Only some elements have tags, while all elements require attributes.",
+          "The tag defines what the element fundamentally is; attributes add configuration or detail without changing that core identity."
+        ],
+        "correctIndex": 3,
+        "explanation": "The tag name establishes the element's identity (a paragraph, a link, an image); attributes like href, class, or alt add detail on top of that identity without changing what kind of element it fundamentally is."
+      },
+      {
+        "id": "q-1-1-2-2",
+        "question": "A developer forgets to close a <p> tag before starting a new one. What's the most accurate description of what happens?",
+        "options": [
+          "The page fails to load entirely, showing a blank screen.",
+          "The browser throws a visible error message the developer can't miss.",
+          "The browser silently closes the unclosed tag and continues, which can quietly change the document's actual nesting without any visible error.",
+          "Nothing happens — HTML doesn't require closing tags at all."
+        ],
+        "correctIndex": 2,
+        "explanation": "HTML parsers are built to recover from broken markup by guessing and continuing, rather than stopping outright. That means an unclosed tag often produces no visible error at all — just a silently different document structure than you intended, which is exactly why it's easy to miss."
+      }
+    ],
+    "summary": "Elements are built from tags (which establish what an element fundamentally is) and attributes (which configure or describe it without changing that identity). Because browsers recover from broken markup by guessing rather than erroring out, unclosed tags and unquoted attributes rarely announce themselves — they just quietly produce a document structure different from the one you intended.",
+    "resources": [
+      {
+        "label": "MDN — Basic HTML Syntax",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax"
+      }
+    ],
+    "interviewQuestions": [
+      "What's the difference between a tag and an attribute?",
+      "Why might invalid HTML render 'fine' visually but still be considered broken?"
+    ],
+    "previousLessonId": "lesson-1-1-1",
+    "nextLessonId": "lesson-1-1-3"
+  },
+  {
+    "id": "lesson-1-1-3",
+    "topicId": "headings-paragraphs-and-text",
+    "moduleId": "module-1-1",
+    "order": 3,
+    "title": "Headings, Paragraphs, and Text",
+    "description": "Building a correct, skip-free heading outline that both sighted readers and screen readers rely on.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 25,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Apply headings h1-h6 and paragraphs to produce a document with a correct, non-skipping outline.",
+      "Identify a heading hierarchy mistake (a skipped level) in a piece of markup.",
+      "Choose a heading level based on document outline logic, not desired font size."
+    ],
+    "prerequisites": [
+      "lesson-1-1-2"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Quick Recap Before You Practice"
+      },
+      {
+        "type": "paragraph",
+        "text": "Headings (h1–h6) and paragraphs create a readable document outline that both humans and screen readers rely on. h1 is the top-level heading (usually one per page), h2 is a subheading under it, h3 a subheading under that, and so on — the number is the outline level, not a font-size dial. Paragraphs (<p>) hold the actual prose underneath. That's genuinely the whole rule; the rest of this lesson is drilling it until choosing the right level is automatic."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "A correct outline",
+        "code": "<h1>Recipe: Weeknight Hummus</h1>\n<p>A quick, no-fuss hummus you can make in ten minutes.</p>\n\n<h2>Ingredients</h2>\n<p>Chickpeas, tahini, lemon, garlic, olive oil.</p>\n\n<h2>Steps</h2>\n<h3>1. Drain and rinse</h3>\n<p>Drain the chickpeas and rinse under cold water.</p>\n<h3>2. Blend</h3>\n<p>Combine everything and blend until smooth.</p>"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Choosing heading levels by font size desired instead of document outline logic — skipping from h1 to h4 because it 'happened to look like the right size' — is the mistake to drill against here. It breaks the outline a screen reader announces to a blind user navigating heading-by-heading, and it confuses search engines about your page's actual structure. If you want smaller text, that's a CSS decision; the heading level is a structural decision, made separately."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-1-1-3",
+        "title": "Drill: Fix the Skipped Heading Levels",
+        "instructions": "This page's heading outline skips from a top-level heading straight to a deeply nested one, with two levels missing in between. Fix the JSX so the heading levels step down one at a time (h1 → h2 → h3), without changing the visible text.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function ArticleOutline() {\n  return (\n    <article style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif' }}>\n      <h1 style={{ fontSize: 26 }}>Getting Started with Sourdough</h1>\n      <p style={{ color: '#8b949e' }}>A beginner-friendly guide.</p>\n\n      {/* Bug: this skips h2 entirely and jumps to h4 */}\n      <h4 style={{ fontSize: 15 }}>Feeding Your Starter</h4>\n      <p style={{ color: '#8b949e' }}>Feed it daily at room temperature.</p>\n    </article>\n  );\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-1-1-3",
+        "label": "Without a reference, write a 3-level heading outline (h1, then two h2s, then one h3 under one of them) for any topic of your choosing, with a paragraph under each heading.",
+        "hint": "Draw the outline as a bulleted list first if that helps — h1 at the top, h2s as its children, h3 as a child of one h2."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-1-1-3-1",
+        "title": "Escalating Drill: Outline Three Documents",
+        "brief": "Write correct heading + paragraph markup for three short documents: (1) a recipe with an ingredients section and a steps section, (2) a product page with a description and a specs section, (3) a blog post with an introduction, two supporting sections, and a conclusion. Each must have exactly one h1 and a heading hierarchy that never skips a level."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-1-1-3-1",
+        "question": "A page uses <h1> for its title, then <h2> for two section headings, then jumps straight to <h4> for a sub-point under one section. What's wrong with this?",
+        "options": [
+          "It skips h3, breaking the outline that screen readers and search engines rely on to understand document structure.",
+          "Nothing — heading levels are purely cosmetic and any order is fine.",
+          "You're only allowed to use h1 and h2 in valid HTML.",
+          "The page will fail to render because of the skipped level."
+        ],
+        "correctIndex": 0,
+        "explanation": "Heading levels represent nesting in a document outline, not visual styling choices. Skipping from h2 to h4 breaks that outline logic for anyone or anything relying on it — most notably screen reader users navigating heading-by-heading, and search engines parsing page structure."
+      },
+      {
+        "id": "q-1-1-3-2",
+        "question": "A developer wants a subheading to appear smaller than their h1 but chooses <h3> specifically because 'it's the size I want,' skipping h2 entirely. What's the better approach?",
+        "options": [
+          "This is correct — heading levels exist specifically to control size.",
+          "Avoid headings altogether and use styled <p> tags instead.",
+          "Use h2 for correct outline structure, and control the visual size separately with CSS.",
+          "Use h6 instead, since lower numbers are always more prominent."
+        ],
+        "correctIndex": 2,
+        "explanation": "Heading level should be chosen for outline correctness (what level of the document hierarchy this heading represents), not for a desired font size. If h2's default size doesn't look right, that's what CSS is for — the two concerns are meant to be handled separately."
+      }
+    ],
+    "summary": "Headings (h1–h6) and paragraphs build a document's readable outline, one that both sighted readers skimming the page and screen reader users navigating by heading rely on. The level you choose should reflect where a heading sits in that outline — never the font size you want, which is a separate, CSS-only decision.",
+    "resources": [
+      {
+        "label": "MDN — Headings and Paragraphs",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Headings_and_paragraphs"
+      }
+    ],
+    "interviewQuestions": [
+      "Why shouldn't you choose a heading level based on how big you want the text to look?",
+      "How does a skipped heading level affect a screen reader user, specifically?"
+    ],
+    "previousLessonId": "lesson-1-1-2",
+    "nextLessonId": "lesson-1-1-4"
+  },
+  {
+    "id": "lesson-1-1-4",
+    "topicId": "links-images-and-paths",
+    "moduleId": "module-1-1",
+    "order": 4,
+    "title": "Links, Images, and Paths",
+    "description": "Connecting documents and media with <a> and <img>, and the difference between relative and absolute paths.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 30,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Apply anchor and img elements to connect documents and media.",
+      "Explain the difference between a relative path and an absolute path, with an example of each.",
+      "Identify why a local absolute file path breaks once a site is deployed."
+    ],
+    "prerequisites": [
+      "lesson-1-1-2"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Quick Recap Before You Practice"
+      },
+      {
+        "type": "paragraph",
+        "text": "Anchor and img elements connect documents and media; relative vs absolute paths determine how the browser resolves them. <a href=\"...\"> links to another page or resource; <img src=\"...\" alt=\"...\"> embeds an image directly in the page. Both need a path telling the browser where to find the thing — and that path can be written two fundamentally different ways."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "Relative vs. absolute paths",
+        "code": "<!-- Absolute: the full address, works from anywhere -->\n<a href=\"https://example.com/blog/post-1\">Read the post</a>\n\n<!-- Relative: resolved based on the CURRENT page's location -->\n<a href=\"/blog/post-1\">Read the post</a>\n<img src=\"images/dinosaur.jpg\" alt=\"A dinosaur skeleton\">\n\n<!-- A local absolute path — works on YOUR machine only -->\n<img src=\"file:///Users/dana/site/images/dinosaur.jpg\" alt=\"...\">"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Using an absolute local file path that breaks once the site is deployed is this lesson's core trap. It's an easy mistake to miss, because it works flawlessly the entire time you're building locally — the file really is at that path on your machine. The instant the site is deployed to a server, that path points to a folder structure that doesn't exist there, and every one of those images or links quietly breaks at once."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-1-1-4",
+        "title": "Drill: Fix the Broken Path Pattern",
+        "instructions": "This card links to a hardcoded local-style absolute path, which is exactly the pattern that breaks on deploy. Edit the JSX to use a relative-style path instead (e.g. \"images/logo.png\" instead of a full local path), and add descriptive alt text for the image — which is currently missing.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function LinkAndImageDemo() {\n  return (\n    <div style={{ padding: 16, background: '#0d1117', fontFamily: 'sans-serif', color: '#e6edf3' }}>\n      {/* Bug 1: hardcoded local-machine-style path, will break on deploy */}\n      <img\n        src=\"/Users/dana/my-site/assets/logo.png\"\n        alt=\"\"\n        style={{ width: 80, height: 80, background: '#30363d', borderRadius: 8 }}\n      />\n      <p style={{ marginTop: 8 }}>\n        <a href=\"https://example.com/about\" style={{ color: '#58a6ff' }}>\n          Learn more about us\n        </a>\n      </p>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "paragraph",
+        "text": "Notice the alt attribute in that example was left empty. It's easy to treat alt as an afterthought, but it's read aloud by screen readers in place of the image, and it's what displays if the image fails to load — which, per the Network panel lesson back in module-0-2, happens more often than you'd think. A missing or empty alt on a meaningful image is a genuine accessibility failure, not a nitpick."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-1-1-4",
+        "label": "Write a valid <img> element for a photo of a red bicycle at the path \"images/bike.jpg\", with meaningful alt text — then explain in one sentence why the alt text you chose is better than something generic like \"image.\"",
+        "hint": "Alt text should describe what the image conveys, as if you were describing it to someone who can't see it."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-1-1-4-1",
+        "title": "Escalating Drill: Links and Images",
+        "brief": "Write markup for: (1) a link to an external site opening in a new tab, (2) a relative link to a page at /contact on the same site, (3) an image with a relative path and meaningful alt text, (4) an image wrapped in a link (so clicking the image navigates somewhere) — with the image's alt text written for its role as a link, not just as a picture."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-1-1-4-1",
+        "question": "A developer's images all display correctly while developing locally, using paths like \"/Users/dana/site/images/logo.png\". After deploying to a live server, none of the images load. What's the most likely cause?",
+        "options": [
+          "The absolute local file paths pointed to a folder structure that only exists on the developer's own machine, and doesn't exist on the server.",
+          "The images were deleted during deployment.",
+          "img elements don't work on deployed websites.",
+          "The alt text was missing, which prevents images from loading."
+        ],
+        "correctIndex": 0,
+        "explanation": "An absolute local path like /Users/dana/... only resolves correctly on that specific machine. It works flawlessly during local development because the file really is there — but a deployed server has an entirely different file structure, so every image using that pattern breaks at once, all silently, with no error beyond a missing image."
+      },
+      {
+        "id": "q-1-1-4-2",
+        "question": "Why does the alt attribute on an <img> matter beyond just 'being good practice'?",
+        "options": [
+          "It has no real functional purpose; it's purely a formality.",
+          "It only affects how fast the image loads.",
+          "It's required only for images larger than a certain file size.",
+          "It's read aloud by screen readers in place of the image, and displayed if the image fails to load."
+        ],
+        "correctIndex": 3,
+        "explanation": "alt text serves two concrete, functional purposes: it's what a screen reader announces instead of the image, and it's what displays as fallback text if the image request fails — which, as covered in the Network panel lesson, is a real and common occurrence, not a hypothetical."
+      }
+    ],
+    "summary": "Anchor and img elements connect documents and media, and the path you give them can be absolute (a full address, works anywhere) or relative (resolved from the current page's location). Absolute local file paths are the trap: they work perfectly during local development and break silently, all at once, the moment a site is deployed. alt text isn't optional decoration — it's what a screen reader announces and what displays when an image request fails.",
+    "resources": [
+      {
+        "label": "MDN — Creating Links",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Creating_links"
+      },
+      {
+        "label": "MDN — HTML Images",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_images"
+      }
+    ],
+    "interviewQuestions": [
+      "What's the difference between a relative and an absolute path, and when would you use each?",
+      "Why might all of a site's images work locally but break entirely after deployment?",
+      "What's the functional (not just 'best practice') purpose of an image's alt attribute?"
+    ],
+    "previousLessonId": "lesson-1-1-3",
+    "nextLessonId": "lesson-1-1-5"
+  },
+  {
+    "id": "lesson-1-1-5",
+    "topicId": "lists-and-tables",
+    "moduleId": "module-1-1",
+    "order": 5,
+    "title": "Lists and Tables",
+    "description": "Choosing between lists and tables to model sequence versus grid data — and why tables-for-layout hurts accessibility.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 30,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Apply lists (ul/ol/li) and tables (table/tr/td/th) to model the correct kind of structured data.",
+      "Choose ordered vs. unordered lists correctly based on whether sequence matters.",
+      "Explain why using a table for page layout, instead of tabular data, harms accessibility."
+    ],
+    "prerequisites": [
+      "lesson-1-1-3"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Quick Recap Before You Practice"
+      },
+      {
+        "type": "paragraph",
+        "text": "Lists (ul/ol/li) and tables (table/tr/td/th) each model a specific kind of structured data — sequence vs grid. A list is for items where you group related things together; use <ol> (ordered) when their order carries meaning — like steps in a recipe — and <ul> (unordered) when it doesn't, like a set of tags. A table is for genuinely two-dimensional, grid-shaped data, where both rows and columns carry meaning — think a spreadsheet, not a page layout."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "Ordered list, unordered list, and a table",
+        "code": "<ol>\n  <li>Preheat the oven to 375°F</li>\n  <li>Mix dry ingredients</li>\n  <li>Fold in wet ingredients</li>\n</ol>\n\n<ul>\n  <li>Gluten-free</li>\n  <li>Nut-free</li>\n</ul>\n\n<table>\n  <tr>\n    <th>Trail</th>\n    <th>Distance</th>\n    <th>Difficulty</th>\n  </tr>\n  <tr>\n    <td>Overlook Loop</td>\n    <td>2.1 mi</td>\n    <td>Easy</td>\n  </tr>\n</table>"
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Using a table for page layout instead of tabular data, hurting accessibility, was a genuinely common practice in the early web — dividing a whole page into invisible table cells to position a sidebar, header, and content column. A screen reader encountering that announces 'table, three columns, one row' before reading any actual content, which is confusing at best and actively misleading about what the page is. If you're not looking at a genuine grid of rows and meaningful columns, a table is the wrong tool — you'll get real, purpose-built layout tools starting in module-1-2."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-1-1-5",
+        "title": "Drill: Ordered, Unordered, or Table?",
+        "instructions": "Three pieces of content below are marked up with the wrong structure: a sequence of numbered instructions using <ul> instead of <ol>, a set of unordered tags using <ol>, and genuinely tabular data crammed into a bulleted list. Fix all three to use the correct structure.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function ListsDrill() {\n  return (\n    <div style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif', fontSize: 14 }}>\n      <h3>Assembly steps (order matters!)</h3>\n      {/* Bug: should be <ol>, order is meaningful here */}\n      <ul>\n        <li>Attach leg A to the frame</li>\n        <li>Attach leg B to the frame</li>\n        <li>Flip upright</li>\n      </ul>\n\n      <h3 style={{ marginTop: 16 }}>Tags (order doesn't matter)</h3>\n      {/* Bug: should be <ul>, these are unordered */}\n      <ol>\n        <li>Vegan</li>\n        <li>Gluten-free</li>\n      </ol>\n\n      <h3 style={{ marginTop: 16 }}>Pricing (this is genuinely grid data)</h3>\n      {/* Bug: this is tabular data (plan x price), forced into a list */}\n      <ul>\n        <li>Basic — $5/mo</li>\n        <li>Pro — $15/mo</li>\n      </ul>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-1-1-5",
+        "label": "Explain, without a reference, the specific test you'd use to decide between an <ol> and a <ul> for a given set of items — and separately, the test for whether something belongs in a <table> at all.",
+        "hint": "One test is about whether reordering the items would change their meaning. The other is about whether both rows AND columns carry meaning."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-1-1-5-1",
+        "title": "Escalating Drill: Choose the Right Structure",
+        "brief": "Mark up three pieces of content with the correct structure: (1) a numbered set of driving directions, (2) an unordered list of a restaurant's dietary accommodation icons, (3) a small table comparing three phone models across price and storage — genuinely two-dimensional data, not a layout trick."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-1-1-5-1",
+        "question": "A set of navigation links (Home, About, Contact) is marked up as an <ol>. Is this the right choice?",
+        "options": [
+          "Yes — navigation should always use ordered lists.",
+          "It doesn't matter — ol and ul are visually and semantically identical.",
+          "No — navigation links should never be in a list at all.",
+          "No — the order of these links carries no real meaning, so <ul> is the correct, more accurate choice."
+        ],
+        "correctIndex": 3,
+        "explanation": "The test for ol vs. ul is whether reordering the items would change their meaning. Reordering 'Home, About, Contact' doesn't change what the navigation means, so ul is the semantically correct choice — ol implies a meaningful sequence, like ranked results or numbered steps."
+      },
+      {
+        "id": "q-1-1-5-2",
+        "question": "A developer uses a <table> to position a page's header, sidebar, and main content into three columns. What's the main problem with this?",
+        "options": [
+          "Tables can't visually create multi-column layouts.",
+          "It's slower to render than any other approach.",
+          "A screen reader will announce this as tabular data ('table, three columns'), which is confusing and inaccurate since it's actually page layout, not a data grid.",
+          "There's no real problem — this is a standard, recommended technique."
+        ],
+        "correctIndex": 2,
+        "explanation": "Tables carry specific semantic meaning — rows and columns of related data. Using one purely to position layout regions makes a screen reader announce structure that doesn't reflect what's actually there, which is exactly the kind of meaning-appearance mismatch this whole module has been building intuition against."
+      }
+    ],
+    "summary": "Lists model sequence-shaped or grouped data — <ol> when order carries meaning, <ul> when it doesn't — while tables model genuinely two-dimensional data, where both rows and columns matter. Using a table purely for page layout was a common early-web habit that actively harms accessibility, since it announces structure that doesn't match what the content actually is.",
+    "resources": [
+      {
+        "label": "MDN — <ul>: The Unordered List Element",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ul"
+      },
+      {
+        "label": "MDN — HTML Table Basics",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_table_basics"
+      }
+    ],
+    "interviewQuestions": [
+      "How do you decide between an ordered list and an unordered list?",
+      "Why is using tables for page layout considered bad practice today?"
+    ],
+    "previousLessonId": "lesson-1-1-4",
+    "nextLessonId": "lesson-1-1-6"
+  },
+  {
+    "id": "lesson-1-1-6",
+    "topicId": "forms-and-user-input",
+    "moduleId": "module-1-1",
+    "order": 6,
+    "title": "Forms and User Input",
+    "description": "Collecting user input with inputs, labels, and a submit action — and why label association isn't optional.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 35,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Implement: forms collect user input via inputs, labels, and a submit action.",
+      "Correctly associate a <label> with its <input> using for/id.",
+      "Predict which input type (text, email, checkbox, etc.) fits a given kind of data before checking."
+    ],
+    "prerequisites": [
+      "lesson-1-1-3"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Every Sign-Up, Every Search Box, Every Checkout"
+      },
+      {
+        "type": "paragraph",
+        "text": "Forms collect user input via inputs, labels, and a submit action; label association is essential for usability. Nearly every interaction where a user gives an app information — signing up, searching, checking out — runs through a <form> containing <input> elements. Get comfortable here, because you'll be writing forms constantly."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "A minimal, correctly labeled form",
+        "code": "<form>\n  <label for=\"email\">Email address</label>\n  <input type=\"email\" id=\"email\" name=\"email\">\n\n  <label for=\"newsletter\">Subscribe to updates</label>\n  <input type=\"checkbox\" id=\"newsletter\" name=\"newsletter\">\n\n  <button type=\"submit\">Sign up</button>\n</form>"
+      },
+      {
+        "type": "paragraph",
+        "text": "That for/id pairing — the label's for matching the input's id — is doing more work than it looks like. It's what lets a sighted user click the label text itself (not just the tiny checkbox) to focus or toggle the input, and it's what a screen reader announces when the input receives focus. Without it, a visually adjacent label and input have zero actual relationship as far as the browser or assistive tech is concerned — they're just two elements that happen to be near each other."
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Leaving out <label> or its 'for' attribute, making the field unusable for screen reader and click-to-focus users, is this lesson's central mistake — and it's an easy one to make because the form can look completely normal. Visually, unlabeled inputs with nearby placeholder-style text often look identical to properly labeled ones. The difference only shows up when you click the label text and nothing happens, or when a screen reader announces 'edit text, blank' with no idea what it's asking for."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-1-1-6",
+        "title": "Live Example: Change the Input Types",
+        "instructions": "This is a real, working form. Try clicking each label text (not just the input) — notice it focuses the right field, because they're correctly associated. Then change the type on the 'Email address' input from \"text\" to \"email\" and see how the browser's built-in behavior changes (many browsers validate/format email inputs differently from plain text).",
+        "language": "jsx",
+        "initialCode": "import React, { useState } from 'react';\n\nexport default function SignupForm() {\n  const [submitted, setSubmitted] = useState(false);\n\n  return (\n    <form\n      onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}\n      style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 260 }}\n    >\n      <div>\n        <label htmlFor=\"email\" style={{ display: 'block', fontSize: 13, marginBottom: 4 }}>Email address</label>\n        {/* Try changing type=\"text\" to type=\"email\" */}\n        <input id=\"email\" name=\"email\" type=\"text\" style={{ width: '100%', padding: 6, borderRadius: 4, border: '1px solid #30363d', background: '#161b22', color: '#e6edf3' }} />\n      </div>\n\n      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>\n        <input id=\"newsletter\" name=\"newsletter\" type=\"checkbox\" />\n        <label htmlFor=\"newsletter\" style={{ fontSize: 13 }}>Subscribe to updates</label>\n      </div>\n\n      <button type=\"submit\" style={{ background: '#238636', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6, cursor: 'pointer' }}>\n        Sign up\n      </button>\n\n      {submitted && <p style={{ color: '#3fb950', fontSize: 13 }}>Submitted (no data actually sent — this is a demo).</p>}\n    </form>\n  );\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-1-1-6",
+        "label": "Predict what will happen if you click the word 'Subscribe to updates' (not the checkbox itself) in the sandbox above — then click it and confirm. Explain why that works, referencing for/id specifically.",
+        "hint": "This only works because of the label-input association — it wouldn't work if the label and input were unrelated elements that just happened to sit next to each other."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-1-1-6-1",
+        "title": "Change 1-2 Inputs, Observe the Result",
+        "brief": "In the sandbox above, change the email input's type from \"text\" to \"email\", then try typing something without an @ symbol and attempting to submit — note what happens. Then add a third field of your choice (a name field, a password field) with a correctly associated label, and confirm clicking its label focuses it."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-1-1-6-1",
+        "question": "A form has a <label>Email</label> sitting visually right next to an <input>, but the label has no 'for' attribute and the input has no matching 'id'. What's the practical consequence?",
+        "options": [
+          "The browser and assistive technology have no actual relationship between them; clicking the label won't focus the input, and a screen reader won't announce what the input is for.",
+          "None — visual proximity is all that's needed for them to be associated.",
+          "The form will fail to submit entirely.",
+          "The input will automatically inherit the label's text as a placeholder."
+        ],
+        "correctIndex": 0,
+        "explanation": "Label-input association is created explicitly through matching for/id attributes, not through visual placement. Without it, a sighted mouse user might not notice anything wrong, but click-to-focus and screen reader announcement — both of which depend on that real association — simply won't work."
+      },
+      {
+        "id": "q-1-1-6-2",
+        "question": "Why might a developer not notice a missing label association during their own testing?",
+        "options": [
+          "Because the form will refuse to render at all, making the bug obvious immediately.",
+          "Because label association only matters for password fields.",
+          "Because all modern browsers auto-fix missing label associations.",
+          "Because the visual layout can look completely correct, and the failure only shows up when clicking the label text specifically or using a screen reader."
+        ],
+        "correctIndex": 3,
+        "explanation": "This is a classic 'invisible until you test the right way' accessibility bug — the form looks and mostly behaves normally for a sighted mouse user typing directly into fields, so the missing association only surfaces if you specifically try clicking a label or navigate with a screen reader."
+      }
+    ],
+    "summary": "Forms collect input through inputs, labels, and a submit action, and correct label association — a <label>'s for attribute matching its <input>'s id — is what makes a field genuinely usable, not just visually adjacent. That association is what lets clicking label text focus the field and what lets a screen reader announce what an input is actually for; without it, a form can look perfectly normal while quietly failing a real chunk of its users.",
+    "resources": [
+      {
+        "label": "MDN — Web Forms",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms"
+      }
+    ],
+    "interviewQuestions": [
+      "Why is a label's 'for' attribute necessary if the label already appears right next to its input visually?",
+      "How would you test whether a form's labels are actually properly associated with their inputs?"
+    ],
+    "previousLessonId": "lesson-1-1-5",
+    "nextLessonId": "lesson-1-1-7"
+  },
+  {
+    "id": "lesson-1-1-7",
+    "topicId": "semantic-html",
+    "moduleId": "module-1-1",
+    "order": 7,
+    "title": "Semantic HTML",
+    "description": "Choosing header/nav/main/article/footer over generic divs to describe what a section of a page actually is.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 35,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Explain and implement: semantic elements (header, nav, main, article, footer) describe the role of a section, improving accessibility and SEO.",
+      "Choose the correct semantic element for a given content block, unprompted.",
+      "Refactor a div-only layout into semantically meaningful regions."
+    ],
+    "prerequisites": [
+      "lesson-1-1-3",
+      "lesson-1-1-6"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Naming the Regions, Not Just Boxing Them"
+      },
+      {
+        "type": "paragraph",
+        "text": "Semantic elements (header, nav, main, article, footer) describe the role of a section, improving accessibility and SEO. Everything you've learned so far in this module — headings, paragraphs, lists, forms — has been about individual pieces of content. Semantic elements zoom out one level: they say what an entire region of the page is for. A <nav> isn't just a box that happens to hold links; it announces 'this is the navigation' to anyone or anything parsing the page."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "The same page, semantically regioned",
+        "code": "<header>\n  <h1>Trail Guide</h1>\n  <nav>\n    <a href=\"/trails\">Trails</a>\n    <a href=\"/about\">About</a>\n  </nav>\n</header>\n\n<main>\n  <article>\n    <h2>Overlook Loop</h2>\n    <p>2.1 miles, mostly flat, great views near the end.</p>\n  </article>\n</main>\n\n<footer>\n  <p>&copy; 2026 Trail Guide</p>\n</footer>"
+      },
+      {
+        "type": "paragraph",
+        "text": "This is the payoff for everything module-0-2 taught you about DevTools, incidentally. Open the Elements panel on a well-built page and you can read its actual structure at a glance — header, nav, main, article, footer — instead of an undifferentiated forest of <div>s with class names as your only clue. Screen readers expose these same regions as jump targets, letting a user skip straight to 'main content' instead of tabbing through an entire navigation menu first."
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Wrapping everything in <div> when a semantic element already exists for that purpose is the mistake this lesson exists to correct — sometimes called 'div soup.' A <div> is not wrong, exactly; it's a legitimate, meaningless container for when nothing more specific fits. The problem is reaching for it out of habit, for a header, a nav menu, or a footer, when an element that actually names that role has existed the whole time."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-1-1-7",
+        "title": "Worked Example: Refactor Div Soup",
+        "instructions": "This page is built entirely out of <div>s with class names as the only hint of their purpose. Refactor it to use header, nav, main, article, and footer where each one fits — without changing anything about what's visually on screen.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function DivSoupPage() {\n  return (\n    <div style={{ padding: 16, background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif', fontSize: 14 }}>\n      {/* This whole block should be a <header> */}\n      <div className=\"page-header\">\n        <h1 style={{ margin: 0, fontSize: 20 }}>Trail Guide</h1>\n        {/* This should be a <nav> */}\n        <div className=\"nav-links\" style={{ display: 'flex', gap: 8, marginTop: 4 }}>\n          <a href=\"#\" style={{ color: '#58a6ff' }}>Trails</a>\n          <a href=\"#\" style={{ color: '#58a6ff' }}>About</a>\n        </div>\n      </div>\n\n      {/* This should be <main>, and the post inside it an <article> */}\n      <div className=\"page-content\" style={{ marginTop: 12 }}>\n        <div className=\"post\">\n          <h2 style={{ fontSize: 16 }}>Overlook Loop</h2>\n          <p>2.1 miles, mostly flat, great views near the end.</p>\n        </div>\n      </div>\n\n      {/* This should be a <footer> */}\n      <div className=\"page-footer\" style={{ marginTop: 12, color: '#8b949e', fontSize: 12 }}>\n        © 2026 Trail Guide\n      </div>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "collapsible",
+        "title": "Why not just use CSS classes to name everything?",
+        "subtitle": "Class names are for you; semantic tags are for machines too",
+        "variant": "senior-tip",
+        "content": "A class name like class=\"page-header\" communicates intent to another human reading your code — but it means nothing to a browser, a screen reader, or a search engine. Semantic tags carry that meaning at the platform level: assistive technology has built-in support for jumping between <nav>, <main>, and other landmarks, and search engines weight content inside <article> and <main> differently than an anonymous <div>. Classes and semantic tags aren't competing solutions — you'll use both together, a semantic tag for the role, classes for styling hooks."
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-1-1-7",
+        "label": "Without a reference, name which semantic element you'd use for: a page's site-wide top banner, a block of unrelated sidebar content, a single self-contained blog post that could stand alone, and the primary content area of a page.",
+        "hint": "One of these four doesn't have an obvious answer from this lesson alone — that's intentional; make your best reasoned guess and check it against the resources below."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-1-1-7-1",
+        "title": "Refactor a Real Page's Div Soup",
+        "brief": "Find a simple page you've built in an earlier module exercise (or write a short one now: a header, a nav, one article, a footer). Mark it up first using only <div>s with class names, then refactor it into the correct semantic elements. Write one sentence on what changed for a screen reader user, even though nothing changed visually."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-1-1-7-1",
+        "question": "What is the main practical advantage of <nav> over <div class=\"nav\">, given that both can be styled identically?",
+        "options": [
+          "<nav> is understood by assistive technology and search engines as a navigation landmark, regardless of what class names are or aren't present.",
+          "<nav> renders faster than a div in every browser.",
+          "There is no real difference — they're purely stylistic synonyms.",
+          "<nav> automatically generates a website's menu items."
+        ],
+        "correctIndex": 0,
+        "explanation": "A class name is metadata for humans reading the code and for CSS selectors — it carries no meaning to a screen reader or search engine on its own. <nav> is understood at the platform level as a navigation landmark, which is what lets assistive tech offer 'skip to navigation' regardless of what, if anything, the developer named it with CSS classes."
+      },
+      {
+        "id": "q-1-1-7-2",
+        "question": "Is using <div> ever the correct choice, even when other semantic elements exist?",
+        "options": [
+          "No — <div> should never appear in well-written HTML.",
+          "Yes, but only inside a <table>.",
+          "No — <div> is deprecated in modern HTML.",
+          "Yes — <div> is a legitimate, meaningless container for grouping content when no more specific semantic element actually fits; the mistake is reaching for it out of habit when one does."
+        ],
+        "correctIndex": 3,
+        "explanation": "<div> isn't the villain here — it's a genuinely useful, intentionally meaningless container for cases where no semantic element fits the content's role. The mistake this lesson targets is defaulting to <div> for a header, nav, or footer specifically, when an element naming that exact role has been available the entire time."
+      }
+    ],
+    "summary": "Semantic elements — header, nav, main, article, footer, and others — name what a region of a page actually is, not just how it should be boxed and styled. That meaning is understood by assistive technology and search engines at the platform level, in a way CSS class names never are. <div> remains legitimate for genuinely generic grouping; the mistake is reaching for it out of habit when a semantic element already names the role you need.",
+    "resources": [
+      {
+        "label": "MDN — Structuring Documents",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents"
+      }
+    ],
+    "interviewQuestions": [
+      "What's the practical difference between <div class=\"header\"> and <header>?",
+      "How would you explain to a teammate why 'div soup' is worth refactoring, given that it looks identical to users?",
+      "Name three semantic HTML5 elements and the role each one communicates."
+    ],
+    "previousLessonId": "lesson-1-1-6",
+    "nextLessonId": "lesson-1-1-8"
+  },
+  {
+    "id": "lesson-1-1-8",
+    "topicId": "html-challenge-build-a-real-page",
+    "moduleId": "module-1-1",
+    "order": 8,
+    "title": "HTML Challenge: Build a Real Page",
+    "description": "The module capstone: assembling headings, text, links, images, lists, forms, and semantic structure into one real page.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 35,
+    "mastery": "Learning",
+    "learningObjectives": [
+      "Build a single valid HTML page combining headings, paragraphs, links, images, a list, a form, and semantic regions.",
+      "Justify each structural choice made in the page against what was taught earlier in the module.",
+      "Self-review the page against the module's stated mastery checklist before considering it complete."
+    ],
+    "prerequisites": [
+      "lesson-1-1-7"
+    ],
+    "sections": [
+      {
+        "type": "heading",
+        "text": "Everything This Module Taught, in One Page"
+      },
+      {
+        "type": "paragraph",
+        "text": "Capstone: assemble headings, text, links, images, lists, forms, and semantic structure into one real page. There's no new theory in this lesson — every concept you need was covered in the seven lessons before this one. What's being tested now is whether you can compose them together into something that actually holds up as a real page, not just as seven isolated exercises."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "text": "Build the semantic skeleton first — header, nav, main, footer — empty if you have to, before filling in content. Composing a page region-by-region, the way you practiced in the Semantic HTML lesson, produces a much more solid result than writing everything as one long flat sequence of tags and trying to organize it afterward."
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "Capstone brief: build a small 'trail guide' page",
+        "code": "Requirements:\n\n1. A <header> with an <h1> site title and a <nav> containing\n   at least two links.\n2. A <main> containing at least one <article>, which itself\n   contains a heading, a paragraph, and one image with real,\n   descriptive alt text.\n3. A list (<ul> or <ol> — your choice, but justify it) of at\n   least three items somewhere in the main content.\n4. A short <form> — for example a 'subscribe for trail\n   updates' form — with at least one correctly labeled input\n   and a submit button.\n5. A <footer> with at least one piece of content (copyright\n   text, a contact link — your choice).\n6. A correct heading outline: one <h1>, no skipped levels\n   anywhere in the document.\n\nThis mirrors exactly what the module's mastery checklist\nasks for — see the Common Mistake to Avoid callout below\nbefore you consider it done."
+      },
+      {
+        "type": "callout",
+        "variant": "mistake",
+        "text": "Building the page as one big flat block instead of composing it from the semantic regions just learned is the trap here — it's tempting to just start typing content top to bottom and worry about structure later, but that's exactly backwards from the habit this module has been building. If you build flat and try to retrofit <header>/<main>/<footer> onto it afterward, you'll almost always end up with regions that don't cleanly contain what they should."
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "sandbox-1-1-8",
+        "title": "Build Your Capstone Page",
+        "instructions": "Starting from this empty semantic skeleton, build out the full capstone page against the brief above. The skeleton's regions are already in place — your job is to fill each one in correctly, add the list and the form, and get the heading outline right.",
+        "language": "jsx",
+        "initialCode": "import React from 'react';\n\nexport default function CapstonePage() {\n  return (\n    <div style={{ background: '#0d1117', color: '#e6edf3', fontFamily: 'sans-serif', fontSize: 14, padding: 16 }}>\n      <header>\n        {/* TODO: h1 site title + nav with at least 2 links */}\n      </header>\n\n      <main style={{ marginTop: 12 }}>\n        <article>\n          {/* TODO: heading, paragraph, image with real alt text */}\n        </article>\n\n        {/* TODO: a list of at least 3 items, ol or ul (justify your choice) */}\n\n        {/* TODO: a short form with a correctly labeled input + submit button */}\n      </main>\n\n      <footer style={{ marginTop: 12, color: '#8b949e', fontSize: 12 }}>\n        {/* TODO: at least one piece of footer content */}\n      </footer>\n    </div>\n  );\n}"
+      },
+      {
+        "type": "checkpoint",
+        "id": "cp-1-1-8",
+        "label": "Before submitting, self-review your page against all six numbered requirements above one at a time, and separately confirm your heading levels don't skip. This is the same review pass the module's project checkpoint rubric will apply.",
+        "hint": "Open your own Elements panel on the rendered result — it's the fastest way to audit your actual structure rather than trusting what you remember writing."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex-1-1-8-1",
+        "title": "Module Capstone: The Trail Guide Page",
+        "brief": "Build the full page described in the capstone brief: a semantic header with nav, a main containing at least one article (heading + paragraph + image with real alt text), a justified list of 3+ items, a short labeled form, a footer, and a correct, non-skipping heading outline throughout. This is the module's graded project submission."
+      }
+    ],
+    "quiz": [
+      {
+        "id": "q-1-1-8-1",
+        "question": "Why does this capstone lesson deliberately avoid introducing any new HTML concepts?",
+        "options": [
+          "Because capstones are meant to be easier than the lessons before them.",
+          "Because HTML has no more concepts left to teach after this module.",
+          "Because grading is easier when no new material is involved.",
+          "Because the goal is testing whether previously taught concepts can be composed together into one coherent, real page — not testing new knowledge."
+        ],
+        "correctIndex": 3,
+        "explanation": "A capstone's purpose is synthesis, not new theory — it tests whether the individually-practiced pieces (headings, links, images, lists, forms, semantic regions) can actually be composed into one working, coherent artifact, which is a meaningfully different and harder skill than executing each piece in isolation."
+      },
+      {
+        "id": "q-1-1-8-2",
+        "question": "What's the recommended order of operations for building a page like this capstone, based on this module?",
+        "options": [
+          "Build the semantic skeleton (header/main/footer) first, then fill each region in with content.",
+          "Write all the content first, in any order, then retrofit semantic tags around it afterward.",
+          "Start with the form, since it's the most complex element.",
+          "Order doesn't matter as long as the final HTML validates."
+        ],
+        "correctIndex": 0,
+        "explanation": "Building the semantic regions first, then composing content into them, tends to produce a cleaner result than writing everything flat and reorganizing afterward — retrofitting semantic structure onto already-written flat content is exactly the failure mode this lesson's mistake callout warns about."
+      }
+    ],
+    "summary": "The capstone combines everything this module taught — headings, text, links, images, lists, forms, and semantic structure — into one real page, with no new theory introduced. Building the semantic skeleton first and filling it in region by region, rather than writing everything flat and retrofitting structure afterward, is the habit that separates a page that merely looks right from one that's actually well-structured.",
+    "resources": [
+      {
+        "label": "MDN — Structuring Documents",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/Structuring_documents"
+      }
+    ],
+    "interviewQuestions": [
+      "Walk me through how you'd approach structuring a new page from scratch, in order.",
+      "How would you review your own HTML for structural correctness before considering it done?"
+    ],
+    "previousLessonId": "lesson-1-1-7",
+    "nextLessonId": null
   }
 ]
