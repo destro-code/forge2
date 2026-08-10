@@ -55,23 +55,47 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    console.log("[Forge Monaco] mount started");
     setMounted(true);
   }, []);
 
   // ResizeObserver for container element to trigger Monaco layout on visibility / tab / viewport change
   useEffect(() => {
     if (!containerRef.current) return;
-    const observer = new ResizeObserver(() => {
-      if (editorRef.current && typeof editorRef.current.layout === "function") {
-        editorRef.current.layout();
+
+    const initialRect = containerRef.current.getBoundingClientRect();
+    console.log(
+      `[Forge Monaco] container dimensions: ${initialRect.width} x ${initialRect.height}`,
+    );
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        if (
+          width > 0 &&
+          height > 0 &&
+          editorRef.current &&
+          typeof editorRef.current.layout === "function"
+        ) {
+          console.log(`[Forge Monaco] layout: ${width} x ${height}`);
+          editorRef.current.layout({ width, height });
+        }
       }
     });
     observer.observe(containerRef.current);
-    if (editorRef.current && typeof editorRef.current.layout === "function") {
-      editorRef.current.layout();
+
+    if (
+      initialRect.width > 0 &&
+      initialRect.height > 0 &&
+      editorRef.current &&
+      typeof editorRef.current.layout === "function"
+    ) {
+      console.log(`[Forge Monaco] layout: ${initialRect.width} x ${initialRect.height}`);
+      editorRef.current.layout({ width: initialRect.width, height: initialRect.height });
     }
+
     return () => observer.disconnect();
-  }, [editorLoaded]);
+  }, [editorLoaded, activeFile?.id]);
 
   // Set 12-second loading timeout to catch Monaco mount failures on slow mobile networks
   useEffect(() => {
@@ -136,13 +160,25 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   };
 
   const handleEditorMount = (editor: any, monaco: any) => {
+    console.log("[Forge Monaco] editor mounted");
     setEditorLoaded(true);
     setEditorError(false);
     editorRef.current = editor;
 
+    const rect = containerRef.current
+      ? containerRef.current.getBoundingClientRect()
+      : { width: 0, height: 0 };
+    console.log(`[Forge Monaco] container dimensions on mount: ${rect.width} x ${rect.height}`);
+
     const triggerLayout = () => {
-      if (editor && typeof editor.layout === "function") {
-        editor.layout();
+      if (containerRef.current && editor && typeof editor.layout === "function") {
+        const r = containerRef.current.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) {
+          console.log(`[Forge Monaco] layout: ${r.width} x ${r.height}`);
+          editor.layout({ width: r.width, height: r.height });
+        } else {
+          editor.layout();
+        }
       }
     };
 
@@ -187,7 +223,10 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   return (
     <div className="flex-1 flex flex-col h-full min-h-[400px] bg-background w-full min-w-0 overflow-hidden">
       {/* Editor Main */}
-      <div ref={containerRef} className="flex-1 relative min-h-0 w-full overflow-hidden">
+      <div
+        ref={containerRef}
+        className="flex-1 relative min-h-[350px] h-full w-full overflow-hidden"
+      >
         {editorError ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-card/80 p-6 text-center border border-border/50 rounded-lg">
             <div className="rounded-full bg-destructive/10 p-3 text-destructive">

@@ -1,11 +1,15 @@
 import { loader } from "@monaco-editor/react";
+import EditorWorker from "monaco-editor/editor/editor.worker?worker";
+import JsonWorker from "monaco-editor/language/json/json.worker?worker";
+import CssWorker from "monaco-editor/language/css/css.worker?worker";
+import HtmlWorker from "monaco-editor/language/html/html.worker?worker";
+import TsWorker from "monaco-editor/language/typescript/ts.worker?worker";
 
 let initPromise: Promise<typeof import("monaco-editor")> | null = null;
 
 /**
  * Single authoritative Monaco initialization function for the application.
- * Dynamically loads monaco-editor and worker ESM modules only on the client,
- * configures global MonacoEnvironment workers, and connects @monaco-editor/react loader.
+ * Configures global MonacoEnvironment workers and connects @monaco-editor/react loader.
  */
 export function initMonaco(): Promise<typeof import("monaco-editor")> {
   if (typeof window === "undefined") {
@@ -17,48 +21,37 @@ export function initMonaco(): Promise<typeof import("monaco-editor")> {
   }
 
   initPromise = (async () => {
-    const [
-      monaco,
-      { default: EditorWorker },
-      { default: JsonWorker },
-      { default: CssWorker },
-      { default: HtmlWorker },
-      { default: TsWorker },
-    ] = await Promise.all([
-      import("monaco-editor"),
-      import("monaco-editor/editor/editor.worker?worker"),
-      import("monaco-editor/language/json/json.worker?worker"),
-      import("monaco-editor/language/css/css.worker?worker"),
-      import("monaco-editor/language/html/html.worker?worker"),
-      import("monaco-editor/language/typescript/ts.worker?worker"),
-    ]);
+    console.log("[Forge Monaco] initializing Monaco editor setup...");
+    const monaco = await import("monaco-editor");
 
     self.MonacoEnvironment = {
       getWorker(_: unknown, label: string) {
+        console.log(`[Forge Monaco] worker requested for label: ${label}`);
+        let WorkerClass = EditorWorker;
+        if (label === "json") {
+          WorkerClass = JsonWorker;
+        } else if (label === "css" || label === "scss" || label === "less") {
+          WorkerClass = CssWorker;
+        } else if (label === "html" || label === "handlebars" || label === "razor") {
+          WorkerClass = HtmlWorker;
+        } else if (
+          label === "typescript" ||
+          label === "javascript" ||
+          label === "typescriptreact" ||
+          label === "javascriptreact" ||
+          label === "tsx" ||
+          label === "jsx"
+        ) {
+          WorkerClass = TsWorker;
+        }
+
         try {
-          if (label === "json") {
-            return new JsonWorker();
-          }
-          if (label === "css" || label === "scss" || label === "less") {
-            return new CssWorker();
-          }
-          if (label === "html" || label === "handlebars" || label === "razor") {
-            return new HtmlWorker();
-          }
-          if (
-            label === "typescript" ||
-            label === "javascript" ||
-            label === "typescriptreact" ||
-            label === "javascriptreact" ||
-            label === "tsx" ||
-            label === "jsx"
-          ) {
-            return new TsWorker();
-          }
-          return new EditorWorker();
+          const worker = new WorkerClass();
+          console.log(`[Forge Monaco] worker created successfully for label: ${label}`);
+          return worker;
         } catch (err) {
-          console.warn("Monaco worker creation failed, falling back to main thread:", err);
-          return undefined as any;
+          console.error(`[Forge Monaco] Failed to instantiate worker for label '${label}':`, err);
+          throw err;
         }
       },
     };

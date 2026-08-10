@@ -1,4 +1,5 @@
 import type { CompilerOptions, GeneratedOutput, ParsedProject, ValidationResult } from "./types";
+import * as Babel from "@babel/standalone";
 
 /**
  * Step 3: Generate Phase
@@ -17,16 +18,41 @@ export function generateOutput(
 
   const cssBundle = parsed.cssModules.map((m) => m.code).join("\n\n");
 
-  const safeFilesJson = JSON.stringify(
-    parsed.codeModules.map((m) => ({
-      id: m.id,
-      name: m.name,
-      code: m.code,
-      language: m.language,
-    })),
-  ).replace(/<\/script>/g, "<\\/script>");
+  // Pre-compile code modules on parent side using @babel/standalone
+  const precompiledCodeModules = parsed.codeModules.map((m) => {
+    if (m.name.endsWith(".css") || m.name.endsWith(".json")) {
+      return { id: m.id, name: m.name, code: m.code, language: m.language, compiled: m.code };
+    }
+    try {
+      const transformed = Babel.transform(m.code, {
+        presets: [
+          ["env", { modules: "commonjs" }],
+          ["react", { runtime: "classic" }],
+          ["typescript", { ignoreExtensions: false }],
+        ],
+        filename: m.name,
+      });
+      return {
+        id: m.id,
+        name: m.name,
+        code: m.code,
+        language: m.language,
+        compiled: transformed.code || m.code,
+      };
+    } catch {
+      return { id: m.id, name: m.name, code: m.code, language: m.language, compiled: m.code };
+    }
+  });
 
-  const baseTag = baseUrl ? `<base href="${baseUrl}/" />` : `<base href="/" />`;
+  const safeFilesJson = JSON.stringify(precompiledCodeModules).replace(
+    /<\/script>/g,
+    "<\\/script>",
+  );
+
+  const vendorBase = (
+    baseUrl || (typeof window !== "undefined" ? window.location.origin : "")
+  ).replace(/\/$/, "");
+  const baseTag = vendorBase ? `<base href="${vendorBase}/" />` : `<base href="/" />`;
 
   const html = `<!DOCTYPE html>
 <html>
@@ -34,9 +60,12 @@ export function generateOutput(
   <meta charset="UTF-8" />
   ${baseTag}
   <title>${title}</title>
-  <script src="/vendor/react.development.js?v=18.3.1"></script>
-  <script src="/vendor/react-dom.development.js?v=18.3.1"></script>
-  <script src="/vendor/babel.min.js?v=8.0.4"></script>
+  <script>console.log('[Forge Preview] Loading React');</script>
+  <script src="${vendorBase}/vendor/react.development.js?v=18.3.1" onload="console.log('[Forge Preview] React loaded')" onerror="window.__reactLoadError=true; console.error('[Forge Preview] React failed to load')"></script>
+  <script>console.log('[Forge Preview] Loading ReactDOM');</script>
+  <script src="${vendorBase}/vendor/react-dom.development.js?v=18.3.1" onload="console.log('[Forge Preview] ReactDOM loaded')" onerror="window.__reactDomLoadError=true; console.error('[Forge Preview] ReactDOM failed to load')"></script>
+  <script>console.log('[Forge Preview] Loading Babel');</script>
+  <script src="${vendorBase}/vendor/babel.min.js?v=8.0.4" onload="console.log('[Forge Preview] Babel loaded')" onerror="window.__babelLoadError=true; console.error('[Forge Preview] Babel failed to load')"></script>
   <style>
     ${cssBundle}
     body {
@@ -183,13 +212,49 @@ export function generateOutput(
   <script>
     let FILES = ${safeFilesJson};
 
-    function runCompilerAndExecute(newFiles) {
+    function runCompilerAndExecute(newFiles, startTime) {
       if (newFiles) {
         FILES = newFiles;
       }
-      if (!window.Babel) {
-        setTimeout(function() { runCompilerAndExecute(newFiles); }, 30);
+      if (!startTime) startTime = Date.now();
+
+      if (window.__reactLoadError) {
+        console.error('[Forge Preview] React failed to load');
+        window.showErrorOverlay('Runtime Dependency Error', 'Failed to load React library from ' + ${JSON.stringify(vendorBase)} + '/vendor/react.development.js. Please check script load permissions or network.');
         return;
+      }
+      if (window.__reactDomLoadError) {
+        console.error('[Forge Preview] ReactDOM failed to load');
+        window.showErrorOverlay('Runtime Dependency Error', 'Failed to load ReactDOM library from ' + ${JSON.stringify(vendorBase)} + '/vendor/react-dom.development.js. Please check script load permissions or network.');
+        return;
+      }
+      if (window.__babelLoadError) {
+        console.error('[Forge Preview] Babel failed to load');
+      }
+
+      const missing = [];
+      if (!window.React) missing.push('React');
+      if (!window.ReactDOM) missing.push('ReactDOM');
+
+      const needsBabel = FILES.some(function(f) { return !f.compiled && !f.name.endsWith('.css') && !f.name.endsWith('.json'); });
+      if (needsBabel && !window.Babel) {
+        missing.push('Babel');
+      }
+
+      if (missing.length > 0) {
+        if (Date.now() - startTime < 4000) {
+          setTimeout(function() { runCompilerAndExecute(newFiles, startTime); }, 50);
+          return;
+        } else {
+          if (missing.includes('Babel')) {
+            console.error('[Forge Preview] Babel failed to load');
+          }
+          window.showErrorOverlay(
+            'Preview Initialization Timeout',
+            'Required runtime dependencies failed to load within 4.0s: [' + missing.join(', ') + ']. Please verify script access in iframe.'
+          );
+          return;
+        }
       }
 
       const overlay = document.getElementById('error-overlay');
@@ -215,15 +280,22 @@ export function generateOutput(
         }
 
         try {
-          const transformed = Babel.transform(file.code, {
-            presets: [
-              ['env', { modules: 'commonjs' }],
-              ['react', { runtime: 'classic' }],
-              ['typescript', { ignoreExtensions: false }]
-            ],
-            filename: file.name
-          });
-          compiledModules[file.name] = { type: 'code', code: transformed.code };
+          let codeToUse = file.compiled;
+          if (!codeToUse && window.Babel) {
+            const transformed = Babel.transform(file.code, {
+              presets: [
+                ['env', { modules: 'commonjs' }],
+                ['react', { runtime: 'classic' }],
+                ['typescript', { ignoreExtensions: false }]
+              ],
+              filename: file.name
+            });
+            codeToUse = transformed.code;
+          }
+          if (!codeToUse) {
+            codeToUse = file.code;
+          }
+          compiledModules[file.name] = { type: 'code', code: codeToUse };
         } catch (err) {
           const line = err.loc ? err.loc.line : undefined;
           const col = err.loc ? err.loc.column : undefined;
