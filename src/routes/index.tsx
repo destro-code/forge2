@@ -11,13 +11,10 @@ import {
   useLessons,
   useAchievements,
   useProjects,
-  useBugs,
   useTopics,
-  useLearningPaths,
 } from "@/lib/hooks/use-content";
-import { Flame, Clock, BookOpen, Trophy, Sparkles, ChevronRight, ArrowRight, X, Compass } from "lucide-react";
+import { Flame, Clock, BookOpen, Trophy, ChevronRight, ArrowRight, X, Compass } from "lucide-react";
 
-import { QuickResumeBar } from "@/components/dashboard/quick-resume-bar";
 import { ContinueLearningCard } from "@/components/dashboard/continue-learning-card";
 import { ContinueProjectCard } from "@/components/dashboard/continue-project-card";
 import { DailyGoalCard } from "@/components/dashboard/daily-goal-card";
@@ -50,9 +47,7 @@ function Dashboard() {
   const modules = useModules();
   const lessons = useLessons();
   const projects = useProjects();
-  const bugs = useBugs();
   const topics = useTopics();
-  const paths = useLearningPaths();
   const achievements = useAchievements();
 
   const [showOrientation, setShowOrientation] = useState(false);
@@ -69,10 +64,12 @@ function Dashboard() {
     lessons.find((l) => !progress.lessonsCompleted.includes(l.id)) ??
     lessons[0];
   const activeProject = projects[0];
-  const latestBug = bugs[0];
 
   const continueLessonModuleId =
     continueLesson?.moduleId || topics.find((t) => t.id === continueLesson?.topicId)?.moduleId;
+
+  const currentModule = modules.find((m) => m.id === continueLessonModuleId);
+  const currentTopic = topics.find((t) => t.id === continueLesson?.topicId);
 
   const continueProgressPercent = continueLessonModuleId
     ? getModuleProgress(continueLessonModuleId, progress.lessonsCompleted)
@@ -97,10 +94,10 @@ function Dashboard() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <PageHeader
-        className="mb-0 sm:mb-0"
+        className="mb-0"
         eyebrow="Welcome back"
         title={
           <>
@@ -120,7 +117,7 @@ function Dashboard() {
 
       {/* First-Time Learner Orientation Banner */}
       {showOrientation && (
-        <Card className="border-primary/40 bg-gradient-to-r from-primary/10 via-card to-card p-5 relative overflow-hidden shadow-xs">
+        <Card className="border-primary/30 bg-card/60 p-4 relative overflow-hidden shadow-xs">
           <button
             onClick={() => {
               localStorage.setItem("forge_orientation_dismissed", "true");
@@ -132,32 +129,59 @@ function Dashboard() {
             <X className="h-4 w-4" />
           </button>
 
-          <div className="flex items-start gap-3.5 pr-8">
-            <div className="h-10 w-10 rounded-xl bg-primary/20 grid place-items-center shrink-0 text-primary">
-              <Compass className="h-5 w-5" />
+          <div className="flex items-start gap-3 pr-8">
+            <div className="h-8 w-8 rounded-lg bg-primary/15 grid place-items-center shrink-0 text-primary mt-0.5">
+              <Compass className="h-4 w-4" />
             </div>
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               <div>
-                <h3 className="text-sm font-bold text-foreground">
-                  Welcome to Forge! The Canonical Learner Lifecycle
+                <h3 className="text-xs font-semibold text-foreground">
+                  Welcome to Forge — 6-Stage Frontend Mastery Lifecycle
                 </h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Forge guides you through a 6-stage frontend mastery lifecycle. Progress fluidly across any stage at your own pace:
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Progress fluidly through any stage at your own pace:
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
                 {[
-                  { stage: "START", desc: "Select Path", color: "border-blue-500/30 text-blue-400" },
-                  { stage: "LEARN", desc: "Read Lessons", color: "border-indigo-500/30 text-indigo-400" },
-                  { stage: "PRACTICE", desc: "Quizzes & Labs", color: "border-amber-500/30 text-amber-400" },
-                  { stage: "BUILD", desc: "Guided Projects", color: "border-emerald-500/30 text-emerald-400" },
-                  { stage: "TEST", desc: "Mock Interviews", color: "border-purple-500/30 text-purple-400" },
-                  { stage: "MASTER", desc: "Track Mastery", color: "border-rose-500/30 text-rose-400" },
+                  {
+                    stage: "START",
+                    desc: "Select Path",
+                    color: "border-blue-500/30 text-blue-400",
+                  },
+                  {
+                    stage: "LEARN",
+                    desc: "Lessons",
+                    color: "border-indigo-500/30 text-indigo-400",
+                  },
+                  {
+                    stage: "PRACTICE",
+                    desc: "Quizzes",
+                    color: "border-amber-500/30 text-amber-400",
+                  },
+                  {
+                    stage: "BUILD",
+                    desc: "Projects",
+                    color: "border-emerald-500/30 text-emerald-400",
+                  },
+                  {
+                    stage: "TEST",
+                    desc: "Interviews",
+                    color: "border-purple-500/30 text-purple-400",
+                  },
+                  {
+                    stage: "MASTER",
+                    desc: "Skill Matrix",
+                    color: "border-rose-500/30 text-rose-400",
+                  },
                 ].map((s) => (
-                  <div key={s.stage} className={`p-2 rounded-lg border bg-background/60 text-center ${s.color}`}>
-                    <div className="font-extrabold text-[11px] font-mono">{s.stage}</div>
-                    <div className="text-[10px] text-muted-foreground">{s.desc}</div>
+                  <div
+                    key={s.stage}
+                    className={`p-1.5 rounded-md border bg-background/60 text-center ${s.color}`}
+                  >
+                    <div className="font-bold text-[10px] font-mono">{s.stage}</div>
+                    <div className="text-[9px] text-muted-foreground">{s.desc}</div>
                   </div>
                 ))}
               </div>
@@ -166,11 +190,18 @@ function Dashboard() {
         </Card>
       )}
 
-      {/* Quick Resume Action Bar */}
-      <QuickResumeBar lesson={continueLesson} progressPercent={continueProgressPercent} />
+      {/* Primary Continue Learning Hero Experience */}
+      {continueLesson && (
+        <ContinueLearningCard
+          lesson={continueLesson}
+          progressPercent={continueProgressPercent}
+          moduleTitle={currentModule?.title}
+          topicTitle={currentTopic?.title}
+        />
+      )}
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Subordinate Compact Metrics Ribbon */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Current streak"
           value={`${progress.streakDays} days`}
@@ -197,15 +228,13 @@ function Dashboard() {
         />
       </div>
 
-      {/* Row 1: Continue Learning & Daily Goal + Streak */}
+      {/* Recommended Topics Section */}
+      <RecommendedTopicsCard topics={topics} />
+
+      {/* Secondary Information Grid */}
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          {continueLesson && (
-            <ContinueLearningCard
-              lesson={continueLesson}
-              progressPercent={continueProgressPercent}
-            />
-          )}
+          <RecentLessonsCard lessons={lessons} masteryMap={progress.mastery} />
         </div>
         <div className="space-y-6">
           <DailyGoalCard
@@ -213,6 +242,7 @@ function Dashboard() {
             dailyTargetMinutes={30}
             onAddMinutes={handleAddMinutes}
           />
+          <ContinueProjectCard project={activeProject} />
           <StreakCard
             streakDays={progress.streakDays}
             bestStreak={progress.bestStreakDays ?? progress.streakDays}
@@ -220,17 +250,7 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Row 2: Recent Lessons & Continue Active Project */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <RecentLessonsCard lessons={lessons} masteryMap={progress.mastery} />
-        </div>
-        <div>
-          <ContinueProjectCard project={activeProject} />
-        </div>
-      </div>
-
-      {/* Row 3: Weekly Progress & Heat Map */}
+      {/* Weekly Progress & Heat Map */}
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <WeeklyProgressCard weeklyMinutes={progress.weekly} />
@@ -239,9 +259,6 @@ function Dashboard() {
           <HeatmapCard heatmapData={progress.heatmap} />
         </div>
       </div>
-
-      {/* Row 4: Recommended Topics */}
-      <RecommendedTopicsCard topics={topics} />
 
       {/* Module Quick Access Grid */}
       <div>

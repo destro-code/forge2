@@ -205,20 +205,32 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 shrink-0">
             {scorePercent < 80 ? (
               matchingLesson ? (
-                <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+                <Button
+                  asChild
+                  size="sm"
+                  className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white"
+                >
                   <Link to="/lesson/$lessonId" params={{ lessonId: matchingLesson.id }}>
                     <BookOpen className="h-4 w-4" /> Review Lesson Material
                   </Link>
                 </Button>
               ) : quiz.topicId ? (
-                <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+                <Button
+                  asChild
+                  size="sm"
+                  className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white"
+                >
                   <Link to="/learn/topics/$topicId" params={{ topicId: quiz.topicId }}>
                     <BookOpen className="h-4 w-4" /> Review Topic Material
                   </Link>
                 </Button>
               ) : null
             ) : matchingProject ? (
-              <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Button
+                asChild
+                size="sm"
+                className="gap-2 text-xs shadow-glow bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
                 <Link to="/projects/$projectId" params={{ projectId: matchingProject.id }}>
                   <Layers className="h-4 w-4" /> Apply this Knowledge in a Project
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -369,20 +381,32 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
 
         {scorePercent < 80 ? (
           matchingLesson ? (
-            <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+            <Button
+              asChild
+              size="sm"
+              className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white"
+            >
               <Link to="/lesson/$lessonId" params={{ lessonId: matchingLesson.id }}>
                 <BookOpen className="h-4 w-4" /> Review Lesson Material
               </Link>
             </Button>
           ) : quiz.topicId ? (
-            <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+            <Button
+              asChild
+              size="sm"
+              className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white"
+            >
               <Link to="/learn/topics/$topicId" params={{ topicId: quiz.topicId }}>
                 <BookOpen className="h-4 w-4" /> Review Topic Material
               </Link>
             </Button>
           ) : null
         ) : matchingProject ? (
-          <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-emerald-600 hover:bg-emerald-700 text-white">
+          <Button
+            asChild
+            size="sm"
+            className="gap-2 text-xs shadow-glow bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
             <Link to="/projects/$projectId" params={{ projectId: matchingProject.id }}>
               <Layers className="h-4 w-4" /> Apply this Knowledge in a Project
               <ArrowRight className="h-3.5 w-3.5" />

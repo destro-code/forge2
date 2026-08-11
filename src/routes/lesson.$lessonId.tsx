@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Callout } from "@/components/shared/callout";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
-import { useLesson, useLessons, useTopic, useModule, useQuizzes, useBugs } from "@/lib/hooks/use-content";
+import {
+  useLesson,
+  useLessons,
+  useTopic,
+  useModule,
+  useQuizzes,
+  useBugs,
+} from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { toast } from "sonner";
 import {
@@ -474,7 +481,9 @@ function LessonView() {
               <div className="text-[11px] font-semibold uppercase tracking-widest text-primary">
                 Summary Key Takeaway
               </div>
-              <p className="mt-2 text-[15px] text-foreground/90 leading-relaxed">{lesson.summary}</p>
+              <p className="mt-2 text-[15px] text-foreground/90 leading-relaxed">
+                {lesson.summary}
+              </p>
             </div>
 
             {/* Next Steps / Practice CTAs */}
@@ -495,7 +504,12 @@ function LessonView() {
                 )}
 
                 {matchingBug && (
-                  <Button asChild size="sm" variant="outline" className="gap-1.5 border-rose-500/30 text-rose-400 hover:bg-rose-500/10">
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5 border-rose-500/30 text-rose-400 hover:bg-rose-500/10"
+                  >
                     <Link to="/debug-lab/$bugId" params={{ bugId: matchingBug.id }}>
                       <BugIcon className="h-3.5 w-3.5" />
                       Fix a Bug

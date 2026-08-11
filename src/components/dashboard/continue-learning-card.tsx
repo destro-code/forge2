@@ -1,63 +1,94 @@
 import { Link } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ProgressRing } from "@/components/shared/progress-ring";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
-import { ArrowRight, Bot, BookOpen, Sparkles, Clock } from "lucide-react";
+import { ArrowRight, Bot, Sparkles, Clock, PlayCircle, BookOpen } from "lucide-react";
 import type { Lesson } from "@/lib/types";
 
 interface ContinueLearningCardProps {
   lesson: Lesson;
   progressPercent?: number;
+  moduleTitle?: string;
+  topicTitle?: string;
 }
 
-export function ContinueLearningCard({ lesson, progressPercent = 65 }: ContinueLearningCardProps) {
+export function ContinueLearningCard({
+  lesson,
+  progressPercent = 0,
+  moduleTitle,
+  topicTitle,
+}: ContinueLearningCardProps) {
   return (
-    <Card className="relative overflow-hidden border-border/50 bg-card/80 transition duration-200 hover:border-border">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <Badge
-                variant="secondary"
-                className="gap-1 bg-primary/10 text-primary border-0 text-xs font-medium"
-              >
-                <Sparkles className="h-3 w-3" />
-                In Progress
-              </Badge>
-              <DifficultyBadge difficulty={lesson.difficulty} />
-            </div>
-            <CardTitle className="text-xl font-bold tracking-tight text-foreground">
-              {lesson.title}
-            </CardTitle>
+    <Card className="relative overflow-hidden border-primary/30 bg-gradient-to-r from-primary/10 via-card to-card transition-all duration-200 hover:border-primary/50 shadow-xs">
+      {/* Subtle Progress Bar Overlay along bottom */}
+      <div
+        className="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-500"
+        style={{ width: `${progressPercent}%` }}
+      />
+
+      <CardContent className="p-5 sm:p-6 space-y-4">
+        {/* Header & Badges */}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/40 pb-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge
+              variant="secondary"
+              className="gap-1 bg-primary/15 text-primary border-primary/20 text-xs font-semibold px-2.5 py-0.5"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              In Progress
+            </Badge>
+            {(moduleTitle || topicTitle) && (
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                {moduleTitle ? moduleTitle : topicTitle}
+              </span>
+            )}
           </div>
-          <ProgressRing value={progressPercent / 100} size={54} stroke={4} />
+          <div className="flex items-center gap-2">
+            <DifficultyBadge difficulty={lesson.difficulty} />
+            <span className="text-xs text-muted-foreground font-mono font-medium">
+              {progressPercent}% Complete
+            </span>
+          </div>
         </div>
-      </CardHeader>
 
-      <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-          {lesson.description}
-        </p>
+        {/* Title & Description */}
+        <div className="space-y-1.5">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-snug">
+            {lesson.title}
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            {lesson.description}
+          </p>
+        </div>
 
-        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1 rounded-md bg-muted/40 px-2.5 py-1">
-            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+        {/* Metadata Badges */}
+        <div className="flex flex-wrap items-center gap-2.5 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1 rounded-md bg-muted/60 px-2.5 py-1 font-medium">
+            <Clock className="h-3.5 w-3.5 text-primary" />
             {lesson.estimatedMinutes} mins remaining
           </span>
-          <span className="inline-flex items-center gap-1 rounded-md bg-muted/40 px-2.5 py-1">
+          <span className="inline-flex items-center gap-1 rounded-md bg-muted/60 px-2.5 py-1 font-medium">
             Mastery · {lesson.mastery || "Practicing"}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-md bg-muted/40 px-2.5 py-1">
-            {lesson.exercises?.length || 1} exercises
-          </span>
+          {lesson.exercises && lesson.exercises.length > 0 && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-muted/60 px-2.5 py-1 font-medium">
+              {lesson.exercises.length} practice exercises
+            </span>
+          )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Button asChild size="sm" className="gap-1.5">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <Button
+            asChild
+            size="default"
+            className="gap-2 shadow-glow px-5 py-2.5 h-10 text-sm font-semibold"
+          >
             <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }}>
-              Resume Lesson
+              <PlayCircle className="h-4 w-4" />
+              Continue Lesson
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>

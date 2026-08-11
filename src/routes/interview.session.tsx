@@ -399,10 +399,14 @@ Please provide a complete AI Staff Interviewer evaluation in JSON format contain
           <div className="flex items-center gap-2">
             <Trophy className="h-4 w-4 text-amber-400 shrink-0" />
             <span className="font-semibold text-foreground">
-              Evaluating Mock Interview in context of project: <strong className="text-amber-300">{project.title}</strong>
+              Evaluating Mock Interview in context of project:{" "}
+              <strong className="text-amber-300">{project.title}</strong>
             </span>
           </div>
-          <Badge variant="outline" className="border-amber-500/50 text-amber-300 text-[10px] uppercase font-mono">
+          <Badge
+            variant="outline"
+            className="border-amber-500/50 text-amber-300 text-[10px] uppercase font-mono"
+          >
             Project Interview Loop
           </Badge>
         </div>

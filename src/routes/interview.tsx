@@ -259,7 +259,13 @@ function InterviewAcademy() {
     } else {
       navigate({
         to: "/interview/session",
-        search: { mode: "mock", preset: mockPreset, duration: mockDuration, category: "", projectId },
+        search: {
+          mode: "mock",
+          preset: mockPreset,
+          duration: mockDuration,
+          category: "",
+          projectId,
+        },
       });
     }
   };
@@ -287,7 +293,10 @@ function InterviewAcademy() {
             <Trophy className="h-6 w-6 text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-amber-500/50 text-amber-300 text-[10px] uppercase font-mono">
+                <Badge
+                  variant="outline"
+                  className="border-amber-500/50 text-amber-300 text-[10px] uppercase font-mono"
+                >
                   Active Project Context
                 </Badge>
                 <Badge variant="secondary" className="text-[10px]">
@@ -297,12 +306,14 @@ function InterviewAcademy() {
               <h4 className="font-bold text-sm text-foreground">
                 Evaluating Candidate Readiness for: {project.title}
               </h4>
-              <p className="text-xs text-muted-foreground line-clamp-1">
-                {project.description}
-              </p>
+              <p className="text-xs text-muted-foreground line-clamp-1">{project.description}</p>
             </div>
           </div>
-          <Button onClick={() => handleStartSession()} size="sm" className="gap-1.5 shadow-glow bg-amber-600 hover:bg-amber-700 text-white shrink-0">
+          <Button
+            onClick={() => handleStartSession()}
+            size="sm"
+            className="gap-1.5 shadow-glow bg-amber-600 hover:bg-amber-700 text-white shrink-0"
+          >
             <Play className="h-3.5 w-3.5 fill-current" /> Start Project Interview Loop
           </Button>
         </Card>

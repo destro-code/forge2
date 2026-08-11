@@ -157,7 +157,11 @@ function ProjectView() {
                 <Code2 className="h-3.5 w-3.5 text-primary" /> Code Playground
               </Link>
             </Button>
-            <Button asChild size="sm" className="h-8 text-xs gap-1.5 shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+            <Button
+              asChild
+              size="sm"
+              className="h-8 text-xs gap-1.5 shadow-glow bg-amber-600 hover:bg-amber-700 text-white"
+            >
               <Link to="/interview" search={{ projectId: project.id }}>
                 <Award className="h-3.5 w-3.5" /> Evaluate in Mock Interview
               </Link>
