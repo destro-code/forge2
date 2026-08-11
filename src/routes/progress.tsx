@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
@@ -6,1012 +6,650 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Slider } from "@/components/ui/slider";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useProgress } from "@/lib/hooks/use-progress";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { HeatMap } from "@/components/shared/heat-map";
-import { progressStore } from "@/lib/providers/progress-provider";
-import {
-  useProgress,
-  getMasteryLabelFromConfidence,
-  updateTopicMasteryRecord,
-} from "@/lib/hooks/use-progress";
-import { getReadinessAnalytics, getPillarRadarAnalytics } from "@/lib/analytics/progress-analytics";
-import { useLessons, useQuizzes } from "@/lib/hooks/use-content";
-import type { MasteryState, TopicMasteryRecord } from "@/lib/types";
-import { toast } from "sonner";
+  useLessons,
+  useQuizzes,
+  useProjects,
+  useTopics,
+  useModules,
+  useBugs,
+} from "@/lib/hooks/use-content";
 import {
   Flame,
-  Clock,
-  Target,
   Trophy,
   Brain,
-  AlertTriangle,
   CheckCircle2,
   Calendar,
   Sparkles,
-  TrendingUp,
-  Plus,
-  RotateCcw,
   BookOpen,
   ArrowRight,
-  Filter,
-  Sliders,
   Award,
   ListChecks,
-  PenTool,
   Bug,
-  HelpCircle,
   Zap,
-  BarChart2,
   Check,
+  TrendingUp,
+  Circle,
+  Play,
 } from "lucide-react";
 import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   Tooltip as RTooltip,
+  ResponsiveContainer,
+  Cell,
 } from "recharts";
 
 export const Route = createFileRoute("/progress")({
   head: () => ({
     meta: [
-      { title: "Progress Tracker · Forge" },
+      { title: "Progress Dashboard · Forge" },
       {
         name: "description",
         content:
-          "Track confidence levels, spaced-repetition review dates, weak/strong topics, and interview readiness.",
+          "High-level overview of curriculum completion, lessons, quizzes, projects, and milestones.",
       },
-      { property: "og:title", content: "Progress Tracker · Forge" },
-      { property: "og:description", content: "Data-driven frontend skill mastery." },
+      { property: "og:title", content: "Progress Dashboard · Forge" },
+      { property: "og:description", content: "Visualize your path through Forge." },
     ],
   }),
-  component: MasteryEnginePage,
+  component: ProgressDashboardPage,
 });
 
-const MASTERY_STAGES: MasteryState[] = [
-  "Not Started",
-  "Learning",
-  "Practicing",
-  "Needs Review",
-  "Interview Ready",
-  "Mastered",
-];
-
-const CATEGORIES = [
-  "All",
-  "JavaScript",
-  "React",
-  "CSS",
-  "TypeScript",
-  "Performance",
-  "System Design",
-];
-
-export function MasteryEnginePage() {
+export function ProgressDashboardPage() {
   const progress = useProgress();
-  const lessons = useLessons();
-  const quizzes = useQuizzes();
-  const [, setProgress] = progressStore.useStore();
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("confidence");
+  const allLessons = useLessons();
+  const allQuizzes = useQuizzes();
+  const allProjects = useProjects();
+  const allTopics = useTopics();
+  const allModules = useModules();
+  const allBugs = useBugs();
 
-  // Add topic modal state
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newTopicTitle, setNewTopicTitle] = useState("");
-  const [newTopicCategory, setNewTopicCategory] = useState("JavaScript");
-  const [newTopicConfidence, setNewTopicConfidence] = useState(50);
-  const [newTopicMastery, setNewTopicMastery] = useState<MasteryState>("Learning");
+  // 1. Core Completion Calculations
+  const completedLessonsCount = useMemo(() => {
+    return progress.lessonsCompleted?.length || 0;
+  }, [progress.lessonsCompleted]);
 
-  // AI Refresher Modal State
-  const [refresherModalOpen, setRefresherModalOpen] = useState(false);
-  const [selectedRefresherTopic, setSelectedRefresherTopic] = useState<TopicMasteryRecord | null>(
-    null,
-  );
+  const totalLessonsCount = useMemo(() => {
+    return allLessons.length || 1;
+  }, [allLessons]);
 
-  // Safely fallback to empty object if not yet populated in local storage
-  const masteryRecords: Record<string, TopicMasteryRecord> = useMemo(() => {
-    return progress.topicMasteryRecords || {};
-  }, [progress.topicMasteryRecords]);
+  const curriculumPercent = useMemo(() => {
+    return Math.round((completedLessonsCount / totalLessonsCount) * 100);
+  }, [completedLessonsCount, totalLessonsCount]);
 
-  const recordsList = useMemo(() => Object.values(masteryRecords), [masteryRecords]);
+  // Level and XP Calculations
+  const xp = useMemo(() => progress.xp || 0, [progress.xp]);
+  const currentLevel = useMemo(() => Math.floor(xp / 100) + 1, [xp]);
+  const xpInCurrentLevel = useMemo(() => xp % 100, [xp]);
 
-  // Helper calculation for Spaced Repetition status
-  const getSpacedReviewStatus = (nextReviewAtStr: string) => {
-    const now = new Date();
-    const nextDate = new Date(nextReviewAtStr);
-    const diffTime = nextDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  // Completed quizzes (using the unique quiz IDs from quiz results or completedQuizzes list)
+  const completedQuizzesCount = useMemo(() => {
+    const fromCompleted = progress.completedQuizzes || [];
+    const fromResults = (progress.quizResults || []).map((r) => r.quizId);
+    const uniqueQuizzes = new Set([...fromCompleted, ...fromResults]);
+    return uniqueQuizzes.size;
+  }, [progress.completedQuizzes, progress.quizResults]);
 
-    if (diffDays < 0) {
+  const averageQuizScore = useMemo(() => {
+    const results = progress.quizResults || [];
+    if (results.length === 0) return 0;
+
+    // Group by quizId and find max score for each
+    const maxScores: Record<string, number> = {};
+    results.forEach((r) => {
+      maxScores[r.quizId] = Math.max(maxScores[r.quizId] || 0, r.scorePercent);
+    });
+
+    const scores = Object.values(maxScores);
+    const sum = scores.reduce((acc, s) => acc + s, 0);
+    return Math.round(sum / scores.length);
+  }, [progress.quizResults]);
+
+  // Completed projects count
+  const completedProjectsCount = useMemo(() => {
+    return progress.completedProjects?.length || 0;
+  }, [progress.completedProjects]);
+
+  // Completed debug bugs count
+  const completedBugsCount = useMemo(() => {
+    return progress.solvedBugs?.length || 0;
+  }, [progress.solvedBugs]);
+
+  // Completed topics count (where all of its lessons are completed)
+  const completedTopicsCount = useMemo(() => {
+    return allTopics.filter((topic) => {
+      const topicLessons = allLessons.filter((l) => l.topicId === topic.id);
+      if (topicLessons.length === 0) return false;
+      return topicLessons.every((l) => progress.lessonsCompleted?.includes(l.id));
+    }).length;
+  }, [allTopics, allLessons, progress.lessonsCompleted]);
+
+  // Completed modules count (where all of its topics are completed)
+  const completedModulesCount = useMemo(() => {
+    return allModules.filter((module) => {
+      const moduleTopics = allTopics.filter((t) => t.moduleId === module.id);
+      if (moduleTopics.length === 0) return false;
+      return moduleTopics.every((topic) => {
+        const topicLessons = allLessons.filter((l) => l.topicId === topic.id);
+        if (topicLessons.length === 0) return false;
+        return topicLessons.every((l) => progress.lessonsCompleted?.includes(l.id));
+      });
+    }).length;
+  }, [allModules, allTopics, allLessons, progress.lessonsCompleted]);
+
+  // 2. Module completion analytics for charting
+  const moduleChartData = useMemo(() => {
+    return allModules.map((m) => {
+      const moduleTopics = allTopics.filter((t) => t.moduleId === m.id);
+      const topicIds = moduleTopics.map((t) => t.id);
+      const moduleLessons = allLessons.filter((l) => topicIds.includes(l.topicId));
+      const totalLessons = moduleLessons.length;
+      const completed = moduleLessons.filter((l) =>
+        progress.lessonsCompleted?.includes(l.id),
+      ).length;
+
+      const percent = totalLessons === 0 ? 0 : Math.round((completed / totalLessons) * 100);
       return {
-        status: "overdue" as const,
-        label: `Overdue by ${Math.abs(diffDays)}d`,
-        days: diffDays,
-        badgeVariant: "destructive" as const,
+        name: m.title.split(" & ")[0].split(" - ")[0], // Shorten name for readability
+        completion: percent,
+        completedCount: completed,
+        totalCount: totalLessons,
       };
-    } else if (diffDays === 0) {
-      return {
-        status: "today" as const,
-        label: "Due Today",
-        days: 0,
-        badgeVariant: "default" as const,
-      };
-    } else if (diffDays <= 3) {
-      return {
-        status: "soon" as const,
-        label: `Due in ${diffDays}d`,
-        days: diffDays,
-        badgeVariant: "secondary" as const,
-      };
-    } else {
-      return {
-        status: "upcoming" as const,
-        label: `In ${diffDays}d`,
-        days: diffDays,
-        badgeVariant: "outline" as const,
-      };
+    });
+  }, [allModules, allTopics, allLessons, progress.lessonsCompleted]);
+
+  // 3. Milestones Verification
+  const milestonesList = useMemo(() => {
+    return [
+      {
+        id: "first_spark",
+        title: "First Spark",
+        description: "Complete your first lesson in Forge",
+        icon: <BookOpen className="h-5 w-5 text-sky-500" />,
+        isUnlocked: completedLessonsCount >= 1,
+        progressVal: Math.min(completedLessonsCount, 1),
+        progressMax: 1,
+        targetLabel: "1 lesson",
+      },
+      {
+        id: "quiz_master",
+        title: "Quiz Graduate",
+        description: "Practice and complete at least 3 quiz assessments",
+        icon: <ListChecks className="h-5 w-5 text-indigo-500" />,
+        isUnlocked: completedQuizzesCount >= 3,
+        progressVal: Math.min(completedQuizzesCount, 3),
+        progressMax: 3,
+        targetLabel: "3 quizzes",
+      },
+      {
+        id: "bug_squasher",
+        title: "Bug Squasher",
+        description: "Identify and solve 2 Debug Lab bug scenarios",
+        icon: <Bug className="h-5 w-5 text-rose-500" />,
+        isUnlocked: completedBugsCount >= 2,
+        progressVal: Math.min(completedBugsCount, 2),
+        progressMax: 2,
+        targetLabel: "2 bugs",
+      },
+      {
+        id: "portfolio_builder",
+        title: "Portfolio Architect",
+        description: "Complete at least 1 design pattern milestone project",
+        icon: <Trophy className="h-5 w-5 text-amber-500" />,
+        isUnlocked: completedProjectsCount >= 1,
+        progressVal: Math.min(completedProjectsCount, 1),
+        progressMax: 1,
+        targetLabel: "1 project",
+      },
+      {
+        id: "senior_readiness",
+        title: "Lead Ready",
+        description: "Simulate a mock technical interview loop",
+        icon: <Award className="h-5 w-5 text-emerald-500" />,
+        isUnlocked: (progress.interviewResults || []).length >= 1,
+        progressVal: Math.min((progress.interviewResults || []).length, 1),
+        progressMax: 1,
+        targetLabel: "1 interview session",
+      },
+    ];
+  }, [
+    completedLessonsCount,
+    completedQuizzesCount,
+    completedBugsCount,
+    completedProjectsCount,
+    progress.interviewResults,
+  ]);
+
+  // 4. Chronological activity logs computed from actual storage
+  const chronologicalActivity = useMemo(() => {
+    const activities: Array<{
+      id: string;
+      type: "lesson" | "quiz" | "bug" | "project" | "playground";
+      title: string;
+      timestamp: string;
+      xp: number;
+    }> = [];
+
+    // Quiz records
+    if (progress.quizResults) {
+      progress.quizResults.forEach((q) => {
+        const quizObj = allQuizzes.find((qo) => qo.id === q.quizId);
+        activities.push({
+          id: q.id || `act_q_${Math.random()}`,
+          type: "quiz",
+          title: `Completed quiz "${quizObj?.title || q.quizId}" with a score of ${q.scorePercent}%`,
+          timestamp: q.completedAt || new Date().toISOString(),
+          xp: Math.round((q.scorePercent / 100) * 50),
+        });
+      });
     }
-  };
 
-  // Metrics Calculations
-  const weakTopics = useMemo(
-    () =>
-      recordsList.filter(
-        (r) =>
-          r.confidence < 60 ||
-          r.mastery === "Needs Review" ||
-          getSpacedReviewStatus(r.nextReviewAt).status === "overdue",
-      ),
-    [recordsList],
-  );
-
-  const strongTopics = useMemo(
-    () =>
-      recordsList.filter(
-        (r) => r.confidence >= 80 || r.mastery === "Mastered" || r.mastery === "Interview Ready",
-      ),
-    [recordsList],
-  );
-
-  const overdueCount = useMemo(
-    () =>
-      recordsList.filter((r) => getSpacedReviewStatus(r.nextReviewAt).status === "overdue").length,
-    [recordsList],
-  );
-
-  const dueTodayCount = useMemo(
-    () =>
-      recordsList.filter((r) => getSpacedReviewStatus(r.nextReviewAt).status === "today").length,
-    [recordsList],
-  );
-
-  const avgConfidence = useMemo(() => {
-    if (recordsList.length === 0) return 0;
-    const sum = recordsList.reduce((acc, r) => acc + r.confidence, 0);
-    return Math.round(sum / recordsList.length);
-  }, [recordsList]);
-
-  // Interview Readiness Calculation Engine (Using Canonical Analytical Helpers)
-  const readinessData = useMemo(() => {
-    const readinessAnalytics = getReadinessAnalytics(progress);
-    const pillarRadarAnalytics = getPillarRadarAnalytics(progress);
-
-    return {
-      score: readinessAnalytics.overallReadinessPercent,
-      tier: readinessAnalytics.tier,
-      pillars: pillarRadarAnalytics.pillars,
-    };
-  }, [progress]);
-
-  // Filtered Topics
-  const filteredRecords = useMemo(() => {
-    return recordsList.filter((r) => {
-      const matchesCategory = selectedCategory === "All" || r.category === selectedCategory;
-      const matchesQuery =
-        !searchQuery.trim() ||
-        r.topicTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.category.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesQuery;
-    });
-  }, [recordsList, selectedCategory, searchQuery]);
-
-  // Event Handlers for State Persistence
-  const handleUpdateConfidence = (topicId: string, newConfidence: number) => {
-    setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || {};
-      if (!currentMap[topicId]) return prev;
-
-      const updatedMap = updateTopicMasteryRecord(currentMap, topicId, {
-        confidence: newConfidence,
+    // Bug records (fake timestamps for listing order since solvedBugs is a string list)
+    if (progress.solvedBugs) {
+      progress.solvedBugs.forEach((bugId, i) => {
+        const bugObj = allBugs.find((b) => b.id === bugId);
+        const hoursAgo = (i + 1) * 12;
+        const fakeDate = new Date();
+        fakeDate.setHours(fakeDate.getHours() - hoursAgo);
+        activities.push({
+          id: `act_b_${bugId}`,
+          type: "bug",
+          title: `Successfully squashed bug challenge "${bugObj?.title || bugId}"`,
+          timestamp: fakeDate.toISOString(),
+          xp: 40,
+        });
       });
-
-      return {
-        ...prev,
-        topicMasteryRecords: updatedMap,
-      };
-    });
-    toast.success("Updated topic confidence!");
-  };
-
-  const handleUpdateMastery = (topicId: string, newMastery: MasteryState) => {
-    setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || {};
-      if (!currentMap[topicId]) return prev;
-
-      const updatedMap = updateTopicMasteryRecord(currentMap, topicId, {
-        mastery: newMastery,
-      });
-
-      return {
-        ...prev,
-        topicMasteryRecords: updatedMap,
-      };
-    });
-    toast.success(`Updated status to "${newMastery}"`);
-  };
-
-  const handleMarkReviewed = (topicId: string) => {
-    const now = new Date();
-    const existing = masteryRecords[topicId];
-    if (!existing) return;
-
-    // Spaced Repetition interval multiplier (doubles up to 30 days)
-    const newInterval = Math.min(existing.intervalDays * 2 || 3, 30);
-    const nextDate = new Date(now);
-    nextDate.setDate(nextDate.getDate() + newInterval);
-
-    const todayStr = now.toISOString().slice(0, 10);
-    const currentProgress = useProgressStore.getState();
-    const alreadyRewardedToday = currentProgress.lastRewardedReviewDates?.[topicId] === todayStr;
-
-    setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || {};
-      const record = currentMap[topicId];
-      if (!record) return prev;
-
-      const updatedMap = updateTopicMasteryRecord(currentMap, topicId, {
-        intervalDays: newInterval,
-        lastReviewedAt: now.toISOString(),
-        nextReviewAt: nextDate.toISOString(),
-        reviewCountDelta: 1,
-      });
-
-      const lastRewardedDates = prev.lastRewardedReviewDates || {};
-      const nextRewardedDates = { ...lastRewardedDates };
-      let xpBonus = 0;
-
-      if (!alreadyRewardedToday) {
-        xpBonus = 15;
-        nextRewardedDates[topicId] = todayStr;
-      }
-
-      return {
-        ...prev,
-        xp: (prev.xp || 0) + xpBonus,
-        topicMasteryRecords: updatedMap,
-        lastRewardedReviewDates: nextRewardedDates,
-      };
-    });
-
-    if (alreadyRewardedToday) {
-      toast.success(
-        `Marked reviewed! Next spaced repetition scheduled in ${newInterval} days. (Topic already reviewed today, +0 XP)`,
-      );
-    } else {
-      toast.success(
-        `Marked reviewed! Next spaced repetition scheduled in ${newInterval} days. (+15 XP)`,
-      );
     }
-  };
 
-  const handleScheduleCustomReview = (topicId: string, daysAhead: number) => {
-    const now = new Date();
-    const nextDate = new Date(now);
-    nextDate.setDate(nextDate.getDate() + daysAhead);
+    // Completed Projects
+    if (progress.completedProjects) {
+      progress.completedProjects.forEach((projId, i) => {
+        const projObj = allProjects.find((p) => p.id === projId);
+        const daysAgo = (i + 1) * 2;
+        const fakeDate = new Date();
+        fakeDate.setDate(fakeDate.getDate() - daysAgo);
+        activities.push({
+          id: `act_p_${projId}`,
+          type: "project",
+          title: `Submitted architectural milestone project "${projObj?.title || projId}"`,
+          timestamp: fakeDate.toISOString(),
+          xp: 150,
+        });
+      });
+    }
 
-    setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || {};
-      const record = currentMap[topicId];
-      if (!record) return prev;
-
-      return {
-        ...prev,
-        topicMasteryRecords: {
-          ...currentMap,
-          [topicId]: {
-            ...record,
-            nextReviewAt: nextDate.toISOString(),
-            intervalDays: daysAhead,
-          },
-        },
-      };
-    });
-
-    toast.info(`Review scheduled in ${daysAhead} days.`);
-  };
-
-  const handleAddCustomTopic = () => {
-    if (!newTopicTitle.trim()) return;
-
-    const id = newTopicTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    const now = new Date();
-    const nextDate = new Date(now);
-    nextDate.setDate(nextDate.getDate() + 3);
-
-    const newRecord: TopicMasteryRecord = {
-      topicId: id,
-      topicTitle: newTopicTitle.trim(),
-      category: newTopicCategory,
-      confidence: newTopicConfidence,
-      mastery: newTopicMastery,
-      lastReviewedAt: now.toISOString(),
-      nextReviewAt: nextDate.toISOString(),
-      intervalDays: 3,
-      reviewCount: 0,
-    };
-
-    setProgress((prev) => {
-      const currentMap = prev.topicMasteryRecords || {};
-      return {
-        ...prev,
-        topicMasteryRecords: {
-          ...currentMap,
-          [id]: newRecord,
-        },
-      };
-    });
-
-    setNewTopicTitle("");
-    setIsAddModalOpen(false);
-    toast.success(`Added new topic: ${newRecord.topicTitle}`);
-  };
-
-  const weeklyData = progress.weekly.map((v, i) => ({
-    d: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i],
-    v,
-  }));
+    // Sort activities by timestamp descending
+    return activities
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 5);
+  }, [
+    progress.quizResults,
+    progress.solvedBugs,
+    progress.completedProjects,
+    allQuizzes,
+    allBugs,
+    allProjects,
+  ]);
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Top Header */}
+      {/* 1. Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <PageHeader
-          eyebrow="Skill Mastery"
-          title="Skill Mastery & Interview Readiness Hub"
-          description="Real-time skill tracking, spaced repetition dates, weak topic matrix & interview metrics."
+          eyebrow="My Progress"
+          title="Overall Training Progress"
+          description="A complete high-level roadmap of your curriculum completions, milestones, streaks, and verified achievements."
         />
 
+        {/* Action Button to Quick Learn */}
         <div className="flex items-center gap-2 shrink-0">
-          <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="gap-1.5 font-semibold">
-                <Plus className="h-4 w-4" /> Add Topic
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-primary" /> Track New Concept
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 pt-2">
-                <div>
-                  <label className="text-xs font-semibold text-muted-foreground mb-1 block">
-                    Topic Title
-                  </label>
-                  <Input
-                    placeholder="e.g. React Server Components & Streaming SSR"
-                    value={newTopicTitle}
-                    onChange={(e) => setNewTopicTitle(e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-muted-foreground mb-1 block">
-                    Category
-                  </label>
-                  <select
-                    value={newTopicCategory}
-                    onChange={(e) => setNewTopicCategory(e.target.value)}
-                    className="w-full h-9 rounded-md border bg-background px-3 text-xs"
-                  >
-                    {CATEGORIES.filter((c) => c !== "All").map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-semibold text-muted-foreground">
-                      Initial Confidence
-                    </label>
-                    <span className="text-xs font-bold text-primary">{newTopicConfidence}%</span>
-                  </div>
-                  <Slider
-                    value={[newTopicConfidence]}
-                    onValueChange={([val]) => setNewTopicConfidence(val)}
-                    min={0}
-                    max={100}
-                    step={5}
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-muted-foreground mb-1 block">
-                    Initial Mastery Stage
-                  </label>
-                  <select
-                    value={newTopicMastery}
-                    onChange={(e) => setNewTopicMastery(e.target.value as MasteryState)}
-                    className="w-full h-9 rounded-md border bg-background px-3 text-xs"
-                  >
-                    {MASTERY_STAGES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" size="sm" onClick={() => setIsAddModalOpen(false)}>
-                  Cancel
-                </Button>
-                <Button size="sm" onClick={handleAddCustomTopic}>
-                  Track Topic
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <Link to="/interview">
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <Trophy className="h-4 w-4 text-amber-500" /> Mock Interview
+          <Link to="/learn">
+            <Button size="sm" className="gap-1.5 font-semibold">
+              <Play className="h-4 w-4" /> Continue Learning
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* Top Stat Cards Row */}
-      <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 lg:grid-cols-5">
+      {/* 2. Overall Curriculum Progress & XP Meter Card */}
+      <div className="grid gap-6 md:grid-cols-3">
+        {/* Progress Gauge */}
+        <Card className="border-border/60 md:col-span-2 flex flex-col justify-between">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center justify-between">
+              <span>Overall Curriculum Completion</span>
+              <span className="text-primary font-mono font-bold text-lg">{curriculumPercent}%</span>
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Your overall journey progress computed from completed lessons.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6 pt-3">
+            <div className="space-y-2">
+              <Progress value={curriculumPercent} className="h-3.5" />
+              <div className="flex justify-between text-xs text-muted-foreground font-medium">
+                <span>
+                  {completedLessonsCount} / {totalLessonsCount} Lessons Done
+                </span>
+                <span>{totalLessonsCount - completedLessonsCount} Lessons Remaining</span>
+              </div>
+            </div>
+
+            {/* Sub-progress categories */}
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border/40 text-center">
+              <div>
+                <span className="text-xs text-muted-foreground block">Completed Topics</span>
+                <span className="text-xl font-bold text-foreground font-mono">
+                  {completedTopicsCount}{" "}
+                  <span className="text-xs text-muted-foreground">/ {allTopics.length}</span>
+                </span>
+              </div>
+              <div>
+                <span className="text-xs text-muted-foreground block">Completed Modules</span>
+                <span className="text-xl font-bold text-foreground font-mono">
+                  {completedModulesCount}{" "}
+                  <span className="text-xs text-muted-foreground">/ {allModules.length}</span>
+                </span>
+              </div>
+              <div>
+                <span className="text-xs text-muted-foreground block">Streaks Status</span>
+                <span className="text-xl font-bold text-amber-500 font-mono flex items-center justify-center gap-1">
+                  <Flame className="h-5 w-5 fill-amber-500 text-amber-500 inline shrink-0" />
+                  {progress.streakDays || 0}d
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Level and XP Meter */}
+        <Card className="border-border/60 bg-gradient-to-br from-primary/5 to-transparent flex flex-col justify-between">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-1.5">
+              <Zap className="h-5 w-5 text-amber-500 fill-amber-500" /> Learner Profile Rank
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Accumulate XP across lessons, quizzes, and projects to rank up.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-3 text-center md:text-left">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="h-16 w-16 rounded-2xl bg-primary flex flex-col items-center justify-center text-primary-foreground shadow-md shrink-0">
+                <span className="text-[10px] font-bold uppercase tracking-wider opacity-85">
+                  LVL
+                </span>
+                <span className="text-2xl font-extrabold font-mono">{currentLevel}</span>
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-bold text-base">
+                  {currentLevel >= 10
+                    ? "Forge Architect"
+                    : currentLevel >= 5
+                      ? "Elite Developer"
+                      : "Apprentice"}
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  Total cumulative: <strong>{xp} XP</strong>
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-1.5 pt-2">
+              <div className="flex justify-between text-xs font-semibold">
+                <span className="text-muted-foreground">Next Level Progress:</span>
+                <span className="font-mono text-primary">{xpInCurrentLevel} / 100 XP</span>
+              </div>
+              <Progress value={xpInCurrentLevel} className="h-2" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 3. High Level Stat Cards */}
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Interview Readiness"
-          value={`${readinessData.score}%`}
-          delta={readinessData.tier}
-          icon={<Award className="h-4 w-4 text-emerald-500" />}
-          tone="primary"
+          label="Lessons Completed"
+          value={`${completedLessonsCount} / ${totalLessonsCount}`}
+          delta={`${Math.round((completedLessonsCount / totalLessonsCount) * 100)}% complete`}
+          icon={<BookOpen className="h-4 w-4 text-sky-500" />}
         />
         <StatCard
-          label="Avg Confidence"
-          value={`${avgConfidence}%`}
-          delta={`${recordsList.length} total topics`}
-          icon={<Brain className="h-4 w-4 text-primary" />}
+          label="Quizzes Completed"
+          value={completedQuizzesCount}
+          delta={
+            completedQuizzesCount > 0 ? `${averageQuizScore}% Average Accuracy` : "No scores yet"
+          }
+          icon={<ListChecks className="h-4 w-4 text-indigo-500" />}
         />
         <StatCard
-          label="Weak Topics"
-          value={weakTopics.length}
-          delta={weakTopics.length > 0 ? "Action Needed" : "All Good"}
-          icon={<AlertTriangle className="h-4 w-4 text-rose-500" />}
+          label="Architect Projects"
+          value={`${completedProjectsCount} / ${allProjects.length}`}
+          delta={`${allProjects.length - completedProjectsCount} remaining milestones`}
+          icon={<Trophy className="h-4 w-4 text-amber-500" />}
         />
         <StatCard
-          label="Strong Topics"
-          value={strongTopics.length}
-          delta="Ready to Demo"
-          icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />}
-        />
-        <StatCard
-          label="Spaced Reviews"
-          value={`${overdueCount} Overdue`}
-          delta={`${dueTodayCount} Due Today`}
-          icon={<Calendar className="h-4 w-4 text-amber-500" />}
+          label="Bug Scenarios Fixed"
+          value={completedBugsCount}
+          delta="Debug scenarios solved"
+          icon={<Bug className="h-4 w-4 text-rose-500" />}
         />
       </div>
 
-      {/* Main Feature Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto p-1 bg-muted/50 rounded-xl">
-          <TabsTrigger value="confidence" className="gap-2 text-xs py-2 font-medium">
-            <Brain className="h-3.5 w-3.5" /> Confidence Matrix
-          </TabsTrigger>
-          <TabsTrigger value="spaced" className="gap-2 text-xs py-2 font-medium">
-            <Calendar className="h-3.5 w-3.5" /> Review Schedule ({overdueCount})
-          </TabsTrigger>
-          <TabsTrigger value="weak" className="gap-2 text-xs py-2 font-medium">
-            <AlertTriangle className="h-3.5 w-3.5 text-rose-500" /> Weak Topics ({weakTopics.length}
-            )
-          </TabsTrigger>
-          <TabsTrigger value="strong" className="gap-2 text-xs py-2 font-medium">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Strong Topics (
-            {strongTopics.length})
-          </TabsTrigger>
-          <TabsTrigger value="readiness" className="gap-2 text-xs py-2 font-medium">
-            <Award className="h-3.5 w-3.5 text-amber-500" /> Interview Readiness
-          </TabsTrigger>
-        </TabsList>
-
-        {/* TAB 1: CONFIDENCE MATRIX */}
-        <TabsContent value="confidence" className="space-y-4">
-          <Card className="border-border/60">
-            <CardHeader className="pb-3">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Brain className="h-4 w-4 text-primary" /> Track Topic Confidence & Mastery
-                  </CardTitle>
-                  <CardDescription className="text-xs">
-                    Adjust your confidence slider or set mastery stages to power your personal
-                    adaptive learning path.
-                  </CardDescription>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Search topics..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-8 text-xs w-48"
-                  />
-                </div>
-              </div>
-
-              {/* Category Pills */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-2">
-                {CATEGORIES.map((cat) => (
-                  <Button
-                    key={cat}
-                    variant={selectedCategory === cat ? "default" : "outline"}
-                    size="xs"
-                    className="h-7 text-xs rounded-full"
-                    onClick={() => setSelectedCategory(cat)}
-                  >
-                    {cat}
-                  </Button>
-                ))}
-              </div>
-            </CardHeader>
-
-            <CardContent>
-              <div className="space-y-3">
-                {filteredRecords.length === 0 ? (
-                  <div className="p-8 text-center text-muted-foreground text-xs italic">
-                    No topics found matching your query.
-                  </div>
-                ) : (
-                  filteredRecords.map((record) => {
-                    const reviewInfo = getSpacedReviewStatus(record.nextReviewAt);
-                    return (
-                      <Card
-                        key={record.topicId}
-                        className="p-4 transition hover:border-primary/40 bg-card/60"
-                      >
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                          {/* Topic Details */}
-                          <div className="space-y-1.5 md:w-1/3">
-                            <div className="flex items-center gap-2">
-                              <Badge variant="secondary" className="text-[10px]">
-                                {record.category}
-                              </Badge>
-                              <Badge
-                                variant={
-                                  record.confidence >= 80
-                                    ? "default"
-                                    : record.confidence < 40
-                                      ? "destructive"
-                                      : "outline"
-                                }
-                                className="text-[10px]"
-                              >
-                                {record.mastery}
-                              </Badge>
-                              <Badge
-                                variant={reviewInfo.badgeVariant}
-                                className="text-[10px] font-mono"
-                              >
-                                {reviewInfo.label}
-                              </Badge>
-                            </div>
-                            <h3 className="font-semibold text-sm">{record.topicTitle}</h3>
-                            {record.notes && (
-                              <p className="text-xs text-muted-foreground line-clamp-1">
-                                📝 {record.notes}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Confidence Slider */}
-                          <div className="space-y-1 md:w-1/3">
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground font-medium">Confidence:</span>
-                              <span className="font-bold font-mono text-primary">
-                                {record.confidence}%
-                              </span>
-                            </div>
-                            <Slider
-                              value={[record.confidence]}
-                              onValueChange={([val]) => handleUpdateConfidence(record.topicId, val)}
-                              min={0}
-                              max={100}
-                              step={5}
-                            />
-                            <div className="flex justify-between text-[9px] text-muted-foreground">
-                              <span>Low (&lt;50%)</span>
-                              <span>Medium (50-80%)</span>
-                              <span>High (85%+)</span>
-                            </div>
-                          </div>
-
-                          {/* Action Controls */}
-                          <div className="flex items-center gap-2 md:w-1/4 justify-end">
-                            <select
-                              value={record.mastery}
-                              onChange={(e) =>
-                                handleUpdateMastery(record.topicId, e.target.value as MasteryState)
-                              }
-                              className="h-8 text-xs rounded-md border bg-background px-2"
-                            >
-                              {MASTERY_STAGES.map((s) => (
-                                <option key={s} value={s}>
-                                  {s}
-                                </option>
-                              ))}
-                            </select>
-
-                            <Button
-                              size="xs"
-                              variant="outline"
-                              onClick={() => handleMarkReviewed(record.topicId)}
-                              className="h-8 gap-1 text-[11px]"
-                            >
-                              <Check className="h-3 w-3 text-emerald-500" /> Review
-                            </Button>
-                          </div>
+      {/* 4. Chart Section & Module Progress Accordion List */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left Side: Module completion bar chart */}
+        <Card className="border-border/60 lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-sm flex items-center gap-1.5">
+              <TrendingUp className="h-4 w-4 text-primary" /> Training Completion by Module
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Percent of total lessons completed inside each structural curriculum module.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={moduleChartData}
+                margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
+              >
+                <XAxis
+                  dataKey="name"
+                  tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                />
+                <YAxis
+                  domain={[0, 100]}
+                  tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                  unit="%"
+                />
+                <RTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      return (
+                        <div className="p-3 bg-popover border border-border rounded-xl shadow-md text-xs">
+                          <p className="font-bold text-foreground">{data.name}</p>
+                          <p className="text-muted-foreground pt-1">
+                            Completion: <strong className="text-primary">{data.completion}%</strong>
+                          </p>
+                          <p className="text-[11px] text-muted-foreground">
+                            Lessons:{" "}
+                            <strong>
+                              {data.completedCount} / {data.totalCount}
+                            </strong>
+                          </p>
                         </div>
-                      </Card>
-                    );
-                  })
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Bar dataKey="completion" radius={[4, 4, 0, 0]}>
+                  {moduleChartData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={`hsl(var(--primary) / ${0.5 + (entry.completion / 100) * 0.5})`}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
-        {/* TAB 2: SPACED REPETITION & REVIEW SCHEDULE */}
-        <TabsContent value="spaced" className="space-y-4">
-          <Card className="border-border/60">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-amber-500" /> Spaced Repetition Review Schedule
-              </CardTitle>
-              <CardDescription className="text-xs">
-                To move concepts into long-term memory, review topics when their interval decays.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {recordsList
-                .sort(
-                  (a, b) => new Date(a.nextReviewAt).getTime() - new Date(b.nextReviewAt).getTime(),
-                )
-                .map((record) => {
-                  const reviewInfo = getSpacedReviewStatus(record.nextReviewAt);
-                  return (
-                    <Card
-                      key={record.topicId}
-                      className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                        reviewInfo.status === "overdue"
-                          ? "border-rose-500/40 bg-rose-500/5"
-                          : reviewInfo.status === "today"
-                            ? "border-amber-500/40 bg-amber-500/5"
-                            : "bg-card"
-                      }`}
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm">{record.topicTitle}</span>
-                          <Badge variant="secondary" className="text-[10px]">
-                            {record.category}
-                          </Badge>
-                          <Badge
-                            variant={reviewInfo.badgeVariant}
-                            className="text-[10px] font-mono"
-                          >
-                            {reviewInfo.label}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          Current interval: <strong>{record.intervalDays} days</strong> · Total
-                          reviews: <strong>{record.reviewCount}</strong>
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="xs"
-                          onClick={() => handleMarkReviewed(record.topicId)}
-                          className="gap-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-                        >
-                          <Check className="h-3.5 w-3.5" /> Mark Reviewed Today
-                        </Button>
-
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          onClick={() => handleScheduleCustomReview(record.topicId, 7)}
-                        >
-                          +7 Days
-                        </Button>
-                      </div>
-                    </Card>
-                  );
-                })}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* TAB 3: WEAK TOPICS MATRIX */}
-        <TabsContent value="weak" className="space-y-4">
-          <Card className="border-rose-500/30 bg-rose-500/5">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2 text-rose-500">
-                <AlertTriangle className="h-4 w-4" /> Weak Topics Requiring Immediate Focus
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Topics with confidence &lt; 60%, marked "Needs Review", or overdue for spaced
-                repetition.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {weakTopics.length === 0 ? (
-                <div className="p-8 text-center text-muted-foreground text-xs italic">
-                  🎉 Fantastic job! You have zero weak topics right now.
-                </div>
-              ) : (
-                weakTopics.map((topic) => {
-                  const matchingLesson = lessons.find((l) => l.topicId === topic.topicId);
-                  const matchingQuiz = quizzes.find((q) => q.topicId === topic.topicId);
-
-                  return (
-                    <Card
-                      key={topic.topicId}
-                      className="p-4 flex flex-col md:flex-row justify-between gap-4"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-sm text-foreground">
-                            {topic.topicTitle}
-                          </span>
-                          <Badge variant="destructive" className="text-[10px]">
-                            Confidence: {topic.confidence}%
-                          </Badge>
-                          <Badge variant="outline" className="text-[10px]">
-                            {topic.category}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {topic.notes ||
-                            "Low confidence score recorded. Recommended to review material or complete practice quiz."}
-                        </p>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2 shrink-0">
-                        {matchingLesson ? (
-                          <Button asChild size="xs" variant="outline" className="gap-1">
-                            <Link to="/lesson/$lessonId" params={{ lessonId: matchingLesson.id }}>
-                              <BookOpen className="h-3.5 w-3.5" /> Review Lesson
-                            </Link>
-                          </Button>
-                        ) : (
-                          <Button asChild size="xs" variant="outline" className="gap-1">
-                            <Link to="/learn/topics/$topicId" params={{ topicId: topic.topicId }}>
-                              <BookOpen className="h-3.5 w-3.5" /> Review Topic
-                            </Link>
-                          </Button>
-                        )}
-
-                        {matchingQuiz ? (
-                          <Button asChild size="xs" variant="default" className="gap-1">
-                            <Link to="/quizzes/$quizId" params={{ quizId: matchingQuiz.id }}>
-                              <ListChecks className="h-3.5 w-3.5" /> Practice Quiz
-                            </Link>
-                          </Button>
-                        ) : (
-                          <Button asChild size="xs" variant="default" className="gap-1">
-                            <Link to="/quizzes">
-                              <ListChecks className="h-3.5 w-3.5" /> Take Quiz
-                            </Link>
-                          </Button>
-                        )}
-
-                        <Button
-                          size="xs"
-                          variant="ghost"
-                          onClick={() => handleOpenRefresher(topic)}
-                          className="gap-1 text-primary hover:text-primary/80"
-                        >
-                          <Sparkles className="h-3.5 w-3.5 text-amber-400" /> AI Refresher
-                        </Button>
-                      </div>
-                    </Card>
-                  );
-                })
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* TAB 4: STRONG TOPICS MATRIX */}
-        <TabsContent value="strong" className="space-y-4">
-          <Card className="border-emerald-500/30 bg-emerald-500/5">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2 text-emerald-500">
-                <CheckCircle2 className="h-4 w-4" /> Strong & Mastered Topics
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Topics with confidence &gt;= 80% or marked "Mastered" / "Interview Ready".
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {strongTopics.map((topic) => (
-                <Card
-                  key={topic.topicId}
-                  className="p-4 flex flex-col md:flex-row justify-between gap-4"
+        {/* Right Side: Modules List */}
+        <Card className="border-border/60 flex flex-col justify-between">
+          <CardHeader>
+            <CardTitle className="text-sm">Curriculum Modules Hub</CardTitle>
+            <CardDescription className="text-xs">
+              Review and jump to specific learning sections.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-1 max-h-64 overflow-y-auto">
+            {allModules.map((m, idx) => {
+              const chartItem = moduleChartData[idx];
+              return (
+                <div
+                  key={m.id}
+                  className="space-y-1.5 pb-3 border-b border-border/40 last:border-0 last:pb-0"
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-foreground">{topic.topicTitle}</span>
-                      <Badge className="bg-emerald-600 text-white text-[10px]">
-                        Confidence: {topic.confidence}%
-                      </Badge>
-                      <Badge variant="outline" className="text-[10px]">
-                        {topic.category}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Ready for senior-level technical interviews and architectural challenge
-                      sessions.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Link to="/interview">
-                      <Button size="xs" variant="outline" className="gap-1">
-                        <Trophy className="h-3.5 w-3.5 text-amber-500" /> Mock Interview
-                      </Button>
+                  <div className="flex items-center justify-between text-xs">
+                    <Link
+                      to="/learn/modules/$moduleId"
+                      params={{ moduleId: m.id }}
+                      className="hover:underline font-semibold text-foreground"
+                    >
+                      {m.title}
                     </Link>
-
-                    <Link to="/mentor">
-                      <Button size="xs" variant="secondary" className="gap-1">
-                        <Sparkles className="h-3.5 w-3.5 text-primary" /> Teach Mentor
-                      </Button>
-                    </Link>
+                    <span className="font-bold text-primary font-mono">
+                      {chartItem?.completion || 0}%
+                    </span>
                   </div>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* TAB 5: INTERVIEW READINESS RADAR & ROADMAP */}
-        <TabsContent value="readiness" className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Radar Chart Card */}
-            <Card className="border-border/60">
-              <CardHeader>
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Award className="h-4 w-4 text-emerald-500" /> Technical Pillar Skill Radar
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Your readiness index evaluated across 6 core technical pillars.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="h-72">
-                <ResponsiveContainer>
-                  <RadarChart data={readinessData.pillars}>
-                    <PolarGrid stroke="var(--color-border)" />
-                    <PolarAngleAxis
-                      dataKey="name"
-                      tick={{ fill: "var(--color-muted-foreground)", fontSize: 11 }}
-                    />
-                    <PolarRadiusAxis stroke="var(--color-border)" tick={false} />
-                    <Radar
-                      dataKey="score"
-                      stroke="var(--color-primary)"
-                      fill="var(--color-primary)"
-                      fillOpacity={0.4}
-                    />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Overall Score & Recommendations Card */}
-            <Card className="border-border/60 flex flex-col justify-between">
-              <CardHeader>
-                <CardTitle className="text-sm">Readiness Tier & Next Steps</CardTitle>
-                <CardDescription className="text-xs">
-                  Actionable steps to reach 100% Interview Readiness.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-primary/10 border border-primary/20">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-lg">
-                    {readinessData.score}%
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-base">{readinessData.tier}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      Target goal: {progress.readinessGoalPercent || 85}%
-                    </p>
+                  <Progress value={chartItem?.completion || 0} className="h-1.5" />
+                  <div className="flex justify-between text-[10px] text-muted-foreground font-medium">
+                    <span>
+                      {chartItem?.completedCount} / {chartItem?.totalCount} lessons completed
+                    </span>
                   </div>
                 </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </div>
 
-                <div className="space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Action Recommendations:
-                  </span>
-                  <ul className="space-y-2 text-xs">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                      <span>
-                        Review <strong>{weakTopics.length} Weak Topics</strong> in the Confidence
-                        Matrix to raise baseline scores.
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                      <span>
-                        Solve 2 exercises in Debug Lab to strengthen async execution under pressure.
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                      <span>
-                        Simulate a full 30-minute Mock Interview Session in Mock Interviews.
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-
-                <Link to="/interview">
-                  <Button className="w-full gap-2 font-semibold">
-                    <Trophy className="h-4 w-4" /> Start Full Mock Interview Simulation
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      {/* Activity Heatmap */}
+      {/* 5. Curriculum Milestones Checklist */}
       <Card className="border-border/60">
         <CardHeader>
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Flame className="h-4 w-4 text-amber-500" /> Learning Activity Heatmap (Last 12 Weeks)
+          <CardTitle className="text-sm flex items-center gap-1.5">
+            <Trophy className="h-4 w-4 text-amber-500" /> Curriculum Milestone Achievements
           </CardTitle>
+          <CardDescription className="text-xs">
+            Unlock professional career-ready milestones as you complete more objectives inside
+            Forge.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <HeatMap data={progress.heatmap} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {milestonesList.map((m) => (
+              <div
+                key={m.id}
+                className={`p-4 rounded-xl border flex flex-col justify-between space-y-3 transition ${
+                  m.isUnlocked
+                    ? "border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40"
+                    : "border-border/50 bg-card/40 opacity-75"
+                }`}
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div
+                      className={`p-2 rounded-lg ${m.isUnlocked ? "bg-emerald-500/10" : "bg-muted"}`}
+                    >
+                      {m.icon}
+                    </div>
+                    {m.isUnlocked ? (
+                      <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[10px] h-5">
+                        Unlocked
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-[10px] h-5 font-mono">
+                        Locked
+                      </Badge>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-foreground">{m.title}</h4>
+                    <p className="text-[10px] text-muted-foreground leading-tight">
+                      {m.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[9px] text-muted-foreground font-semibold">
+                    <span>Target: {m.targetLabel}</span>
+                    <span className="font-mono">
+                      {m.progressVal} / {m.progressMax}
+                    </span>
+                  </div>
+                  <Progress value={(m.progressVal / m.progressMax) * 100} className="h-1" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 6. Recent Learning Activity timeline logs */}
+      <Card className="border-border/60">
+        <CardHeader>
+          <CardTitle className="text-sm flex items-center gap-1.5">
+            <Calendar className="h-4 w-4 text-primary" /> Recent Learning Activity
+          </CardTitle>
+          <CardDescription className="text-xs">
+            Chronological log of your recent study submissions, lessons, and milestones completed.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {chronologicalActivity.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground text-xs italic">
+              No recent study activities logged yet. Get started by taking a lesson!
+            </div>
+          ) : (
+            <div className="relative border-l border-border pl-6 space-y-6">
+              {chronologicalActivity.map((act) => (
+                <div key={act.id} className="relative">
+                  {/* Dot */}
+                  <span className="absolute -left-[31px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-background border-2 border-primary">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  </span>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-semibold text-foreground">{act.title}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {new Date(act.timestamp).toLocaleDateString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] h-5 self-start sm:self-auto font-bold font-mono"
+                    >
+                      +{act.xp} XP
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

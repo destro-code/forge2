@@ -56,35 +56,29 @@ type Item = {
 const startItems: Item[] = [{ title: "Dashboard", to: "/", icon: LayoutDashboard, tier: "core" }];
 
 const learnItems: Item[] = [
-  { title: "Learning Paths", to: "/learn", icon: GraduationCap, tier: "core" },
-  { title: "Modules", to: "/learn/modules", icon: Layers, tier: "core" },
+  { title: "Learn", to: "/learn", icon: GraduationCap, tier: "core" },
+  { title: "Modules", to: "/learn/modules", icon: Layers, tier: "secondary" },
   { title: "Topics", to: "/learn/topics", icon: FolderTree, tier: "secondary" },
-  { title: "Lessons", to: "/learn/lessons", icon: BookOpen, tier: "core" },
+  { title: "Lessons", to: "/learn/lessons", icon: BookOpen, tier: "secondary" },
 ];
 
 const practiceItems: Item[] = [
-  { title: "Practice Hub", to: "/practice", icon: ListChecks, tier: "core" },
-  { title: "Quizzes", to: "/quizzes", icon: ListChecks, tier: "secondary" },
+  { title: "Quizzes", to: "/quizzes", icon: ListChecks, tier: "core" },
+  { title: "Debug Lab", to: "/debug-lab", icon: Bug, tier: "core" },
+  { title: "Code Playground", to: "/playground", icon: Terminal, tier: "core" },
+  { title: "Interview Academy", to: "/interview", icon: MessagesSquare, tier: "core" },
+  { title: "Projects", to: "/projects", icon: FolderKanban, tier: "secondary" },
   { title: "Flashcards", to: "/flashcards", icon: Blocks, tier: "secondary" },
   { title: "Daily Challenges", to: "/challenges", icon: Zap, tier: "secondary" },
-  { title: "Debug Lab", to: "/debug-lab", icon: Bug, tier: "core" },
-];
-
-const buildItems: Item[] = [
-  { title: "Projects", to: "/projects", icon: FolderKanban, tier: "core" },
-  { title: "Code Playground", to: "/playground", icon: Terminal, tier: "core" },
   { title: "Whiteboard Mode", to: "/whiteboard", icon: PenTool, tier: "secondary" },
 ];
 
-const testItems: Item[] = [
-  { title: "Mock Interviews", to: "/interview", icon: MessagesSquare, tier: "core" },
-];
-
-const masterItems: Item[] = [
+const progressItems: Item[] = [
+  { title: "Progress Dashboard", to: "/progress", icon: LineChart, tier: "core" },
   { title: "Skill Mastery", to: "/mastery", icon: Brain, tier: "core" },
-  { title: "Progress Tracker", to: "/progress", icon: LineChart, tier: "secondary" },
+  { title: "Analytics Engine", to: "/analytics", icon: BarChart3, tier: "core" },
+  { title: "Achievements", to: "/achievements", icon: Trophy, tier: "core" },
   { title: "Certificates", to: "/certificates", icon: Award, tier: "secondary" },
-  { title: "Achievements", to: "/achievements", icon: Trophy, tier: "secondary" },
 ];
 
 const supportItems: Item[] = [{ title: "AI Mentor", to: "/mentor", icon: Sparkles, tier: "core" }];
@@ -203,9 +197,7 @@ export function AppSidebar() {
         {renderGroup("Start", startItems)}
         {renderGroup("Learn", learnItems)}
         {renderGroup("Practice", practiceItems)}
-        {renderGroup("Build", buildItems)}
-        {renderGroup("Test", testItems)}
-        {renderGroup("Master", masterItems)}
+        {renderGroup("Progress", progressItems)}
         {renderGroup("Global Support", supportItems)}
         {renderGroup("Utility", utilityItems)}
       </SidebarContent>

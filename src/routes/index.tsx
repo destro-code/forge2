@@ -168,8 +168,8 @@ function Dashboard() {
                     color: "border-emerald-500/30 text-emerald-400",
                   },
                   {
-                    stage: "TEST",
-                    desc: "Interviews",
+                    stage: "REVIEW",
+                    desc: "Review Cards",
                     color: "border-purple-500/30 text-purple-400",
                   },
                   {

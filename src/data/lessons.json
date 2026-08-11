@@ -125,9 +125,7 @@
       "Describe why loading a page is a network exchange, not a file simply 'opening.'",
       "Identify the roles of client and server in that exchange."
     ],
-    "prerequisites": [
-      "lesson-0-1-1"
-    ],
+    "prerequisites": ["lesson-0-1-1"],
     "sections": [
       {
         "type": "heading",
@@ -238,9 +236,7 @@
       "Explain what a DNS lookup does and why it happens before any request can be sent.",
       "Reproduce this sequence unprompted for a new, unfamiliar URL."
     ],
-    "prerequisites": [
-      "lesson-0-1-2"
-    ],
+    "prerequisites": ["lesson-0-1-2"],
     "sections": [
       {
         "type": "heading",
@@ -319,12 +315,7 @@
       {
         "id": "q-0-1-3-2",
         "question": "Put these in the correct order: (A) Browser renders the page, (B) Server sends back HTML, (C) Browser sends an HTTP request, (D) DNS resolves the host name to an IP address.",
-        "options": [
-          "A, B, C, D",
-          "D, C, B, A",
-          "C, D, B, A",
-          "D, B, C, A"
-        ],
+        "options": ["A, B, C, D", "D, C, B, A", "C, D, B, A", "D, B, C, A"],
         "correctIndex": 1,
         "explanation": "The correct sequence is: DNS resolves the name to an IP (D), the browser sends the HTTP request to that IP (C), the server sends back the HTML response (B), and only then does the browser render it (A)."
       },
@@ -375,9 +366,7 @@
       "Give an example of something that must happen on the server and could not safely happen only in the browser.",
       "Explain why 'client' and 'browser' are often used interchangeably in frontend contexts."
     ],
-    "prerequisites": [
-      "lesson-0-1-3"
-    ],
+    "prerequisites": ["lesson-0-1-3"],
     "sections": [
       {
         "type": "heading",
@@ -488,9 +477,7 @@
       "Locate the Learn, Practice, and Grow areas of the platform.",
       "Describe what happens after finishing a lesson."
     ],
-    "prerequisites": [
-      "lesson-0-1-4"
-    ],
+    "prerequisites": ["lesson-0-1-4"],
     "sections": [
       {
         "type": "heading",
@@ -571,9 +558,7 @@
       "Open DevTools in your own browser using a keyboard shortcut or the right-click menu.",
       "Name which panel you'd reach for first for a given kind of problem (a layout issue, a JS error, a failed request)."
     ],
-    "prerequisites": [
-      "lesson-0-1-5"
-    ],
+    "prerequisites": ["lesson-0-1-5"],
     "sections": [
       {
         "type": "heading",
@@ -688,9 +673,7 @@
       "Select an element on the page and find its applied CSS rules.",
       "Predict the visual effect of a CSS edit before making it, then verify by making the edit live."
     ],
-    "prerequisites": [
-      "lesson-0-2-1"
-    ],
+    "prerequisites": ["lesson-0-2-1"],
     "sections": [
       {
         "type": "heading",
@@ -792,9 +775,7 @@
       "Read a stack trace well enough to identify which line and file an error points to.",
       "Distinguish an error (red) from a warning (yellow) and explain what each generally implies."
     ],
-    "prerequisites": [
-      "lesson-0-2-1"
-    ],
+    "prerequisites": ["lesson-0-2-1"],
     "sections": [
       {
         "type": "heading",
@@ -904,9 +885,7 @@
       "Identify a failed request's status code and explain, at a high level, what that code category means.",
       "Explain why a page can 'look' like nothing happened when a request actually failed silently."
     ],
-    "prerequisites": [
-      "lesson-0-2-1"
-    ],
+    "prerequisites": ["lesson-0-2-1"],
     "sections": [
       {
         "type": "heading",
@@ -1026,10 +1005,7 @@
       "Confirm a bug's cause by inspecting it before attempting a fix.",
       "Complete both drill items in the Playground without hints."
     ],
-    "prerequisites": [
-      "lesson-0-2-2",
-      "lesson-0-2-3"
-    ],
+    "prerequisites": ["lesson-0-2-2", "lesson-0-2-3"],
     "sections": [
       {
         "type": "heading",

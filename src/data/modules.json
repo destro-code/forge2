@@ -10,10 +10,7 @@
     "estimatedHours": 1.7,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "Orientation",
-      "Web Basics"
-    ],
+    "tags": ["Orientation", "Web Basics"],
     "order": 1,
     "prerequisites": []
   },
@@ -28,15 +25,9 @@
     "estimatedHours": 1.7,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "Orientation",
-      "DevTools",
-      "Debugging"
-    ],
+    "tags": ["Orientation", "DevTools", "Debugging"],
     "order": 2,
-    "prerequisites": [
-      "module-0-1"
-    ]
+    "prerequisites": ["module-0-1"]
   },
   {
     "id": "module-1-1",
@@ -49,13 +40,8 @@
     "estimatedHours": 4.0,
     "progress": 0,
     "color": "chart-2",
-    "tags": [
-      "Web Foundations",
-      "HTML"
-    ],
+    "tags": ["Web Foundations", "HTML"],
     "order": 3,
-    "prerequisites": [
-      "module-0-2"
-    ]
+    "prerequisites": ["module-0-2"]
   }
 ]
