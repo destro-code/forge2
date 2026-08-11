@@ -58,7 +58,7 @@ export const EMPTY_PROGRESS_STATE: ProgressState = {
   whiteboardSnapshots: [],
   playgroundCompletions: [],
   completedProjects: [],
-  flashcardDailyReviews: { date: "", count: 0 },
+  flashcardDailyReviews: { date: "", count: 0, reviewedCardIds: [] },
 };
 
 export function deriveStreakDays(activityDates: string[] = []): number {
@@ -197,7 +197,11 @@ export const useProgressStore = create<ProgressStore>()(
           whiteboardSnapshots: current.whiteboardSnapshots ?? [],
           playgroundCompletions: current.playgroundCompletions ?? [],
           completedProjects: current.completedProjects ?? [],
-          flashcardDailyReviews: current.flashcardDailyReviews ?? { date: "", count: 0 },
+          flashcardDailyReviews: current.flashcardDailyReviews ?? {
+            date: "",
+            count: 0,
+            reviewedCardIds: [],
+          },
         };
 
         const nextState = typeof updater === "function" ? updater(currentState) : updater;
@@ -220,14 +224,18 @@ export const useProgressStore = create<ProgressStore>()(
 
           const today = new Date().toISOString().slice(0, 10);
           const daily = state.flashcardDailyReviews;
-          const currentCount = daily && daily.date === today ? daily.count : 0;
+          const isToday = daily && daily.date === today;
+          const reviewedCardIds =
+            isToday && Array.isArray(daily.reviewedCardIds) ? daily.reviewedCardIds : [];
 
           let xpGained = 0;
-          let newCount = currentCount;
+          let newCardIds = reviewedCardIds;
 
-          if (currentCount < 5) {
-            xpGained = 5;
-            newCount = currentCount + 1;
+          if (!reviewedCardIds.includes(cardId)) {
+            if (reviewedCardIds.length < 5) {
+              xpGained = 5;
+            }
+            newCardIds = [...reviewedCardIds, cardId];
           }
 
           return {
@@ -237,7 +245,8 @@ export const useProgressStore = create<ProgressStore>()(
             },
             flashcardDailyReviews: {
               date: today,
-              count: newCount,
+              count: newCardIds.length,
+              reviewedCardIds: newCardIds,
             },
             xp: (state.xp || 0) + xpGained,
           };

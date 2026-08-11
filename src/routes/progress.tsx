@@ -623,9 +623,9 @@ export function MasteryEnginePage() {
                               </Badge>
                               <Badge
                                 variant={
-                                  record.confidence >= 85
+                                  record.confidence >= 80
                                     ? "default"
-                                    : record.confidence < 50
+                                    : record.confidence < 40
                                       ? "destructive"
                                       : "outline"
                                 }
@@ -876,7 +876,7 @@ export function MasteryEnginePage() {
                 <CheckCircle2 className="h-4 w-4" /> Strong & Mastered Topics
               </CardTitle>
               <CardDescription className="text-xs">
-                Topics with confidence &gt;= 85% or marked "Mastered" / "Interview Ready".
+                Topics with confidence &gt;= 80% or marked "Mastered" / "Interview Ready".
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">

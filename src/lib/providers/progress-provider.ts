@@ -534,9 +534,8 @@ export const progressStore = {
 export function getMasteryLabelFromConfidence(confidence: number): MasteryState {
   if (confidence >= 90) return "Mastered";
   if (confidence >= 80) return "Interview Ready";
-  if (confidence >= 65) return "Practicing";
-  if (confidence >= 40) return "Needs Review";
-  if (confidence > 0) return "Learning";
+  if (confidence >= 60) return "Practicing";
+  if (confidence >= 40) return "Learning";
   return "Not Started";
 }
 

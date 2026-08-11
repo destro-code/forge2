@@ -549,5 +549,5 @@ export interface ProgressState {
   whiteboardSnapshots?: WhiteboardSnapshot[];
   playgroundCompletions?: PlaygroundCompletion[];
   completedProjects?: string[];
-  flashcardDailyReviews?: { date: string; count: number };
+  flashcardDailyReviews?: { date: string; count: number; reviewedCardIds?: string[] };
 }
