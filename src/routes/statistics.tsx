@@ -226,7 +226,7 @@ export function AnalyticsPage() {
       </div>
 
       {/* Top Key Performance Indicator Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           label="Total Study Time"
           value={`${Math.round(progress.totalMinutes / 60)}h ${progress.totalMinutes % 60}m`}

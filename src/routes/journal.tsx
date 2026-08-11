@@ -264,6 +264,10 @@ function EngineeringJournal() {
     } else {
       addJournalEntry(payload);
       toast.success("New journal entry created!");
+      setSearchQuery("");
+      setSelectedTag(null);
+      setShowFavoritesOnly(false);
+      setSelectedCategory("all");
     }
 
     setIsDialogOpen(false);
@@ -512,19 +516,40 @@ function EngineeringJournal() {
         <Card className="border-border/60 py-12 text-center">
           <CardContent className="space-y-3">
             <BookOpenText className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
-            <h3 className="text-base font-bold">No Engineering Journal Entries Found</h3>
+            <h3 className="text-base font-bold">
+              {journalEntries.length === 0
+                ? "No Engineering Journal Entries Found"
+                : "No Matching Notes Found"}
+            </h3>
             <p className="text-xs text-muted-foreground max-w-md mx-auto">
-              {searchQuery || selectedTag || showFavoritesOnly
-                ? "No notes matched your current search filters. Try clearing your query or selected tag."
+              {journalEntries.length > 0
+                ? "No notes match your current search query, selected category, or tag filter."
                 : "Your engineering journal is empty. Log your first code note, bug mistake, or key discovery!"}
             </p>
-            <Button
-              onClick={() => handleOpenCreateDialog("code_note")}
-              size="sm"
-              className="gap-1.5 mt-2"
-            >
-              <Plus className="h-4 w-4" /> Create First Note
-            </Button>
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+              {journalEntries.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedTag(null);
+                    setShowFavoritesOnly(false);
+                    setSelectedCategory("all");
+                  }}
+                  className="gap-1.5"
+                >
+                  <X className="h-4 w-4" /> Clear Search & Tag Filters
+                </Button>
+              )}
+              <Button
+                onClick={() => handleOpenCreateDialog("code_note")}
+                size="sm"
+                className="gap-1.5"
+              >
+                <Plus className="h-4 w-4" /> Create First Note
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ) : (

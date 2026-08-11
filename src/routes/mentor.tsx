@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
+import { EmptyState } from "@/components/shared/empty-state";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -218,7 +219,7 @@ export function Mentor() {
     if (codeContext.trim()) {
       mainContent += `\n\n\`\`\`tsx\n${codeContext.trim()}\n\`\`\``;
     }
-    if (!mainContent || streaming) return;
+    if (!mainContent || streaming || !active) return;
 
     setInput("");
     setCodeContext("");
@@ -465,78 +466,95 @@ export function Mentor() {
             ref={scrollRef as never}
             className="scrollbar-thin flex-1 space-y-4 overflow-y-auto p-4"
           >
-            {active?.messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={
-                    m.role === "user"
-                      ? "max-w-[85%] rounded-2xl bg-primary px-4 py-3 text-sm text-primary-foreground shadow-sm"
-                      : "max-w-[90%] rounded-2xl border border-border/60 bg-muted/30 p-4 text-sm text-foreground/90 shadow-xs space-y-2"
+            {!active ? (
+              <div className="flex h-full flex-col items-center justify-center p-6 text-center my-auto">
+                <EmptyState
+                  icon={<Brain className="h-8 w-8 text-primary" />}
+                  title="No Active Conversation"
+                  description="You have no active mentor sessions. Start a new conversation to ask questions, review code, or request debugging help."
+                  action={
+                    <Button onClick={newChat} size="sm" className="gap-2">
+                      <Plus className="h-4 w-4" /> Start New Session
+                    </Button>
                   }
-                >
-                  {/* Assistant Header Badge */}
-                  {m.role === "assistant" && (
-                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-border/40 text-xs">
-                      <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                        <Sparkles className="h-3.5 w-3.5 text-primary" />
-                        <span>Forge Mentor</span>
-                        <Badge variant="outline" className="text-[10px] ml-1">
-                          {m.mode || activeMode}
-                        </Badge>
-                      </div>
-                      <span
-                        suppressHydrationWarning
-                        className="text-[10px] text-muted-foreground font-mono"
-                      >
-                        {new Date(m.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Render Message Content with Markdown support */}
-                  <div className="markdown-body leading-relaxed space-y-2 text-sm">
-                    <Markdown>{m.content || (streaming ? "Thinking and typing..." : "")}</Markdown>
-                  </div>
-
-                  {/* Assistant Message Actions */}
-                  {m.role === "assistant" && m.content && (
-                    <div className="mt-3 flex items-center justify-between pt-2 border-t border-border/40 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-3">
-                        <button
-                          className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
-                          onClick={() => handleCopy(m.id, m.content)}
-                        >
-                          {copiedId === m.id ? (
-                            <Check className="h-3 w-3 text-emerald-500" />
-                          ) : (
-                            <Copy className="h-3 w-3" />
-                          )}
-                          <span>{copiedId === m.id ? "Copied" : "Copy"}</span>
-                        </button>
-                        <button
-                          className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
-                          onClick={() =>
-                            send(
-                              [...active.messages].reverse().find((x) => x.role === "user")
-                                ?.content,
-                            )
-                          }
-                        >
-                          <RotateCcw className="h-3 w-3" />
-                          <span>Regenerate</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                />
               </div>
-            ))}
+            ) : (
+              active.messages.map((m) => (
+                <div
+                  key={m.id}
+                  className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={
+                      m.role === "user"
+                        ? "max-w-[85%] rounded-2xl bg-primary px-4 py-3 text-sm text-primary-foreground shadow-sm"
+                        : "max-w-[90%] rounded-2xl border border-border/60 bg-muted/30 p-4 text-sm text-foreground/90 shadow-xs space-y-2"
+                    }
+                  >
+                    {/* Assistant Header Badge */}
+                    {m.role === "assistant" && (
+                      <div className="flex items-center justify-between pb-2 mb-2 border-b border-border/40 text-xs">
+                        <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                          <Sparkles className="h-3.5 w-3.5 text-primary" />
+                          <span>Forge Mentor</span>
+                          <Badge variant="outline" className="text-[10px] ml-1">
+                            {m.mode || activeMode}
+                          </Badge>
+                        </div>
+                        <span
+                          suppressHydrationWarning
+                          className="text-[10px] text-muted-foreground font-mono"
+                        >
+                          {new Date(m.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Render Message Content with Markdown support */}
+                    <div className="markdown-body leading-relaxed space-y-2 text-sm">
+                      <Markdown>
+                        {m.content || (streaming ? "Thinking and typing..." : "")}
+                      </Markdown>
+                    </div>
+
+                    {/* Assistant Message Actions */}
+                    {m.role === "assistant" && m.content && (
+                      <div className="mt-3 flex items-center justify-between pt-2 border-t border-border/40 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-3">
+                          <button
+                            className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
+                            onClick={() => handleCopy(m.id, m.content)}
+                          >
+                            {copiedId === m.id ? (
+                              <Check className="h-3 w-3 text-emerald-500" />
+                            ) : (
+                              <Copy className="h-3 w-3" />
+                            )}
+                            <span>{copiedId === m.id ? "Copied" : "Copy"}</span>
+                          </button>
+                          <button
+                            className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
+                            onClick={() =>
+                              send(
+                                [...active.messages].reverse().find((x) => x.role === "user")
+                                  ?.content,
+                              )
+                            }
+                          >
+                            <RotateCcw className="h-3 w-3" />
+                            <span>Regenerate</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </CardContent>
 
           {/* Input & Action Panel */}

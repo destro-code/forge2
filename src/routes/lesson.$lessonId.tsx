@@ -31,7 +31,17 @@ import {
   GraduationCap,
   Bug as BugIcon,
   Sparkles,
+  List,
+  FileText,
+  Compass,
+  Terminal,
+  CheckSquare,
+  Zap,
+  BrainCircuit,
+  Target,
+  Award,
 } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 import { LessonReadingProgress } from "@/components/lesson/lesson-reading-progress";
 import { LessonDiagram } from "@/components/lesson/lesson-diagram";
@@ -55,6 +65,16 @@ export const Route = createFileRoute("/lesson/$lessonId")({
   component: LessonView,
 });
 
+const PHASES = [
+  { id: "orient", number: "01", label: "Orient", icon: Compass },
+  { id: "understand", number: "02", label: "Understand", icon: BookOpen },
+  { id: "see-try", number: "03", label: "See & Try", icon: Terminal },
+  { id: "check", number: "04", label: "Check", icon: CheckSquare },
+  { id: "apply", number: "05", label: "Apply", icon: Zap },
+  { id: "master", number: "06", label: "Master", icon: BrainCircuit },
+  { id: "continue", number: "07", label: "Continue", icon: Sparkles },
+];
+
 function LessonView() {
   const { lessonId } = Route.useParams();
   const lesson = useLesson(lessonId);
@@ -64,8 +84,8 @@ function LessonView() {
   const quizzes = useQuizzes();
   const bugs = useBugs();
 
-  const matchingQuiz = quizzes.find((q) => q.topicId === lesson.topicId) || quizzes[0];
-  const matchingBug = bugs.find((b) => b.topicId === lesson.topicId);
+  const matchingQuiz = quizzes.find((q) => q.topicId === lesson?.topicId) || quizzes[0];
+  const matchingBug = bugs.find((b) => b.topicId === lesson?.topicId);
   const {
     bookmarks,
     toggleBookmark,
@@ -79,6 +99,9 @@ function LessonView() {
 
   const [selectedQuizAnswers, setSelectedQuizAnswers] = useState<Record<string, number>>({});
   const [activeSectionId, setActiveSectionId] = useState<string>("");
+  const [activePhase, setActivePhase] = useState<string>("orient");
+  const [tocOpen, setTocOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   if (!lesson) throw notFound();
 
@@ -95,6 +118,39 @@ function LessonView() {
       setLastActiveLesson(lesson.id);
     }
   }, [lesson?.id, lastActiveLessonId, setLastActiveLesson]);
+
+  // Dynamic active phase scroll observer
+  useEffect(() => {
+    const phaseIds = PHASES.map((p) => p.id);
+    const observerCallback: IntersectionObserverCallback = (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          setActivePhase(entry.target.id);
+          break;
+        }
+      }
+    };
+
+    const observer = new IntersectionObserver(observerCallback, {
+      rootMargin: "-80px 0px -50% 0px",
+      threshold: 0.1,
+    });
+
+    phaseIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToPhase = (phaseId: string) => {
+    setActivePhase(phaseId);
+    const el = document.getElementById(phaseId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   const handleToggleBookmark = () => {
     toggleBookmark(lesson.id);
@@ -131,6 +187,8 @@ function LessonView() {
     saveNote(lesson.id, updated);
     toast.success("Added quote to lesson notes");
   };
+
+  const currentPhaseIndex = PHASES.findIndex((p) => p.id === activePhase);
 
   return (
     <div className="space-y-6">
@@ -193,218 +251,498 @@ function LessonView() {
                 <span>Difficulty</span>
                 <DifficultyBadge difficulty={lesson.difficulty} />
               </div>
-            </div>
-          </div>
-        </aside>
-
-        {/* Center Main Article Content */}
-        <article className="min-w-0 space-y-6">
-          {/* Hierarchy Breadcrumb Navigation */}
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5 overflow-x-auto whitespace-nowrap scrollbar-none">
-            <GraduationCap className="h-4 w-4 text-primary shrink-0" />
-            <Link to="/learn" className="hover:text-foreground hover:underline">
-              Roadmap
-            </Link>
-            <span>/</span>
-            <Link to="/learn/modules" className="hover:text-foreground hover:underline">
-              Modules
-            </Link>
-            {parentModule && (
-              <>
-                <span>/</span>
-                <Link
-                  to="/learn/modules/$moduleId"
-                  params={{ moduleId: parentModule.id }}
-                  className="hover:text-foreground hover:underline text-foreground"
-                >
-                  {parentModule.title}
-                </Link>
-              </>
-            )}
-            {topic && (
-              <>
-                <span>/</span>
-                <Link
-                  to="/learn/topics/$topicId"
-                  params={{ topicId: topic.id }}
-                  className="hover:text-foreground hover:underline text-foreground"
-                >
-                  {topic.title}
-                </Link>
-              </>
-            )}
-            <span>/</span>
-            <span className="font-semibold text-primary truncate max-w-[180px]">
-              {lesson.title}
-            </span>
-          </div>
-
-          <PageHeader
-            eyebrow="Lesson Engine 2.0"
-            title={lesson.title}
-            description={lesson.description}
-            actions={
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Status</span>
                 {isCompleted ? (
                   <Badge
                     variant="secondary"
-                    className="gap-1 bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                    className="text-[10px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5" />
                     Completed
                   </Badge>
                 ) : (
                   <Badge
                     variant="secondary"
-                    className="gap-1 bg-primary/10 text-primary border-primary/20"
+                    className="text-[10px] bg-primary/10 text-primary border-primary/20"
                   >
-                    <BookOpen className="h-3.5 w-3.5" />
                     In Progress
                   </Badge>
                 )}
-                <DifficultyBadge difficulty={lesson.difficulty} />
-                <Badge variant="outline" className="gap-1">
-                  <Clock className="h-3 w-3" />
-                  {lesson.estimatedMinutes}m
-                </Badge>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Center Main Article Content */}
+        <article className="min-w-0 space-y-8">
+          {/* PHASE 01 — ORIENT */}
+          <section id="orient" className="space-y-4">
+            {/* Hierarchy Breadcrumb Navigation */}
+            <nav
+              aria-label="Breadcrumb"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono bg-muted/20 border border-border/40 rounded-lg px-3 py-2 overflow-x-auto whitespace-nowrap scrollbar-none"
+            >
+              <GraduationCap className="h-4 w-4 text-primary shrink-0" />
+              <Link to="/learn" className="hover:text-foreground transition-colors">
+                Roadmap
+              </Link>
+              <span className="opacity-40">/</span>
+              <Link to="/learn/modules" className="hover:text-foreground transition-colors">
+                Modules
+              </Link>
+              {parentModule && (
+                <>
+                  <span className="opacity-40">/</span>
+                  <Link
+                    to="/learn/modules/$moduleId"
+                    params={{ moduleId: parentModule.id }}
+                    className="hover:text-foreground transition-colors text-foreground/80"
+                  >
+                    {parentModule.title}
+                  </Link>
+                </>
+              )}
+              {topic && (
+                <>
+                  <span className="opacity-40">/</span>
+                  <Link
+                    to="/learn/topics/$topicId"
+                    params={{ topicId: topic.id }}
+                    className="hover:text-foreground transition-colors text-foreground/80"
+                  >
+                    {topic.title}
+                  </Link>
+                </>
+              )}
+              <span className="opacity-40">/</span>
+              <span className="font-semibold text-primary truncate max-w-[200px]">
+                {lesson.title}
+              </span>
+            </nav>
+
+            {/* Mobile Lesson Controls (< lg screens) */}
+            <div className="flex items-center justify-between gap-2 p-2.5 rounded-lg border border-border/60 bg-card/80 lg:hidden text-xs">
+              <div className="flex items-center gap-1.5 font-medium text-muted-foreground min-w-0 truncate">
+                <BookOpen className="h-3.5 w-3.5 text-primary shrink-0" />
+                <span className="truncate">
+                  Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {allLessons.length}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <Sheet open={tocOpen} onOpenChange={setTocOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 px-2.5">
+                      <List className="h-3.5 w-3.5 text-primary" />
+                      <span>Contents</span>
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="bottom"
+                    className="max-h-[80vh] overflow-y-auto rounded-t-xl p-4"
+                  >
+                    <SheetHeader className="pb-3 border-b border-border/50">
+                      <SheetTitle className="text-sm font-semibold flex items-center justify-between">
+                        <span>On this lesson</span>
+                        <span className="text-xs font-normal text-muted-foreground font-mono">
+                          Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {allLessons.length}
+                        </span>
+                      </SheetTitle>
+                    </SheetHeader>
+                    <div className="py-4 space-y-4">
+                      <ul className="space-y-2.5 text-xs font-medium">
+                        {lesson.sections
+                          .filter((s) => s.type === "heading")
+                          .map((s, i) => (
+                            <li key={i}>
+                              <a
+                                href={`#h-${i}`}
+                                onClick={() => {
+                                  setActiveSectionId(`h-${i}`);
+                                  setTocOpen(false);
+                                }}
+                                className={`block truncate transition ${
+                                  activeSectionId === `h-${i}`
+                                    ? "text-primary font-semibold border-l-2 border-primary pl-2 -ml-2"
+                                    : "text-muted-foreground hover:text-foreground"
+                                }`}
+                              >
+                                {"text" in s ? s.text : ""}
+                              </a>
+                            </li>
+                          ))}
+                        <li>
+                          <a
+                            href="#exercises"
+                            onClick={() => setTocOpen(false)}
+                            className="text-muted-foreground hover:text-foreground block"
+                          >
+                            Exercises
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            href="#quiz"
+                            onClick={() => setTocOpen(false)}
+                            className="text-muted-foreground hover:text-foreground block"
+                          >
+                            Quiz
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            href="#interview"
+                            onClick={() => setTocOpen(false)}
+                            className="text-muted-foreground hover:text-foreground block"
+                          >
+                            Interview Questions
+                          </a>
+                        </li>
+                      </ul>
+
+                      <div className="pt-3 border-t border-border/50 space-y-2 text-xs">
+                        <div className="flex items-center justify-between text-muted-foreground">
+                          <span>Estimated Time</span>
+                          <span className="font-mono font-medium text-foreground">
+                            {lesson.estimatedMinutes} mins
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-muted-foreground">
+                          <span>Difficulty</span>
+                          <DifficultyBadge difficulty={lesson.difficulty} />
+                        </div>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+
+                <Sheet open={notesOpen} onOpenChange={setNotesOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 px-2.5">
+                      <FileText className="h-3.5 w-3.5 text-primary" />
+                      <span>Notes</span>
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="bottom"
+                    className="max-h-[85vh] overflow-y-auto rounded-t-xl p-4"
+                  >
+                    <SheetHeader className="pb-3 border-b border-border/50 mb-3">
+                      <SheetTitle className="text-sm font-semibold">
+                        Lesson Notes & Resources
+                      </SheetTitle>
+                    </SheetHeader>
+                    <div className="space-y-4">
+                      <LessonNotesWidget lessonId={lesson.id} lessonTitle={lesson.title} />
+
+                      {lesson.resources.length > 0 && (
+                        <Card className="border-border/60">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-xs font-semibold">
+                              Resources & Docs
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="grid gap-2 text-xs">
+                            {lesson.resources.map((r) => (
+                              <a
+                                key={r.url}
+                                href={r.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-primary underline-offset-4 hover:underline truncate"
+                              >
+                                {r.label}
+                              </a>
+                            ))}
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
+            </div>
+
+            {/* Learning Journey Stepper Indicator */}
+            <div className="overflow-x-auto scrollbar-none rounded-xl border border-border/50 bg-card/50 p-1.5 max-w-full">
+              <div className="flex items-center justify-between min-w-[580px] gap-1 text-xs">
+                {PHASES.map((p, idx) => {
+                  const Icon = p.icon;
+                  const isCurrent = activePhase === p.id;
+                  const isPast = idx < currentPhaseIndex;
+
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => scrollToPhase(p.id)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all font-mono whitespace-nowrap text-xs select-none cursor-pointer ${
+                        isCurrent
+                          ? "bg-primary text-primary-foreground font-bold shadow-xs ring-1 ring-primary/50"
+                          : isPast
+                            ? "bg-emerald-500/10 text-emerald-400 font-medium hover:bg-emerald-500/20 border border-emerald-500/20"
+                            : "text-muted-foreground/80 hover:text-foreground hover:bg-muted/50"
+                      }`}
+                    >
+                      {isPast ? (
+                        <Check className="h-3 w-3 text-emerald-400 shrink-0" />
+                      ) : (
+                        <span className="text-[10px] opacity-70 font-bold">{p.number}</span>
+                      )}
+                      <Icon className="h-3.5 w-3.5 shrink-0" />
+                      <span>{p.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Header & Metadata Briefing */}
+            <div className="space-y-3 pt-1">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline" className="font-mono text-xs bg-muted/30">
+                    Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {allLessons.length}
+                  </Badge>
+                  <DifficultyBadge difficulty={lesson.difficulty} />
+                  <Badge variant="outline" className="gap-1 text-xs">
+                    <Clock className="h-3 w-3" />
+                    {lesson.estimatedMinutes} mins
+                  </Badge>
+                  {isCompleted ? (
+                    <Badge
+                      variant="secondary"
+                      className="gap-1 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-xs font-medium"
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      Completed
+                    </Badge>
+                  ) : (
+                    <Badge
+                      variant="secondary"
+                      className="gap-1 bg-primary/10 text-primary border-primary/20 text-xs font-medium"
+                    >
+                      <BookOpen className="h-3.5 w-3.5" />
+                      In Progress
+                    </Badge>
+                  )}
+                </div>
+
                 <Button
                   variant="ghost"
-                  size="icon"
-                  aria-label="Bookmark"
+                  size="sm"
                   onClick={handleToggleBookmark}
+                  className="h-8 text-xs gap-1.5 hover:bg-muted"
+                  aria-label="Bookmark lesson"
                 >
                   {isBookmarked ? (
-                    <BookmarkCheck className="h-4 w-4 text-primary fill-primary/20" />
+                    <>
+                      <BookmarkCheck className="h-4 w-4 text-primary fill-primary/20" />
+                      <span className="text-primary font-medium">Bookmarked</span>
+                    </>
                   ) : (
-                    <Bookmark className="h-4 w-4" />
+                    <>
+                      <Bookmark className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Bookmark</span>
+                    </>
                   )}
                 </Button>
               </div>
-            }
-          />
 
-          {/* Text Highlighter Wrapper enabling drag-to-highlight */}
-          <LessonTextHighlighter lessonId={lesson.id} onAddNoteFromText={handleAddNoteFromText}>
-            <div className="prose prose-invert max-w-none text-[15px] leading-relaxed">
-              {lesson.sections.map((s, i) => {
-                if (s.type === "heading")
-                  return (
-                    <h2
-                      id={`h-${i}`}
-                      key={i}
-                      className="mt-8 text-xl font-bold tracking-tight text-foreground"
-                    >
-                      {s.text}
-                    </h2>
-                  );
-                if (s.type === "paragraph")
-                  return (
-                    <p key={i} className="mt-3 text-foreground/85 leading-relaxed">
-                      {s.text}
-                    </p>
-                  );
-                if (s.type === "callout")
-                  return (
-                    <Callout key={i} variant={s.variant}>
-                      {s.text}
-                    </Callout>
-                  );
-                if (s.type === "code")
-                  return (
-                    <LessonInteractiveCode
-                      key={i}
-                      language={s.language}
-                      code={s.code}
-                      title={"title" in s ? s.title : undefined}
-                      highlightLines={"highlightLines" in s ? s.highlightLines : []}
-                    />
-                  );
-                if (s.type === "diagram")
-                  return (
-                    <LessonDiagram
-                      key={i}
-                      diagramType={s.diagramType}
-                      title={s.title}
-                      description={s.description}
-                    />
-                  );
-                if (s.type === "walkthrough")
-                  return <LessonWalkthrough key={i} title={s.title} steps={s.steps} />;
-                if (s.type === "collapsible")
-                  return (
-                    <LessonCollapsible
-                      key={i}
-                      title={s.title}
-                      subtitle={s.subtitle}
-                      content={s.content}
-                      variant={s.variant}
-                    />
-                  );
-                if (s.type === "checkpoint")
-                  return (
-                    <LessonCheckpoints
-                      key={i}
-                      lessonId={lesson.id}
-                      checkpoints={[{ id: s.id, label: s.label, hint: s.hint }]}
-                    />
-                  );
-                if (s.type === "interactive-sandbox")
-                  return (
-                    <LessonInlineSandbox
-                      key={i}
-                      initialCode={s.initialCode}
-                      title={s.title}
-                      instructions={s.instructions}
-                    />
-                  );
-                return null;
-              })}
-            </div>
-          </LessonTextHighlighter>
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
+                {lesson.title}
+              </h1>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-prose">
+                {lesson.description}
+              </p>
 
-          {/* Exercises Section */}
-          {lesson.exercises && lesson.exercises.length > 0 && (
-            <section id="exercises" className="mt-10">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <Code2 className="h-4 w-4 text-primary" />
-                Exercises
-              </h2>
-              <div className="mt-4 grid gap-3">
-                {lesson.exercises.map((ex) => (
-                  <Card key={ex.id} className="border-border/60">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <div className="font-semibold text-sm">{ex.title}</div>
-                          <p className="mt-1 text-xs text-muted-foreground">{ex.brief}</p>
-                        </div>
-                        <Button asChild size="sm" variant="secondary" className="text-xs">
-                          <Link to="/playground">Open playground</Link>
-                        </Button>
+              {/* Scannable Objectives & Prerequisites */}
+              {((lesson.learningObjectives && lesson.learningObjectives.length > 0) ||
+                (lesson.prerequisites && lesson.prerequisites.length > 0)) && (
+                <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs space-y-3">
+                  {lesson.learningObjectives && lesson.learningObjectives.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-1.5 font-bold text-primary uppercase text-[11px] tracking-wider font-mono">
+                        <Target className="h-4 w-4" />
+                        <span>What You Will Learn</span>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
-          )}
+                      <ul className="grid gap-2 sm:grid-cols-2 text-foreground/90 font-medium">
+                        {lesson.learningObjectives.map((obj, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                            <span>{obj}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-          {/* Interactive Quiz Section */}
+                  {lesson.prerequisites && lesson.prerequisites.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-primary/15 text-xs">
+                      <span className="font-semibold text-foreground/70 font-mono text-[11px] uppercase">
+                        Prerequisites:
+                      </span>
+                      {lesson.prerequisites.map((prereq, i) => (
+                        <Badge
+                          key={i}
+                          variant="outline"
+                          className="text-[11px] bg-background/60 border-border/60"
+                        >
+                          {prereq}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* PHASE 02 — UNDERSTAND & PHASE 03 — SEE & TRY */}
+          <section id="understand" className="space-y-6 pt-6 border-t border-border/40">
+            <div id="see-try" />
+            <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider pb-1">
+              <BookOpen className="h-4 w-4 text-primary" />
+              <span className="font-semibold text-foreground">
+                02 & 03 · UNDERSTAND & EXPERIMENT
+              </span>
+            </div>
+
+            {/* Text Highlighter Wrapper enabling drag-to-highlight */}
+            <LessonTextHighlighter lessonId={lesson.id} onAddNoteFromText={handleAddNoteFromText}>
+              <div className="space-y-5 text-[15px] sm:text-base leading-relaxed">
+                {lesson.sections.map((s, i) => {
+                  if (s.type === "heading")
+                    return (
+                      <h2
+                        id={`h-${i}`}
+                        key={i}
+                        className="mt-8 text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2 scroll-mt-20"
+                      >
+                        <span className="text-primary/70 text-sm font-mono font-normal">#</span>
+                        {s.text}
+                      </h2>
+                    );
+                  if (s.type === "paragraph")
+                    return (
+                      <p key={i} className="text-foreground/90 leading-relaxed max-w-prose">
+                        {s.text}
+                      </p>
+                    );
+                  if (s.type === "callout")
+                    return (
+                      <Callout key={i} variant={s.variant}>
+                        {s.text}
+                      </Callout>
+                    );
+                  if (s.type === "code")
+                    return (
+                      <div
+                        key={i}
+                        className="my-4 rounded-xl border border-border/70 bg-card/60 p-2 space-y-2 shadow-2xs"
+                      >
+                        <div className="flex items-center gap-1.5 px-2 pt-1 text-xs font-mono text-muted-foreground">
+                          <Terminal className="h-3.5 w-3.5 text-primary" />
+                          <span className="font-semibold text-foreground/80 uppercase text-[10px] tracking-wider">
+                            03 · SEE & TRY
+                          </span>
+                          <span>·</span>
+                          <span>Interactive Code Example</span>
+                        </div>
+                        <LessonInteractiveCode
+                          language={s.language}
+                          code={s.code}
+                          title={"title" in s ? s.title : undefined}
+                          highlightLines={"highlightLines" in s ? s.highlightLines : []}
+                        />
+                      </div>
+                    );
+                  if (s.type === "diagram")
+                    return (
+                      <LessonDiagram
+                        key={i}
+                        diagramType={s.diagramType}
+                        title={s.title}
+                        description={s.description}
+                      />
+                    );
+                  if (s.type === "walkthrough")
+                    return <LessonWalkthrough key={i} title={s.title} steps={s.steps} />;
+                  if (s.type === "collapsible")
+                    return (
+                      <LessonCollapsible
+                        key={i}
+                        title={s.title}
+                        subtitle={s.subtitle}
+                        content={s.content}
+                        variant={s.variant}
+                      />
+                    );
+                  if (s.type === "checkpoint")
+                    return (
+                      <div
+                        key={i}
+                        className="my-6 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-2"
+                      >
+                        <div className="flex items-center gap-1.5 text-xs font-mono text-amber-400">
+                          <CheckSquare className="h-3.5 w-3.5" />
+                          <span className="font-semibold uppercase text-[10px] tracking-wider">
+                            04 · CHECK
+                          </span>
+                          <span>·</span>
+                          <span>Quick Checkpoint</span>
+                        </div>
+                        <LessonCheckpoints
+                          lessonId={lesson.id}
+                          checkpoints={[{ id: s.id, label: s.label, hint: s.hint }]}
+                        />
+                      </div>
+                    );
+                  if (s.type === "interactive-sandbox")
+                    return (
+                      <div
+                        key={i}
+                        className="my-6 rounded-xl border border-primary/30 bg-primary/5 p-2 space-y-2"
+                      >
+                        <div className="flex items-center gap-1.5 px-2 pt-1 text-xs font-mono text-primary">
+                          <Terminal className="h-3.5 w-3.5" />
+                          <span className="font-semibold uppercase text-[10px] tracking-wider">
+                            03 · SEE & TRY
+                          </span>
+                          <span>·</span>
+                          <span>Interactive Sandbox</span>
+                        </div>
+                        <LessonInlineSandbox
+                          initialCode={s.initialCode}
+                          title={s.title}
+                          instructions={s.instructions}
+                        />
+                      </div>
+                    );
+                  return null;
+                })}
+              </div>
+            </LessonTextHighlighter>
+          </section>
+
+          {/* PHASE 04 — CHECK */}
           {lesson.quiz && lesson.quiz.length > 0 && (
-            <section id="quiz" className="mt-10">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <HelpCircle className="h-4 w-4 text-emerald-400" />
-                Interactive Checkpoint Quiz
-              </h2>
-              <div className="mt-4 grid gap-4">
+            <section id="check" className="space-y-4 pt-6 border-t border-border/40">
+              <div id="quiz" />
+              <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 uppercase tracking-wider">
+                <CheckSquare className="h-4 w-4" />
+                <span className="font-semibold text-foreground">04 · CHECK</span>
+                <span className="opacity-40">·</span>
+                <span>Check Your Understanding</span>
+              </div>
+
+              <div className="grid gap-4">
                 {lesson.quiz.map((q) => {
                   const selectedIdx = selectedQuizAnswers[q.id];
                   const isAnswered = selectedIdx !== undefined;
 
                   return (
-                    <Card key={q.id} className="border-border/60">
+                    <Card key={q.id} className="border-border/60 bg-card/80">
                       <CardHeader className="pb-3">
-                        <CardTitle className="text-sm font-semibold leading-snug">
+                        <CardTitle className="text-sm sm:text-base font-semibold leading-snug">
                           {q.question}
                         </CardTitle>
                       </CardHeader>
@@ -418,12 +756,12 @@ function LessonView() {
                           if (isAnswered) {
                             if (isCorrect) {
                               btnStyle =
-                                "border-emerald-500/50 bg-emerald-500/10 text-emerald-300 font-medium";
+                                "border-emerald-500/60 bg-emerald-500/10 text-emerald-300 font-medium ring-1 ring-emerald-500/30";
                             } else if (isSelected && !isCorrect) {
                               btnStyle =
-                                "border-rose-500/50 bg-rose-500/10 text-rose-300 font-medium";
+                                "border-rose-500/60 bg-rose-500/10 text-rose-300 font-medium ring-1 ring-rose-500/30";
                             } else {
-                              btnStyle = "border-border/40 bg-muted/20 opacity-60";
+                              btnStyle = "border-border/40 bg-muted/20 opacity-50";
                             }
                           }
 
@@ -431,9 +769,9 @@ function LessonView() {
                             <button
                               key={i}
                               onClick={() => handleQuizSelect(q.id, i, q.correctIndex)}
-                              className={`flex items-center justify-between rounded-lg border px-3 py-2.5 text-left text-xs transition duration-150 ${btnStyle}`}
+                              className={`flex items-center justify-between rounded-lg border px-3.5 py-3 text-left text-xs sm:text-sm transition duration-150 min-h-[44px] cursor-pointer select-none ${btnStyle}`}
                             >
-                              <span>{o}</span>
+                              <span className="pr-2">{o}</span>
                               {isAnswered && isCorrect && (
                                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
                               )}
@@ -445,8 +783,11 @@ function LessonView() {
                         })}
 
                         {isAnswered && q.explanation && (
-                          <div className="mt-2 rounded-md border border-primary/20 bg-primary/5 p-3 text-xs text-muted-foreground leading-relaxed">
-                            <strong className="text-primary font-medium">Explanation: </strong>
+                          <div className="mt-3 rounded-lg border border-primary/25 bg-primary/5 p-3.5 text-xs sm:text-sm text-foreground/90 leading-relaxed">
+                            <div className="font-semibold text-primary mb-1 flex items-center gap-1.5">
+                              <HelpCircle className="h-4 w-4" />
+                              <span>Explanation:</span>
+                            </div>
                             {q.explanation}
                           </div>
                         )}
@@ -458,138 +799,340 @@ function LessonView() {
             </section>
           )}
 
-          {/* Interview Questions Section */}
-          {lesson.interviewQuestions && lesson.interviewQuestions.length > 0 && (
-            <section id="interview" className="mt-10">
-              <h2 className="text-lg font-bold">Interview Questions</h2>
-              <ul className="mt-4 grid gap-2">
-                {lesson.interviewQuestions.map((q, i) => (
-                  <li
-                    key={i}
-                    className="rounded-lg border border-border/60 bg-muted/30 p-3 text-xs leading-relaxed"
+          {/* PHASE 05 — APPLY */}
+          {lesson.exercises && lesson.exercises.length > 0 && (
+            <section id="apply" className="space-y-4 pt-6 border-t border-border/40">
+              <div id="exercises" />
+              <div className="flex items-center gap-2 text-xs font-mono text-amber-400 uppercase tracking-wider">
+                <Zap className="h-4 w-4" />
+                <span className="font-semibold text-foreground">05 · APPLY</span>
+                <span className="opacity-40">·</span>
+                <span>Apply Your Skills</span>
+              </div>
+
+              <div className="grid gap-3">
+                {lesson.exercises.map((ex) => (
+                  <Card
+                    key={ex.id}
+                    className="border-border/60 bg-card/80 hover:border-primary/40 transition shadow-2xs"
                   >
-                    {q}
-                  </li>
+                    <CardContent className="p-4 sm:p-5">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="space-y-1">
+                          <div className="font-bold text-sm sm:text-base text-foreground">
+                            {ex.title}
+                          </div>
+                          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                            {ex.brief}
+                          </p>
+                        </div>
+                        <Button
+                          asChild
+                          size="default"
+                          className="text-xs font-semibold shrink-0 gap-1.5 shadow-glow"
+                        >
+                          <Link to="/playground">
+                            Open Playground <Code2 className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
-              </ul>
+              </div>
             </section>
           )}
 
-          {/* Lesson Summary Card */}
-          <div className="mt-10 rounded-2xl border border-border/60 bg-gradient-to-br from-primary/10 via-card to-transparent p-6 shadow-xs space-y-4">
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-widest text-primary">
-                Summary Key Takeaway
+          {/* PHASE 06 — MASTER */}
+          <section id="master" className="space-y-6 pt-6 border-t border-border/40">
+            <div id="interview" />
+            <div className="flex items-center gap-2 text-xs font-mono text-purple-400 uppercase tracking-wider">
+              <BrainCircuit className="h-4 w-4 text-purple-400" />
+              <span className="font-semibold text-foreground">06 · MASTER</span>
+              <span className="opacity-40">·</span>
+              <span>Recall & Key Takeaway</span>
+            </div>
+
+            {/* Key Takeaway Summary */}
+            <div className="rounded-2xl border border-purple-500/30 bg-purple-500/5 p-5 space-y-3 shadow-2xs">
+              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-purple-400 font-mono">
+                <Award className="h-4 w-4" />
+                <span>Key Takeaway</span>
               </div>
-              <p className="mt-2 text-[15px] text-foreground/90 leading-relaxed">
+              <p className="text-sm sm:text-base text-foreground/90 leading-relaxed font-medium">
                 {lesson.summary}
               </p>
             </div>
 
-            {/* Next Steps / Practice CTAs */}
-            <div className="pt-4 border-t border-border/40 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                <Sparkles className="h-4 w-4 text-amber-400" />
-                <span>Next Step in your Learning Journey:</span>
+            {/* Interview Recall Questions */}
+            {lesson.interviewQuestions && lesson.interviewQuestions.length > 0 && (
+              <div className="space-y-3">
+                <div className="text-xs font-semibold text-muted-foreground font-mono uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+                  <span>
+                    Interview Recall — Can you explain these without looking at your notes?
+                  </span>
+                </div>
+                <ul className="grid gap-2.5">
+                  {lesson.interviewQuestions.map((q, i) => (
+                    <li
+                      key={i}
+                      className="rounded-xl border border-border/60 bg-muted/30 p-4 text-xs sm:text-sm leading-relaxed font-medium text-foreground/90 flex items-start gap-3"
+                    >
+                      <Badge
+                        variant="outline"
+                        className="font-mono text-xs bg-purple-500/10 text-purple-300 border-purple-500/20 shrink-0 mt-0.5"
+                      >
+                        Q{i + 1}
+                      </Badge>
+                      <span>{q}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+
+          {/* PHASE 07 — CONTINUE */}
+          <section id="continue" className="space-y-6 pt-6 border-t border-border/40">
+            <div className="flex items-center gap-2 text-xs font-mono text-primary uppercase tracking-wider">
+              <Sparkles className="h-4 w-4 text-amber-400" />
+              <span className="font-semibold text-foreground">07 · CONTINUE</span>
+              <span className="opacity-40">·</span>
+              <span>Completion & Next Action</span>
+            </div>
+
+            {/* BLOCK A: LESSON COMPLETION STATE */}
+            <Card className="border-border/70 bg-gradient-to-br from-card via-card/90 to-muted/30 p-5 sm:p-6 shadow-elegant">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                <div className="space-y-1 max-w-xl">
+                  <div className="text-[11px] font-mono font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                    <Award className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>Completion Status</span>
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground">
+                    {isCompleted ? "Lesson Completed!" : "Ready to complete this lesson?"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    {isCompleted
+                      ? "Congratulations on completing this lesson! Follow the recommended next step below to reinforce your knowledge."
+                      : "Mark this lesson complete to update your progress streak and keep track of your learning achievements."}
+                  </p>
+                </div>
+
+                <Button
+                  onClick={handleComplete}
+                  variant={isCompleted ? "outline" : "default"}
+                  size="lg"
+                  className={`shrink-0 text-sm font-semibold gap-2 ${
+                    isCompleted
+                      ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                      : "shadow-glow"
+                  }`}
+                >
+                  {isCompleted ? (
+                    <>
+                      <Check className="h-4 w-4 text-emerald-400" />
+                      <span>Completed</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Mark Complete</span>
+                      <CheckCircle2 className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </Card>
+
+            {/* BLOCK B: WHAT SHOULD YOU DO NOW? (NEXT ACTION HIERARCHY) */}
+            <div className="space-y-4 pt-2">
+              <div className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+                What should you do now?
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              {/* PRIMARY CTA: Start Next Lesson (Featured Dominant Card) */}
+              {nextLesson ? (
+                <Card className="border-primary/50 bg-primary/10 p-5 sm:p-6 hover:border-primary transition shadow-glow">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="secondary"
+                          className="bg-primary/20 text-primary border-primary/30 text-[10px] font-mono font-bold uppercase"
+                        >
+                          Primary Recommended Step
+                        </Badge>
+                        <span className="text-xs font-mono text-muted-foreground">
+                          Step {currentIndex + 2} of {allLessons.length}
+                        </span>
+                      </div>
+                      <h4 className="text-base sm:text-lg font-bold text-foreground">
+                        Next Lesson: {nextLesson.title}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2 max-w-xl">
+                        {nextLesson.description}
+                      </p>
+                    </div>
+
+                    <Button
+                      asChild
+                      size="lg"
+                      className="shrink-0 text-sm font-bold gap-2 shadow-glow w-full sm:w-auto"
+                    >
+                      <Link to="/lesson/$lessonId" params={{ lessonId: nextLesson.id }}>
+                        <span>Start Next Lesson</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                </Card>
+              ) : (
+                <Card className="border-emerald-500/40 bg-emerald-500/10 p-5 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <Badge
+                        variant="secondary"
+                        className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-[10px] font-mono font-bold uppercase"
+                      >
+                        Track Complete
+                      </Badge>
+                      <h4 className="text-base sm:text-lg font-bold text-foreground">
+                        You've completed all lessons in this curriculum track!
+                      </h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        Explore other modules or test your knowledge in the playground and quizzes.
+                      </p>
+                    </div>
+                    <Button
+                      asChild
+                      size="default"
+                      className="shrink-0 font-semibold gap-2 w-full sm:w-auto"
+                    >
+                      <Link to="/learn/modules">
+                        <span>View All Modules</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                </Card>
+              )}
+
+              {/* SECONDARY & TERTIARY ACTIONS GRID */}
+              <div className="grid gap-3 sm:grid-cols-2">
+                {/* SECONDARY: Practice Topic Quiz */}
                 {matchingQuiz && (
-                  <Button asChild size="sm" className="shadow-glow font-semibold gap-1.5">
-                    <Link to="/quizzes/$quizId" params={{ quizId: matchingQuiz.id }}>
-                      Practice this Concept
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <Card className="border-border/60 bg-card/60 hover:border-primary/40 transition">
+                    <CardContent className="p-4 sm:p-5 flex flex-col justify-between space-y-3 h-full">
+                      <div>
+                        <div className="flex items-center gap-1.5 text-[10px] font-mono text-primary uppercase font-semibold">
+                          <HelpCircle className="h-3.5 w-3.5" />
+                          <span>Secondary Action</span>
+                        </div>
+                        <div className="text-sm font-bold mt-1 text-foreground">
+                          Practice This Concept
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                          Take the topic quiz to test your memory and solidify key concepts.
+                        </p>
+                      </div>
+                      <Button
+                        asChild
+                        size="sm"
+                        variant="secondary"
+                        className="w-full text-xs font-semibold gap-1.5"
+                      >
+                        <Link to="/quizzes/$quizId" params={{ quizId: matchingQuiz.id }}>
+                          <span>Practice Concept</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
                 )}
 
+                {/* TERTIARY: Fix a Bug in Debug Lab */}
                 {matchingBug && (
+                  <Card className="border-border/60 bg-card/60 hover:border-rose-500/40 transition">
+                    <CardContent className="p-4 sm:p-5 flex flex-col justify-between space-y-3 h-full">
+                      <div>
+                        <div className="flex items-center gap-1.5 text-[10px] font-mono text-rose-400 uppercase font-semibold">
+                          <BugIcon className="h-3.5 w-3.5" />
+                          <span>Tertiary Action</span>
+                        </div>
+                        <div className="text-sm font-bold mt-1 text-foreground">
+                          Fix a Bug in Debug Lab
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                          Solve a hands-on debugging challenge tailored to this topic.
+                        </p>
+                      </div>
+                      <Button
+                        asChild
+                        size="sm"
+                        variant="outline"
+                        className="w-full text-xs border-rose-500/30 text-rose-400 hover:bg-rose-500/10 font-semibold gap-1.5"
+                      >
+                        <Link to="/debug-lab/$bugId" params={{ bugId: matchingBug.id }}>
+                          <BugIcon className="h-3.5 w-3.5" />
+                          <span>Fix a Bug</span>
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+
+              {/* SUBORDINATE BACK / PREVIOUS LESSON NAVIGATION */}
+              <nav
+                aria-label="Lesson navigation"
+                className="flex items-center justify-between gap-4 pt-4 border-t border-border/30 text-xs"
+              >
+                {prevLesson ? (
                   <Button
+                    variant="ghost"
                     asChild
                     size="sm"
-                    variant="outline"
-                    className="gap-1.5 border-rose-500/30 text-rose-400 hover:bg-rose-500/10"
+                    className="text-muted-foreground hover:text-foreground text-xs gap-1.5 max-w-[240px]"
                   >
-                    <Link to="/debug-lab/$bugId" params={{ bugId: matchingBug.id }}>
-                      <BugIcon className="h-3.5 w-3.5" />
-                      Fix a Bug
+                    <Link
+                      to="/lesson/$lessonId"
+                      params={{ lessonId: prevLesson.id }}
+                      className="truncate"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">Previous: {prevLesson.title}</span>
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    asChild
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground text-xs gap-1.5"
+                  >
+                    <Link to="/learn/lessons" search={{}}>
+                      <ArrowLeft className="h-3.5 w-3.5" />
+                      <span>All Lessons Library</span>
                     </Link>
                   </Button>
                 )}
-              </div>
+
+                {prevLesson && (
+                  <Button
+                    variant="ghost"
+                    asChild
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground text-xs gap-1.5"
+                  >
+                    <Link to="/learn/lessons" search={{}}>
+                      <span>All Lessons</span>
+                    </Link>
+                  </Button>
+                )}
+              </nav>
             </div>
-          </div>
-
-          {/* Lesson Navigation Footer */}
-          <nav className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-border/40">
-            {prevLesson ? (
-              <Button
-                variant="outline"
-                asChild
-                size="sm"
-                className="w-full sm:w-auto sm:max-w-[220px]"
-              >
-                <Link
-                  to="/lesson/$lessonId"
-                  params={{ lessonId: prevLesson.id }}
-                  className="truncate justify-center"
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
-                  <span className="truncate">Prev: {prevLesson.title}</span>
-                </Link>
-              </Button>
-            ) : (
-              <Button variant="ghost" asChild size="sm" className="w-full sm:w-auto">
-                <Link to="/learn/lessons" search={{}}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to library
-                </Link>
-              </Button>
-            )}
-
-            <Button
-              onClick={handleComplete}
-              variant={isCompleted ? "outline" : "default"}
-              size="sm"
-              className="w-full sm:w-auto shadow-glow"
-            >
-              {isCompleted ? (
-                <>
-                  <Check className="mr-2 h-4 w-4 text-emerald-400" />
-                  Completed
-                </>
-              ) : (
-                <>
-                  Mark complete
-                  <CheckCircle2 className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-
-            {nextLesson ? (
-              <Button
-                variant="outline"
-                asChild
-                size="sm"
-                className="w-full sm:w-auto sm:max-w-[220px]"
-              >
-                <Link
-                  to="/lesson/$lessonId"
-                  params={{ lessonId: nextLesson.id }}
-                  className="truncate justify-center"
-                >
-                  <span className="truncate">Next: {nextLesson.title}</span>
-                  <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
-                </Link>
-              </Button>
-            ) : (
-              <Button variant="outline" asChild size="sm" className="w-full sm:w-auto">
-                <Link to="/learn/lessons" search={{}}>
-                  All lessons <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            )}
-          </nav>
+          </section>
         </article>
 
         {/* Right Sidebar Notes & Highlights Widget */}

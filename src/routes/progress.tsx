@@ -20,7 +20,11 @@ import {
 } from "@/components/ui/dialog";
 import { HeatMap } from "@/components/shared/heat-map";
 import { progressStore } from "@/lib/providers/progress-provider";
-import { useProgress } from "@/lib/hooks/use-progress";
+import {
+  useProgress,
+  getMasteryLabelFromConfidence,
+  updateTopicMasteryRecord,
+} from "@/lib/hooks/use-progress";
 import { useLessons, useQuizzes } from "@/lib/hooks/use-content";
 import type { MasteryState, TopicMasteryRecord } from "@/lib/types";
 import { toast } from "sonner";
@@ -181,7 +185,7 @@ export function MasteryEnginePage() {
   const strongTopics = useMemo(
     () =>
       recordsList.filter(
-        (r) => r.confidence >= 85 || r.mastery === "Mastered" || r.mastery === "Interview Ready",
+        (r) => r.confidence >= 80 || r.mastery === "Mastered" || r.mastery === "Interview Ready",
       ),
     [recordsList],
   );
@@ -262,26 +266,15 @@ export function MasteryEnginePage() {
   const handleUpdateConfidence = (topicId: string, newConfidence: number) => {
     setProgress((prev) => {
       const currentMap = prev.topicMasteryRecords || {};
-      const existing = currentMap[topicId];
-      if (!existing) return prev;
+      if (!currentMap[topicId]) return prev;
 
-      let newMastery = existing.mastery;
-      if (newConfidence >= 90) newMastery = "Mastered";
-      else if (newConfidence >= 80) newMastery = "Interview Ready";
-      else if (newConfidence < 50) newMastery = "Needs Review";
-
-      const updatedRecord: TopicMasteryRecord = {
-        ...existing,
+      const updatedMap = updateTopicMasteryRecord(currentMap, topicId, {
         confidence: newConfidence,
-        mastery: newMastery,
-      };
+      });
 
       return {
         ...prev,
-        topicMasteryRecords: {
-          ...currentMap,
-          [topicId]: updatedRecord,
-        },
+        topicMasteryRecords: updatedMap,
       };
     });
     toast.success("Updated topic confidence!");
@@ -290,15 +283,15 @@ export function MasteryEnginePage() {
   const handleUpdateMastery = (topicId: string, newMastery: MasteryState) => {
     setProgress((prev) => {
       const currentMap = prev.topicMasteryRecords || {};
-      const existing = currentMap[topicId];
-      if (!existing) return prev;
+      if (!currentMap[topicId]) return prev;
+
+      const updatedMap = updateTopicMasteryRecord(currentMap, topicId, {
+        mastery: newMastery,
+      });
 
       return {
         ...prev,
-        topicMasteryRecords: {
-          ...currentMap,
-          [topicId]: { ...existing, mastery: newMastery },
-        },
+        topicMasteryRecords: updatedMap,
       };
     });
     toast.success(`Updated status to "${newMastery}"`);
@@ -319,21 +312,17 @@ export function MasteryEnginePage() {
       const record = currentMap[topicId];
       if (!record) return prev;
 
-      const updatedRecord: TopicMasteryRecord = {
-        ...record,
+      const updatedMap = updateTopicMasteryRecord(currentMap, topicId, {
+        intervalDays: newInterval,
         lastReviewedAt: now.toISOString(),
         nextReviewAt: nextDate.toISOString(),
-        intervalDays: newInterval,
-        reviewCount: record.reviewCount + 1,
-        mastery: record.confidence >= 80 ? "Interview Ready" : "Practicing",
-      };
+        reviewCountDelta: 1,
+      });
 
       return {
         ...prev,
-        topicMasteryRecords: {
-          ...currentMap,
-          [topicId]: updatedRecord,
-        },
+        xp: (prev.xp || 0) + 15,
+        topicMasteryRecords: updatedMap,
       };
     });
 
@@ -514,7 +503,7 @@ export function MasteryEnginePage() {
       </div>
 
       {/* Top Stat Cards Row */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           label="Interview Readiness"
           value={`${readinessData.score}%`}

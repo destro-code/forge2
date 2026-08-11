@@ -92,9 +92,10 @@ export function TopBar() {
       <div className="flex items-center gap-2 min-w-0 shrink">
         <SidebarTrigger className="h-8 w-8 shrink-0" />
 
+        {/* Desktop Breadcrumb Nav */}
         <nav
           aria-label="Breadcrumb"
-          className="hidden min-w-0 items-center gap-1.5 text-xs font-medium sm:flex max-w-[200px] sm:max-w-xs md:max-w-md"
+          className="hidden min-w-0 items-center gap-1.5 text-xs font-medium sm:flex max-w-xs md:max-w-md"
         >
           {crumbs.map((c, i) => (
             <div key={c.to + i} className="flex min-w-0 items-center gap-1.5 shrink">
@@ -112,6 +113,19 @@ export function TopBar() {
             </div>
           ))}
         </nav>
+
+        {/* Mobile Contextual Indicator */}
+        <div className="flex min-w-0 items-center gap-1 text-xs font-medium sm:hidden">
+          {crumbs.length > 1 && (
+            <span className="text-muted-foreground/70 text-[11px] shrink-0 max-w-[80px] truncate">
+              {crumbs[crumbs.length - 2]?.label}
+            </span>
+          )}
+          {crumbs.length > 1 && <span className="text-muted-foreground/40 shrink-0">/</span>}
+          <span className="truncate font-semibold text-foreground max-w-[130px]">
+            {crumbs[crumbs.length - 1]?.label}
+          </span>
+        </div>
       </div>
 
       <div className="ml-auto flex items-center gap-1.5 shrink-0">

@@ -32,21 +32,30 @@ import type {
  */
 export interface ContentProvider {
   categories(): Category[];
+  getCategory(id: string): Category | undefined;
   learningPaths(): LearningPath[];
+  getLearningPath(id: string): LearningPath | undefined;
   modules(): Module[];
+  getModule(id: string): Module | undefined;
   topics(): Topic[];
+  getTopic(id: string): Topic | undefined;
   lessons(): Lesson[];
+  getLesson(id: string): Lesson | undefined;
   projects(): Project[];
+  getProject(id: string): Project | undefined;
   quizzes(): Quiz[];
+  getQuiz(id: string): Quiz | undefined;
   flashcards(): Flashcard[];
   achievements(): Achievement[];
   bugs(): Bug[];
+  getBug(id: string): Bug | undefined;
   interviewQuestions(): InterviewQuestion[];
   resources(): Resource[];
 }
 
 export const localContentProvider: ContentProvider = {
   categories: () => categoriesData as Category[],
+  getCategory: (id: string) => (categoriesData as Category[]).find((c) => c.id === id),
   learningPaths: () => {
     const raw = learningPathsData as LearningPath[];
     return [...raw].sort((a, b) => {
@@ -55,6 +64,7 @@ export const localContentProvider: ContentProvider = {
       return orderA - orderB;
     });
   },
+  getLearningPath: (id: string) => (learningPathsData as LearningPath[]).find((p) => p.id === id),
   modules: () => {
     const rawModules = modulesData as Module[];
     const rawTopics = topicsData as Topic[];
@@ -80,14 +90,17 @@ export const localContentProvider: ContentProvider = {
 
     return processed.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   },
+  getModule: (id: string) => localContentProvider.modules().find((m) => m.id === id),
   topics: () => {
     const raw = topicsData as Topic[];
     return [...raw].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   },
+  getTopic: (id: string) => (topicsData as Topic[]).find((t) => t.id === id),
   lessons: () => {
     const raw = lessonsData as Lesson[];
     return [...raw].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   },
+  getLesson: (id: string) => (lessonsData as Lesson[]).find((l) => l.id === id),
   projects: () => {
     const raw = projectsData as Project[];
     return [...raw].sort((a, b) => {
@@ -96,7 +109,9 @@ export const localContentProvider: ContentProvider = {
       return orderA - orderB;
     });
   },
+  getProject: (id: string) => (projectsData as Project[]).find((p) => p.id === id),
   quizzes: () => quizzesData as Quiz[],
+  getQuiz: (id: string) => (quizzesData as Quiz[]).find((q) => q.id === id),
   flashcards: () => flashcardsData as Flashcard[],
   achievements: () => achievementsData as Achievement[],
   bugs: () => {
@@ -107,6 +122,7 @@ export const localContentProvider: ContentProvider = {
       return orderA - orderB;
     });
   },
+  getBug: (id: string) => (bugsData as Bug[]).find((b) => b.id === id),
   interviewQuestions: () => {
     const raw = interviewData as InterviewQuestion[];
     return [...raw].sort((a, b) => {

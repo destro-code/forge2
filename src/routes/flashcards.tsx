@@ -182,28 +182,28 @@ function Flashcards() {
               >
                 <Button
                   variant="outline"
-                  className="hover:border-destructive/50 hover:bg-destructive/10 hover:text-destructive"
+                  className="h-11 min-h-[44px] hover:border-destructive/50 hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => handleRate("again")}
                 >
                   Again
                 </Button>
                 <Button
                   variant="outline"
-                  className="hover:border-orange-500/50 hover:bg-orange-500/10 hover:text-orange-500"
+                  className="h-11 min-h-[44px] hover:border-orange-500/50 hover:bg-orange-500/10 hover:text-orange-500"
                   onClick={() => handleRate("hard")}
                 >
                   Hard
                 </Button>
                 <Button
                   variant="outline"
-                  className="hover:border-green-500/50 hover:bg-green-500/10 hover:text-green-500"
+                  className="h-11 min-h-[44px] hover:border-green-500/50 hover:bg-green-500/10 hover:text-green-500"
                   onClick={() => handleRate("good")}
                 >
                   Good
                 </Button>
                 <Button
                   variant="outline"
-                  className="hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-500"
+                  className="h-11 min-h-[44px] hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-500"
                   onClick={() => handleRate("easy")}
                 >
                   Easy

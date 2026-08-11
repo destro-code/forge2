@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { useLessons } from "@/lib/hooks/use-content";
-import { Compass, TrendingUp, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { useProgress } from "@/lib/hooks/use-progress";
+import { getAdaptiveRecommendations } from "@/lib/hooks/use-recommendations";
+import { Compass, TrendingUp, Clock, ArrowRight, CheckCircle2 } from "lucide-react";
 import type { Topic } from "@/lib/types";
 
 interface RecommendedTopicsCardProps {
@@ -12,8 +14,13 @@ interface RecommendedTopicsCardProps {
 }
 
 export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
-  const recommendedList = topics.slice(0, 3);
+  const progress = useProgress();
   const lessons = useLessons();
+  const { topics: recommendedList, allMastered } = getAdaptiveRecommendations(
+    topics,
+    progress,
+    lessons,
+  );
 
   return (
     <Card className="border-border/50 bg-card/80 transition duration-200 hover:border-border">
@@ -21,27 +28,41 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
         <div>
           <CardTitle className="text-base font-semibold flex items-center gap-2">
             <Compass className="h-4 w-4 text-primary" />
-            Recommended Next Topics
+            {allMastered ? "Curriculum Mastered — Refresh Topics" : "Recommended Next Topics"}
           </CardTitle>
           <p className="text-xs text-muted-foreground mt-0.5">
-            High-impact topics based on interview frequency & skill gaps
+            {allMastered
+              ? "All topics mastered! Keep interview high-frequency topics fresh with periodic review."
+              : "Adaptive signal-based recommendations for maximum learning impact"}
           </p>
         </div>
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
-          className="text-xs gap-1 text-muted-foreground hover:text-foreground h-8 px-2"
-        >
-          <Link to="/learn/topics">
-            Explore Topics <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {allMastered && (
+            <Badge
+              variant="outline"
+              className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-xs"
+            >
+              <CheckCircle2 className="h-3 w-3 mr-1" /> All Mastered
+            </Badge>
+          )}
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-xs gap-1 text-muted-foreground hover:text-foreground h-8 px-2"
+          >
+            <Link to="/learn/topics">
+              Explore Topics <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </Button>
+        </div>
       </CardHeader>
 
       <CardContent className="grid gap-3 sm:grid-cols-3">
         {recommendedList.map((topic) => {
-          const topicLessons = lessons.filter((l) => l.topicId === topic.id);
+          const topicLessons = lessons.filter(
+            (l) => l.topicId === topic.id || (topic.topicId && l.topicId === topic.topicId),
+          );
           const firstLesson = topicLessons[0];
 
           return (
@@ -77,7 +98,8 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
                 >
                   {firstLesson ? (
                     <Link to="/lesson/$lessonId" params={{ lessonId: firstLesson.id }}>
-                      Start Lesson <ArrowRight className="h-3 w-3" />
+                      {allMastered ? "Review Lesson" : "Start Lesson"}{" "}
+                      <ArrowRight className="h-3 w-3" />
                     </Link>
                   ) : (
                     <Link to="/learn/topics/$topicId" params={{ topicId: topic.id }}>

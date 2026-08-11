@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
@@ -155,7 +156,23 @@ function DebugLab() {
             />
           </div>
 
-          <div className="flex flex-wrap gap-1.5 w-full md:w-auto">
+          {/* Mobile Select Category Dropdown */}
+          <div className="w-full md:hidden">
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value as any)}
+              className="h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+            >
+              {CATEGORIES.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Desktop Category Badges */}
+          <div className="hidden md:flex flex-wrap gap-1.5 w-auto">
             {CATEGORIES.map((cat) => (
               <Badge
                 key={cat.id}
@@ -173,13 +190,34 @@ function DebugLab() {
       {/* Bug List */}
       <div className="grid gap-3">
         {filteredBugs.length === 0 ? (
-          <Card className="p-8 text-center border-dashed">
-            <Bug className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-            <h4 className="font-semibold text-sm">No debugging challenges found</h4>
-            <p className="text-xs text-muted-foreground mt-1">
-              Try adjusting your category filter or search terms.
-            </p>
-          </Card>
+          bugs.length === 0 ? (
+            <Card className="p-8 text-center border-dashed">
+              <Bug className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+              <h4 className="font-semibold text-sm">No debugging challenges available</h4>
+              <p className="text-xs text-muted-foreground mt-1">
+                There are currently no bug challenges in the debug lab.
+              </p>
+            </Card>
+          ) : (
+            <Card className="p-8 text-center border-dashed">
+              <Bug className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+              <h4 className="font-semibold text-sm">No debugging challenges found</h4>
+              <p className="text-xs text-muted-foreground mt-1">
+                No bug challenges match your current category filter or search terms.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSearchQuery("");
+                }}
+                className="mt-4"
+              >
+                Reset Filters
+              </Button>
+            </Card>
+          )
         ) : (
           filteredBugs.map((b) => {
             const isSolved = solvedBugs.includes(b.id);

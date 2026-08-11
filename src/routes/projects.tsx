@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
+import { EmptyState } from "@/components/shared/empty-state";
 import { useProjects } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import {
@@ -161,98 +162,127 @@ function Projects() {
       </div>
 
       {/* Projects Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredProjects.map((project) => {
-          // Calculate project specific task stats
-          const projectTaskCount = project.milestones.reduce(
-            (acc, m) => acc + (m.tasks?.length || 0),
-            0,
-          );
-          const completedProjectTaskCount = project.milestones.reduce((acc, m) => {
-            const finishedInM = (m.tasks || []).filter(
-              (t) => projectTasks[`${project.id}:${t.id}`],
-            ).length;
-            return acc + finishedInM;
-          }, 0);
+      {filteredProjects.length === 0 ? (
+        projects.length === 0 ? (
+          <EmptyState
+            icon={<FolderGit2 className="h-6 w-6" />}
+            title="No Projects Available"
+            description="There are currently no guided projects available in the catalog."
+          />
+        ) : (
+          <EmptyState
+            icon={<Search className="h-6 w-6" />}
+            title="No Matching Projects Found"
+            description="No portfolio projects match your current category, difficulty, or search terms."
+            action={
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedCategory("All");
+                  setSelectedDifficulty("All");
+                  setSearchQuery("");
+                }}
+              >
+                Reset Filters
+              </Button>
+            }
+          />
+        )
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredProjects.map((project) => {
+            // Calculate project specific task stats
+            const projectTaskCount = project.milestones.reduce(
+              (acc, m) => acc + (m.tasks?.length || 0),
+              0,
+            );
+            const completedProjectTaskCount = project.milestones.reduce((acc, m) => {
+              const finishedInM = (m.tasks || []).filter(
+                (t) => projectTasks[`${project.id}:${t.id}`],
+              ).length;
+              return acc + finishedInM;
+            }, 0);
 
-          const projectProgressPercent =
-            projectTaskCount > 0
-              ? Math.round((completedProjectTaskCount / projectTaskCount) * 100)
-              : 0;
+            const projectProgressPercent =
+              projectTaskCount > 0
+                ? Math.round((completedProjectTaskCount / projectTaskCount) * 100)
+                : 0;
 
-          const isFullyCompleted =
-            projectTaskCount > 0 && completedProjectTaskCount === projectTaskCount;
+            const isFullyCompleted =
+              projectTaskCount > 0 && completedProjectTaskCount === projectTaskCount;
 
-          return (
-            <Link key={project.id} to="/projects/$projectId" params={{ projectId: project.id }}>
-              <Card className="h-full border-border/60 transition-all hover:border-primary/50 hover:shadow-glow flex flex-col justify-between group overflow-hidden relative">
-                {isFullyCompleted && (
-                  <div className="absolute top-3 right-3 z-10">
-                    <Badge className="bg-emerald-600 hover:bg-emerald-600 gap-1 text-[10px]">
-                      <CheckCircle2 className="h-3 w-3" /> Completed
-                    </Badge>
-                  </div>
-                )}
-
-                <CardContent className="p-6 flex-1 space-y-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <DifficultyBadge difficulty={project.difficulty} />
-                    {project.category && (
-                      <Badge variant="outline" className="text-xs">
-                        {project.category}
+            return (
+              <Link key={project.id} to="/projects/$projectId" params={{ projectId: project.id }}>
+                <Card className="h-full border-border/60 transition-all hover:border-primary/50 hover:shadow-glow flex flex-col justify-between group overflow-hidden relative">
+                  {isFullyCompleted && (
+                    <div className="absolute top-3 right-3 z-10">
+                      <Badge className="bg-emerald-600 hover:bg-emerald-600 gap-1 text-[10px]">
+                        <CheckCircle2 className="h-3 w-3" /> Completed
                       </Badge>
-                    )}
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
-                      {project.title}
-                    </h3>
-                    {project.subtitle && (
-                      <p className="text-xs text-primary/80 font-medium mt-0.5">
-                        {project.subtitle}
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground line-clamp-3 mt-2 leading-relaxed">
-                      {project.description}
-                    </p>
-                  </div>
-
-                  {/* Task Progress Bar */}
-                  <div className="space-y-1.5 pt-2">
-                    <div className="flex justify-between text-[11px] text-muted-foreground font-mono">
-                      <span>
-                        Tasks: {completedProjectTaskCount}/{projectTaskCount}
-                      </span>
-                      <span>{projectProgressPercent}%</span>
                     </div>
-                    <Progress value={projectProgressPercent} className="h-1.5" />
-                  </div>
+                  )}
 
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1 pt-1">
-                    {project.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-[10px] py-0">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
+                  <CardContent className="p-6 flex-1 space-y-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <DifficultyBadge difficulty={project.difficulty} />
+                      {project.category && (
+                        <Badge variant="outline" className="text-xs">
+                          {project.category}
+                        </Badge>
+                      )}
+                    </div>
 
-                <div className="bg-muted/20 border-t border-border/40 p-4 px-6 flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5" /> ~{project.estimatedHours} hours
-                  </span>
-                  <span className="flex items-center gap-1 font-semibold text-primary group-hover:translate-x-1 transition-transform">
-                    {projectProgressPercent > 0 ? "Continue Build" : "Start Project"}
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
-                </div>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
+                    <div>
+                      <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
+                        {project.title}
+                      </h3>
+                      {project.subtitle && (
+                        <p className="text-xs text-primary/80 font-medium mt-0.5">
+                          {project.subtitle}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground line-clamp-3 mt-2 leading-relaxed">
+                        {project.description}
+                      </p>
+                    </div>
+
+                    {/* Task Progress Bar */}
+                    <div className="space-y-1.5 pt-2">
+                      <div className="flex justify-between text-[11px] text-muted-foreground font-mono">
+                        <span>
+                          Tasks: {completedProjectTaskCount}/{projectTaskCount}
+                        </span>
+                        <span>{projectProgressPercent}%</span>
+                      </div>
+                      <Progress value={projectProgressPercent} className="h-1.5" />
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {project.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-[10px] py-0">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+
+                  <div className="bg-muted/20 border-t border-border/40 p-4 px-6 flex items-center justify-between text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3.5 w-3.5" /> ~{project.estimatedHours} hours
+                    </span>
+                    <span className="flex items-center gap-1 font-semibold text-primary group-hover:translate-x-1 transition-transform">
+                      {projectProgressPercent > 0 ? "Continue Build" : "Start Project"}
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

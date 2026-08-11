@@ -18,7 +18,7 @@ export function StatCard({
 }) {
   return (
     <Card className={cn("relative overflow-hidden border-border/50 bg-card/80", className)}>
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="p-3.5 sm:p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="text-xs font-medium text-muted-foreground">{label}</div>

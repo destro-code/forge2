@@ -548,4 +548,6 @@ export interface ProgressState {
   challengeStreakDays?: number;
   whiteboardSnapshots?: WhiteboardSnapshot[];
   playgroundCompletions?: PlaygroundCompletion[];
+  completedProjects?: string[];
+  flashcardDailyReviews?: { date: string; count: number };
 }

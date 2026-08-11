@@ -183,41 +183,58 @@ export function LessonInteractiveCode({
           {title && <span className="ml-2 font-sans text-xs text-muted-foreground">{title}</span>}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           <Badge variant="outline" className="text-[10px] px-2 py-0.5 border-border/60 uppercase">
             {language}
           </Badge>
 
           <Button
-            variant="ghost"
             size="sm"
             onClick={handleQuickRun}
-            className="h-6 px-2 text-[10px] gap-1 hover:text-foreground"
+            className="h-7 px-2.5 text-xs gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 font-medium"
             title="Evaluate console output"
           >
-            <Play className="h-3 w-3 text-emerald-400" /> Run Quick
+            <Play className="h-3.5 w-3.5 text-emerald-400 fill-emerald-400/20" />
+            <span className="hidden sm:inline">Run Quick</span>
+            <span className="sm:hidden">Run</span>
           </Button>
 
-          {onOpenSandbox && (
+          {onOpenSandbox ? (
             <Button
-              variant="ghost"
               size="sm"
               onClick={() => onOpenSandbox(code)}
-              className="h-6 px-2 text-[10px] gap-1 hover:text-foreground text-primary"
+              className="h-7 px-2.5 text-xs gap-1.5 bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 font-medium"
               title="Edit in live sandbox"
             >
-              <Terminal className="h-3 w-3" /> Sandbox
+              <Terminal className="h-3.5 w-3.5" />
+              <span>Sandbox</span>
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              asChild
+              className="h-7 px-2.5 text-xs gap-1.5 bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 font-medium"
+              title="Open full playground"
+            >
+              <a href="/playground">
+                <Terminal className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Playground</span>
+              </a>
             </Button>
           )}
 
           <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={handleCopy}
-            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50"
             title="Copy code"
           >
-            {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+            {copied ? (
+              <Check className="h-3.5 w-3.5 text-emerald-400" />
+            ) : (
+              <Copy className="h-3.5 w-3.5" />
+            )}
           </Button>
         </div>
       </div>

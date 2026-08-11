@@ -267,7 +267,7 @@ function Lessons() {
             />
           </div>
 
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 w-full sm:w-auto">
             <select
               value={selectedModule}
               onChange={(e) => updateFilter({ moduleId: e.target.value }, false)}
@@ -321,10 +321,10 @@ function Lessons() {
                 variant="ghost"
                 size="sm"
                 onClick={resetFilters}
-                className="gap-1.5 text-xs text-muted-foreground"
+                className="col-span-2 sm:col-span-1 gap-1.5 text-xs text-muted-foreground justify-center h-10"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                Reset
+                Reset ({activeFiltersCount})
               </Button>
             )}
           </div>

@@ -37,7 +37,7 @@ export function LessonReadingProgress({ title, estimatedMinutes }: LessonReading
   const remainingMinutes = Math.max(1, Math.ceil(estimatedMinutes * (1 - completionPercent / 100)));
 
   return (
-    <div className="sticky top-0 z-30 w-full border-b border-border/60 bg-background/95 backdrop-blur-md transition-all">
+    <div className="sticky top-14 z-20 w-full border-b border-border/60 bg-background/95 backdrop-blur-md transition-all">
       {/* Top progress bar indicator */}
       <div className="h-1 w-full bg-muted/40">
         <div

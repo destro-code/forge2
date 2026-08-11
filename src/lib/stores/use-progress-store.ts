@@ -16,6 +16,14 @@ import type {
   ProgressState,
 } from "@/lib/types";
 
+import { updateTopicMasteryRecord, deriveStreakDays } from "@/lib/providers/progress-provider";
+
+const PLAYGROUND_TOPIC_MAP: Record<string, string> = {
+  "stale-closure-lab": "useeffect",
+  "use-debounce-hook": "useeffect",
+  "async-abort-controller": "promises-async",
+};
+
 export type { ProgressState };
 
 export const EMPTY_PROGRESS_STATE: ProgressState = {
@@ -49,6 +57,8 @@ export const EMPTY_PROGRESS_STATE: ProgressState = {
   challengeStreakDays: 0,
   whiteboardSnapshots: [],
   playgroundCompletions: [],
+  completedProjects: [],
+  flashcardDailyReviews: { date: "", count: 0 },
 };
 
 export function deriveStreakDays(activityDates: string[] = []): number {
@@ -186,6 +196,8 @@ export const useProgressStore = create<ProgressStore>()(
           challengeStreakDays: current.challengeStreakDays ?? 0,
           whiteboardSnapshots: current.whiteboardSnapshots ?? [],
           playgroundCompletions: current.playgroundCompletions ?? [],
+          completedProjects: current.completedProjects ?? [],
+          flashcardDailyReviews: current.flashcardDailyReviews ?? { date: "", count: 0 },
         };
 
         const nextState = typeof updater === "function" ? updater(currentState) : updater;
@@ -205,11 +217,29 @@ export const useProgressStore = create<ProgressStore>()(
         set((state) => {
           const existing = state.flashcardReviews?.[cardId];
           const review = computeSM2(cardId, deck, existing, rating);
+
+          const today = new Date().toISOString().slice(0, 10);
+          const daily = state.flashcardDailyReviews;
+          const currentCount = daily && daily.date === today ? daily.count : 0;
+
+          let xpGained = 0;
+          let newCount = currentCount;
+
+          if (currentCount < 5) {
+            xpGained = 5;
+            newCount = currentCount + 1;
+          }
+
           return {
             flashcardReviews: {
               ...(state.flashcardReviews || {}),
               [cardId]: review,
             },
+            flashcardDailyReviews: {
+              date: today,
+              count: newCount,
+            },
+            xp: (state.xp || 0) + xpGained,
           };
         });
       },
@@ -265,22 +295,44 @@ export const useProgressStore = create<ProgressStore>()(
 
       completePlaygroundExercise: (templateId) => {
         set((state) => {
+          const currentCompletions = state.playgroundCompletions || [];
+          const isAlreadyCompleted = currentCompletions.some((c) => c.templateId === templateId);
+
+          if (isAlreadyCompleted) {
+            return state;
+          }
+
           const today = new Date().toISOString().slice(0, 10);
           const currentActivityDates = state.activityDates || [];
           const newActivityDates = currentActivityDates.includes(today)
             ? currentActivityDates
             : [...currentActivityDates, today];
 
-          const currentCompletions = state.playgroundCompletions || [];
           const newCompletions = [
             ...currentCompletions,
             { templateId, completedAt: new Date().toISOString() },
           ];
 
+          const mappedTopicId = PLAYGROUND_TOPIC_MAP[templateId];
+          let updatedRecords = state.topicMasteryRecords || {};
+
+          if (mappedTopicId) {
+            const existingRec = updatedRecords[mappedTopicId];
+            const curConfidence = existingRec?.confidence ?? 50;
+            const newConfidence = Math.min(100, curConfidence + 10);
+
+            updatedRecords = updateTopicMasteryRecord(updatedRecords, mappedTopicId, {
+              confidence: newConfidence,
+              reviewCountDelta: 1,
+              lastReviewedAt: new Date().toISOString(),
+            });
+          }
+
           return {
             playgroundCompletions: newCompletions,
-            xp: (state.xp || 0) + 25,
+            xp: (state.xp || 0) + 50,
             activityDates: newActivityDates,
+            topicMasteryRecords: updatedRecords,
           };
         });
       },

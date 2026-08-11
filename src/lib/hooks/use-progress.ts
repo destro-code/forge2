@@ -1,10 +1,17 @@
 import {
   progressStore,
   getDerivedProgress,
+  getMasteryLabelFromConfidence,
+  updateTopicMasteryRecord,
   type ProgressState,
 } from "@/lib/providers/progress-provider";
 import { getModuleProgress, getTopicProgress } from "@/lib/hooks/use-curriculum";
-export { getModuleProgress, getTopicProgress };
+export {
+  getModuleProgress,
+  getTopicProgress,
+  getMasteryLabelFromConfidence,
+  updateTopicMasteryRecord,
+};
 import type {
   MasteryState,
   ProjectReflection,
@@ -19,15 +26,8 @@ import type {
 import { useProgressStore } from "@/lib/stores/use-progress-store";
 import topicsData from "@/data/topics.json";
 import learningPathsData from "@/data/learning-paths.json";
-
-function getMasteryLabelFromConfidence(confidence: number): MasteryState {
-  if (confidence >= 85) return "Mastered";
-  if (confidence >= 70) return "Interview Ready";
-  if (confidence >= 50) return "Practicing";
-  if (confidence >= 30) return "Learning";
-  if (confidence > 0) return "Needs Review";
-  return "Not Started";
-}
+import bugsData from "@/data/bugs.json";
+import projectsData from "@/data/projects.json";
 
 function recordActivityState(p: ProgressState): ProgressState {
   const today = new Date().toISOString().slice(0, 10);
@@ -55,6 +55,23 @@ export function useProgress() {
         const withActivity = recordActivityState(p);
         const currentQuizResults = withActivity.quizResults || [];
 
+        // Calculate score improvement and incremental XP to prevent XP farming exploit
+        const prevResultsForQuiz = currentQuizResults.filter((r) => r.quizId === quizId);
+        const prevMaxScore =
+          prevResultsForQuiz.length > 0
+            ? Math.max(...prevResultsForQuiz.map((r) => r.scorePercent))
+            : 0;
+        const prevXpEarned = Math.round((prevMaxScore / 100) * 50);
+
+        const newMaxScore = Math.max(prevMaxScore, scorePercent);
+        const newXpEarned = Math.round((newMaxScore / 100) * 50);
+        const incrementalXp = Math.max(0, newXpEarned - prevXpEarned);
+
+        const completedQuizzes = withActivity.completedQuizzes || [];
+        const updatedCompletedQuizzes = completedQuizzes.includes(quizId)
+          ? completedQuizzes
+          : [...completedQuizzes, quizId];
+
         const newResult: QuizResultRecord = {
           id: `qr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
           quizId,
@@ -65,58 +82,27 @@ export function useProgress() {
 
         const quizResults = [newResult, ...currentQuizResults];
 
-        const currentTopicRecords = withActivity.topicMasteryRecords || {};
-        const updatedTopicRecords = { ...currentTopicRecords };
-
+        let updatedTopicRecords = withActivity.topicMasteryRecords || {};
         if (topicId) {
-          const existing = currentTopicRecords[topicId];
-          if (existing) {
-            const oldConfidence = existing.confidence ?? 50;
-            const newConfidence = Math.min(
-              100,
-              Math.max(0, Math.round(oldConfidence * 0.6 + scorePercent * 0.4)),
-            );
-            const newMastery = getMasteryLabelFromConfidence(newConfidence);
+          const existing = updatedTopicRecords[topicId];
+          const oldConfidence = existing?.confidence ?? 50;
+          const newConfidence = Math.min(
+            100,
+            Math.max(0, Math.round(oldConfidence * 0.6 + scorePercent * 0.4)),
+          );
 
-            updatedTopicRecords[topicId] = {
-              ...existing,
-              quizScorePercent: scorePercent,
-              reviewCount: (existing.reviewCount || 0) + 1,
-              lastReviewedAt: new Date().toISOString(),
-              confidence: newConfidence,
-              mastery: newMastery,
-            };
-          } else {
-            const topic = topicsData.find((t) => t.id === topicId);
-            const topicObj = topic as Record<string, unknown> | undefined;
-            const categoryId = (topicObj?.categoryId || topicObj?.moduleId) as string | undefined;
-            const category =
-              categoryId === "core-web"
-                ? "HTML/CSS"
-                : categoryId === "language-mastery" || categoryId === "js-foundation"
-                  ? "JavaScript"
-                  : categoryId === "framework-mastery" || categoryId === "react-deep-dive"
-                    ? "React"
-                    : "Architecture";
-
-            const confidence = Math.min(100, Math.max(0, Math.round(scorePercent)));
-            updatedTopicRecords[topicId] = {
-              topicId,
-              topicTitle: topic ? topic.title : topicId,
-              category,
-              confidence,
-              mastery: getMasteryLabelFromConfidence(confidence),
-              lastReviewedAt: new Date().toISOString(),
-              nextReviewAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-              intervalDays: 7,
-              reviewCount: 1,
-              quizScorePercent: scorePercent,
-            };
-          }
+          updatedTopicRecords = updateTopicMasteryRecord(updatedTopicRecords, topicId, {
+            confidence: newConfidence,
+            quizScorePercent: scorePercent,
+            reviewCountDelta: 1,
+            lastReviewedAt: new Date().toISOString(),
+          });
         }
 
         return {
           ...withActivity,
+          xp: (withActivity.xp || 0) + incrementalXp,
+          completedQuizzes: updatedCompletedQuizzes,
           quizResults,
           topicMasteryRecords: updatedTopicRecords,
         };
@@ -136,12 +122,18 @@ export function useProgress() {
     completeLesson(id: string) {
       setProgress((p) => {
         const withActivity = recordActivityState(p);
+        const isAlreadyCompleted = withActivity.lessonsCompleted.includes(id);
+        const newCompleted = isAlreadyCompleted
+          ? withActivity.lessonsCompleted
+          : [...withActivity.lessonsCompleted, id];
+
+        const xpBonus = isAlreadyCompleted ? 0 : 50;
+
         return {
           ...withActivity,
+          xp: (withActivity.xp || 0) + xpBonus,
           lastActiveLessonId: id,
-          lessonsCompleted: withActivity.lessonsCompleted.includes(id)
-            ? withActivity.lessonsCompleted
-            : [...withActivity.lessonsCompleted, id],
+          lessonsCompleted: newCompleted,
         };
       });
     },
@@ -155,9 +147,33 @@ export function useProgress() {
       setProgress((p) => {
         const withActivity = recordActivityState(p);
         const solved = withActivity.solvedBugs || [];
+        if (solved.includes(id)) {
+          return withActivity;
+        }
+
+        const newSolved = [...solved, id];
+        const newXp = (withActivity.xp || 0) + 100;
+
+        const bug = (bugsData as import("@/lib/types").Bug[]).find((b) => b.id === id);
+        let updatedRecords = withActivity.topicMasteryRecords || {};
+
+        if (bug && bug.topicId) {
+          const existingRec = updatedRecords[bug.topicId];
+          const curConfidence = existingRec?.confidence ?? 50;
+          const newConfidence = Math.min(100, curConfidence + 15);
+
+          updatedRecords = updateTopicMasteryRecord(updatedRecords, bug.topicId, {
+            confidence: newConfidence,
+            reviewCountDelta: 1,
+            lastReviewedAt: new Date().toISOString(),
+          });
+        }
+
         return {
           ...withActivity,
-          solvedBugs: solved.includes(id) ? solved : [...solved, id],
+          solvedBugs: newSolved,
+          xp: newXp,
+          topicMasteryRecords: updatedRecords,
         };
       });
     },
@@ -232,12 +248,57 @@ export function useProgress() {
       setProgress((p) => {
         const key = `${projectId}:${criteriaId}`;
         const currentCriteria = p.projectCriteria || {};
+        const nextCriteria = {
+          ...currentCriteria,
+          [key]: !currentCriteria[key],
+        };
+
+        const project = (projectsData as import("@/lib/types").Project[]).find(
+          (proj) => proj.id === projectId,
+        );
+        const allCriteria = project?.acceptanceCriteria || [];
+
+        const wasAllCompleteBefore =
+          allCriteria.length > 0 &&
+          allCriteria.every((c) => currentCriteria[`${projectId}:${c.id}`] === true);
+
+        const isAllCompleteAfter =
+          allCriteria.length > 0 &&
+          allCriteria.every((c) => nextCriteria[`${projectId}:${c.id}`] === true);
+
+        const completedProjects = p.completedProjects || [];
+        const isFirstComplete =
+          !completedProjects.includes(projectId) && !wasAllCompleteBefore && isAllCompleteAfter;
+
+        let xpBonus = 0;
+        let newCompletedProjects = completedProjects;
+        let updatedRecords = p.topicMasteryRecords || {};
+
+        if (isFirstComplete) {
+          xpBonus = 250;
+          newCompletedProjects = [...completedProjects, projectId];
+
+          if (project?.moduleId) {
+            const matchingTopics = (topicsData as import("@/lib/types").Topic[]).filter(
+              (t) => t.moduleId === project.moduleId,
+            );
+            for (const t of matchingTopics) {
+              const curConf = updatedRecords[t.id]?.confidence ?? 50;
+              const newConf = Math.min(100, curConf + 10);
+              updatedRecords = updateTopicMasteryRecord(updatedRecords, t.id, {
+                confidence: newConf,
+                lastReviewedAt: new Date().toISOString(),
+              });
+            }
+          }
+        }
+
         return {
           ...p,
-          projectCriteria: {
-            ...currentCriteria,
-            [key]: !currentCriteria[key],
-          },
+          projectCriteria: nextCriteria,
+          completedProjects: newCompletedProjects,
+          xp: (p.xp || 0) + xpBonus,
+          topicMasteryRecords: updatedRecords,
         };
       });
     },

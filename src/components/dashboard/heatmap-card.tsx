@@ -22,7 +22,7 @@ export function HeatmapCard({ heatmapData }: HeatmapCardProps) {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="overflow-x-auto pb-2">
+        <div className="overflow-x-auto scrollbar-none pb-2">
           <HeatMap data={heatmapData} className="justify-between" />
         </div>
 

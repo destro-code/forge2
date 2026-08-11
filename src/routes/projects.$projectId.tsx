@@ -206,33 +206,33 @@ function ProjectView() {
 
       {/* Workspace Tabs */}
       <Tabs defaultValue="tasks" className="w-full space-y-6">
-        <TabsList className="bg-muted/50 p-1 flex-wrap h-auto gap-1">
-          <TabsTrigger value="tasks" className="gap-1.5 text-xs py-2">
+        <TabsList className="bg-muted/50 p-1 flex w-full overflow-x-auto whitespace-nowrap scrollbar-none h-auto gap-1 justify-start border border-border/40 rounded-lg">
+          <TabsTrigger value="tasks" className="gap-1.5 text-xs py-2 shrink-0">
             <CheckSquare className="h-3.5 w-3.5" />
-            Tasks & Milestones ({completedTasksCount}/{totalTasks})
+            Tasks ({completedTasksCount}/{totalTasks})
           </TabsTrigger>
-          <TabsTrigger value="criteria" className="gap-1.5 text-xs py-2">
+          <TabsTrigger value="criteria" className="gap-1.5 text-xs py-2 shrink-0">
             <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
             Acceptance Criteria ({completedCriteriaCount}/{totalCriteria})
           </TabsTrigger>
-          <TabsTrigger value="resources" className="gap-1.5 text-xs py-2">
+          <TabsTrigger value="resources" className="gap-1.5 text-xs py-2 shrink-0">
             <BookOpen className="h-3.5 w-3.5 text-amber-400" />
             Resources ({project.resources?.length || 0})
           </TabsTrigger>
-          <TabsTrigger value="reflection" className="gap-1.5 text-xs py-2">
+          <TabsTrigger value="reflection" className="gap-1.5 text-xs py-2 shrink-0">
             <FileText className="h-3.5 w-3.5 text-purple-400" />
             Reflection
           </TabsTrigger>
-          <TabsTrigger value="portfolio" className="gap-1.5 text-xs py-2">
+          <TabsTrigger value="portfolio" className="gap-1.5 text-xs py-2 shrink-0">
             <Award className="h-3.5 w-3.5 text-cyan-400" />
             Portfolio Notes
           </TabsTrigger>
           <TabsTrigger
             value="ai-mentor"
-            className="gap-1.5 text-xs py-2 border border-primary/30 bg-primary/5 text-primary"
+            className="gap-1.5 text-xs py-2 border border-primary/30 bg-primary/5 text-primary shrink-0"
           >
             <Sparkles className="h-3.5 w-3.5 text-amber-300 fill-amber-300/30" />
-            Sprint 18 — AI Project Mentor
+            AI Project Mentor
           </TabsTrigger>
         </TabsList>
 
@@ -293,7 +293,7 @@ function ProjectView() {
                                 id={taskKey}
                                 checked={isChecked}
                                 onCheckedChange={() => toggleProjectTask(project.id, task.id)}
-                                className="mt-1"
+                                className="mt-0.5 h-5 w-5 shrink-0"
                               />
                               <div className="space-y-1 flex-1">
                                 <label
