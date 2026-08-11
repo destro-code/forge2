@@ -77,21 +77,21 @@ function ModuleHubRoute() {
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
         <GraduationCap className="h-4 w-4 text-primary shrink-0" />
         <Link to="/learn" className="hover:text-foreground hover:underline">
-          Level 0: Roadmap
+          Learning Path
         </Link>
         <span>→</span>
         <Link to="/learn/modules" className="hover:text-foreground hover:underline">
-          Level 1: Modules
+          Modules
         </Link>
         <span>→</span>
         <span className="font-semibold text-primary truncate max-w-[200px]">
-          Level 2: {moduleItem.title}
+          {moduleItem.title}
         </span>
       </div>
 
       {/* Module Overview Header */}
       <PageHeader
-        eyebrow={`Level 2 Module Hub · ${category?.name || "Frontend Domain"}`}
+        eyebrow={`Module Hub · ${category?.name || "Frontend Domain"}`}
         title={moduleItem.title}
         description={moduleItem.description}
         actions={
@@ -122,7 +122,7 @@ function ModuleHubRoute() {
             <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono pt-1">
               <span className="flex items-center gap-1.5">
                 <FolderTree className="h-4 w-4 text-primary" />
-                <strong className="text-foreground">{moduleTopics.length}</strong> Chapter Topics
+                <strong className="text-foreground">{moduleTopics.length}</strong> Topics
               </span>
               <span>·</span>
               <span className="flex items-center gap-1.5">
@@ -157,10 +157,10 @@ function ModuleHubRoute() {
           <div>
             <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2">
               <FolderTree className="h-4 w-4 text-primary" />
-              Chapter Topics ({moduleTopics.length})
+              Topics ({moduleTopics.length})
             </h2>
             <p className="text-xs text-muted-foreground">
-              Level 2 Chapter Units inside this module. Select a topic to explore its lesson hub.
+              Topics inside this module. Select a topic to explore its lessons.
             </p>
           </div>
         </div>
@@ -216,7 +216,7 @@ function ModuleHubRoute() {
                         size="sm"
                       >
                         <Link to="/learn/topics/$topicId" params={{ topicId: topic.id }}>
-                          Open Chapter Topics <ArrowRight className="h-3.5 w-3.5" />
+                          Open Topic <ArrowRight className="h-3.5 w-3.5" />
                         </Link>
                       </Button>
                     </div>

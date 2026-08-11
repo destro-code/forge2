@@ -24,8 +24,16 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/learn/lessons")({
-  validateSearch: (search: Record<string, unknown>): { query?: string, moduleId?: string, topicId?: string, pathId?: string, difficulty?: string, status?: string } => ({
-
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): {
+    query?: string;
+    moduleId?: string;
+    topicId?: string;
+    pathId?: string;
+    difficulty?: string;
+    status?: string;
+  } => ({
     query: (search.query as string) || undefined,
     moduleId: (search.moduleId as string) || undefined,
     topicId: (search.topicId as string) || undefined,

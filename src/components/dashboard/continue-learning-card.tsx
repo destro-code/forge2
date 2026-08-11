@@ -56,7 +56,7 @@ export function ContinueLearningCard({ lesson, progressPercent = 65 }: ContinueL
 
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <Button asChild size="sm" className="gap-1.5">
-            <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id}}>
+            <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }}>
               Resume Lesson
               <ArrowRight className="h-4 w-4" />
             </Link>

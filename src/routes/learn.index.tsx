@@ -15,7 +15,7 @@ import {
   BookOpen,
   Compass,
   Layers,
-  Network,
+  FolderTree,
   PlayCircle,
   CheckCircle2,
   GraduationCap,
@@ -24,16 +24,16 @@ import {
 export const Route = createFileRoute("/learn/")({
   head: () => ({
     meta: [
-      { title: "Academy Roadmap · Forge" },
+      { title: "Learning Paths · Forge" },
       {
         name: "description",
         content:
-          "The core engineering learning hub — structured hierarchy from major modules to chapter topics and focused deep-dive lessons.",
+          "The core engineering learning hub — structured hierarchy from Learning Paths to Modules, Topics, and Lessons.",
       },
-      { property: "og:title", content: "Academy Roadmap · Forge" },
+      { property: "og:title", content: "Learning Paths · Forge" },
       {
         property: "og:description",
-        content: "Master modern frontend engineering through structured academy pillars.",
+        content: "Master modern frontend engineering through structured learning paths.",
       },
     ],
   }),
@@ -59,8 +59,8 @@ function LearnIndexRoute() {
       {/* Visual Hierarchy Navigation Breadcrumb Header */}
       <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
         <GraduationCap className="h-4 w-4 text-primary" />
-        <span className="font-semibold text-foreground">Curriculum Hierarchy:</span>
-        <span className="text-primary font-medium">Roadmap</span>
+        <span className="font-semibold text-foreground">Learning Hierarchy:</span>
+        <span className="text-primary font-medium">Learning Path</span>
         <span>→</span>
         <Link to="/learn/modules" className="hover:text-foreground hover:underline">
           Modules
@@ -77,27 +77,27 @@ function LearnIndexRoute() {
 
       {/* Page Header */}
       <PageHeader
-        eyebrow="Academy Master Hub"
-        title="Engineering Learning Engine"
-        description="A structured four-tier curriculum hierarchy engineered for modern frontend mastery — from major architecture pillars down to hands-on lesson units."
+        eyebrow="Learning Hub"
+        title="Learning Paths & Curriculum"
+        description="A structured curriculum hierarchy engineered for modern frontend mastery — from structured paths to modules, topics, and hands-on lessons."
         actions={
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="default" className="shadow-glow">
               <Link to="/learn/modules" className="gap-1.5">
                 <Layers className="h-4 w-4" />
-                Browse Modules (Pillars)
+                Browse Modules
               </Link>
             </Button>
             <Button asChild variant="outline">
               <Link to="/learn/topics" search={{}} className="gap-1.5">
-                <Network className="h-4 w-4 text-primary" />
-                Knowledge Graph (Topics)
+                <FolderTree className="h-4 w-4 text-primary" />
+                Topics
               </Link>
             </Button>
             <Button asChild variant="outline">
               <Link to="/learn/lessons" search={{}} className="gap-1.5">
                 <BookOpen className="h-4 w-4 text-primary" />
-                Lesson Catalog
+                Lessons
               </Link>
             </Button>
           </div>
@@ -172,16 +172,16 @@ function LearnIndexRoute() {
         </div>
       </section>
 
-      {/* Curriculum Pillars Overview (Level 1 Preview) */}
+      {/* Learning Modules Overview */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2">
               <Layers className="h-4 w-4 text-primary" />
-              Curriculum Pillars ({modules.length} Core Modules)
+              Modules ({modules.length} Core Modules)
             </h2>
             <p className="text-xs text-muted-foreground">
-              Core engineering domains. Click any pillar to explore its chapter topics.
+              Core engineering domains. Click any module to explore its topics.
             </p>
           </div>
           <Button asChild variant="outline" size="sm" className="gap-1.5 text-xs">

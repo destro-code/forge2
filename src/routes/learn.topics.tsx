@@ -23,21 +23,20 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/learn/topics")({
-  validateSearch: (search: Record<string, unknown>): { query?: string, moduleId?: string } => ({
-
+  validateSearch: (search: Record<string, unknown>): { query?: string; moduleId?: string } => ({
     query: (search.query as string) || undefined,
     moduleId: (search.moduleId as string) || undefined,
   }),
   head: () => ({
     meta: [
-      { title: "Chapter Topics (Knowledge Graph) · Forge" },
+      { title: "Topics · Forge" },
       {
         name: "description",
         content:
-          "Chapter Topics — concept chapters inside modules, prerequisite graphs, and interview frequencies.",
+          "Topics — key concept topics inside learning modules with prerequisite links and interview weightings.",
       },
-      { property: "og:title", content: "Chapter Topics · Forge" },
-      { property: "og:description", content: "The full topic knowledge graph." },
+      { property: "og:title", content: "Topics · Forge" },
+      { property: "og:description", content: "Curriculum topics index." },
     ],
   }),
   component: TopicsRoute,
@@ -94,7 +93,7 @@ function TopicsRoute() {
       <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
         <GraduationCap className="h-4 w-4 text-primary" />
         <Link to="/learn" className="hover:text-foreground hover:underline">
-          Roadmap
+          Learning Path
         </Link>
         <span>→</span>
         <Link to="/learn/modules" className="hover:text-foreground hover:underline">
@@ -109,15 +108,15 @@ function TopicsRoute() {
       </div>
 
       <PageHeader
-        eyebrow="Knowledge Graph"
-        title="Chapter Topics"
-        description="Concepts organized into distinct chapter units within curriculum modules — complete with prerequisite graph nodes and interview frequency weights."
+        eyebrow="Curriculum Topics"
+        title="Topics"
+        description="Core concepts organized into focused topics within learning modules — complete with prerequisites and interview frequency weights."
         actions={
           <div className="flex gap-2">
             <Button asChild variant="outline">
               <Link to="/learn/modules" className="gap-1.5">
                 <Layers className="h-4 w-4 text-primary" />
-                Curriculum Modules
+                Modules
               </Link>
             </Button>
             <Button asChild variant="outline">

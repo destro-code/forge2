@@ -82,7 +82,11 @@ export function CommandPalette() {
           </CommandItem>
           <CommandItem onSelect={() => go("/interview")}>
             <MessagesSquare className="mr-2 h-4 w-4" />
-            Interview Room
+            Mock Interviews
+          </CommandItem>
+          <CommandItem onSelect={() => go("/mastery")}>
+            <Sparkles className="mr-2 h-4 w-4" />
+            Skill Mastery
           </CommandItem>
           <CommandItem onSelect={() => go("/mentor")}>
             <Sparkles className="mr-2 h-4 w-4" />

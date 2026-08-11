@@ -59,7 +59,7 @@ Your responsibilities:
   "improvements": string[],
   "refactoredSolution": string (clean TypeScript/React code block or "N/A"),
   "followUpQuestions": string[]
-}`
+}`,
 };
 
 async function handleMentorApi(request: Request): Promise<Response> {

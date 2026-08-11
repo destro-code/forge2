@@ -53,43 +53,49 @@ type Item = {
   tier: Tier;
 };
 
+const startItems: Item[] = [{ title: "Dashboard", to: "/", icon: LayoutDashboard, tier: "core" }];
+
 const learnItems: Item[] = [
-  { title: "Dashboard", to: "/", icon: LayoutDashboard, tier: "core" },
-  { title: "Academy Roadmap", to: "/learn", icon: GraduationCap, tier: "core" },
-  { title: "Lesson Catalog", to: "/learn/lessons", icon: BookOpen, tier: "core" },
-  { title: "Curriculum Modules", to: "/learn/modules", icon: Layers, tier: "core" },
-  { title: "Chapter Topics", to: "/learn/topics", icon: FolderTree, tier: "secondary" },
+  { title: "Learning Paths", to: "/learn", icon: GraduationCap, tier: "core" },
+  { title: "Modules", to: "/learn/modules", icon: Layers, tier: "core" },
+  { title: "Topics", to: "/learn/topics", icon: FolderTree, tier: "secondary" },
+  { title: "Lessons", to: "/learn/lessons", icon: BookOpen, tier: "core" },
 ];
 
 const practiceItems: Item[] = [
   { title: "Practice Hub", to: "/practice", icon: ListChecks, tier: "core" },
-  { title: "Playground", to: "/playground", icon: Terminal, tier: "core" },
-  { title: "Debug Lab", to: "/debug-lab", icon: Bug, tier: "core" },
-  { title: "Projects", to: "/projects", icon: FolderKanban, tier: "core" },
-  { title: "AI Mentor", to: "/mentor", icon: Sparkles, tier: "core" },
-  { title: "Daily Challenges", to: "/challenges", icon: Zap, tier: "secondary" },
   { title: "Quizzes", to: "/quizzes", icon: ListChecks, tier: "secondary" },
   { title: "Flashcards", to: "/flashcards", icon: Blocks, tier: "secondary" },
+  { title: "Daily Challenges", to: "/challenges", icon: Zap, tier: "secondary" },
+  { title: "Debug Lab", to: "/debug-lab", icon: Bug, tier: "core" },
+];
+
+const buildItems: Item[] = [
+  { title: "Projects", to: "/projects", icon: FolderKanban, tier: "core" },
+  { title: "Code Playground", to: "/playground", icon: Terminal, tier: "core" },
   { title: "Whiteboard Mode", to: "/whiteboard", icon: PenTool, tier: "secondary" },
 ];
 
-const growItems: Item[] = [
-  { title: "Mastery Engine", to: "/mastery", icon: Brain, tier: "secondary" },
-  { title: "Progress Tracker", to: "/progress", icon: LineChart, tier: "secondary" },
-  { title: "Interview Room", to: "/interview", icon: MessagesSquare, tier: "secondary" },
-  { title: "Certificates", to: "/certificates", icon: Award, tier: "secondary" },
-  { title: "Achievements", to: "/achievements", icon: Trophy, tier: "secondary" },
-  { title: "Statistics", to: "/statistics", icon: BarChart3, tier: "secondary" },
-  { title: "Learning Journal", to: "/journal", icon: BookOpenText, tier: "secondary" },
-  { title: "Schedule", to: "/calendar", icon: Calendar, tier: "secondary" },
+const testItems: Item[] = [
+  { title: "Mock Interviews", to: "/interview", icon: MessagesSquare, tier: "core" },
 ];
 
+const masterItems: Item[] = [
+  { title: "Skill Mastery", to: "/mastery", icon: Brain, tier: "core" },
+  { title: "Progress Tracker", to: "/progress", icon: LineChart, tier: "secondary" },
+  { title: "Certificates", to: "/certificates", icon: Award, tier: "secondary" },
+  { title: "Achievements", to: "/achievements", icon: Trophy, tier: "secondary" },
+];
+
+const supportItems: Item[] = [{ title: "AI Mentor", to: "/mentor", icon: Sparkles, tier: "core" }];
+
 const utilityItems: Item[] = [
+  { title: "Journal", to: "/journal", icon: BookOpenText, tier: "utility" },
+  { title: "Schedule", to: "/calendar", icon: Calendar, tier: "utility" },
   { title: "Bookmarks", to: "/bookmarks", icon: Bookmark, tier: "utility" },
   { title: "Resources", to: "/resources", icon: Library, tier: "utility" },
   { title: "Docs", to: "/docs", icon: FileText, tier: "utility" },
   { title: "Settings", to: "/settings", icon: Settings, tier: "utility" },
-  { title: "About", to: "/about", icon: Info, tier: "utility" },
 ];
 
 export function AppSidebar() {
@@ -117,7 +123,9 @@ export function AppSidebar() {
         ? "h-4 w-4 shrink-0 text-primary"
         : "h-4 w-4 shrink-0 text-primary/80 group-hover/link:text-primary group-hover/link:scale-105 transition-transform";
       buttonClass = active
-        ? "bg-primary/10 text-primary font-semibold border-l-2 border-primary rounded-r-md rounded-l-none pl-2.5"
+        ? collapsed
+          ? "bg-primary/15 text-primary font-semibold rounded-md"
+          : "bg-primary/10 text-primary font-semibold border-l-2 border-primary rounded-r-md rounded-l-none pl-2.5"
         : "";
     } else if (item.tier === "secondary") {
       textStyle = active
@@ -162,9 +170,7 @@ export function AppSidebar() {
         </SidebarGroupLabel>
       )}
       <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map(renderItem)}
-        </SidebarMenu>
+        <SidebarMenu>{items.map(renderItem)}</SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
   );
@@ -194,10 +200,14 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="scrollbar-thin space-y-1">
+        {renderGroup("Start", startItems)}
         {renderGroup("Learn", learnItems)}
-        {renderGroup("Practice & Lab", practiceItems)}
-        {renderGroup("Insights & Growth", growItems)}
-        {renderGroup("Utilities", utilityItems)}
+        {renderGroup("Practice", practiceItems)}
+        {renderGroup("Build", buildItems)}
+        {renderGroup("Test", testItems)}
+        {renderGroup("Master", masterItems)}
+        {renderGroup("Global Support", supportItems)}
+        {renderGroup("Utility", utilityItems)}
       </SidebarContent>
 
       <SidebarFooter className="px-3 pb-3">
@@ -226,4 +236,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-

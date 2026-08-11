@@ -423,12 +423,7 @@ export interface Resource {
 }
 
 export type MentorMode =
-  | "chat"
-  | "lesson-help"
-  | "code-review"
-  | "explanations"
-  | "debug-help"
-  | "interview-eval";
+  "chat" | "lesson-help" | "code-review" | "explanations" | "debug-help" | "interview-eval";
 
 export interface MentorMessage {
   id: string;

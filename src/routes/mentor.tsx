@@ -326,7 +326,7 @@ export function Mentor() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <PageHeader
-          eyebrow="Sprint 15 — AI Mentor"
+          eyebrow="AI Mentor"
           title="Forge AI Mentor & Coaching Hub"
           description="Your Staff Engineer mentor equipped with Specialized AI Support Modes: Chat, Lesson Help, Code Review, Explanations, and Debug Assistance."
         />

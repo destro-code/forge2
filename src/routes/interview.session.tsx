@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useInterviewQuestions } from "@/lib/hooks/use-content";
+import { useInterviewQuestions, useProject } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { mentorProvider } from "@/lib/providers/mentor-provider";
 import type { InterviewQuestion } from "@/lib/types";
@@ -51,6 +51,7 @@ export const Route = createFileRoute("/interview/session")({
       mode: (search.mode as "single" | "mock") || "single",
       preset: (search.preset as string) || "mixed",
       duration: (search.duration as string) || "30",
+      projectId: (search.projectId as string) || undefined,
     };
   },
   head: () => ({
@@ -65,6 +66,7 @@ export const Route = createFileRoute("/interview/session")({
 function SessionComponent() {
   const navigate = useNavigate();
   const searchParams = Route.useSearch();
+  const project = useProject(searchParams.projectId);
   const allQuestions = useInterviewQuestions();
   const { saveInterviewResult } = useProgress();
 
@@ -111,7 +113,7 @@ function SessionComponent() {
   const [reflectionNotes, setReflectionNotes] = useState<Record<string, string>>({});
   const [savedStatus, setSavedStatus] = useState<Record<string, boolean>>({});
 
-  // AI Interviewer (Sprint 16) State
+  // AI Interviewer State
   const [aiFeedback, setAiFeedback] = useState<Record<string, string>>({});
   const [aiScores, setAiScores] = useState<Record<string, number>>({});
   const [isAiEvaluating, setIsAiEvaluating] = useState<Record<string, boolean>>({});
@@ -130,8 +132,6 @@ function SessionComponent() {
     }
   };
 
-
-  
   // Request AI Staff Interviewer Evaluation
   const handleRequestAiEvaluation = async (q: InterviewQuestion) => {
     setIsAiEvaluating((prev) => ({ ...prev, [q.id]: true }));
@@ -152,8 +152,11 @@ Expected Evaluation Rubric Criteria:
 ${(q.rubric || []).map((r) => `- ${r}`).join("\n")}
 Please provide a complete AI Staff Interviewer evaluation in JSON format containing criteria ratings, STAR methodology scoring, identified strengths, and actionable improvement points.`;
 
-      const stream = mentorProvider.stream([{ role: "user", content: prompt, id: String(Date.now()), createdAt: Date.now() }], { mode: "interview-eval" });
-      
+      const stream = mentorProvider.stream(
+        [{ role: "user", content: prompt, id: String(Date.now()), createdAt: Date.now() }],
+        { mode: "interview-eval" },
+      );
+
       let streamText = "";
       for await (const chunk of stream) {
         streamText += chunk;
@@ -181,7 +184,7 @@ Please provide a complete AI Staff Interviewer evaluation in JSON format contain
       setIsAiEvaluating((prev) => ({ ...prev, [q.id]: false }));
     }
   };
-// Request AI Evaluation for Follow-Up Question Probe
+  // Request AI Evaluation for Follow-Up Question Probe
   const handleRequestFollowUpEval = async (q: InterviewQuestion, followUpQ: string) => {
     const ansKey = `${q.id}-${followUpQ}`;
     const userFollowUpAns = followUpAnswers[ansKey] || "";
@@ -322,7 +325,7 @@ Please provide a complete AI Staff Interviewer evaluation in JSON format contain
     return (
       <div className="space-y-6 max-w-3xl mx-auto py-6">
         <Button variant="ghost" onClick={() => navigate({ to: "/interview" })} className="-ml-2">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Return to Interview Room
+          <ArrowLeft className="mr-2 h-4 w-4" /> Return to Mock Interviews
         </Button>
 
         <Card className="border-primary/30 bg-card p-6 text-center space-y-6">
@@ -390,6 +393,21 @@ Please provide a complete AI Staff Interviewer evaluation in JSON format contain
 
   return (
     <div className="space-y-6">
+      {/* Project Context Banner */}
+      {project && (
+        <div className="p-3.5 rounded-xl border border-amber-500/40 bg-amber-500/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2">
+            <Trophy className="h-4 w-4 text-amber-400 shrink-0" />
+            <span className="font-semibold text-foreground">
+              Evaluating Mock Interview in context of project: <strong className="text-amber-300">{project.title}</strong>
+            </span>
+          </div>
+          <Badge variant="outline" className="border-amber-500/50 text-amber-300 text-[10px] uppercase font-mono">
+            Project Interview Loop
+          </Badge>
+        </div>
+      )}
+
       {/* Top Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 pb-4">
         <Button variant="ghost" onClick={() => navigate({ to: "/interview" })} className="-ml-2">
@@ -670,7 +688,6 @@ Please provide a complete AI Staff Interviewer evaluation in JSON format contain
                       </div>
 
                       <div className="text-xs text-foreground space-y-2 leading-relaxed max-h-[400px] overflow-y-auto pr-1">
-                        
                         {(() => {
                           const raw = aiFeedback[currentQuestion.id];
                           if (!raw) {
@@ -688,63 +705,99 @@ Please provide a complete AI Staff Interviewer evaluation in JSON format contain
                             return (
                               <div className="space-y-4 text-sm mt-4">
                                 <div className="p-3 bg-secondary/20 rounded-md border border-border/40">
-                                  <h6 className="font-semibold text-foreground mb-1">Executive Assessment</h6>
-                                  <p className="text-muted-foreground">{parsed.executiveAssessment}</p>
+                                  <h6 className="font-semibold text-foreground mb-1">
+                                    Executive Assessment
+                                  </h6>
+                                  <p className="text-muted-foreground">
+                                    {parsed.executiveAssessment}
+                                  </p>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <h6 className="font-semibold text-foreground mb-2 flex items-center gap-2"><Award className="w-4 h-4"/> Criteria Ratings</h6>
+                                    <h6 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                                      <Award className="w-4 h-4" /> Criteria Ratings
+                                    </h6>
                                     <ul className="space-y-1">
-                                      {Object.entries(parsed.criteriaRatings || {}).map(([key, val]) => (
-                                        <li key={key} className="flex justify-between">
-                                          <span className="capitalize text-muted-foreground">{key}</span>
-                                          <span className="font-mono text-primary">{val as number}/100</span>
-                                        </li>
-                                      ))}
+                                      {Object.entries(parsed.criteriaRatings || {}).map(
+                                        ([key, val]) => (
+                                          <li key={key} className="flex justify-between">
+                                            <span className="capitalize text-muted-foreground">
+                                              {key}
+                                            </span>
+                                            <span className="font-mono text-primary">
+                                              {val as number}/100
+                                            </span>
+                                          </li>
+                                        ),
+                                      )}
                                     </ul>
                                   </div>
                                   <div>
-                                    <h6 className="font-semibold text-foreground mb-2 flex items-center gap-2"><Trophy className="w-4 h-4"/> STAR Scoring</h6>
+                                    <h6 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                                      <Trophy className="w-4 h-4" /> STAR Scoring
+                                    </h6>
                                     <ul className="space-y-1">
-                                      {Object.entries(parsed.starScoring || {}).map(([key, val]) => (
-                                        <li key={key} className="flex justify-between">
-                                          <span className="capitalize text-muted-foreground">{key}</span>
-                                          <span className="font-mono text-primary">{val as number}/100</span>
-                                        </li>
-                                      ))}
+                                      {Object.entries(parsed.starScoring || {}).map(
+                                        ([key, val]) => (
+                                          <li key={key} className="flex justify-between">
+                                            <span className="capitalize text-muted-foreground">
+                                              {key}
+                                            </span>
+                                            <span className="font-mono text-primary">
+                                              {val as number}/100
+                                            </span>
+                                          </li>
+                                        ),
+                                      )}
                                     </ul>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                   <div className="p-3 bg-green-500/10 rounded-md border border-green-500/20">
-                                    <h6 className="font-semibold text-green-600 dark:text-green-400 mb-2">Strengths</h6>
+                                    <h6 className="font-semibold text-green-600 dark:text-green-400 mb-2">
+                                      Strengths
+                                    </h6>
                                     <ul className="list-disc pl-4 space-y-1 text-green-700 dark:text-green-300">
-                                      {(parsed.strengths || []).map((s: string, i: number) => <li key={i}>{s}</li>)}
+                                      {(parsed.strengths || []).map((s: string, i: number) => (
+                                        <li key={i}>{s}</li>
+                                      ))}
                                     </ul>
                                   </div>
                                   <div className="p-3 bg-red-500/10 rounded-md border border-red-500/20">
-                                    <h6 className="font-semibold text-red-600 dark:text-red-400 mb-2">Areas for Improvement</h6>
+                                    <h6 className="font-semibold text-red-600 dark:text-red-400 mb-2">
+                                      Areas for Improvement
+                                    </h6>
                                     <ul className="list-disc pl-4 space-y-1 text-red-700 dark:text-red-300">
-                                      {(parsed.improvements || []).map((s: string, i: number) => <li key={i}>{s}</li>)}
+                                      {(parsed.improvements || []).map((s: string, i: number) => (
+                                        <li key={i}>{s}</li>
+                                      ))}
                                     </ul>
                                   </div>
                                 </div>
-                                {parsed.refactoredSolution && parsed.refactoredSolution !== "N/A" && (
-                                  <div>
-                                    <h6 className="font-semibold text-foreground mb-2">Refactored Solution</h6>
-                                    <div className="markdown-body text-xs">
-                                      <Markdown>{`\`\`tsx\n${parsed.refactoredSolution}\n\`\`\``}</Markdown>
+                                {parsed.refactoredSolution &&
+                                  parsed.refactoredSolution !== "N/A" && (
+                                    <div>
+                                      <h6 className="font-semibold text-foreground mb-2">
+                                        Refactored Solution
+                                      </h6>
+                                      <div className="markdown-body text-xs">
+                                        <Markdown>{`\`\`tsx\n${parsed.refactoredSolution}\n\`\`\``}</Markdown>
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
-                                {parsed.followUpQuestions && parsed.followUpQuestions.length > 0 && (
-                                  <div className="p-3 bg-cyan-500/10 rounded-md border border-cyan-500/20">
-                                    <h6 className="font-semibold text-cyan-600 dark:text-cyan-400 mb-2">Targeted Follow-Up Questions</h6>
-                                    <ul className="list-disc pl-4 space-y-1 text-cyan-700 dark:text-cyan-300">
-                                      {parsed.followUpQuestions.map((s: string, i: number) => <li key={i}>{s}</li>)}
-                                    </ul>
-                                  </div>
-                                )}
+                                  )}
+                                {parsed.followUpQuestions &&
+                                  parsed.followUpQuestions.length > 0 && (
+                                    <div className="p-3 bg-cyan-500/10 rounded-md border border-cyan-500/20">
+                                      <h6 className="font-semibold text-cyan-600 dark:text-cyan-400 mb-2">
+                                        Targeted Follow-Up Questions
+                                      </h6>
+                                      <ul className="list-disc pl-4 space-y-1 text-cyan-700 dark:text-cyan-300">
+                                        {parsed.followUpQuestions.map((s: string, i: number) => (
+                                          <li key={i}>{s}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
                               </div>
                             );
                           }
@@ -776,9 +829,7 @@ Please provide a complete AI Staff Interviewer evaluation in JSON format contain
 
                             return (
                               <div key={i} className="space-y-2">
-                                <p className="text-sm font-medium text-foreground">
-                                  {followUpQ}
-                                </p>
+                                <p className="text-sm font-medium text-foreground">{followUpQ}</p>
                                 <div className="space-y-2">
                                   <Textarea
                                     placeholder="Your answer to this follow-up..."

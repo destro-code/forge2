@@ -76,7 +76,12 @@ export function ContinueProjectCard({ project }: ContinueProjectCardProps) {
             <Clock className="h-3.5 w-3.5 text-primary" />
             <span>~{project.estimatedHours}h total</span>
           </div>
-          <Button asChild size="sm" variant="outline" className="gap-1 h-8 text-xs border-border/60">
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="gap-1 h-8 text-xs border-border/60"
+          >
             <Link to="/projects">
               Resume Project
               <ArrowRight className="h-3.5 w-3.5" />

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Bell, Command, Moon, Search, Sun, User } from "lucide-react";
 import { useCommandPalette } from "@/lib/hooks/use-command-palette";
 import { useTheme } from "@/lib/hooks/use-theme";
+import { contentProvider } from "@/lib/providers/content-provider";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 
 const LABELS: Record<string, string> = {
   "": "Dashboard",
-  learn: "Learn",
+  learn: "Learning Paths",
   modules: "Modules",
   topics: "Topics",
   lessons: "Lessons",
@@ -25,16 +26,17 @@ const LABELS: Record<string, string> = {
   practice: "Practice",
   projects: "Projects",
   "debug-lab": "Debug Lab",
-  interview: "Interview Room",
+  interview: "Mock Interviews",
   session: "Session",
   mentor: "AI Mentor",
-  playground: "Playground",
+  playground: "Code Playground",
   quizzes: "Quizzes",
   flashcards: "Flashcards",
   bookmarks: "Bookmarks",
   resources: "Resources",
   docs: "Docs",
-  progress: "Progress",
+  progress: "Progress Tracker",
+  mastery: "Skill Mastery",
   achievements: "Achievements",
   statistics: "Statistics",
   challenges: "Daily Challenges",
@@ -49,7 +51,33 @@ function useCrumbs() {
   let acc = "";
   parts.forEach((p) => {
     acc += "/" + p;
-    crumbs.push({ label: LABELS[p] ?? p, to: acc as "/" });
+    let label = LABELS[p];
+    if (!label) {
+      const lesson = contentProvider.getLesson(p);
+      if (lesson) label = lesson.title;
+      else {
+        const topic = contentProvider.getTopic(p);
+        if (topic) label = topic.title;
+        else {
+          const project = contentProvider.getProject(p);
+          if (project) label = project.title;
+          else {
+            const moduleItem = contentProvider.getModule(p);
+            if (moduleItem) label = moduleItem.title;
+            else {
+              const quiz = contentProvider.getQuiz(p);
+              if (quiz) label = quiz.title;
+              else {
+                const bug = contentProvider.getBug(p);
+                if (bug) label = bug.title;
+                else label = p;
+              }
+            }
+          }
+        }
+      }
+    }
+    crumbs.push({ label, to: acc as "/" });
   });
   return crumbs;
 }

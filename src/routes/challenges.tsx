@@ -80,7 +80,11 @@ function Challenges() {
 
             <div className="mt-4 flex gap-2">
               <Button asChild variant={isTodayCompleted ? "outline" : "default"}>
-                <Link to={(`/${todayChallenge.linkType === "quiz" ? "quizzes" : todayChallenge.linkType}`) as any}>
+                <Link
+                  to={
+                    `/${todayChallenge.linkType === "quiz" ? "quizzes" : todayChallenge.linkType}` as any
+                  }
+                >
                   <Zap className="mr-2 h-4 w-4" />
                   {isTodayCompleted ? "Review challenge" : "Start challenge"}
                 </Link>
@@ -101,7 +105,7 @@ function Challenges() {
           {historyChallenges.map((c) => {
             const isCompleted = challengesCompleted.includes(c.id);
             return (
-              <Link key={c.id} to={(`/${c.linkType === "quiz" ? "quizzes" : c.linkType}`) as any}>
+              <Link key={c.id} to={`/${c.linkType === "quiz" ? "quizzes" : c.linkType}` as any}>
                 <Card
                   className={`border-border/60 transition hover:border-primary/40 ${isCompleted ? "opacity-70" : ""}`}
                 >

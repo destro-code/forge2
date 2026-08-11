@@ -82,8 +82,8 @@ function Practice() {
         <Tile
           to="/interview"
           icon={<MessagesSquare className="h-5 w-5" />}
-          title="Interview Room"
-          desc="Timed, categorized, review-first practice."
+          title="Mock Interviews"
+          desc="Formal timed interview evaluation."
         />
         <Tile
           to="/challenges"

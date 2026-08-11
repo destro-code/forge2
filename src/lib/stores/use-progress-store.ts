@@ -298,7 +298,9 @@ export const useProgressStore = create<ProgressStore>()(
           return {
             ...state,
             bestStreakDays:
-              typeof state.bestStreakDays === "number" ? state.bestStreakDays : (state.streakDays ?? 0),
+              typeof state.bestStreakDays === "number"
+                ? state.bestStreakDays
+                : (state.streakDays ?? 0),
             flashcardReviews:
               (state.flashcardReviews as Record<string, FlashcardReviewState>) ?? {},
             challengesCompleted: (state.challengesCompleted as string[]) ?? [],

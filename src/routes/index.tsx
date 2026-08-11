@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
@@ -14,7 +15,7 @@ import {
   useTopics,
   useLearningPaths,
 } from "@/lib/hooks/use-content";
-import { Flame, Clock, BookOpen, Trophy, Sparkles, ChevronRight, ArrowRight } from "lucide-react";
+import { Flame, Clock, BookOpen, Trophy, Sparkles, ChevronRight, ArrowRight, X, Compass } from "lucide-react";
 
 import { QuickResumeBar } from "@/components/dashboard/quick-resume-bar";
 import { ContinueLearningCard } from "@/components/dashboard/continue-learning-card";
@@ -54,6 +55,15 @@ function Dashboard() {
   const paths = useLearningPaths();
   const achievements = useAchievements();
 
+  const [showOrientation, setShowOrientation] = useState(false);
+
+  useEffect(() => {
+    const isDismissed = localStorage.getItem("forge_orientation_dismissed");
+    if (!isDismissed && progress.lessonsCompleted.length < 5) {
+      setShowOrientation(true);
+    }
+  }, [progress.lessonsCompleted.length]);
+
   const continueLesson =
     lessons.find((l) => l.id === progress.lastActiveLessonId) ??
     lessons.find((l) => !progress.lessonsCompleted.includes(l.id)) ??
@@ -62,8 +72,7 @@ function Dashboard() {
   const latestBug = bugs[0];
 
   const continueLessonModuleId =
-    continueLesson?.moduleId ||
-    topics.find((t) => t.id === continueLesson?.topicId)?.moduleId;
+    continueLesson?.moduleId || topics.find((t) => t.id === continueLesson?.topicId)?.moduleId;
 
   const continueProgressPercent = continueLessonModuleId
     ? getModuleProgress(continueLessonModuleId, progress.lessonsCompleted)
@@ -109,10 +118,56 @@ function Dashboard() {
         }
       />
 
+      {/* First-Time Learner Orientation Banner */}
+      {showOrientation && (
+        <Card className="border-primary/40 bg-gradient-to-r from-primary/10 via-card to-card p-5 relative overflow-hidden shadow-xs">
+          <button
+            onClick={() => {
+              localStorage.setItem("forge_orientation_dismissed", "true");
+              setShowOrientation(false);
+            }}
+            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground p-1 rounded-md transition"
+            aria-label="Dismiss orientation"
+          >
+            <X className="h-4 w-4" />
+          </button>
+
+          <div className="flex items-start gap-3.5 pr-8">
+            <div className="h-10 w-10 rounded-xl bg-primary/20 grid place-items-center shrink-0 text-primary">
+              <Compass className="h-5 w-5" />
+            </div>
+            <div className="space-y-2.5">
+              <div>
+                <h3 className="text-sm font-bold text-foreground">
+                  Welcome to Forge! The Canonical Learner Lifecycle
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Forge guides you through a 6-stage frontend mastery lifecycle. Progress fluidly across any stage at your own pace:
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
+                {[
+                  { stage: "START", desc: "Select Path", color: "border-blue-500/30 text-blue-400" },
+                  { stage: "LEARN", desc: "Read Lessons", color: "border-indigo-500/30 text-indigo-400" },
+                  { stage: "PRACTICE", desc: "Quizzes & Labs", color: "border-amber-500/30 text-amber-400" },
+                  { stage: "BUILD", desc: "Guided Projects", color: "border-emerald-500/30 text-emerald-400" },
+                  { stage: "TEST", desc: "Mock Interviews", color: "border-purple-500/30 text-purple-400" },
+                  { stage: "MASTER", desc: "Track Mastery", color: "border-rose-500/30 text-rose-400" },
+                ].map((s) => (
+                  <div key={s.stage} className={`p-2 rounded-lg border bg-background/60 text-center ${s.color}`}>
+                    <div className="font-extrabold text-[11px] font-mono">{s.stage}</div>
+                    <div className="text-[10px] text-muted-foreground">{s.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* Quick Resume Action Bar */}
-      <QuickResumeBar
-        lesson={continueLesson} progressPercent={continueProgressPercent}
-      />
+      <QuickResumeBar lesson={continueLesson} progressPercent={continueProgressPercent} />
 
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -191,7 +246,7 @@ function Dashboard() {
       {/* Module Quick Access Grid */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold tracking-tight">Curriculum Modules</h2>
+          <h2 className="text-lg font-semibold tracking-tight">Modules</h2>
           <Link
             suppressHydrationWarning
             to="/learn/modules"

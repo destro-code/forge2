@@ -914,7 +914,7 @@
       },
       {
         "type": "paragraph",
-        "text": "The Network panel shows every request a page makes, its status, timing, and payload. Recall the request/response loop from Level 0's first module — every time a page fetches HTML, CSS, JS, an image, or data from an API, that's a request. The Network panel is where all of that becomes visible and inspectable, instead of invisible and assumed, which is a surprisingly common state for beginners to leave it in — quietly trusting that things are fine."
+        "text": "The Network panel shows every request a page makes, its status, timing, and payload. Recall the request/response loop from the foundational Learning Path module — every time a page fetches HTML, CSS, JS, an image, or data from an API, that's a request. The Network panel is where all of that becomes visible and inspectable, instead of invisible and assumed, which is a surprisingly common state for beginners to leave it in — quietly trusting that things are fine."
       },
       {
         "type": "walkthrough",

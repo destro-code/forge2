@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { useLessons, useTopics, useProjects } from "@/lib/hooks/use-content";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import {
   XCircle,
   RotateCcw,
   ArrowLeft,
+  ArrowRight,
   Clock,
   Sparkles,
   Check,
@@ -18,6 +20,8 @@ import {
   Trophy,
   BarChart3,
   Lightbulb,
+  BookOpen,
+  Layers,
 } from "lucide-react";
 
 import type { Quiz, QuizQuestion } from "@/lib/types";
@@ -121,6 +125,14 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
   const scorePercent = Math.round((correctCount / totalCount) * 100);
 
   const { saveQuizResult } = useProgress();
+  const lessons = useLessons();
+  const topics = useTopics();
+  const projects = useProjects();
+
+  const matchingLesson = lessons.find((l) => l.topicId === quiz.topicId);
+  const topic = topics.find((t) => t.id === quiz.topicId);
+  const matchingProject = projects.find((p) => p.moduleId === topic?.moduleId) || projects[0];
+
   const hasSavedRef = useRef(false);
 
   useEffect(() => {
@@ -191,6 +203,29 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
 
           {/* Action buttons */}
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 shrink-0">
+            {scorePercent < 80 ? (
+              matchingLesson ? (
+                <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+                  <Link to="/lesson/$lessonId" params={{ lessonId: matchingLesson.id }}>
+                    <BookOpen className="h-4 w-4" /> Review Lesson Material
+                  </Link>
+                </Button>
+              ) : quiz.topicId ? (
+                <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+                  <Link to="/learn/topics/$topicId" params={{ topicId: quiz.topicId }}>
+                    <BookOpen className="h-4 w-4" /> Review Topic Material
+                  </Link>
+                </Button>
+              ) : null
+            ) : matchingProject ? (
+              <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-emerald-600 hover:bg-emerald-700 text-white">
+                <Link to="/projects/$projectId" params={{ projectId: matchingProject.id }}>
+                  <Layers className="h-4 w-4" /> Apply this Knowledge in a Project
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            ) : null}
+
             {correctCount < totalCount && (
               <Button
                 variant="outline"
@@ -202,7 +237,7 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
               </Button>
             )}
 
-            <Button onClick={() => onRetake(false)} className="gap-2 text-xs shadow-glow">
+            <Button onClick={() => onRetake(false)} variant="outline" className="gap-2 text-xs">
               <RotateCcw className="h-4 w-4" />
               Restart Full Quiz
             </Button>
@@ -325,12 +360,35 @@ export function QuizResults({ quiz, userAnswers, timeSpentSeconds, onRetake }: Q
         ))}
       </div>
 
-      <div className="pt-4 flex items-center justify-between">
+      <div className="pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border/40">
         <Button asChild variant="outline">
           <Link to="/quizzes">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Quizzes List
           </Link>
         </Button>
+
+        {scorePercent < 80 ? (
+          matchingLesson ? (
+            <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+              <Link to="/lesson/$lessonId" params={{ lessonId: matchingLesson.id }}>
+                <BookOpen className="h-4 w-4" /> Review Lesson Material
+              </Link>
+            </Button>
+          ) : quiz.topicId ? (
+            <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+              <Link to="/learn/topics/$topicId" params={{ topicId: quiz.topicId }}>
+                <BookOpen className="h-4 w-4" /> Review Topic Material
+              </Link>
+            </Button>
+          ) : null
+        ) : matchingProject ? (
+          <Button asChild size="sm" className="gap-2 text-xs shadow-glow bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Link to="/projects/$projectId" params={{ projectId: matchingProject.id }}>
+              <Layers className="h-4 w-4" /> Apply this Knowledge in a Project
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </Button>
+        ) : null}
       </div>
     </div>
   );

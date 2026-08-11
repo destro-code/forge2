@@ -204,7 +204,7 @@ export function AnalyticsPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <PageHeader
-          eyebrow="Sprint 14 — Analytics Engine"
+          eyebrow="Statistics & Analytics"
           title="Growth & Mastery Analytics"
           description="Comprehensive charts tracking study time, accuracy, quiz scores, interview readiness, topic progress, and streak consistency."
         />

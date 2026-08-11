@@ -370,7 +370,8 @@ function AssessmentRoute() {
 
         <div className="flex items-center gap-3">
           <QuizTimer
-            durationMinutes={30} onTogglePause={() => {}}
+            durationMinutes={30}
+            onTogglePause={() => {}}
             isPaused={false}
             onTimeExpired={handleSubmitAssessment}
             onTick={(seconds) => setTimeSpentSeconds(seconds)}
@@ -381,7 +382,10 @@ function AssessmentRoute() {
             userAnswers={userAnswers}
             flaggedQuestionIds={flaggedIds}
             onSelectQuestion={(idx) => setCurrentIndex(idx)}
-            onSubmitQuiz={handleSubmitAssessment} isReviewMode={false} onToggleReviewMode={() => {}} onToggleFlag={(qId: string) => handleToggleFlag(qId)}
+            onSubmitQuiz={handleSubmitAssessment}
+            isReviewMode={false}
+            onToggleReviewMode={() => {}}
+            onToggleFlag={(qId: string) => handleToggleFlag(qId)}
           />
         </div>
       </div>
@@ -402,42 +406,55 @@ function AssessmentRoute() {
         {currentQuestion.type === "mcq" && (
           <MCQQuestionCard
             question={currentQuestion}
-            selectedAnswer={(userAnswers as Record<string, any>)[currentQuestion.id] as number | undefined}
+            selectedAnswer={
+              (userAnswers as Record<string, any>)[currentQuestion.id] as number | undefined
+            }
             onSelectAnswer={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "multiple" && (
           <MultipleQuestionCard
             question={currentQuestion}
-            selectedAnswers={(userAnswers as Record<string, any>)[currentQuestion.id] as number[] | undefined}
+            selectedAnswers={
+              (userAnswers as Record<string, any>)[currentQuestion.id] as number[] | undefined
+            }
             onSelectAnswer={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "ordering" && (
           <OrderingQuestionCard
             question={currentQuestion}
-            currentOrder={(userAnswers as Record<string, any>)[currentQuestion.id] as string[] | undefined}
+            currentOrder={
+              (userAnswers as Record<string, any>)[currentQuestion.id] as string[] | undefined
+            }
             onOrderChange={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "drag_drop" && (
           <DragDropQuestionCard
             question={currentQuestion}
-            currentMatches={(userAnswers as Record<string, any>)[currentQuestion.id] as Record<string, string> | undefined}
+            currentMatches={
+              (userAnswers as Record<string, any>)[currentQuestion.id] as
+                Record<string, string> | undefined
+            }
             onMatchChange={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "code" && (
           <CodeQuestionCard
             question={currentQuestion}
-            selectedAnswer={(userAnswers as Record<string, any>)[currentQuestion.id] as number | undefined}
+            selectedAnswer={
+              (userAnswers as Record<string, any>)[currentQuestion.id] as number | undefined
+            }
             onSelectAnswer={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}
         {currentQuestion.type === "fill_in_blank" && (
           <FillInBlankQuestionCard
             question={currentQuestion}
-            userAnswer={(userAnswers as Record<string, any>)[currentQuestion.id] as string | undefined}
+            userAnswer={
+              (userAnswers as Record<string, any>)[currentQuestion.id] as string | undefined
+            }
             onAnswerChange={(ans: any) => handleAnswerChange(currentQuestion.id, ans)}
           />
         )}

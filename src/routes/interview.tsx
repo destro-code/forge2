@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useInterviewQuestions } from "@/lib/hooks/use-content";
+import { useInterviewQuestions, useProject } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import type { InterviewQuestion, InterviewSessionResult } from "@/lib/types";
 import {
@@ -57,6 +57,9 @@ import Markdown from "react-markdown";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/interview")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    projectId: (search.projectId as string) || undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Interview Academy · Forge" },
@@ -171,6 +174,9 @@ const DEFAULT_META = {
 
 function InterviewAcademy() {
   const navigate = useNavigate();
+  const searchParams = Route.useSearch();
+  const projectId = searchParams.projectId;
+  const project = useProject(projectId);
   const allQuestions = useInterviewQuestions();
   const { interviewResults = [], clearInterviewResults } = useProgress();
 
@@ -248,12 +254,12 @@ function InterviewAcademy() {
     if (category) {
       navigate({
         to: "/interview/session",
-        search: { category, mode: "single", preset: "", duration: "" },
+        search: { category, mode: "single", preset: "", duration: "", projectId },
       });
     } else {
       navigate({
         to: "/interview/session",
-        search: { mode: "mock", preset: mockPreset, duration: mockDuration, category: "" },
+        search: { mode: "mock", preset: mockPreset, duration: mockDuration, category: "", projectId },
       });
     }
   };
@@ -262,8 +268,8 @@ function InterviewAcademy() {
     <div className="space-y-8">
       {/* Header */}
       <PageHeader
-        eyebrow="Sprint 16 — AI Interviewer"
-        title="Engineering Interview Prep"
+        eyebrow={project ? `Project Evaluation Loop · ${project.title}` : "Mock Interviews"}
+        title="Mock Interviews & Practice"
         description="Timed mock loops calibrated to Meta, Google, Stripe, Vercel, and Amazon interview standards. Practice with real-time AI Staff Interviewer evaluation, follow-up probes, score badges, and structured feedback."
         actions={
           <div className="flex flex-wrap items-center gap-2">
@@ -273,6 +279,34 @@ function InterviewAcademy() {
           </div>
         }
       />
+
+      {/* Project Context Alert Banner */}
+      {project && (
+        <Card className="border-amber-500/40 bg-amber-500/10 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3">
+            <Trophy className="h-6 w-6 text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="border-amber-500/50 text-amber-300 text-[10px] uppercase font-mono">
+                  Active Project Context
+                </Badge>
+                <Badge variant="secondary" className="text-[10px]">
+                  {project.category || "Frontend"}
+                </Badge>
+              </div>
+              <h4 className="font-bold text-sm text-foreground">
+                Evaluating Candidate Readiness for: {project.title}
+              </h4>
+              <p className="text-xs text-muted-foreground line-clamp-1">
+                {project.description}
+              </p>
+            </div>
+          </div>
+          <Button onClick={() => handleStartSession()} size="sm" className="gap-1.5 shadow-glow bg-amber-600 hover:bg-amber-700 text-white shrink-0">
+            <Play className="h-3.5 w-3.5 fill-current" /> Start Project Interview Loop
+          </Button>
+        </Card>
+      )}
 
       {/* Top Metric Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Callout } from "@/components/shared/callout";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
-import { useLesson, useLessons, useTopic, useModule } from "@/lib/hooks/use-content";
+import { useLesson, useLessons, useTopic, useModule, useQuizzes, useBugs } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { toast } from "sonner";
 import {
@@ -22,6 +22,8 @@ import {
   Code2,
   HelpCircle,
   GraduationCap,
+  Bug as BugIcon,
+  Sparkles,
 } from "lucide-react";
 
 import { LessonReadingProgress } from "@/components/lesson/lesson-reading-progress";
@@ -52,6 +54,11 @@ function LessonView() {
   const topic = useTopic(lesson?.topicId);
   const parentModule = useModule(topic?.moduleId);
   const allLessons = useLessons();
+  const quizzes = useQuizzes();
+  const bugs = useBugs();
+
+  const matchingQuiz = quizzes.find((q) => q.topicId === lesson.topicId) || quizzes[0];
+  const matchingBug = bugs.find((b) => b.topicId === lesson.topicId);
   const {
     bookmarks,
     toggleBookmark,
@@ -462,11 +469,41 @@ function LessonView() {
           )}
 
           {/* Lesson Summary Card */}
-          <div className="mt-10 rounded-2xl border border-border/60 bg-gradient-to-br from-primary/10 via-card to-transparent p-6 shadow-xs">
-            <div className="text-[11px] font-semibold uppercase tracking-widest text-primary">
-              Summary Key Takeaway
+          <div className="mt-10 rounded-2xl border border-border/60 bg-gradient-to-br from-primary/10 via-card to-transparent p-6 shadow-xs space-y-4">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-widest text-primary">
+                Summary Key Takeaway
+              </div>
+              <p className="mt-2 text-[15px] text-foreground/90 leading-relaxed">{lesson.summary}</p>
             </div>
-            <p className="mt-2 text-[15px] text-foreground/90 leading-relaxed">{lesson.summary}</p>
+
+            {/* Next Steps / Practice CTAs */}
+            <div className="pt-4 border-t border-border/40 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+                <Sparkles className="h-4 w-4 text-amber-400" />
+                <span>Next Step in your Learning Journey:</span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                {matchingQuiz && (
+                  <Button asChild size="sm" className="shadow-glow font-semibold gap-1.5">
+                    <Link to="/quizzes/$quizId" params={{ quizId: matchingQuiz.id }}>
+                      Practice this Concept
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                )}
+
+                {matchingBug && (
+                  <Button asChild size="sm" variant="outline" className="gap-1.5 border-rose-500/30 text-rose-400 hover:bg-rose-500/10">
+                    <Link to="/debug-lab/$bugId" params={{ bugId: matchingBug.id }}>
+                      <BugIcon className="h-3.5 w-3.5" />
+                      Fix a Bug
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Lesson Navigation Footer */}
@@ -478,7 +515,11 @@ function LessonView() {
                 size="sm"
                 className="w-full sm:w-auto sm:max-w-[220px]"
               >
-                <Link to="/lesson/$lessonId" params={{ lessonId: prevLesson.id }} className="truncate justify-center">
+                <Link
+                  to="/lesson/$lessonId"
+                  params={{ lessonId: prevLesson.id }}
+                  className="truncate justify-center"
+                >
                   <ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
                   <span className="truncate">Prev: {prevLesson.title}</span>
                 </Link>
@@ -518,7 +559,11 @@ function LessonView() {
                 size="sm"
                 className="w-full sm:w-auto sm:max-w-[220px]"
               >
-                <Link to="/lesson/$lessonId" params={{ lessonId: nextLesson.id }} className="truncate justify-center">
+                <Link
+                  to="/lesson/$lessonId"
+                  params={{ lessonId: nextLesson.id }}
+                  className="truncate justify-center"
+                >
                   <span className="truncate">Next: {nextLesson.title}</span>
                   <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
                 </Link>

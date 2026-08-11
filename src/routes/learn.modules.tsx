@@ -15,14 +15,14 @@ import { ArrowRight, Layers, GraduationCap, FolderTree, BookOpen, Clock } from "
 export const Route = createFileRoute("/learn/modules")({
   head: () => ({
     meta: [
-      { title: "Curriculum Pillars (Modules) · Forge" },
+      { title: "Modules · Forge" },
       {
         name: "description",
         content:
-          "Curriculum Pillars — major engineering modules containing chapter topics and specialized learning tracks.",
+          "Learning Modules — major engineering domains containing focused topics and lessons.",
       },
-      { property: "og:title", content: "Curriculum Pillars (Modules) · Forge" },
-      { property: "og:description", content: "The complete module pillar hub." },
+      { property: "og:title", content: "Modules · Forge" },
+      { property: "og:description", content: "Learning modules index." },
     ],
   }),
   component: ModulesRoute,
@@ -41,7 +41,7 @@ function ModulesRoute() {
       <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
         <GraduationCap className="h-4 w-4 text-primary" />
         <Link to="/learn" className="hover:text-foreground hover:underline">
-          Roadmap
+          Learning Path
         </Link>
         <span>→</span>
         <span className="font-semibold text-primary">Modules</span>
@@ -56,9 +56,9 @@ function ModulesRoute() {
       </div>
 
       <PageHeader
-        eyebrow="Curriculum Architecture"
-        title="Curriculum Pillars & Modules"
-        description="Major engineering domains structured into self-contained pillars. Select a module to explore its chapter topics and knowledge graph dependencies."
+        eyebrow="Modules Hub"
+        title="Modules"
+        description="Major engineering domains structured into self-contained modules. Select a module to explore its topics and lessons."
         actions={
           <div className="flex gap-2">
             <Button asChild variant="outline">

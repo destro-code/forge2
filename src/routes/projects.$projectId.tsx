@@ -36,6 +36,7 @@ import {
   ShieldCheck,
   FileText,
   Lightbulb,
+  Code2,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -151,6 +152,16 @@ function ProjectView() {
           <div className="flex flex-wrap items-center gap-2">
             <DifficultyBadge difficulty={project.difficulty} />
             <Badge variant="outline">~{project.estimatedHours} Hours</Badge>
+            <Button asChild size="sm" variant="outline" className="h-8 text-xs gap-1.5">
+              <Link to="/playground">
+                <Code2 className="h-3.5 w-3.5 text-primary" /> Code Playground
+              </Link>
+            </Button>
+            <Button asChild size="sm" className="h-8 text-xs gap-1.5 shadow-glow bg-amber-600 hover:bg-amber-700 text-white">
+              <Link to="/interview" search={{ projectId: project.id }}>
+                <Award className="h-3.5 w-3.5" /> Evaluate in Mock Interview
+              </Link>
+            </Button>
           </div>
         }
       />

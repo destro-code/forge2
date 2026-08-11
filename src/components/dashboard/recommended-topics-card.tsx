@@ -34,13 +34,16 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
           className="text-xs gap-1 text-muted-foreground hover:text-foreground h-8 px-2"
         >
           <Link to="/learn/topics">
-            Knowledge Graph <ArrowRight className="h-3.5 w-3.5" />
+            Explore Topics <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </Button>
       </CardHeader>
 
       <CardContent className="grid gap-3 sm:grid-cols-3">
         {recommendedList.map((topic) => {
+          const topicLessons = lessons.filter((l) => l.topicId === topic.id);
+          const firstLesson = topicLessons[0];
+
           return (
             <div
               key={topic.id}
@@ -70,11 +73,17 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
                   asChild
                   size="sm"
                   variant="ghost"
-                  className="h-7 text-xs px-2 text-primary gap-1"
+                  className="h-7 text-xs px-2 text-primary gap-1 font-medium"
                 >
-                  <Link to="/learn/topics/$topicId" params={{ topicId: topic.id }}>
-                    Open Topic <ArrowRight className="h-3 w-3" />
-                  </Link>
+                  {firstLesson ? (
+                    <Link to="/lesson/$lessonId" params={{ lessonId: firstLesson.id }}>
+                      Start Lesson <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  ) : (
+                    <Link to="/learn/topics/$topicId" params={{ topicId: topic.id }}>
+                      Open Topic <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  )}
                 </Button>
               </div>
             </div>

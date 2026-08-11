@@ -26,7 +26,8 @@ const CANNED_REPLIES: Record<string, string> = {
 };
 
 function pickReply(text: string, mode?: MentorMode) {
-  if (mode === ("interview-eval" as any)) return `{
+  if (mode === ("interview-eval" as any))
+    return `{
   "overallScore": 85,
   "hireLevel": "Senior Engineer (L5)",
   "executiveAssessment": "Strong theoretical understanding but could improve on concrete examples.",

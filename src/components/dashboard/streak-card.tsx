@@ -25,9 +25,7 @@ export function StreakCard({ streakDays = 12, bestStreak = 21 }: StreakCardProps
 
       <CardContent className="space-y-4">
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold tracking-tight text-foreground">
-            {streakDays}
-          </span>
+          <span className="text-3xl font-bold tracking-tight text-foreground">{streakDays}</span>
           <span className="text-xs font-medium text-muted-foreground">Days Active Streak</span>
         </div>
 
@@ -41,9 +39,7 @@ export function StreakCard({ streakDays = 12, bestStreak = 21 }: StreakCardProps
 
         {/* Milestone Badges */}
         <div className="space-y-2 pt-1">
-          <span className="text-xs font-medium text-muted-foreground block">
-            Milestones
-          </span>
+          <span className="text-xs font-medium text-muted-foreground block">Milestones</span>
           <div className="flex gap-2 text-xs">
             <Badge
               variant="secondary"

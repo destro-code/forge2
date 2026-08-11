@@ -127,7 +127,7 @@ function DebugLab() {
               <ShieldAlert className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-base font-bold">Debugging Mastery Track</h3>
+              <h3 className="text-base font-bold">Debug Lab Progress</h3>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {solvedCount} of {bugs.length} challenges solved ({completionPercent}% complete)
               </p>

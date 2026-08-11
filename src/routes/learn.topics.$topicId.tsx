@@ -76,11 +76,11 @@ function TopicHubRoute() {
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-mono bg-muted/30 border border-border/50 rounded-lg p-2.5">
         <GraduationCap className="h-4 w-4 text-primary shrink-0" />
         <Link to="/learn" className="hover:text-foreground hover:underline">
-          Level 0: Roadmap
+          Learning Path
         </Link>
         <span>→</span>
         <Link to="/learn/modules" className="hover:text-foreground hover:underline">
-          Level 1: Modules
+          Modules
         </Link>
         {parentModule && (
           <>
@@ -90,19 +90,17 @@ function TopicHubRoute() {
               params={{ moduleId: parentModule.id }}
               className="hover:text-foreground hover:underline truncate max-w-[150px]"
             >
-              Level 2: {parentModule.title}
+              {parentModule.title}
             </Link>
           </>
         )}
         <span>→</span>
-        <span className="font-semibold text-primary truncate max-w-[200px]">
-          Level 3: {topic.title}
-        </span>
+        <span className="font-semibold text-primary truncate max-w-[200px]">{topic.title}</span>
       </div>
 
       {/* Topic Overview Header */}
       <PageHeader
-        eyebrow={`Level 3 Topic Hub · ${parentModule ? parentModule.title : "Knowledge Graph"}`}
+        eyebrow={`Topic Hub · ${parentModule ? parentModule.title : "Modules"}`}
         title={topic.title}
         description={topic.description}
         actions={
@@ -172,7 +170,7 @@ function TopicHubRoute() {
               Chapter Lessons ({topicLessons.length})
             </h2>
             <p className="text-xs text-muted-foreground">
-              Level 3 Unit Lessons. Select a lesson to enter the interactive reader.
+              Lessons inside this topic. Select a lesson to enter the interactive reader.
             </p>
           </div>
         </div>

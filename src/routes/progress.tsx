@@ -21,6 +21,7 @@ import {
 import { HeatMap } from "@/components/shared/heat-map";
 import { progressStore } from "@/lib/providers/progress-provider";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { useLessons, useQuizzes } from "@/lib/hooks/use-content";
 import type { MasteryState, TopicMasteryRecord } from "@/lib/types";
 import { toast } from "sonner";
 import {
@@ -66,13 +67,13 @@ import {
 export const Route = createFileRoute("/progress")({
   head: () => ({
     meta: [
-      { title: "Mastery Engine · Forge" },
+      { title: "Progress Tracker · Forge" },
       {
         name: "description",
         content:
           "Track confidence levels, spaced-repetition review dates, weak/strong topics, and interview readiness.",
       },
-      { property: "og:title", content: "Mastery Engine · Forge" },
+      { property: "og:title", content: "Progress Tracker · Forge" },
       { property: "og:description", content: "Data-driven frontend skill mastery." },
     ],
   }),
@@ -100,6 +101,8 @@ const CATEGORIES = [
 
 export function MasteryEnginePage() {
   const progress = useProgress();
+  const lessons = useLessons();
+  const quizzes = useQuizzes();
   const [, setProgress] = progressStore.useStore();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -411,8 +414,8 @@ export function MasteryEnginePage() {
       {/* Top Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <PageHeader
-          eyebrow="Sprint 13 — Mastery Engine"
-          title="Mastery & Interview Readiness Hub"
+          eyebrow="Skill Mastery"
+          title="Skill Mastery & Interview Readiness Hub"
           description="Real-time skill tracking, spaced repetition dates, weak topic matrix & interview metrics."
         />
 
@@ -803,44 +806,74 @@ export function MasteryEnginePage() {
                   🎉 Fantastic job! You have zero weak topics right now.
                 </div>
               ) : (
-                weakTopics.map((topic) => (
-                  <Card
-                    key={topic.topicId}
-                    className="p-4 flex flex-col md:flex-row justify-between gap-4"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-foreground">
-                          {topic.topicTitle}
-                        </span>
-                        <Badge variant="destructive" className="text-[10px]">
-                          Confidence: {topic.confidence}%
-                        </Badge>
-                        <Badge variant="outline" className="text-[10px]">
-                          {topic.category}
-                        </Badge>
+                weakTopics.map((topic) => {
+                  const matchingLesson = lessons.find((l) => l.topicId === topic.topicId);
+                  const matchingQuiz = quizzes.find((q) => q.topicId === topic.topicId);
+
+                  return (
+                    <Card
+                      key={topic.topicId}
+                      className="p-4 flex flex-col md:flex-row justify-between gap-4"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-foreground">
+                            {topic.topicTitle}
+                          </span>
+                          <Badge variant="destructive" className="text-[10px]">
+                            Confidence: {topic.confidence}%
+                          </Badge>
+                          <Badge variant="outline" className="text-[10px]">
+                            {topic.category}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {topic.notes ||
+                            "Low confidence score recorded. Recommended to review material or complete practice quiz."}
+                        </p>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        {topic.notes ||
-                          "Low confidence score recorded. Recommended to run practice exercises or whiteboard breakdown."}
-                      </p>
-                    </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Link to="/whiteboard">
-                        <Button size="xs" variant="outline" className="gap-1">
-                          <PenTool className="h-3.5 w-3.5" /> Whiteboard Mode
-                        </Button>
-                      </Link>
+                      <div className="flex flex-wrap items-center gap-2 shrink-0">
+                        {matchingLesson ? (
+                          <Button asChild size="xs" variant="outline" className="gap-1">
+                            <Link to="/lesson/$lessonId" params={{ lessonId: matchingLesson.id }}>
+                              <BookOpen className="h-3.5 w-3.5" /> Review Lesson
+                            </Link>
+                          </Button>
+                        ) : (
+                          <Button asChild size="xs" variant="outline" className="gap-1">
+                            <Link to="/learn/topics/$topicId" params={{ topicId: topic.topicId }}>
+                              <BookOpen className="h-3.5 w-3.5" /> Review Topic
+                            </Link>
+                          </Button>
+                        )}
 
-                      <Link to="/quizzes">
-                        <Button size="xs" variant="default" className="gap-1">
-                          <ListChecks className="h-3.5 w-3.5" /> Take Quiz
+                        {matchingQuiz ? (
+                          <Button asChild size="xs" variant="default" className="gap-1">
+                            <Link to="/quizzes/$quizId" params={{ quizId: matchingQuiz.id }}>
+                              <ListChecks className="h-3.5 w-3.5" /> Practice Quiz
+                            </Link>
+                          </Button>
+                        ) : (
+                          <Button asChild size="xs" variant="default" className="gap-1">
+                            <Link to="/quizzes">
+                              <ListChecks className="h-3.5 w-3.5" /> Take Quiz
+                            </Link>
+                          </Button>
+                        )}
+
+                        <Button
+                          size="xs"
+                          variant="ghost"
+                          onClick={() => handleOpenRefresher(topic)}
+                          className="gap-1 text-primary hover:text-primary/80"
+                        >
+                          <Sparkles className="h-3.5 w-3.5 text-amber-400" /> AI Refresher
                         </Button>
-                      </Link>
-                    </div>
-                  </Card>
-                ))
+                      </div>
+                    </Card>
+                  );
+                })
               )}
             </CardContent>
           </Card>
@@ -973,7 +1006,7 @@ export function MasteryEnginePage() {
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                       <span>
-                        Simulate a full 30-minute Mock Interview Session in the Interview Room.
+                        Simulate a full 30-minute Mock Interview Session in Mock Interviews.
                       </span>
                     </li>
                   </ul>

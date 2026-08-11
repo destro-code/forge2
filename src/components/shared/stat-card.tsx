@@ -21,10 +21,10 @@ export function StatCard({
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-xs font-medium text-muted-foreground">
-              {label}
+            <div className="text-xs font-medium text-muted-foreground">{label}</div>
+            <div className="mt-1.5 text-2xl font-bold tracking-tight tabular-nums text-foreground">
+              {value}
             </div>
-            <div className="mt-1.5 text-2xl font-bold tracking-tight tabular-nums text-foreground">{value}</div>
             {delta && <div className="mt-1 text-xs text-muted-foreground/80">{delta}</div>}
           </div>
           {icon && (
