@@ -14,6 +14,7 @@ import {
   useTopics,
 } from "@/lib/hooks/use-content";
 import { Flame, Clock, BookOpen, Trophy, ChevronRight, ArrowRight, X, Compass } from "lucide-react";
+import { evaluateAchievements } from "@/lib/utils/achievements";
 
 import { ContinueLearningCard } from "@/components/dashboard/continue-learning-card";
 import { ContinueProjectCard } from "@/components/dashboard/continue-project-card";
@@ -48,7 +49,8 @@ function Dashboard() {
   const lessons = useLessons();
   const projects = useProjects();
   const topics = useTopics();
-  const achievements = useAchievements();
+  const rawAchievements = useAchievements();
+  const achievements = evaluateAchievements(rawAchievements, progress, lessons);
 
   const [showOrientation, setShowOrientation] = useState(false);
 

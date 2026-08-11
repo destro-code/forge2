@@ -16,7 +16,7 @@ import type {
   ProgressState,
 } from "@/lib/types";
 
-import { updateTopicMasteryRecord, deriveStreakDays } from "@/lib/providers/progress-provider";
+import { updateTopicMasteryRecord } from "@/lib/utils/mastery";
 
 const PLAYGROUND_TOPIC_MAP: Record<string, string> = {
   "stale-closure-lab": "useeffect",
@@ -59,6 +59,8 @@ export const EMPTY_PROGRESS_STATE: ProgressState = {
   playgroundCompletions: [],
   completedProjects: [],
   flashcardDailyReviews: { date: "", count: 0, reviewedCardIds: [] },
+  lastRewardedReviewDates: {},
+  completedWhiteboardPredictions: [],
 };
 
 export function deriveStreakDays(activityDates: string[] = []): number {
@@ -202,6 +204,8 @@ export const useProgressStore = create<ProgressStore>()(
             count: 0,
             reviewedCardIds: [],
           },
+          lastRewardedReviewDates: current.lastRewardedReviewDates ?? {},
+          completedWhiteboardPredictions: current.completedWhiteboardPredictions ?? [],
         };
 
         const nextState = typeof updater === "function" ? updater(currentState) : updater;
@@ -238,6 +242,11 @@ export const useProgressStore = create<ProgressStore>()(
             newCardIds = [...reviewedCardIds, cardId];
           }
 
+          const currentActivityDates = state.activityDates || [];
+          const newActivityDates = currentActivityDates.includes(today)
+            ? currentActivityDates
+            : [...currentActivityDates, today];
+
           return {
             flashcardReviews: {
               ...(state.flashcardReviews || {}),
@@ -249,6 +258,7 @@ export const useProgressStore = create<ProgressStore>()(
               reviewedCardIds: newCardIds,
             },
             xp: (state.xp || 0) + xpGained,
+            activityDates: newActivityDates,
           };
         });
       },
@@ -296,7 +306,17 @@ export const useProgressStore = create<ProgressStore>()(
           } else {
             updated = [snapshot, ...existing];
           }
-          return { whiteboardSnapshots: updated };
+
+          const today = now.slice(0, 10);
+          const currentActivityDates = state.activityDates || [];
+          const newActivityDates = currentActivityDates.includes(today)
+            ? currentActivityDates
+            : [...currentActivityDates, today];
+
+          return {
+            whiteboardSnapshots: updated,
+            activityDates: newActivityDates,
+          };
         });
 
         return snapshot;
@@ -369,6 +389,10 @@ export const useProgressStore = create<ProgressStore>()(
               typeof state.challengeStreakDays === "number" ? state.challengeStreakDays : 0,
             whiteboardSnapshots: (state.whiteboardSnapshots as WhiteboardSnapshot[]) ?? [],
             playgroundCompletions: (state.playgroundCompletions as PlaygroundCompletion[]) ?? [],
+            lastRewardedReviewDates:
+              (state.lastRewardedReviewDates as Record<string, string>) ?? {},
+            completedWhiteboardPredictions:
+              (state.completedWhiteboardPredictions as string[]) ?? [],
           } as ProgressState;
         }
 
@@ -386,6 +410,12 @@ export const useProgressStore = create<ProgressStore>()(
           whiteboardSnapshots: pState.whiteboardSnapshots ?? currentState.whiteboardSnapshots ?? [],
           playgroundCompletions:
             pState.playgroundCompletions ?? currentState.playgroundCompletions ?? [],
+          lastRewardedReviewDates:
+            pState.lastRewardedReviewDates ?? currentState.lastRewardedReviewDates ?? {},
+          completedWhiteboardPredictions:
+            pState.completedWhiteboardPredictions ??
+            currentState.completedWhiteboardPredictions ??
+            [],
         };
       },
     },

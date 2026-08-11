@@ -196,8 +196,82 @@ export function deriveSkills(
   });
 }
 
+export function getUnifiedActivityDates(state: ProgressState): string[] {
+  const dates = new Set<string>();
+
+  // 1. Existing activityDates
+  if (Array.isArray(state.activityDates)) {
+    state.activityDates.forEach((d) => {
+      if (d) dates.add(d.slice(0, 10));
+    });
+  }
+
+  // 2. Quiz results completedAt
+  if (Array.isArray(state.quizResults)) {
+    state.quizResults.forEach((q) => {
+      if (q.completedAt) dates.add(q.completedAt.slice(0, 10));
+    });
+  }
+
+  // 3. Journal entries createdAt
+  if (Array.isArray(state.journalEntries)) {
+    state.journalEntries.forEach((j) => {
+      if (j.createdAt) dates.add(j.createdAt.slice(0, 10));
+    });
+  }
+
+  // 4. Interview results completedAt
+  if (Array.isArray(state.interviewResults)) {
+    state.interviewResults.forEach((i) => {
+      if (i.completedAt) dates.add(i.completedAt.slice(0, 10));
+    });
+  }
+
+  // 5. Playground completions completedAt
+  if (Array.isArray(state.playgroundCompletions)) {
+    state.playgroundCompletions.forEach((p) => {
+      if (p.completedAt) dates.add(p.completedAt.slice(0, 10));
+    });
+  }
+
+  // 6. Whiteboard snapshots updatedAt
+  if (Array.isArray(state.whiteboardSnapshots)) {
+    state.whiteboardSnapshots.forEach((w) => {
+      if (w.updatedAt) dates.add(w.updatedAt.slice(0, 10));
+    });
+  }
+
+  // 7. Certificates issuedAt
+  if (Array.isArray(state.certificates)) {
+    state.certificates.forEach((c) => {
+      if (c.issuedAt) dates.add(c.issuedAt.slice(0, 10));
+    });
+  }
+
+  // 8. Flashcard daily reviews date
+  if (
+    state.flashcardDailyReviews &&
+    state.flashcardDailyReviews.date &&
+    state.flashcardDailyReviews.count > 0
+  ) {
+    dates.add(state.flashcardDailyReviews.date.slice(0, 10));
+  }
+
+  // 9. Flashcard reviews lastReviewedAt
+  if (state.flashcardReviews) {
+    Object.values(state.flashcardReviews).forEach((review) => {
+      if (review && review.lastReviewedAt) {
+        dates.add(review.lastReviewedAt.slice(0, 10));
+      }
+    });
+  }
+
+  // Sort dates chronologically to ensure consistent streak counting
+  return Array.from(dates).sort((a, b) => a.localeCompare(b));
+}
+
 export function getDerivedProgress(state: ProgressState): ProgressState {
-  const activityDates = state.activityDates || [];
+  const activityDates = getUnifiedActivityDates(state);
   const currentStreak = deriveStreakDays(activityDates);
   const bestStreakDays = Math.max(state.bestStreakDays ?? 0, currentStreak);
   return {
@@ -531,96 +605,5 @@ export const progressStore = {
   },
 };
 
-export function getMasteryLabelFromConfidence(confidence: number): MasteryState {
-  if (confidence >= 90) return "Mastered";
-  if (confidence >= 80) return "Interview Ready";
-  if (confidence >= 60) return "Practicing";
-  if (confidence >= 40) return "Learning";
-  return "Not Started";
-}
-
-export function updateTopicMasteryRecord(
-  existingRecords: Record<string, TopicMasteryRecord>,
-  topicId: string,
-  updates: {
-    confidence?: number;
-    quizScorePercent?: number;
-    mastery?: MasteryState;
-    intervalDays?: number;
-    lastReviewedAt?: string;
-    nextReviewAt?: string;
-    reviewCountDelta?: number;
-  },
-): Record<string, TopicMasteryRecord> {
-  const existing = existingRecords[topicId];
-  const nowIso = new Date().toISOString();
-
-  if (existing) {
-    const newConfidence =
-      updates.confidence !== undefined
-        ? Math.min(100, Math.max(0, Math.round(updates.confidence)))
-        : existing.confidence;
-
-    const derivedMastery = updates.mastery ?? getMasteryLabelFromConfidence(newConfidence);
-
-    const updatedRecord: TopicMasteryRecord = {
-      ...existing,
-      confidence: newConfidence,
-      mastery: derivedMastery,
-      quizScorePercent:
-        updates.quizScorePercent !== undefined
-          ? updates.quizScorePercent
-          : existing.quizScorePercent,
-      intervalDays: updates.intervalDays ?? existing.intervalDays,
-      lastReviewedAt: updates.lastReviewedAt ?? existing.lastReviewedAt,
-      nextReviewAt: updates.nextReviewAt ?? existing.nextReviewAt,
-      reviewCount: (existing.reviewCount || 0) + (updates.reviewCountDelta ?? 0),
-    };
-
-    return {
-      ...existingRecords,
-      [topicId]: updatedRecord,
-    };
-  }
-
-  const topic = (topicsData as import("@/lib/types").Topic[]).find(
-    (t) => t.id === topicId || (t.topicId && t.topicId === topicId),
-  );
-  const topicObj = topic as Record<string, unknown> | undefined;
-  const categoryId = (topicObj?.categoryId || topicObj?.moduleId) as string | undefined;
-  const category =
-    categoryId === "core-web" || categoryId === "html-css-foundations"
-      ? "HTML/CSS"
-      : categoryId === "language-mastery" || categoryId === "js-foundation"
-        ? "JavaScript"
-        : categoryId === "framework-mastery" ||
-            categoryId === "react-deep-dive" ||
-            categoryId === "react-professional"
-          ? "React"
-          : "Architecture";
-
-  const confidence =
-    updates.confidence !== undefined
-      ? Math.min(100, Math.max(0, Math.round(updates.confidence)))
-      : 50;
-
-  const derivedMastery = updates.mastery ?? getMasteryLabelFromConfidence(confidence);
-
-  const newRecord: TopicMasteryRecord = {
-    topicId,
-    topicTitle: topic ? topic.title : topicId,
-    category,
-    confidence,
-    mastery: derivedMastery,
-    lastReviewedAt: updates.lastReviewedAt ?? nowIso,
-    nextReviewAt: updates.nextReviewAt ?? new Date(Date.now() + 3 * 86400000).toISOString(),
-    intervalDays: updates.intervalDays ?? 3,
-    reviewCount: updates.reviewCountDelta ?? 1,
-    quizScorePercent: updates.quizScorePercent ?? 0,
-  };
-
-  return {
-    ...existingRecords,
-    [topicId]: newRecord,
-  };
-}
+import { getMasteryLabelFromConfidence, updateTopicMasteryRecord } from "@/lib/utils/mastery";
+export { getMasteryLabelFromConfidence, updateTopicMasteryRecord };

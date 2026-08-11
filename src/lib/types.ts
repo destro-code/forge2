@@ -550,4 +550,6 @@ export interface ProgressState {
   playgroundCompletions?: PlaygroundCompletion[];
   completedProjects?: string[];
   flashcardDailyReviews?: { date: string; count: number; reviewedCardIds?: string[] };
+  lastRewardedReviewDates?: Record<string, string>;
+  completedWhiteboardPredictions?: string[];
 }

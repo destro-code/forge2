@@ -76,7 +76,8 @@ interface ArchEdge {
 }
 
 export function WhiteboardPage() {
-  const { whiteboardSnapshots, saveWhiteboardSnapshot } = useProgress();
+  const { whiteboardSnapshots, saveWhiteboardSnapshot, completedWhiteboardPredictions } =
+    useProgress();
   const [snapshotId, setSnapshotId] = useState<string>("");
   const [currentTitle, setCurrentTitle] = useState("Untitled Whiteboard");
   const [snapshotsDialogOpen, setSnapshotsDialogOpen] = useState(false);
@@ -92,7 +93,7 @@ export function WhiteboardPage() {
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [hasExecuted, setHasExecuted] = useState<boolean>(false);
   const [executionMatch, setExecutionMatch] = useState<boolean | null>(null);
-  const completedPredictionsRef = useRef<Set<string>>(new Set());
+  const completedPredictions = completedWhiteboardPredictions || [];
 
   // Architecture board state
   const [nodes, setNodes] = useState<ArchNode[]>(
@@ -303,12 +304,20 @@ export function WhiteboardPage() {
       setExecutionMatch(matches);
       if (matches) {
         const predKey = `${code.trim()}:::${userPrediction.trim()}`;
-        if (!completedPredictionsRef.current.has(predKey)) {
-          completedPredictionsRef.current.add(predKey);
+        const alreadyRewarded = completedPredictions.includes(predKey);
+        if (!alreadyRewarded) {
+          useProgressStore.getState().setProgress((s) => {
+            const currentCompleted = s.completedWhiteboardPredictions || [];
+            if (currentCompleted.includes(predKey)) return s;
+            return {
+              ...s,
+              xp: (s.xp ?? 0) + 25,
+              completedWhiteboardPredictions: [...currentCompleted, predKey],
+            };
+          });
           toast.success(
             "🎯 Spot on! Your output prediction matched JS execution perfectly (+25 XP)!",
           );
-          useProgressStore.getState().setProgress((s) => ({ ...s, xp: (s.xp ?? 0) + 25 }));
         } else {
           toast.success("🎯 Spot on! Your output prediction matched JS execution perfectly!");
         }

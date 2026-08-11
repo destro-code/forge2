@@ -233,10 +233,11 @@ export function useProgress() {
     },
     toggleProjectTask(projectId: string, taskId: string) {
       setProgress((p) => {
+        const withActivity = recordActivityState(p);
         const key = `${projectId}:${taskId}`;
-        const currentTasks = p.projectTasks || {};
+        const currentTasks = withActivity.projectTasks || {};
         return {
-          ...p,
+          ...withActivity,
           projectTasks: {
             ...currentTasks,
             [key]: !currentTasks[key],
@@ -246,8 +247,9 @@ export function useProgress() {
     },
     toggleProjectCriteria(projectId: string, criteriaId: string) {
       setProgress((p) => {
+        const withActivity = recordActivityState(p);
         const key = `${projectId}:${criteriaId}`;
-        const currentCriteria = p.projectCriteria || {};
+        const currentCriteria = withActivity.projectCriteria || {};
         const nextCriteria = {
           ...currentCriteria,
           [key]: !currentCriteria[key],
@@ -266,13 +268,13 @@ export function useProgress() {
           allCriteria.length > 0 &&
           allCriteria.every((c) => nextCriteria[`${projectId}:${c.id}`] === true);
 
-        const completedProjects = p.completedProjects || [];
+        const completedProjects = withActivity.completedProjects || [];
         const isFirstComplete =
           !completedProjects.includes(projectId) && !wasAllCompleteBefore && isAllCompleteAfter;
 
         let xpBonus = 0;
         let newCompletedProjects = completedProjects;
-        let updatedRecords = p.topicMasteryRecords || {};
+        let updatedRecords = withActivity.topicMasteryRecords || {};
 
         if (isFirstComplete) {
           xpBonus = 250;
@@ -294,17 +296,18 @@ export function useProgress() {
         }
 
         return {
-          ...p,
+          ...withActivity,
           projectCriteria: nextCriteria,
           completedProjects: newCompletedProjects,
-          xp: (p.xp || 0) + xpBonus,
+          xp: (withActivity.xp || 0) + xpBonus,
           topicMasteryRecords: updatedRecords,
         };
       });
     },
     saveProjectReflection(projectId: string, reflection: Partial<ProjectReflection>) {
       setProgress((p) => {
-        const currentReflections = p.projectReflections || {};
+        const withActivity = recordActivityState(p);
+        const currentReflections = withActivity.projectReflections || {};
         const existing = currentReflections[projectId] || {
           challenge: "",
           solution: "",
@@ -312,7 +315,7 @@ export function useProgress() {
           scaleRefactor: "",
         };
         return {
-          ...p,
+          ...withActivity,
           projectReflections: {
             ...currentReflections,
             [projectId]: { ...existing, ...reflection },
@@ -322,7 +325,8 @@ export function useProgress() {
     },
     saveProjectPortfolioNotes(projectId: string, notes: Partial<ProjectUserNotes>) {
       setProgress((p) => {
-        const currentNotes = p.projectPortfolioNotes || {};
+        const withActivity = recordActivityState(p);
+        const currentNotes = withActivity.projectPortfolioNotes || {};
         const existing = currentNotes[projectId] || {
           repoUrl: "",
           demoUrl: "",
@@ -330,7 +334,7 @@ export function useProgress() {
           highlight: "",
         };
         return {
-          ...p,
+          ...withActivity,
           projectPortfolioNotes: {
             ...currentNotes,
             [projectId]: { ...existing, ...notes },
@@ -345,10 +349,13 @@ export function useProgress() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      setProgress((p) => ({
-        ...p,
-        journalEntries: [newEntry, ...(p.journalEntries || [])],
-      }));
+      setProgress((p) => {
+        const withActivity = recordActivityState(p);
+        return {
+          ...withActivity,
+          journalEntries: [newEntry, ...(withActivity.journalEntries || [])],
+        };
+      });
       return newEntry;
     },
     updateJournalEntry(id: string, updates: Partial<JournalEntry>) {

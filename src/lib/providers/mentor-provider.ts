@@ -8,7 +8,7 @@ export interface MentorProvider {
   models: { id: string; label: string }[];
   stream(
     messages: MentorMessage[],
-    opts?: { model?: string; mode?: MentorMode; signal?: AbortSignal },
+    opts?: { model?: string; mode?: MentorMode; signal?: AbortSignal; learnerContext?: any },
   ): AsyncIterable<string>;
 }
 
@@ -77,7 +77,12 @@ export const geminiMentorProvider: MentorProvider = {
       const response = await fetch("/api/mentor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages, model: opts?.model, mode: opts?.mode }),
+        body: JSON.stringify({
+          messages,
+          model: opts?.model,
+          mode: opts?.mode,
+          learnerContext: opts?.learnerContext,
+        }),
         signal: opts?.signal,
       });
 

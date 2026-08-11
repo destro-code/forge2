@@ -278,6 +278,10 @@ export function MasteryEnginePage() {
     const nextDate = new Date(now);
     nextDate.setDate(nextDate.getDate() + newInterval);
 
+    const todayStr = now.toISOString().slice(0, 10);
+    const currentProgress = useProgressStore.getState();
+    const alreadyRewardedToday = currentProgress.lastRewardedReviewDates?.[topicId] === todayStr;
+
     setProgress((prev) => {
       const currentMap = prev.topicMasteryRecords || {};
       const record = currentMap[topicId];
@@ -290,16 +294,32 @@ export function MasteryEnginePage() {
         reviewCountDelta: 1,
       });
 
+      const lastRewardedDates = prev.lastRewardedReviewDates || {};
+      const nextRewardedDates = { ...lastRewardedDates };
+      let xpBonus = 0;
+
+      if (!alreadyRewardedToday) {
+        xpBonus = 15;
+        nextRewardedDates[topicId] = todayStr;
+      }
+
       return {
         ...prev,
-        xp: (prev.xp || 0) + 15,
+        xp: (prev.xp || 0) + xpBonus,
         topicMasteryRecords: updatedMap,
+        lastRewardedReviewDates: nextRewardedDates,
       };
     });
 
-    toast.success(
-      `Marked reviewed! Next spaced repetition scheduled in ${newInterval} days. (+15 XP)`,
-    );
+    if (alreadyRewardedToday) {
+      toast.success(
+        `Marked reviewed! Next spaced repetition scheduled in ${newInterval} days. (Topic already reviewed today, +0 XP)`,
+      );
+    } else {
+      toast.success(
+        `Marked reviewed! Next spaced repetition scheduled in ${newInterval} days. (+15 XP)`,
+      );
+    }
   };
 
   const handleScheduleCustomReview = (topicId: string, daysAhead: number) => {

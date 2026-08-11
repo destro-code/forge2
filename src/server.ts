@@ -72,10 +72,11 @@ async function handleMentorApi(request: Request): Promise<Response> {
   }
 
   try {
-    const { messages, model, mode } = (await request.json()) as {
+    const { messages, model, mode, learnerContext } = (await request.json()) as {
       messages: { role: string; content: string }[];
       model?: string;
       mode?: string;
+      learnerContext?: any;
     };
 
     const selectedModel =
@@ -85,8 +86,14 @@ async function handleMentorApi(request: Request): Promise<Response> {
           ? "gemini-3.1-pro-preview"
           : "gemini-3.6-flash";
 
-    const systemInstruction =
+    const baseInstruction =
       MENTOR_MODE_SYSTEM_INSTRUCTIONS[mode || "chat"] || MENTOR_MODE_SYSTEM_INSTRUCTIONS.chat;
+
+    let systemInstruction = baseInstruction;
+    if (learnerContext) {
+      const contextStr = JSON.stringify(learnerContext, null, 2);
+      systemInstruction = `${baseInstruction}\n\n[STUDENT LEARNING PROGRESS CONTEXT (AUTHORITATIVE)]\n${contextStr}\n\nAlways tailor your responses, coaching style, and recommended next steps precisely to this student's real-time progress. If their readiness tier is junior/mid/senior/staff, adapt the depth and seniority of your engineering discussions accordingly. You may proactively mention their actual achievements, solved bugs, streaks, or weakest areas to make the interaction personal and high-fidelity. DO NOT hallucinate, fabricate, or assume any progress state, scores, or achievements not explicitly defined in the context block above.`;
+    }
 
     const ai = new GoogleGenAI({
       apiKey,

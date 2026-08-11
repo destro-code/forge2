@@ -17,6 +17,10 @@ import {
   Clock,
   Sparkles,
   Bug,
+  Code,
+  PenTool,
+  Award,
+  Layers,
 } from "lucide-react";
 import quizzesData from "@/data/quizzes.json";
 import lessonsData from "@/data/lessons.json";
@@ -82,7 +86,41 @@ function CalendarPage() {
     (i) => i.completedAt && i.completedAt.slice(0, 10) === selectedDateStr,
   );
 
-  const hasRecordedActivity = activityDatesSet.has(selectedDateStr);
+  const playgroundsForDate = (progress.playgroundCompletions || []).filter(
+    (p) => p.completedAt && p.completedAt.slice(0, 10) === selectedDateStr,
+  );
+
+  const whiteboardsForDate = (progress.whiteboardSnapshots || []).filter(
+    (w) => w.updatedAt && w.updatedAt.slice(0, 10) === selectedDateStr,
+  );
+
+  const certificatesForDate = (progress.certificates || []).filter(
+    (c) => c.issuedAt && c.issuedAt.slice(0, 10) === selectedDateStr,
+  );
+
+  const flashcardDailyForDate =
+    progress.flashcardDailyReviews &&
+    progress.flashcardDailyReviews.date &&
+    progress.flashcardDailyReviews.date.slice(0, 10) === selectedDateStr &&
+    progress.flashcardDailyReviews.count > 0
+      ? progress.flashcardDailyReviews.count
+      : 0;
+
+  const flashcardReviewsForDateCount = Object.values(progress.flashcardReviews || {}).filter(
+    (r) => r.lastReviewedAt && r.lastReviewedAt.slice(0, 10) === selectedDateStr,
+  ).length;
+
+  const flashcardsReviewedCount = Math.max(flashcardDailyForDate, flashcardReviewsForDateCount);
+
+  const hasRecordedActivity =
+    activityDatesSet.has(selectedDateStr) ||
+    quizzesTaken.length > 0 ||
+    journalsForDate.length > 0 ||
+    interviewsForDate.length > 0 ||
+    playgroundsForDate.length > 0 ||
+    whiteboardsForDate.length > 0 ||
+    certificatesForDate.length > 0 ||
+    flashcardsReviewedCount > 0;
 
   const quizzesList = quizzesData as Quiz[];
 
@@ -229,6 +267,120 @@ function CalendarPage() {
               </div>
             )}
 
+            {/* Playground Exercises Completed on Selected Date */}
+            {playgroundsForDate.length > 0 && (
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <Code className="h-3.5 w-3.5 text-primary" />
+                  Playground Lab ({playgroundsForDate.length})
+                </div>
+                <div className="space-y-2">
+                  {playgroundsForDate.map((p) => {
+                    const cleanName = p.templateId
+                      .split("-")
+                      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                      .join(" ");
+                    return (
+                      <div
+                        key={p.templateId}
+                        className="flex items-center justify-between p-3 rounded-lg border border-border/50 bg-accent/30 text-xs"
+                      >
+                        <div className="space-y-0.5">
+                          <p className="font-semibold text-foreground">{cleanName}</p>
+                          <p className="text-[11px] text-muted-foreground">Exercise Completed</p>
+                        </div>
+                        <Badge variant="outline" className="text-[10px] bg-primary/5 text-primary">
+                          Lab Solved
+                        </Badge>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Whiteboard Sketches on Selected Date */}
+            {whiteboardsForDate.length > 0 && (
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <PenTool className="h-3.5 w-3.5 text-primary" />
+                  Whiteboard Sketches ({whiteboardsForDate.length})
+                </div>
+                <div className="space-y-2">
+                  {whiteboardsForDate.map((w) => (
+                    <div
+                      key={w.id}
+                      className="flex items-center justify-between p-3 rounded-lg border border-border/50 bg-accent/30 text-xs"
+                    >
+                      <div className="space-y-0.5">
+                        <p className="font-semibold text-foreground">
+                          {w.title || "Untitled Sketch"}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground">Architectural Design</p>
+                      </div>
+                      <Badge variant="secondary" className="text-[10px]">
+                        Saved
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Flashcard Reviews on Selected Date */}
+            {flashcardsReviewedCount > 0 && (
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <Layers className="h-3.5 w-3.5 text-primary" />
+                  Flashcard Reviews
+                </div>
+                <div className="p-3 rounded-lg border border-border/50 bg-accent/30 text-xs flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <p className="font-semibold text-foreground">Spaced Repetition Review</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Reviewed{" "}
+                      <span className="font-medium text-foreground">{flashcardsReviewedCount}</span>{" "}
+                      cards
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] bg-amber-500/5 text-amber-500 border-amber-500/15"
+                  >
+                    Active Recall
+                  </Badge>
+                </div>
+              </div>
+            )}
+
+            {/* Certificates Earned on Selected Date */}
+            {certificatesForDate.length > 0 && (
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <Award className="h-3.5 w-3.5 text-primary" />
+                  Certificates Earned ({certificatesForDate.length})
+                </div>
+                <div className="space-y-2">
+                  {certificatesForDate.map((c) => (
+                    <div
+                      key={c.id}
+                      className="flex items-center justify-between p-3 rounded-lg border border-primary/20 bg-primary/5 text-xs"
+                    >
+                      <div className="space-y-0.5">
+                        <p className="font-semibold text-foreground">{c.pathTitle}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          Score: <span className="font-medium text-foreground">{c.score}%</span>
+                        </p>
+                      </div>
+                      <Badge className="text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/25 border-0">
+                        Certified
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Journal Entries on Selected Date */}
             {journalsForDate.length > 0 && (
               <div className="space-y-2.5">
@@ -281,7 +433,11 @@ function CalendarPage() {
               (hasRecordedActivity &&
                 quizzesTaken.length === 0 &&
                 journalsForDate.length === 0 &&
-                interviewsForDate.length === 0)) && (
+                interviewsForDate.length === 0 &&
+                playgroundsForDate.length === 0 &&
+                whiteboardsForDate.length === 0 &&
+                certificatesForDate.length === 0 &&
+                flashcardsReviewedCount === 0)) && (
               <div className="space-y-3 pt-1">
                 <div className="p-3.5 rounded-lg border border-primary/20 bg-primary/5 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-primary">

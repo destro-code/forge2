@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mentorStore } from "@/lib/providers/mentor-store";
 import { mentorProvider } from "@/lib/providers/mentor-provider";
+import { useProgress } from "@/lib/hooks/use-progress";
+import { useLessons, useAchievements } from "@/lib/hooks/use-content";
+import { buildMentorContext } from "@/lib/utils/mentor-context";
 import {
   Select,
   SelectContent,
@@ -178,6 +181,9 @@ export function Mentor() {
   const [state, set] = mentorStore.useStore();
   const active = state.conversations.find((c) => c.id === state.activeId) ?? state.conversations[0];
   const [activeMode, setActiveMode] = useState<MentorMode>(active?.mode || "chat");
+  const progress = useProgress();
+  const lessons = useLessons();
+  const rawAchievements = useAchievements();
   const [input, setInput] = useState("");
   const [codeContext, setCodeContext] = useState("");
   const [showCodeBox, setShowCodeBox] = useState(false);
@@ -257,12 +263,15 @@ export function Mentor() {
     const ctrl = new AbortController();
     abortRef.current = ctrl;
 
+    const learnerContext = buildMentorContext(progress, lessons, rawAchievements, activeMode);
+
     try {
       let acc = "";
       for await (const chunk of mentorProvider.stream([...active.messages, userMsg], {
         model,
         mode: activeMode,
         signal: ctrl.signal,
+        learnerContext,
       })) {
         acc += chunk;
         const cur = mentorStore.read();
