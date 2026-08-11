@@ -25,6 +25,7 @@ import {
   getMasteryLabelFromConfidence,
   updateTopicMasteryRecord,
 } from "@/lib/hooks/use-progress";
+import { getReadinessAnalytics, getPillarRadarAnalytics } from "@/lib/analytics/progress-analytics";
 import { useLessons, useQuizzes } from "@/lib/hooks/use-content";
 import type { MasteryState, TopicMasteryRecord } from "@/lib/types";
 import { toast } from "sonner";
@@ -208,47 +209,17 @@ export function MasteryEnginePage() {
     return Math.round(sum / recordsList.length);
   }, [recordsList]);
 
-  // Interview Readiness Calculation Engine
+  // Interview Readiness Calculation Engine (Using Canonical Analytical Helpers)
   const readinessData = useMemo(() => {
-    if (recordsList.length === 0) return { score: 50, tier: "Junior Ready", pillars: [] };
+    const readinessAnalytics = getReadinessAnalytics(progress);
+    const pillarRadarAnalytics = getPillarRadarAnalytics(progress);
 
-    const avgConf = recordsList.reduce((acc, r) => acc + r.confidence, 0) / recordsList.length;
-    const masteredRatio =
-      (recordsList.filter((r) => r.mastery === "Mastered" || r.mastery === "Interview Ready")
-        .length /
-        recordsList.length) *
-      100;
-    const solvedBugsBonus = Math.min((progress.solvedBugs?.length || 0) * 3, 10);
-
-    const overallScore = Math.min(
-      100,
-      Math.round(avgConf * 0.45 + masteredRatio * 0.45 + solvedBugsBonus),
-    );
-
-    let tier = "Junior Front-End Ready";
-    if (overallScore >= 90) tier = "Staff / Principal Ready";
-    else if (overallScore >= 80) tier = "Senior Front-End Ready";
-    else if (overallScore >= 65) tier = "Mid-Level Engineer Ready";
-
-    const pillarCategories = [
-      "JavaScript",
-      "React",
-      "CSS",
-      "TypeScript",
-      "Performance",
-      "System Design",
-    ];
-    const pillars = pillarCategories.map((cat) => {
-      const catRecords = recordsList.filter((r) => r.category === cat);
-      if (catRecords.length === 0) return { name: cat, score: 60 };
-      const catAvg = Math.round(
-        catRecords.reduce((acc, r) => acc + r.confidence, 0) / catRecords.length,
-      );
-      return { name: cat, score: catAvg };
-    });
-
-    return { score: overallScore, tier, pillars };
-  }, [recordsList, progress.solvedBugs]);
+    return {
+      score: readinessAnalytics.overallReadinessPercent,
+      tier: readinessAnalytics.tier,
+      pillars: pillarRadarAnalytics.pillars,
+    };
+  }, [progress]);
 
   // Filtered Topics
   const filteredRecords = useMemo(() => {

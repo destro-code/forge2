@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -8,26 +8,28 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { HeatMap } from "@/components/shared/heat-map";
-import { progressStore } from "@/lib/providers/progress-provider";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { useQuizzes, useTopics, useLessons } from "@/lib/hooks/use-content";
+import {
+  getQuizAnalytics,
+  getCategoryAccuracyAnalytics,
+  getCategoryActivityAnalytics,
+  getMonthlyActivityAnalytics,
+  getWeeklyAccuracyTrend,
+  getReadinessAnalytics,
+  getPillarRadarAnalytics,
+} from "@/lib/analytics/progress-analytics";
 import {
   Clock,
   Percent,
   Award,
   Flame,
   TrendingUp,
-  Target,
   BarChart2,
-  Calendar,
-  CheckCircle2,
   Brain,
-  Zap,
   Activity,
-  Layers,
-  Sparkles,
   PieChart as PieChartIcon,
   ShieldCheck,
-  Trophy,
   ListChecks,
 } from "lucide-react";
 import {
@@ -50,7 +52,6 @@ import {
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
-  Legend,
 } from "recharts";
 
 export const Route = createFileRoute("/statistics")({
@@ -71,8 +72,11 @@ export const Route = createFileRoute("/statistics")({
 
 export function AnalyticsPage() {
   const progress = useProgress();
+  const quizzes = useQuizzes();
+  const topics = useTopics();
+  const lessons = useLessons();
+
   const [timeHorizon, setTimeHorizon] = useState<"7d" | "30d" | "90d" | "12m">("30d");
-  const [activeCategory, setActiveCategory] = useState<string>("All");
   const [activeTab, setActiveTab] = useState<string>("overview");
 
   // Topics & Mastery
@@ -82,84 +86,34 @@ export function AnalyticsPage() {
   );
   const recordsList = useMemo(() => Object.values(masteryRecords), [masteryRecords]);
 
-  // Metric 1: Learning Time Data
-  const monthlyLearningTime = [
-    { month: "Jan", JavaScript: 280, React: 210, CSS: 150, TypeScript: 120, Performance: 60 },
-    { month: "Feb", JavaScript: 310, React: 240, CSS: 180, TypeScript: 150, Performance: 90 },
-    { month: "Mar", JavaScript: 290, React: 270, CSS: 160, TypeScript: 190, Performance: 110 },
-    { month: "Apr", JavaScript: 340, React: 320, CSS: 200, TypeScript: 220, Performance: 140 },
-    { month: "May", JavaScript: 380, React: 360, CSS: 210, TypeScript: 260, Performance: 180 },
-    { month: "Jun", JavaScript: 420, React: 410, CSS: 230, TypeScript: 290, Performance: 210 },
-    { month: "Jul", JavaScript: 460, React: 450, CSS: 250, TypeScript: 320, Performance: 240 },
-  ];
+  // Reactive Analytics Calculations via Reusable Helper
+  const quizAnalytics = useMemo(
+    () => getQuizAnalytics(progress, quizzes, topics),
+    [progress, quizzes, topics],
+  );
 
-  const categoryTimePie = [
-    { name: "JavaScript", value: 32, color: "var(--color-chart-1)" },
-    { name: "React", value: 28, color: "var(--color-chart-2)" },
-    { name: "CSS", value: 16, color: "var(--color-chart-3)" },
-    { name: "TypeScript", value: 14, color: "var(--color-chart-4)" },
-    { name: "Performance", value: 10, color: "var(--color-chart-5)" },
-  ];
+  const categoryAccuracy = useMemo(
+    () => getCategoryAccuracyAnalytics(progress, quizzes, topics),
+    [progress, quizzes, topics],
+  );
 
-  // Metric 2: Accuracy Data
-  const accuracyTrend = [
-    { week: "W1", quizAccuracy: 62, bugFixAccuracy: 55, overall: 58 },
-    { week: "W2", quizAccuracy: 68, bugFixAccuracy: 60, overall: 64 },
-    { week: "W3", quizAccuracy: 71, bugFixAccuracy: 68, overall: 70 },
-    { week: "W4", quizAccuracy: 75, bugFixAccuracy: 72, overall: 73 },
-    { week: "W5", quizAccuracy: 80, bugFixAccuracy: 79, overall: 79 },
-    { week: "W6", quizAccuracy: 84, bugFixAccuracy: 81, overall: 82 },
-    { week: "W7", quizAccuracy: 88, bugFixAccuracy: 86, overall: 87 },
-  ];
+  const categoryActivity = useMemo(
+    () => getCategoryActivityAnalytics(progress, topics, lessons),
+    [progress, topics, lessons],
+  );
 
-  const accuracyByCategory = [
-    { category: "CSS", accuracy: 94, totalAttempts: 45 },
-    { category: "React", accuracy: 88, totalAttempts: 62 },
-    { category: "JavaScript", accuracy: 82, totalAttempts: 78 },
-    { category: "TypeScript", accuracy: 74, totalAttempts: 38 },
-    { category: "Performance", accuracy: 65, totalAttempts: 24 },
-    { category: "System Design", accuracy: 58, totalAttempts: 15 },
-  ];
+  const monthlyActivity = useMemo(
+    () => getMonthlyActivityAnalytics(progress, topics),
+    [progress, topics],
+  );
 
-  // Metric 3: Quiz Scores Data
-  const quizScoresData = [
-    { quizName: "Flexbox Layouts", score: 100, category: "CSS", date: "Jul 20" },
-    { quizName: "CSS Grid 2D", score: 90, category: "CSS", date: "Jul 22" },
-    { quizName: "Closures & Scope", score: 75, category: "JavaScript", date: "Jul 24" },
-    { quizName: "Event Loop & Promises", score: 85, category: "JavaScript", date: "Jul 25" },
-    { quizName: "useEffect & Cleanup", score: 80, category: "React", date: "Jul 26" },
-    { quizName: "TypeScript Generics", score: 70, category: "TypeScript", date: "Jul 27" },
-    { quizName: "Core Web Vitals", score: 60, category: "Performance", date: "Jul 28" },
-  ];
+  const weeklyAccuracy = useMemo(() => getWeeklyAccuracyTrend(progress), [progress]);
 
-  const scoreDistribution = [
-    { range: "90-100%", count: 12, fill: "#10b981" },
-    { range: "80-89%", count: 8, fill: "#3b82f6" },
-    { range: "70-79%", count: 5, fill: "#f59e0b" },
-    { range: "< 70%", count: 3, fill: "#f43f5e" },
-  ];
+  const readinessAnalytics = useMemo(() => getReadinessAnalytics(progress), [progress]);
 
-  // Metric 4: Interview Readiness Historical Trend & Pillars
-  const readinessTrend = [
-    { week: "W1", score: 42, goal: 85 },
-    { week: "W2", score: 50, goal: 85 },
-    { week: "W3", score: 58, goal: 85 },
-    { week: "W4", score: 64, goal: 85 },
-    { week: "W5", score: 71, goal: 85 },
-    { week: "W6", score: 78, goal: 85 },
-    { week: "W7", score: 83, goal: 85 },
-  ];
+  const pillarRadarAnalytics = useMemo(() => getPillarRadarAnalytics(progress), [progress]);
 
-  const pillarRadar = [
-    { pillar: "JavaScript", score: 82, fullMark: 100 },
-    { pillar: "React", score: 88, fullMark: 100 },
-    { pillar: "CSS Layout", score: 94, fullMark: 100 },
-    { pillar: "TypeScript", score: 74, fullMark: 100 },
-    { pillar: "Performance", score: 65, fullMark: 100 },
-    { pillar: "System Design", score: 58, fullMark: 100 },
-  ];
-
-  // Metric 5: Topic Mastery Stage Progression & Completion
+  // Topic Mastery Stage Counts
   const masteryStageCounts = useMemo(() => {
     const counts: Record<string, number> = {
       "Not Started": 0,
@@ -184,20 +138,19 @@ export function AnalyticsPage() {
     { stage: "Not Started", count: masteryStageCounts["Not Started"], fill: "#6b7280" },
   ];
 
-  // Metric 6: Streaks & Consistency
+  // Streaks & Consistency
   const streakStats = {
     currentStreak: progress.streakDays,
-    longestStreak: Math.max(progress.streakDays, 18),
+    bestStreak: Math.max(progress.streakDays, progress.bestStreakDays || 0),
     totalActiveDays: progress.heatmap.filter((h) => h.value > 0).length,
-    consistencyPercent: Math.round(
-      (progress.heatmap.filter((h) => h.value > 0).length / progress.heatmap.length) * 100,
-    ),
+    consistencyPercent:
+      progress.heatmap.length > 0
+        ? Math.round(
+            (progress.heatmap.filter((h) => h.value > 0).length / progress.heatmap.length) * 100,
+          )
+        : 0,
     shieldsRemaining: 2,
   };
-
-  const avgQuizAccuracy = Math.round(
-    quizScoresData.reduce((acc, q) => acc + q.score, 0) / quizScoresData.length,
-  );
 
   return (
     <div className="space-y-8 pb-12">
@@ -230,32 +183,44 @@ export function AnalyticsPage() {
         <StatCard
           label="Total Study Time"
           value={`${Math.round(progress.totalMinutes / 60)}h ${progress.totalMinutes % 60}m`}
-          delta="+12% vs last week"
+          delta="Accumulated practice"
           icon={<Clock className="h-4 w-4 text-primary" />}
         />
         <StatCard
           label="Avg Quiz Accuracy"
-          value={`${avgQuizAccuracy}%`}
-          delta="+5% improvement"
+          value={
+            quizAnalytics.hasQuizData ? `${quizAnalytics.avgQuizAccuracy}%` : "No quiz data yet"
+          }
+          delta={
+            quizAnalytics.hasQuizData
+              ? `${quizAnalytics.totalQuizzesTaken} quiz attempt${
+                  quizAnalytics.totalQuizzesTaken === 1 ? "" : "s"
+                }`
+              : "Complete quizzes to see score"
+          }
           icon={<Percent className="h-4 w-4 text-emerald-500" />}
         />
         <StatCard
           label="Interview Readiness"
-          value="83%"
-          delta="Senior Tier Goal: 85%"
+          value={`${readinessAnalytics.overallReadinessPercent}%`}
+          delta={`${readinessAnalytics.interviewReadyCount} / ${readinessAnalytics.totalTrackedTopics} topics ready`}
           icon={<Award className="h-4 w-4 text-amber-500" />}
           tone="primary"
         />
         <StatCard
           label="Current Streak"
           value={`${progress.streakDays} Days`}
-          delta={`Record: ${streakStats.longestStreak} Days`}
+          delta={
+            streakStats.bestStreak > 0 ? `Best: ${streakStats.bestStreak} Days` : "Keep it up!"
+          }
           icon={<Flame className="h-4 w-4 text-rose-500" />}
         />
         <StatCard
           label="Consistency Rate"
           value={`${streakStats.consistencyPercent}%`}
-          delta={`${streakStats.totalActiveDays} / 84 active days`}
+          delta={`${streakStats.totalActiveDays} active day${
+            streakStats.totalActiveDays === 1 ? "" : "s"
+          }`}
           icon={<Activity className="h-4 w-4 text-blue-500" />}
         />
       </div>
@@ -286,50 +251,63 @@ export function AnalyticsPage() {
         {/* TAB 1: OVERVIEW DASHBOARD */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Learning Time Trend */}
+            {/* Learning Time / Activity Distribution */}
             <Card className="border-border/60">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center justify-between">
                   <span className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-primary" /> Monthly Learning Time Distribution
+                    <Clock className="h-4 w-4 text-primary" /> Monthly Activity Distribution
                   </span>
                   <Badge variant="outline" className="text-[10px]">
-                    Minutes
+                    Activities
                   </Badge>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Hours dedicated across front-end categories.
+                  Activity volume across front-end categories.
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-72">
-                <ResponsiveContainer>
-                  <BarChart data={monthlyLearningTime}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="var(--color-border)"
-                      opacity={0.5}
-                    />
-                    <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} />
-                    <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
-                    <RTooltip
-                      contentStyle={{
-                        background: "var(--color-popover)",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: 10,
-                        fontSize: 12,
-                      }}
-                    />
-                    <Bar dataKey="JavaScript" stackId="a" fill="#3b82f6" />
-                    <Bar dataKey="React" stackId="a" fill="#06b6d4" />
-                    <Bar dataKey="CSS" stackId="a" fill="#10b981" />
-                    <Bar dataKey="TypeScript" stackId="a" fill="#8b5cf6" />
-                    <Bar dataKey="Performance" stackId="a" fill="#f59e0b" />
-                  </BarChart>
-                </ResponsiveContainer>
+                {monthlyActivity.hasTrendData ? (
+                  <ResponsiveContainer>
+                    <BarChart data={monthlyActivity.monthlyTrend}>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--color-border)"
+                        opacity={0.5}
+                      />
+                      <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} />
+                      <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
+                      <RTooltip
+                        contentStyle={{
+                          background: "var(--color-popover)",
+                          border: "1px solid var(--color-border)",
+                          borderRadius: 10,
+                          fontSize: 12,
+                        }}
+                      />
+                      <Bar dataKey="JavaScript" stackId="a" fill="#3b82f6" />
+                      <Bar dataKey="React" stackId="a" fill="#06b6d4" />
+                      <Bar dataKey="CSS" stackId="a" fill="#10b981" />
+                      <Bar dataKey="TypeScript" stackId="a" fill="#8b5cf6" />
+                      <Bar dataKey="Performance" stackId="a" fill="#f59e0b" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                    <Activity className="h-8 w-8 mb-2 opacity-50 text-primary" />
+                    <p className="text-sm font-medium text-foreground">
+                      No monthly activity data yet
+                    </p>
+                    <p className="text-xs mt-1 max-w-xs">
+                      Complete lessons, quizzes, or practice sessions to unlock monthly activity
+                      distribution insights.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            {/* Quiz Accuracy & Debug Success Rate */}
+            {/* Quiz Accuracy Trajectory */}
             <Card className="border-border/60">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center justify-between">
@@ -337,98 +315,120 @@ export function AnalyticsPage() {
                     <Percent className="h-4 w-4 text-emerald-500" /> Accuracy & Performance
                     Trajectory
                   </span>
-                  <Badge className="bg-emerald-600 text-white text-[10px]">87% Current</Badge>
+                  <Badge className="bg-emerald-600 text-white text-[10px]">
+                    {quizAnalytics.hasQuizData
+                      ? `${quizAnalytics.avgQuizAccuracy}% Average`
+                      : "No Quiz Data"}
+                  </Badge>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Quiz accuracy vs. Debug Lab bug solving success rate over 7 weeks.
+                  Weekly accuracy trajectory derived from completed quiz attempts.
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-72">
-                <ResponsiveContainer>
-                  <LineChart data={accuracyTrend}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="var(--color-border)"
-                      opacity={0.5}
-                    />
-                    <XAxis dataKey="week" stroke="var(--color-muted-foreground)" fontSize={11} />
-                    <YAxis
-                      domain={[40, 100]}
-                      stroke="var(--color-muted-foreground)"
-                      fontSize={11}
-                    />
-                    <RTooltip
-                      contentStyle={{
-                        background: "var(--color-popover)",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: 10,
-                        fontSize: 12,
-                      }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="quizAccuracy"
-                      name="Quiz Accuracy"
-                      stroke="#10b981"
-                      strokeWidth={2.5}
-                      dot={{ r: 4 }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="bugFixAccuracy"
-                      name="Debug Lab Rate"
-                      stroke="#3b82f6"
-                      strokeWidth={2.5}
-                      dot={{ r: 4 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                {weeklyAccuracy.hasTrendData ? (
+                  <ResponsiveContainer>
+                    <LineChart data={weeklyAccuracy.trend}>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--color-border)"
+                        opacity={0.5}
+                      />
+                      <XAxis dataKey="week" stroke="var(--color-muted-foreground)" fontSize={11} />
+                      <YAxis
+                        domain={[0, 100]}
+                        stroke="var(--color-muted-foreground)"
+                        fontSize={11}
+                      />
+                      <RTooltip
+                        contentStyle={{
+                          background: "var(--color-popover)",
+                          border: "1px solid var(--color-border)",
+                          borderRadius: 10,
+                          fontSize: 12,
+                        }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="quizAccuracy"
+                        name="Quiz Accuracy"
+                        stroke="#10b981"
+                        strokeWidth={2.5}
+                        dot={{ r: 4 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                    <Percent className="h-8 w-8 mb-2 opacity-50 text-emerald-500" />
+                    <p className="text-sm font-medium text-foreground">
+                      Complete more activities to see your trend
+                    </p>
+                    <p className="text-xs mt-1 max-w-xs">
+                      Complete quiz attempts to view your performance trajectory over time.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-3">
-            {/* Category Time Pie */}
+            {/* Category Activity Pie */}
             <Card className="border-border/60">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <PieChartIcon className="h-4 w-4 text-primary" /> Time per Category
+                  <PieChartIcon className="h-4 w-4 text-primary" /> Activity per Category
                 </CardTitle>
               </CardHeader>
               <CardContent className="h-64 flex flex-col items-center justify-center">
-                <ResponsiveContainer>
-                  <PieChart>
-                    <Pie
-                      data={categoryTimePie}
-                      dataKey="value"
-                      nameKey="name"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={4}
-                    >
-                      {categoryTimePie.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                {categoryActivity.hasActivityData ? (
+                  <>
+                    <ResponsiveContainer>
+                      <PieChart>
+                        <Pie
+                          data={categoryActivity.categoryPie}
+                          dataKey="value"
+                          nameKey="name"
+                          innerRadius={50}
+                          outerRadius={80}
+                          paddingAngle={4}
+                        >
+                          {categoryActivity.categoryPie.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <RTooltip
+                          contentStyle={{
+                            background: "var(--color-popover)",
+                            border: "1px solid var(--color-border)",
+                            borderRadius: 10,
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="flex flex-wrap justify-center gap-3 text-[11px] text-muted-foreground">
+                      {categoryActivity.categoryPie.map((c) => (
+                        <div key={c.name} className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full" style={{ background: c.color }} />
+                          <span>
+                            {c.name} ({c.value}%)
+                          </span>
+                        </div>
                       ))}
-                    </Pie>
-                    <RTooltip
-                      contentStyle={{
-                        background: "var(--color-popover)",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: 10,
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex flex-wrap justify-center gap-3 text-[11px] text-muted-foreground">
-                  {categoryTimePie.map((c) => (
-                    <div key={c.name} className="flex items-center gap-1">
-                      <span className="h-2 w-2 rounded-full" style={{ background: c.color }} />
-                      <span>
-                        {c.name} ({c.value}%)
-                      </span>
                     </div>
-                  ))}
-                </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                    <PieChartIcon className="h-8 w-8 mb-2 opacity-50 text-primary" />
+                    <p className="text-sm font-medium text-foreground">
+                      No category activity data yet
+                    </p>
+                    <p className="text-xs mt-1">
+                      Start learning topics across categories to see distribution.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -524,47 +524,62 @@ export function AnalyticsPage() {
           <Card className="border-border/60">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <Clock className="h-4 w-4 text-primary" /> Learning Hours & Time Allocation
+                <Clock className="h-4 w-4 text-primary" /> Learning Activity & Time Allocation
               </CardTitle>
               <CardDescription className="text-xs">
-                Detailed breakdown of minutes spent per category over time.
+                Detailed breakdown of completed learning activities per category over time.
               </CardDescription>
             </CardHeader>
             <CardContent className="h-80">
-              <ResponsiveContainer>
-                <AreaChart data={monthlyLearningTime}>
-                  <defs>
-                    <linearGradient id="colorJs" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="colorReact" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.5} />
-                  <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} />
-                  <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
-                  <RTooltip
-                    contentStyle={{ background: "var(--color-popover)", borderRadius: 10 }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="JavaScript"
-                    stroke="#3b82f6"
-                    fillOpacity={1}
-                    fill="url(#colorJs)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="React"
-                    stroke="#06b6d4"
-                    fillOpacity={1}
-                    fill="url(#colorReact)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {monthlyActivity.hasTrendData ? (
+                <ResponsiveContainer>
+                  <AreaChart data={monthlyActivity.monthlyTrend}>
+                    <defs>
+                      <linearGradient id="colorJs" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="colorReact" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="var(--color-border)"
+                      opacity={0.5}
+                    />
+                    <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} />
+                    <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
+                    <RTooltip
+                      contentStyle={{ background: "var(--color-popover)", borderRadius: 10 }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="JavaScript"
+                      stroke="#3b82f6"
+                      fillOpacity={1}
+                      fill="url(#colorJs)"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="React"
+                      stroke="#06b6d4"
+                      fillOpacity={1}
+                      fill="url(#colorReact)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                  <Clock className="h-8 w-8 mb-2 opacity-50 text-primary" />
+                  <p className="text-sm font-medium text-foreground">No activity data yet</p>
+                  <p className="text-xs mt-1 max-w-xs">
+                    Complete lessons, quizzes, or practice sessions to record learning activity
+                    allocation over time.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -583,25 +598,41 @@ export function AnalyticsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-72">
-                <ResponsiveContainer>
-                  <BarChart data={accuracyByCategory}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="var(--color-border)"
-                      opacity={0.4}
-                    />
-                    <XAxis
-                      dataKey="category"
-                      stroke="var(--color-muted-foreground)"
-                      fontSize={11}
-                    />
-                    <YAxis domain={[0, 100]} stroke="var(--color-muted-foreground)" fontSize={11} />
-                    <RTooltip
-                      contentStyle={{ background: "var(--color-popover)", borderRadius: 10 }}
-                    />
-                    <Bar dataKey="accuracy" fill="var(--color-primary)" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                {categoryAccuracy.hasCategoryData ? (
+                  <ResponsiveContainer>
+                    <BarChart data={categoryAccuracy.categories}>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--color-border)"
+                        opacity={0.4}
+                      />
+                      <XAxis
+                        dataKey="category"
+                        stroke="var(--color-muted-foreground)"
+                        fontSize={11}
+                      />
+                      <YAxis
+                        domain={[0, 100]}
+                        stroke="var(--color-muted-foreground)"
+                        fontSize={11}
+                      />
+                      <RTooltip
+                        contentStyle={{ background: "var(--color-popover)", borderRadius: 10 }}
+                      />
+                      <Bar dataKey="accuracy" fill="var(--color-primary)" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                    <Percent className="h-8 w-8 mb-2 opacity-50 text-emerald-500" />
+                    <p className="text-sm font-medium text-foreground">
+                      No category accuracy data yet
+                    </p>
+                    <p className="text-xs mt-1 max-w-xs">
+                      Take quizzes in different categories to unlock category performance metrics.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -616,25 +647,36 @@ export function AnalyticsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-72">
-                <ResponsiveContainer>
-                  <BarChart data={scoreDistribution}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="var(--color-border)"
-                      opacity={0.4}
-                    />
-                    <XAxis dataKey="range" stroke="var(--color-muted-foreground)" fontSize={11} />
-                    <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
-                    <RTooltip
-                      contentStyle={{ background: "var(--color-popover)", borderRadius: 10 }}
-                    />
-                    <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                      {scoreDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+                {quizAnalytics.hasQuizData ? (
+                  <ResponsiveContainer>
+                    <BarChart data={quizAnalytics.scoreDistribution}>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--color-border)"
+                        opacity={0.4}
+                      />
+                      <XAxis dataKey="range" stroke="var(--color-muted-foreground)" fontSize={11} />
+                      <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
+                      <RTooltip
+                        contentStyle={{ background: "var(--color-popover)", borderRadius: 10 }}
+                      />
+                      <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                        {quizAnalytics.scoreDistribution.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                    <ListChecks className="h-8 w-8 mb-2 opacity-50 text-blue-500" />
+                    <p className="text-sm font-medium text-foreground">No quiz data yet</p>
+                    <p className="text-xs mt-1 max-w-xs">
+                      Complete quiz attempts in the Practice tab to track score distribution
+                      brackets.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -645,32 +687,42 @@ export function AnalyticsPage() {
               <CardTitle className="text-sm">Recent Quiz Attempt History</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                {quizScoresData.map((quiz, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between p-3 rounded-lg border bg-card/60 text-xs"
-                  >
-                    <div className="space-y-0.5">
-                      <div className="font-semibold">{quiz.quizName}</div>
-                      <div className="text-muted-foreground text-[10px]">
-                        {quiz.category} · {quiz.date}
-                      </div>
-                    </div>
-                    <Badge
-                      className={
-                        quiz.score >= 85
-                          ? "bg-emerald-600 text-white font-mono"
-                          : quiz.score >= 70
-                            ? "bg-blue-600 text-white font-mono"
-                            : "bg-amber-600 text-white font-mono"
-                      }
+              {quizAnalytics.hasQuizData ? (
+                <div className="space-y-2">
+                  {quizAnalytics.quizHistory.map((quiz, i) => (
+                    <div
+                      key={quiz.id || i}
+                      className="flex items-center justify-between p-3 rounded-lg border bg-card/60 text-xs"
                     >
-                      {quiz.score}% Score
-                    </Badge>
-                  </div>
-                ))}
-              </div>
+                      <div className="space-y-0.5">
+                        <div className="font-semibold">{quiz.quizName}</div>
+                        <div className="text-muted-foreground text-[10px]">
+                          {quiz.category} · {quiz.date}
+                        </div>
+                      </div>
+                      <Badge
+                        className={
+                          quiz.score >= 85
+                            ? "bg-emerald-600 text-white font-mono"
+                            : quiz.score >= 70
+                              ? "bg-blue-600 text-white font-mono"
+                              : "bg-amber-600 text-white font-mono"
+                        }
+                      >
+                        {quiz.score}% Score
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center border rounded-lg bg-card/40 space-y-2">
+                  <ListChecks className="h-8 w-8 mx-auto text-muted-foreground/60" />
+                  <div className="font-semibold text-sm text-foreground">No quiz data yet</div>
+                  <p className="text-xs text-muted-foreground">
+                    Complete quizzes in Practice or Learn modules to record attempt history.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -690,29 +742,45 @@ export function AnalyticsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-72">
-                <ResponsiveContainer>
-                  <AreaChart data={readinessTrend}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="var(--color-border)"
-                      opacity={0.4}
-                    />
-                    <XAxis dataKey="week" stroke="var(--color-muted-foreground)" fontSize={11} />
-                    <YAxis domain={[0, 100]} stroke="var(--color-muted-foreground)" fontSize={11} />
-                    <RTooltip
-                      contentStyle={{ background: "var(--color-popover)", borderRadius: 10 }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="score"
-                      stroke="#f59e0b"
-                      fill="#f59e0b"
-                      fillOpacity={0.2}
-                      strokeWidth={2.5}
-                    />
-                    <Line type="monotone" dataKey="goal" stroke="#10b981" strokeDasharray="4 4" />
-                  </AreaChart>
-                </ResponsiveContainer>
+                {weeklyAccuracy.hasTrendData ? (
+                  <ResponsiveContainer>
+                    <AreaChart data={weeklyAccuracy.trend}>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--color-border)"
+                        opacity={0.4}
+                      />
+                      <XAxis dataKey="week" stroke="var(--color-muted-foreground)" fontSize={11} />
+                      <YAxis
+                        domain={[0, 100]}
+                        stroke="var(--color-muted-foreground)"
+                        fontSize={11}
+                      />
+                      <RTooltip
+                        contentStyle={{ background: "var(--color-popover)", borderRadius: 10 }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="quizAccuracy"
+                        stroke="#f59e0b"
+                        fill="#f59e0b"
+                        fillOpacity={0.2}
+                        strokeWidth={2.5}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                    <Award className="h-8 w-8 mb-2 opacity-50 text-amber-500" />
+                    <p className="text-sm font-medium text-foreground">
+                      Complete more activities to see your trend
+                    </p>
+                    <p className="text-xs mt-1 max-w-xs">
+                      As you complete topic assessments and quizzes, your readiness trajectory will
+                      plot here.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -723,26 +791,39 @@ export function AnalyticsPage() {
                   <Brain className="h-4 w-4 text-primary" /> Technical Pillar Skill Radar
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Comparative balance across 6 front-end domains.
+                  Comparative balance across 6 front-end technical pillars.
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-72">
-                <ResponsiveContainer>
-                  <RadarChart data={pillarRadar}>
-                    <PolarGrid stroke="var(--color-border)" />
-                    <PolarAngleAxis
-                      dataKey="pillar"
-                      tick={{ fill: "var(--color-muted-foreground)", fontSize: 11 }}
-                    />
-                    <PolarRadiusAxis stroke="var(--color-border)" tick={false} />
-                    <Radar
-                      dataKey="score"
-                      stroke="var(--color-primary)"
-                      fill="var(--color-primary)"
-                      fillOpacity={0.4}
-                    />
-                  </RadarChart>
-                </ResponsiveContainer>
+                {pillarRadarAnalytics.hasRadarData ? (
+                  <ResponsiveContainer>
+                    <RadarChart data={pillarRadarAnalytics.pillars}>
+                      <PolarGrid stroke="var(--color-border)" />
+                      <PolarAngleAxis
+                        dataKey="pillar"
+                        tick={{ fill: "var(--color-muted-foreground)", fontSize: 11 }}
+                      />
+                      <PolarRadiusAxis stroke="var(--color-border)" tick={false} />
+                      <Radar
+                        dataKey="score"
+                        stroke="var(--color-primary)"
+                        fill="var(--color-primary)"
+                        fillOpacity={0.4}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted-foreground space-y-2">
+                    <Brain className="h-8 w-8 opacity-50 text-primary" />
+                    <p className="text-sm font-medium text-foreground">
+                      No diagnostic radar data yet
+                    </p>
+                    <p className="text-xs max-w-xs">
+                      Skill radar will populate as you complete topic assessments across technical
+                      pillars.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
