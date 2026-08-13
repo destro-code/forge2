@@ -2100,7 +2100,16 @@
         "type": "checkpoint",
         "id": "checkpoint-0-2-3",
         "label": "Use the Console to run a JavaScript expression, log a value, identify an error, and explain why the first relevant error should be investigated before later cascading errors.",
-        "hint": "Read the message first. Find the value or operation that failed. Then trace backward to understand why it failed."
+        "hint": "Read the message first. Find the value or operation that failed. Then trace backward to understand why it failed.",
+        "assessment": {
+          "type": "true-false",
+          "question": "True or False: When a page throws a long string of cascading runtime errors in the Console, the best strategy is usually to start investigating the very last error in the list because it caused the crash.",
+          "correctAnswer": false,
+          "feedback": {
+            "correct": "Correct. You should generally investigate the FIRST relevant error, as later errors are often just side effects of the initial failure.",
+            "incorrect": "Think about cause and effect. Do later errors cause earlier ones, or do earlier errors cause later ones to fail?"
+          }
+        }
       },
       {
         "type": "heading",
@@ -6583,7 +6592,16 @@
         "type": "checkpoint",
         "id": "checkpoint-1-2-2",
         "label": "Choose appropriate type, class, ID, and descendant selectors; compare competing selectors using the basic specificity model; and diagnose a simple conflict by explaining why one rule wins.",
-        "hint": "First determine which rules actually match. Then compare their specificity. If specificity is equal, use source order."
+        "hint": "First determine which rules actually match. Then compare their specificity. If specificity is equal, use source order.",
+        "assessment": {
+          "type": "output-prediction",
+          "question": "Consider this CSS:\n\nh1 {\n  color: red;\n}\n\n.header-title {\n  color: blue;\n}\n\n#main-heading {\n  color: green;\n}\n\nIf an element has all three identifiers `<h1 id=\"main-heading\" class=\"header-title\">`, what is the computed color? (Type the color name)",
+          "correctAnswer": "green",
+          "feedback": {
+            "correct": "Correct! The ID selector (#main-heading) has higher specificity than the class (.header-title) and type (h1) selectors.",
+            "incorrect": "Check the specificity hierarchy. Which selector type carries the most weight: type, class, or ID?"
+          }
+        }
       },
       {
         "type": "heading",
@@ -7002,7 +7020,16 @@
         "type": "checkpoint",
         "id": "checkpoint-1-2-3",
         "label": "Explain why a declaration wins in a simple cascade conflict, distinguish inherited values from directly matched declarations, and fix a basic cascade or inheritance problem without using !important as the first solution.",
-        "hint": "Follow the value: matching rules → priority/specificity → source order when applicable → inheritance when the element does not have its own applicable value."
+        "hint": "Follow the value: matching rules → priority/specificity → source order when applicable → inheritance when the element does not have its own applicable value.",
+        "assessment": {
+          "type": "output-prediction",
+          "question": "Consider this CSS:\n\n.alert {\n  background-color: yellow;\n}\n\n.alert {\n  background-color: orange;\n}\n\nWhat is the computed background color for an element with class=\"alert\"? (Type the color name)",
+          "correctAnswer": "orange",
+          "feedback": {
+            "correct": "Correct! When specificity is identical, the cascade resolves the conflict using source order, so the later rule wins.",
+            "incorrect": "When two selectors have the exact same specificity, what is the tie-breaker?"
+          }
+        }
       },
       {
         "type": "heading",
@@ -9413,7 +9440,12 @@
         "type": "checkpoint",
         "id": "checkpoint-1-2-9",
         "label": "Build a Flexbox layout using display:flex, identify the main and cross axes, use justify-content and align-items according to those axes, use gap for spacing, and create a simple wrapping card layout.",
-        "hint": "Start with the direction. Once you know the main axis, justify-content makes sense. Once you know the cross axis, align-items makes sense."
+        "hint": "Start with the direction. Once you know the main axis, justify-content makes sense. Once you know the cross axis, align-items makes sense.",
+        "assessment": {
+          "type": "sandbox-completion",
+          "lessonId": "lesson-1-2-9",
+          "sandboxId": "interactive-1-2-9-4"
+        }
       },
       {
         "type": "heading",
@@ -9839,7 +9871,12 @@
         "type": "checkpoint",
         "id": "checkpoint-1-2-10",
         "label": "Create a CSS Grid, define columns with tracks, use fr and gap, place an item across grid lines, and explain why a two-dimensional layout may be a better fit for Grid than Flexbox.",
-        "hint": "Think rows + columns. Start with display:grid, define the tracks, then place or let the browser auto-place the items."
+        "hint": "Think rows + columns. Start with display:grid, define the tracks, then place or let the browser auto-place the items.",
+        "assessment": {
+          "type": "sandbox-completion",
+          "lessonId": "lesson-1-2-10",
+          "sandboxId": "interactive-1-2-10-3"
+        }
       },
       {
         "type": "heading",
@@ -11014,7 +11051,30 @@
         "type": "checkpoint",
         "id": "checkpoint-1-3-1",
         "label": "Explain in your own words what JavaScript contributes to a browser application, distinguish HTML/CSS/JavaScript responsibilities, and describe the sequence from a user event to a visible DOM change.",
-        "hint": "Use this structure: something exists in the DOM → an event happens → JavaScript responds → the DOM may change → the browser updates what the user sees."
+        "hint": "Use this structure: something exists in the DOM → an event happens → JavaScript responds → the DOM may change → the browser updates what the user sees.",
+        "assessment": {
+          "type": "multiple-choice",
+          "question": "Which of the following correctly describes the sequence of a typical browser interaction?",
+          "options": [
+            {
+              "id": "opt-1",
+              "label": "JavaScript re-compiles the HTML source code when an event happens."
+            },
+            {
+              "id": "opt-2",
+              "label": "An event occurs, JavaScript logic responds, and updates the DOM, causing the browser to re-render the visible change."
+            },
+            {
+              "id": "opt-3",
+              "label": "The browser redraws the page first, which triggers an event that JavaScript then records."
+            }
+          ],
+          "correctAnswer": "opt-2",
+          "feedback": {
+            "correct": "Exactly. The DOM represents the live interface, and modifying it triggers the browser's update process.",
+            "incorrect": "Consider the cause-and-effect relationship between user action, programmatic logic, and visual output."
+          }
+        }
       },
       {
         "type": "heading",
@@ -11440,7 +11500,34 @@
         "type": "checkpoint",
         "id": "checkpoint-1-3-2",
         "label": "Declare variables with let and const, correctly reassign let variables, explain why a const variable cannot be reassigned, and choose const or let based on whether reassignment is required.",
-        "hint": "Ask one question: will this variable need to point to a different value later? No → const. Yes → let."
+        "hint": "Ask one question: will this variable need to point to a different value later? No → const. Yes → let.",
+        "assessment": {
+          "type": "multiple-select",
+          "question": "Which of the following statements about let and const are correct? (Select all that apply)",
+          "options": [
+            {
+              "id": "opt-1",
+              "label": "Variables declared with let can be reassigned."
+            },
+            {
+              "id": "opt-2",
+              "label": "Variables declared with const can be reassigned."
+            },
+            {
+              "id": "opt-3",
+              "label": "Variables declared with const cannot be reassigned."
+            },
+            {
+              "id": "opt-4",
+              "label": "let and const are block-scoped."
+            }
+          ],
+          "correctAnswer": ["opt-1", "opt-3", "opt-4"],
+          "feedback": {
+            "correct": "Correct! let is used for values that change, const for values that do not, and both are scoped to the block they are defined in.",
+            "incorrect": "Review the rules of reassignment and block scope for modern JavaScript variables."
+          }
+        }
       },
       {
         "type": "heading",
@@ -37316,93 +37403,4 @@
         "language": "jsx",
         "initialCode": "import React, { useState } from 'react';\n\nfunction LessonEditor({ title }) {\n  const [localTitle, setLocalTitle] = useState(title);\n  const [editing, setEditing] = useState(false);\n\n  return (\n    <section style={{ padding: 16 }}>\n      <h2>{localTitle}</h2>\n\n      {editing && (\n        <input\n          value={localTitle}\n          onChange={(event) => setLocalTitle(event.target.value)}\n        />\n      )}\n\n      <button onClick={() => setEditing((value) => !value)}>\n        {editing ? 'Done' : 'Edit'}\n      </button>\n    </section>\n  );\n}\n\nexport default function App() {\n  const [title] = useState('Thinking in React');\n\n  return <LessonEditor title={title} />;\n}",
         "hints": [
-          "React state must be treated as immutable. Updating it directly without calling the setter function will not trigger a UI render.",
-          "Identify where the state variable 'localTitle' and setter 'setLocalTitle' are initialized via 'useState'.",
-          "Call the setter function 'setLocalTitle' passing a new value (or an array spread like '[...prevItems, newItem]') instead of mutating state."
-        ]
-      },
-      {
-        "type": "heading",
-        "text": "Ask Who Needs the Value"
-      },
-      {
-        "type": "code",
-        "language": "text",
-        "title": "Ownership questions",
-        "code": "Who creates this value?\nWho changes it?\nWho needs to read it?\nWould another component need to stay synchronized with it?\nCan it be derived from existing props/state?"
-      },
-      {
-        "type": "paragraph",
-        "text": "These questions often reveal where the value should live."
-      },
-      {
-        "type": "heading",
-        "text": "A Shared Value Usually Needs a Common Owner"
-      },
-      {
-        "type": "code",
-        "language": "text",
-        "title": "Example",
-        "code": "LessonDashboard\n├── SearchBox\n└── LessonList\n\nBoth depend on:\nsearchQuery\n\nA later lesson will ask:\nWhere should searchQuery live?"
-      },
-      {
-        "type": "paragraph",
-        "text": "If two siblings need to stay synchronized around one changing value, local state in only one sibling may not be enough. That problem leads directly to lifting state up."
-      },
-      {
-        "type": "heading",
-        "text": "Props Are Not 'Lower-Level State'"
-      },
-      {
-        "type": "paragraph",
-        "text": "A prop and state can both hold ordinary JavaScript values. Their difference is ownership and data flow, not the type of the value."
-      },
-      {
-        "type": "code",
-        "language": "text",
-        "title": "Same value type, different role",
-        "code": "string prop\n→ parent owns the string\n\nstring state\n→ component owns the changing string"
-      },
-      {
-        "type": "heading",
-        "text": "Drill 2: Ownership Decisions"
-      },
-      {
-        "type": "interactive-sandbox",
-        "id": "interactive-3-3-2-3",
-        "title": "State Ownership Drill",
-        "instructions": "For each scenario, identify the best owner and whether the value should be a prop, state, or derived value. Explain what would become difficult if you put the value in the wrong place.",
-        "language": "text",
-        "initialCode": "Scenario A\nA LessonCard receives a lesson object from LessonList.\nWho owns lesson?\n____________________________\n\nScenario B\nThe card has a Show details button that only affects that card.\nWho owns expanded?\n____________________________\n\nScenario C\nProgressSummary calculates completed / total.\nDoes percentage need state?\n____________________________\n\nScenario D\nSearchBox and LessonList both need the same search query.\nWhere should that changing query eventually live?\n____________________________\n\nScenario E\nAn editor lets the user change a draft before saving it.\nWhy might draftTitle be local state even though initialTitle is a prop?\n____________________________",
-        "hints": [
-          "Identify the primary professional or technical trade-off being asked in this exercise prompt.",
-          "Analyze the given scenario list carefully, and structure your answer using clear headings or bullet points."
-        ]
-      },
-      {
-        "type": "heading",
-        "text": "A Helpful Rule: One Source of Truth"
-      },
-      {
-        "type": "paragraph",
-        "text": "When multiple pieces of code can independently change or represent the same conceptual value, synchronization becomes harder."
-      },
-      {
-        "type": "code",
-        "language": "text",
-        "title": "Prefer one owner",
-        "code": "One conceptual value\n        ↓\nOne clear owner\n        ↓\nOther components receive it through props\nor receive callbacks to request changes"
-      },
-      {
-        "type": "paragraph",
-        "text": "This is not a rule that every value must exist in exactly one variable. It is a design principle: avoid accidental duplicate sources of truth."
-      },
-      {
-        "type": "heading",
-        "text": "Debugging Props vs State"
-      },
-      {
-        "type": "code",
-        "language": "text",
-        "title": "When a value is stale",
-        "code": "1. Where is
+  

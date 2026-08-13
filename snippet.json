@@ -1,0 +1,141 @@
+        "title": "Example data questions",
+        "code": "Who needs the lesson collection?\n→ LessonList\n→ ProgressSummary\n→ maybe SearchBox results\n\nWho needs one lesson?\n→ LessonCard\n\nWho needs the search term?\n→ SearchBox\n→ perhaps the parent that performs filtering"
+      },
+      {
+        "type": "paragraph",
+        "text": "You are not required to solve all state ownership yet. The goal is to notice the relationships that will matter in the next architecture lessons."
+      },
+      {
+        "type": "heading",
+        "text": "Interactive Practice: Decompose a Mockup"
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "interactive-3-3-1-1",
+        "title": "Component Tree Playground",
+        "instructions": "Inspect the supplied dashboard mockup and modify the component tree. Start with a rough decomposition, then add boundaries only where they represent repeated UI, an independent interaction, or a meaningful section.",
+        "language": "text",
+        "initialCode": "UI Mockup\n\nLesson Dashboard\n├── Header\n├── Progress section\n├── Search area\n├── Lesson cards\n│   ├── JSX card\n│   ├── Components card\n│   └── Props card\n└── Footer\n\nTask:\n1. Propose a component tree.\n2. Mark which parts are likely reusable.\n3. Mark which parts contain independent interaction.\n4. Identify one component boundary you would NOT create.\n5. Explain why.",
+        "hints": [
+          "Identify the primary professional or technical trade-off being asked in this exercise prompt.",
+          "Analyze the given scenario list carefully, and structure your answer using clear headings or bullet points."
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Drill 1: Component Boundary Decisions"
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "interactive-3-3-1-2",
+        "title": "Keep, Split, or Combine",
+        "instructions": "For each proposed boundary, decide whether to keep it as a component, split it further, or combine it with its parent. Give a one-sentence reason for each decision.",
+        "language": "text",
+        "initialCode": "Case A\nA dashboard contains five visually identical lesson cards.\nDecision: ____________________\nReason: _______________________\n\nCase B\nA three-line paragraph appears only once and has no behavior.\nDecision: ____________________\nReason: _______________________\n\nCase C\nA search control has its own input interaction and is reused in two places.\nDecision: ____________________\nReason: _______________________\n\nCase D\nA card contains a title and a small timestamp that are always rendered together.\nDecision: ____________________\nReason: _______________________\n\nCase E\nA page component currently handles navigation, fetching, filtering, list rendering, and modal behavior.\nDecision: ____________________\nReason: _______________________",
+        "hints": [
+          "Identify the primary professional or technical trade-off being asked in this exercise prompt.",
+          "Analyze the given scenario list carefully, and structure your answer using clear headings or bullet points."
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "From Mockup to Tree"
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "title": "A useful sequence",
+        "code": "1. Identify the visible regions.\n2. Identify repeated patterns.\n3. Identify independent interactions.\n4. Name meaningful sections.\n5. Build a component tree.\n6. Check which data must flow between branches.\n7. Only then begin implementation."
+      },
+      {
+        "type": "paragraph",
+        "text": "This sequence prevents implementation details from determining the architecture too early."
+      },
+      {
+        "type": "heading",
+        "text": "The Component Tree Is Not the DOM Tree"
+      },
+      {
+        "type": "paragraph",
+        "text": "A component tree and a DOM tree are related, but they do not have to be identical. A component can return several nested DOM elements, and a component boundary can represent behavior or responsibility rather than a single visual element."
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "title": "Component vs DOM",
+        "code": "LessonCard component\n└── article\n    ├── h2\n    ├── p\n    ├── button\n    └── p"
+      },
+      {
+        "type": "paragraph",
+        "text": "The component gives the group a meaningful identity in the React architecture."
+      },
+      {
+        "type": "heading",
+        "text": "Use Design Repetition as Evidence"
+      },
+      {
+        "type": "paragraph",
+        "text": "If a UI pattern appears repeatedly, that is evidence that the repeated structure may deserve a component. But the component should still represent a coherent concept."
+      },
+      {
+        "type": "heading",
+        "text": "Use Behavior as Evidence"
+      },
+      {
+        "type": "paragraph",
+        "text": "A part of the UI with its own interaction often makes a natural component boundary. Search boxes, dialogs, tabs, and interactive cards are common examples."
+      },
+      {
+        "type": "heading",
+        "text": "Use Change as Evidence"
+      },
+      {
+        "type": "paragraph",
+        "text": "Another useful question is: which parts are likely to change independently? If navigation changes frequently while the lesson list changes for different reasons, separating them can make those changes easier to manage."
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "title": "Three signals",
+        "code": "Repeated\nor\nInteractive\nor\nConceptually independent\n\n→ candidate component boundary"
+      },
+      {
+        "type": "heading",
+        "text": "The Tree Should Help You Answer Ownership Questions"
+      },
+      {
+        "type": "paragraph",
+        "text": "A good hierarchy makes later questions easier: where should the state live, which component should receive the data, and which child needs a callback?"
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "title": "Architecture leads to data flow",
+        "code": "Parent\n↓ props\nChild\n↓ callback\nParent\n\nThe exact ownership decision comes next,\nbut the component tree gives you the map."
+      },
+      {
+        "type": "heading",
+        "text": "Drill 2: Plan Before Code"
+      },
+      {
+        "type": "interactive-sandbox",
+        "id": "interactive-3-3-1-3",
+        "title": "UI Planning Drill",
+        "instructions": "Before writing JSX, design a component hierarchy for the given feature. Include the likely data each component receives, but do not implement state or effects yet.",
+        "language": "text",
+        "initialCode": "Feature:\nA course page contains:\n- course title\n- instructor information\n- search box\n- category filter\n- list of lessons\n- each lesson has a title, duration, progress state, and expand/collapse details\n- a progress summary appears above the list\n\nYour plan:\n\nComponent tree:\n____________________________\n____________________________\n____________________________\n\nRepeated components:\n____________________________\n\nIndependent interactions:\n____________________________\n\nLikely shared data:\n____________________________\n\nOne boundary you deliberately would not create:\n____________________________",
+        "hints": [
+          "Focus on structuring your explanation. Reflect on professional technical terms, trade-offs, and architecture.",
+          "Write down a precise, point-by-point response following the questions or checklists outlined in the prompt."
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What This Prevents"
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "title": "Without planning",
+        "code": "Start coding\n→ component grows\n→ state gets added\n→ more conditions appear\n→ repeated markup appears\n→ props become tangled\n→ refactoring becomes necessary"
+      },
