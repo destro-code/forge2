@@ -91,6 +91,25 @@ export interface LessonHighlight {
   createdAt: string;
 }
 
+export interface CheckpointAssessmentConfig {
+  type:
+    | "multiple-choice"
+    | "multiple-select"
+    | "true-false"
+    | "output-prediction"
+    | "sandbox-completion"
+    | "debug-completion"
+    | "structured-form"
+    | "open-reflection";
+  prompt?: string;
+  options?: { id: string; label: string }[];
+  correctAnswer?: string | string[];
+  explanation?: string;
+  sandboxId?: string;
+  debugBugId?: string;
+  formFields?: { id: string; label: string; placeholder?: string; type?: "text" | "textarea" }[];
+}
+
 export type LessonSection =
   | { type: "heading"; text: string; id?: string }
   | { type: "paragraph"; text: string }
@@ -121,7 +140,13 @@ export type LessonSection =
       content: string;
       variant?: "deep-dive" | "pitfall" | "senior-tip" | "default";
     }
-  | { type: "checkpoint"; id: string; label: string; hint?: string }
+  | {
+      type: "checkpoint";
+      id: string;
+      label: string;
+      hint?: string;
+      assessment?: CheckpointAssessmentConfig;
+    }
   | {
       type: "interactive-sandbox";
       id?: string;
@@ -299,6 +324,8 @@ export interface Quiz {
   estimatedMinutes: number;
   category?: string;
   topicId?: string;
+  lessonId?: string;
+  moduleId?: string;
   questions: QuizQuestion[];
 }
 

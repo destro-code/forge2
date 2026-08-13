@@ -10,17 +10,25 @@ export function generateOutput(
   _validation: ValidationResult,
   options: CompilerOptions = {},
 ): GeneratedOutput {
-  const {
-    isInline = false,
-    title = "Forge Playground Preview",
-    baseUrl = typeof window !== "undefined" ? window.location.origin : "",
-  } = options;
+  const { isInline = false, title = "Forge Playground Preview", baseUrl = "" } = options;
+
+  const isHtmlProject =
+    parsed.entryModule?.language === "html" || parsed.entryModule?.name.endsWith(".html");
+  const isCssProject =
+    parsed.entryModule?.language === "css" || parsed.entryModule?.name.endsWith(".css");
+  const isStaticProject = isHtmlProject || isCssProject;
 
   const cssBundle = parsed.cssModules.map((m) => m.code).join("\n\n");
 
   // Pre-compile code modules on parent side using @babel/standalone
   const precompiledCodeModules = parsed.codeModules.map((m) => {
-    if (m.name.endsWith(".css") || m.name.endsWith(".json")) {
+    if (
+      m.name.endsWith(".css") ||
+      m.name.endsWith(".json") ||
+      m.name.endsWith(".html") ||
+      m.language === "html" ||
+      m.language === "css"
+    ) {
       return { id: m.id, name: m.name, code: m.code, language: m.language, compiled: m.code };
     }
     try {
@@ -49,10 +57,19 @@ export function generateOutput(
     "<\\/script>",
   );
 
-  const vendorBase = (
-    baseUrl || (typeof window !== "undefined" ? window.location.origin : "")
-  ).replace(/\/$/, "");
+  const vendorBase = (baseUrl || "").replace(/\/$/, "");
   const baseTag = vendorBase ? `<base href="${vendorBase}/" />` : `<base href="/" />`;
+
+  const vendorScripts = isStaticProject
+    ? ""
+    : `
+  <script>console.log('[Forge Preview] Loading React');</script>
+  <script src="${vendorBase}/vendor/react.development.js?v=18.3.1" onload="console.log('[Forge Preview] React loaded')" onerror="window.__reactLoadError=true; console.error('[Forge Preview] React failed to load')"></script>
+  <script>console.log('[Forge Preview] Loading ReactDOM');</script>
+  <script src="${vendorBase}/vendor/react-dom.development.js?v=18.3.1" onload="console.log('[Forge Preview] ReactDOM loaded')" onerror="window.__reactDomLoadError=true; console.error('[Forge Preview] ReactDOM failed to load')"></script>
+  <script>console.log('[Forge Preview] Loading Babel');</script>
+  <script src="${vendorBase}/vendor/babel.min.js?v=8.0.4" onload="console.log('[Forge Preview] Babel loaded')" onerror="window.__babelLoadError=true; console.error('[Forge Preview] Babel failed to load')"></script>
+  `;
 
   const html = `<!DOCTYPE html>
 <html>
@@ -60,12 +77,7 @@ export function generateOutput(
   <meta charset="UTF-8" />
   ${baseTag}
   <title>${title}</title>
-  <script>console.log('[Forge Preview] Loading React');</script>
-  <script src="${vendorBase}/vendor/react.development.js?v=18.3.1" onload="console.log('[Forge Preview] React loaded')" onerror="window.__reactLoadError=true; console.error('[Forge Preview] React failed to load')"></script>
-  <script>console.log('[Forge Preview] Loading ReactDOM');</script>
-  <script src="${vendorBase}/vendor/react-dom.development.js?v=18.3.1" onload="console.log('[Forge Preview] ReactDOM loaded')" onerror="window.__reactDomLoadError=true; console.error('[Forge Preview] ReactDOM failed to load')"></script>
-  <script>console.log('[Forge Preview] Loading Babel');</script>
-  <script src="${vendorBase}/vendor/babel.min.js?v=8.0.4" onload="console.log('[Forge Preview] Babel loaded')" onerror="window.__babelLoadError=true; console.error('[Forge Preview] Babel failed to load')"></script>
+  ${vendorScripts}
   <style>
     ${cssBundle}
     body {
@@ -218,42 +230,46 @@ export function generateOutput(
       }
       if (!startTime) startTime = Date.now();
 
-      if (window.__reactLoadError) {
-        console.error('[Forge Preview] React failed to load');
-        window.showErrorOverlay('Runtime Dependency Error', 'Failed to load React library from ' + ${JSON.stringify(vendorBase)} + '/vendor/react.development.js. Please check script load permissions or network.');
-        return;
-      }
-      if (window.__reactDomLoadError) {
-        console.error('[Forge Preview] ReactDOM failed to load');
-        window.showErrorOverlay('Runtime Dependency Error', 'Failed to load ReactDOM library from ' + ${JSON.stringify(vendorBase)} + '/vendor/react-dom.development.js. Please check script load permissions or network.');
-        return;
-      }
-      if (window.__babelLoadError) {
-        console.error('[Forge Preview] Babel failed to load');
-      }
+      const isStatic = ${isStaticProject};
 
-      const missing = [];
-      if (!window.React) missing.push('React');
-      if (!window.ReactDOM) missing.push('ReactDOM');
-
-      const needsBabel = FILES.some(function(f) { return !f.compiled && !f.name.endsWith('.css') && !f.name.endsWith('.json'); });
-      if (needsBabel && !window.Babel) {
-        missing.push('Babel');
-      }
-
-      if (missing.length > 0) {
-        if (Date.now() - startTime < 4000) {
-          setTimeout(function() { runCompilerAndExecute(newFiles, startTime); }, 50);
+      if (!isStatic) {
+        if (window.__reactLoadError) {
+          console.error('[Forge Preview] React failed to load');
+          window.showErrorOverlay('Runtime Dependency Error', 'Failed to load React library from ' + ${JSON.stringify(vendorBase)} + '/vendor/react.development.js. Please check script load permissions or network.');
           return;
-        } else {
-          if (missing.includes('Babel')) {
-            console.error('[Forge Preview] Babel failed to load');
+        }
+        if (window.__reactDomLoadError) {
+          console.error('[Forge Preview] ReactDOM failed to load');
+          window.showErrorOverlay('Runtime Dependency Error', 'Failed to load ReactDOM library from ' + ${JSON.stringify(vendorBase)} + '/vendor/react-dom.development.js. Please check script load permissions or network.');
+          return;
+        }
+        if (window.__babelLoadError) {
+          console.error('[Forge Preview] Babel failed to load');
+        }
+
+        const missing = [];
+        if (!window.React) missing.push('React');
+        if (!window.ReactDOM) missing.push('ReactDOM');
+
+        const needsBabel = FILES.some(function(f) { return !f.compiled && !f.name.endsWith('.css') && !f.name.endsWith('.json') && !f.name.endsWith('.html'); });
+        if (needsBabel && !window.Babel) {
+          missing.push('Babel');
+        }
+
+        if (missing.length > 0) {
+          if (Date.now() - startTime < 4000) {
+            setTimeout(function() { runCompilerAndExecute(newFiles, startTime); }, 50);
+            return;
+          } else {
+            if (missing.includes('Babel')) {
+              console.error('[Forge Preview] Babel failed to load');
+            }
+            window.showErrorOverlay(
+              'Preview Initialization Timeout',
+              'Required runtime dependencies failed to load within 4.0s: [' + missing.join(', ') + ']. Please verify script access in iframe.'
+            );
+            return;
           }
-          window.showErrorOverlay(
-            'Preview Initialization Timeout',
-            'Required runtime dependencies failed to load within 4.0s: [' + missing.join(', ') + ']. Please verify script access in iframe.'
-          );
-          return;
         }
       }
 
@@ -272,7 +288,7 @@ export function generateOutput(
       const moduleCache = {};
 
       for (const file of FILES) {
-        if (file.name.endsWith('.css')) continue;
+        if (file.name.endsWith('.css') || file.name.endsWith('.html')) continue;
 
         if (file.name.endsWith('.json')) {
           compiledModules[file.name] = { type: 'json', content: file.code };
@@ -416,36 +432,75 @@ export function generateOutput(
       }
 
       try {
-        const entryFile = FILES.find(f => f.name === 'App.tsx' || f.name === 'App.jsx' || f.name === 'index.tsx' || f.name === 'main.tsx') || FILES[0];
-        if (!entryFile) return;
+        if (isStatic) {
+          const htmlFile = FILES.find(function(f) { return f.name.endsWith('.html') || f.language === 'html'; });
+          const container = document.getElementById('root');
 
-        const entryExports = requireModule('./' + entryFile.name, 'root');
+          if (htmlFile) {
+            const codeLower = htmlFile.code.toLowerCase();
+            const isFullDoc = codeLower.indexOf('<!doctype') !== -1 || codeLower.indexOf('<html') !== -1 || codeLower.indexOf('<body') !== -1;
+            
+            let htmlToRender = htmlFile.code;
+            if (isFullDoc) {
+              const bodyMatch = htmlFile.code.match(/<body[^>]*>([\\s\\S]*)<\\/body>/i);
+              htmlToRender = bodyMatch ? bodyMatch[1] : htmlFile.code;
+            }
 
-        const ComponentToRender = 
-          entryExports.default || 
-          entryExports.App || 
-          entryExports.Counter || 
-          entryExports.SearchApp || 
-          entryExports.UserFetcher ||
-          Object.values(entryExports).find(val => typeof val === 'function' || (val && typeof val === 'object' && val.$$typeof));
+            if (container) {
+              container.innerHTML = htmlToRender;
 
-        const container = document.getElementById('root');
-
-        if (ComponentToRender) {
-          const element = React.isValidElement(ComponentToRender) 
-            ? ComponentToRender 
-            : React.createElement(ComponentToRender);
-          
-          if (!window.__reactRoot && ReactDOM.createRoot) {
-            window.__reactRoot = ReactDOM.createRoot(container);
+              // Execute script tags inside HTML if any
+              const scripts = container.querySelectorAll('script');
+              scripts.forEach(function(oldScript) {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(function(attr) {
+                  newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                if (oldScript.parentNode) {
+                  oldScript.parentNode.replaceChild(newScript, oldScript);
+                }
+              });
+            }
+          } else {
+            // CSS only or other static
+            if (container) {
+              container.innerHTML = '<div style="padding: 24px; text-align: center; color: #a1a1aa;"><p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 500;">CSS Sandbox</p><p style="margin: 0; font-size: 13px; opacity: 0.8;">Styles are active and applied directly to this preview area.</p></div>';
+            }
           }
-          if (window.__reactRoot) {
-            window.__reactRoot.render(element);
-          } else if (ReactDOM.render) {
-            ReactDOM.render(element, container);
+        } else {
+          // Standard React/TSX/JS Module Execution
+          const entryFile = FILES.find(function(f) { return f.name === 'App.tsx' || f.name === 'App.jsx' || f.name === 'index.tsx' || f.name === 'main.tsx'; }) || FILES[0];
+          if (!entryFile) return;
+
+          const entryExports = requireModule('./' + entryFile.name, 'root');
+
+          const ComponentToRender = 
+            entryExports.default || 
+            entryExports.App || 
+            entryExports.Counter || 
+            entryExports.SearchApp || 
+            entryExports.UserFetcher ||
+            Object.values(entryExports).find(function(val) { return typeof val === 'function' || (val && typeof val === 'object' && val.$$typeof); });
+
+          const container = document.getElementById('root');
+
+          if (ComponentToRender) {
+            const element = React.isValidElement(ComponentToRender) 
+              ? ComponentToRender 
+              : React.createElement(ComponentToRender);
+            
+            if (!window.__reactRoot && ReactDOM.createRoot) {
+              window.__reactRoot = ReactDOM.createRoot(container);
+            }
+            if (window.__reactRoot) {
+              window.__reactRoot.render(element);
+            } else if (ReactDOM.render) {
+              ReactDOM.render(element, container);
+            }
+          } else if (container && container.children.length === 0) {
+            container.innerHTML = '<div style="padding: 16px; color: #a1a1aa; font-size: 13px;">Code compiled successfully.</div>';
           }
-        } else if (container && container.children.length === 0) {
-          container.innerHTML = '<div style="padding: 16px; color: #a1a1aa; font-size: 13px;">Code compiled successfully.</div>';
         }
       } catch (err) {
         window.showErrorOverlay('Runtime Execution Error', err.message, '', undefined, undefined, err.stack);

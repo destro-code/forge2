@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,11 +14,13 @@ import {
   Lightbulb,
   ShieldCheck,
   FileCode2,
+  ArrowLeft,
 } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
-import { buildPlaygroundHtml } from "@/lib/playground-compiler";
+import { buildPlaygroundHtml, getSandboxFileInfo } from "@/lib/playground-compiler";
+import { useLesson } from "@/lib/hooks/use-content";
 
 import type { PlaygroundFile, PlaygroundConsoleLog } from "@/lib/types/playground";
 import { PLAYGROUND_PRESETS } from "@/lib/playground-data";
@@ -31,6 +33,13 @@ import { PlaygroundSolutionModal } from "@/components/playground/playground-solu
 import { PlaygroundCodeReviewerModal } from "@/components/playground/playground-code-reviewer-modal";
 
 export const Route = createFileRoute("/playground")({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { lessonId?: string; sandboxId?: string; code?: string } => ({
+    lessonId: (search.lessonId as string) || undefined,
+    sandboxId: (search.sandboxId as string) || undefined,
+    code: (search.code as string) || undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Playground · Forge" },
@@ -47,9 +56,27 @@ export const Route = createFileRoute("/playground")({
 });
 
 export function Playground() {
+  const searchParams = Route.useSearch();
+  const lesson = useLesson(searchParams.lessonId);
+  const sandboxSection = lesson?.sections?.find(
+    (s: any) => s.type === "interactive-sandbox" && s.id === searchParams.sandboxId,
+  );
+
   const [currentPresetId, setCurrentPresetId] = useState<string>(PLAYGROUND_PRESETS[0].id);
   const activePreset =
     PLAYGROUND_PRESETS.find((p) => p.id === currentPresetId) || PLAYGROUND_PRESETS[0];
+
+  const currentTitle = sandboxSection
+    ? `${lesson?.title || "Lesson"}: ${sandboxSection.title}`
+    : activePreset.title;
+  const currentDifficulty = sandboxSection
+    ? lesson?.difficulty || "Beginner"
+    : activePreset.difficulty;
+  const currentHints = sandboxSection
+    ? sandboxSection.hints && sandboxSection.hints.length > 0
+      ? sandboxSection.hints
+      : [sandboxSection.instructions || "Follow the exercise instructions inside the lesson."]
+    : activePreset.hints;
 
   const {
     files,
@@ -66,17 +93,44 @@ export function Playground() {
     setCompilerOutput,
     updateFileContent,
   } = usePlaygroundStore();
-  const { completePlaygroundExercise } = useProgressStore();
+  const { completePlaygroundExercise, playgroundCompletions = [] } = useProgressStore();
 
   const [executionStatus, setExecutionStatus] = useState<"idle" | "running" | "success" | "error">(
     "idle",
   );
   const [executionTime, setExecutionTime] = useState<number | null>(null);
 
-  // Initialize store on mount if empty
+  // Initialize store on mount or when sandbox search params change
   useEffect(() => {
     let loadedFiles = activePreset.files;
-    if (files.length === 0) {
+    if (sandboxSection) {
+      const exerciseCode = searchParams.code || sandboxSection.initialCode;
+      const fileInfo = getSandboxFileInfo(sandboxSection.language);
+      loadedFiles = [
+        {
+          id: "f-sandbox-app",
+          name: fileInfo.name,
+          language: fileInfo.language,
+          code: exerciseCode,
+        },
+      ];
+      // Check if there is a saved state in localStorage for this lesson sandbox
+      if (typeof window !== "undefined" && !searchParams.code) {
+        const key = `forge_playground_files_lesson_${searchParams.lessonId}_${searchParams.sandboxId}`;
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) loadedFiles = parsed;
+          } catch (e) {
+            /* ignore */
+          }
+        }
+      }
+      setFiles(loadedFiles);
+      setActiveFileId(loadedFiles[0]?.id || "f-sandbox-app");
+      setOpenTabIds(loadedFiles.map((f) => f.id));
+    } else if (files.length === 0) {
       if (typeof window !== "undefined") {
         const key = `forge_playground_files_${currentPresetId}`;
         const saved = localStorage.getItem(key);
@@ -102,12 +156,12 @@ export function Playground() {
 
     // Build initial compilerOutput for initial mount so iframe has srcDoc
     const initialHtml = buildPlaygroundHtml(loadedFiles, {
-      title: "Forge Playground Live Preview",
-      baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+      title: sandboxSection ? sandboxSection.title : "Forge Playground Live Preview",
+      baseUrl: "",
     });
     setCompilerOutput(initialHtml, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams.lessonId, searchParams.sandboxId]);
 
   // Solution modal state
   const [solutionOpen, setSolutionOpen] = useState(false);
@@ -126,9 +180,14 @@ export function Playground() {
   // Auto-persist files to localStorage whenever files change
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (sandboxSection) {
+      const key = `forge_playground_files_lesson_${searchParams.lessonId}_${searchParams.sandboxId}`;
+      localStorage.setItem(key, JSON.stringify(files));
+      return;
+    }
     const key = `forge_playground_files_${currentPresetId}`;
     localStorage.setItem(key, JSON.stringify(files));
-  }, [files, currentPresetId]);
+  }, [files, currentPresetId, searchParams.lessonId, searchParams.sandboxId, sandboxSection]);
 
   // Preset switch handler
   const handleSelectPreset = (presetId: string) => {
@@ -158,7 +217,7 @@ export function Playground() {
     // Full iframe reload for preset change
     const html = buildPlaygroundHtml(nextFiles, {
       title: "Forge Playground Live Preview",
-      baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+      baseUrl: "",
     });
     setCompilerOutput(html, false);
 
@@ -275,8 +334,8 @@ export function Playground() {
       setTimeout(() => {
         try {
           const html = buildPlaygroundHtml(currentFiles, {
-            title: "Forge Playground Live Preview",
-            baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+            title: sandboxSection ? sandboxSection.title : "Forge Playground Live Preview",
+            baseUrl: "",
           });
           setCompilerOutput(html, false);
 
@@ -285,7 +344,11 @@ export function Playground() {
             setExecutionTime(duration);
             setExecutionStatus("success");
             toast.success(`Compiled & executed in ${duration}ms`);
-            completePlaygroundExercise(activePreset.id);
+            if (sandboxSection && searchParams.lessonId && searchParams.sandboxId) {
+              completePlaygroundExercise(`${searchParams.lessonId}:${searchParams.sandboxId}`);
+            } else if (!sandboxSection) {
+              completePlaygroundExercise(activePreset.id);
+            }
           }
         } catch (err) {
           setIsBuilding(false);
@@ -305,8 +368,8 @@ export function Playground() {
         // Rebuild compilerOutput so switching to Preview tab displays updated code.
         try {
           const html = buildPlaygroundHtml(currentFiles, {
-            title: "Forge Playground Live Preview",
-            baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+            title: sandboxSection ? sandboxSection.title : "Forge Playground Live Preview",
+            baseUrl: "",
           });
           setCompilerOutput(html, false);
         } catch (e) {
@@ -326,6 +389,33 @@ export function Playground() {
 
   // Reset handler
   const handleReset = () => {
+    if (sandboxSection) {
+      const fileInfo = getSandboxFileInfo(sandboxSection.language);
+      const resetFiles = [
+        {
+          id: "f-sandbox-app",
+          name: fileInfo.name,
+          language: fileInfo.language,
+          code: sandboxSection.initialCode,
+        },
+      ];
+      setFiles(resetFiles);
+      setActiveFileId("f-sandbox-app");
+      setOpenTabIds(["f-sandbox-app"]);
+      setConsoleLogs([]);
+      setExecutionStatus("idle");
+      setExecutionTime(null);
+
+      const html = buildPlaygroundHtml(resetFiles, {
+        title: sandboxSection.title,
+        baseUrl: "",
+      });
+      setCompilerOutput(html, false);
+
+      toast.info("Playground reset to original lesson code.");
+      return;
+    }
+
     if (typeof window !== "undefined") {
       localStorage.removeItem(`forge_playground_files_${currentPresetId}`);
     }
@@ -339,7 +429,7 @@ export function Playground() {
     // Full iframe reload for reset
     const html = buildPlaygroundHtml(activePreset.files, {
       title: "Forge Playground Live Preview",
-      baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+      baseUrl: "",
     });
     setCompilerOutput(html, false);
 
@@ -355,7 +445,7 @@ export function Playground() {
     // Full iframe reload for applied solution
     const html = buildPlaygroundHtml(solutionFiles, {
       title: "Forge Playground Live Preview",
-      baseUrl: typeof window !== "undefined" ? window.location.origin : "",
+      baseUrl: "",
     });
     setCompilerOutput(html, false);
 
@@ -381,6 +471,50 @@ export function Playground() {
               </Badge>
             )}
 
+            {searchParams.lessonId &&
+              searchParams.sandboxId &&
+              (() => {
+                const isSandboxCompleted = playgroundCompletions.some(
+                  (c) => c.templateId === `${searchParams.lessonId}:${searchParams.sandboxId}`,
+                );
+                return (
+                  <Button
+                    variant={isSandboxCompleted ? "outline" : "default"}
+                    size="sm"
+                    onClick={() => {
+                      if (!isSandboxCompleted) {
+                        completePlaygroundExercise(
+                          `${searchParams.lessonId}:${searchParams.sandboxId}`,
+                        );
+                        toast.success("Exercise completed successfully! Checkpoint updated.");
+                      }
+                    }}
+                    className={`gap-1.5 text-xs font-semibold ${
+                      isSandboxCompleted
+                        ? "border-emerald-500/30 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/10 cursor-default animate-fade-in"
+                        : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-glow animate-pulse"
+                    }`}
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <span>{isSandboxCompleted ? "✓ Exercise Solved" : "Submit & Complete"}</span>
+                  </Button>
+                );
+              })()}
+
+            {searchParams.lessonId && (
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="gap-1.5 text-xs border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary"
+              >
+                <Link to="/lesson/$lessonId" params={{ lessonId: searchParams.lessonId }}>
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Back to Lesson</span>
+                </Link>
+              </Button>
+            )}
+
             <Button
               variant="outline"
               size="sm"
@@ -392,16 +526,18 @@ export function Playground() {
               <span className="inline sm:hidden">AI Review</span>
             </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSolutionOpen(true)}
-              className="gap-1.5 text-xs"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span className="hidden sm:inline">Compare Solution</span>
-              <span className="inline sm:hidden">Solution</span>
-            </Button>
+            {!sandboxSection && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSolutionOpen(true)}
+                className="gap-1.5 text-xs"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                <span className="hidden sm:inline">Compare Solution</span>
+                <span className="inline sm:hidden">Solution</span>
+              </Button>
+            )}
 
             <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 text-xs">
               <RotateCcw className="h-3.5 w-3.5" />
@@ -432,10 +568,10 @@ export function Playground() {
               <PanelLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
             <span className="font-semibold text-foreground truncate max-w-[160px] sm:max-w-none text-xs sm:text-xs">
-              {activePreset.title}
+              {currentTitle}
             </span>
             <Badge variant="secondary" className="text-[10px] hidden sm:inline-flex">
-              {activePreset.difficulty}
+              {currentDifficulty}
             </Badge>
           </div>
 
@@ -569,7 +705,7 @@ export function Playground() {
               </div>
 
               <div className="space-y-2">
-                {activePreset.hints.map((hint, idx) => (
+                {currentHints.map((hint, idx) => (
                   <div
                     key={idx}
                     className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200/90 leading-relaxed"
@@ -580,15 +716,17 @@ export function Playground() {
                 ))}
               </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-1.5 text-xs mt-4"
-                onClick={() => setSolutionOpen(true)}
-              >
-                <Sparkles className="h-3.5 w-3.5 text-primary" />
-                View Reference Solution
-              </Button>
+              {!sandboxSection && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full gap-1.5 text-xs mt-4"
+                  onClick={() => setSolutionOpen(true)}
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  View Reference Solution
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -604,6 +742,7 @@ export function Playground() {
                 presets={PLAYGROUND_PRESETS}
                 currentPresetId={currentPresetId}
                 onSelectPreset={handleSelectPreset}
+                isLessonSandbox={!!sandboxSection}
               />
             </div>
           )}
@@ -646,7 +785,7 @@ export function Playground() {
                 </div>
 
                 <div className="space-y-2">
-                  {activePreset.hints.map((hint, idx) => (
+                  {currentHints.map((hint, idx) => (
                     <div
                       key={idx}
                       className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200/90 leading-relaxed"
@@ -657,15 +796,17 @@ export function Playground() {
                   ))}
                 </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full gap-1.5 text-xs mt-4"
-                  onClick={() => setSolutionOpen(true)}
-                >
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
-                  View Reference Solution
-                </Button>
+                {!sandboxSection && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full gap-1.5 text-xs mt-4"
+                    onClick={() => setSolutionOpen(true)}
+                  >
+                    <Sparkles className="h-3.5 w-3.5 text-primary" />
+                    View Reference Solution
+                  </Button>
+                )}
               </div>
             )}
           </div>

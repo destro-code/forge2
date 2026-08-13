@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AssessmentTestRouteImport } from './routes/assessment-test'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as CertificatesRouteImport } from './routes/certificates'
@@ -67,6 +68,11 @@ const AchievementsRoute = AchievementsRouteImport.update({
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssessmentTestRoute = AssessmentTestRouteImport.update({
+  id: '/assessment-test',
+  path: '/assessment-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookmarksRoute = BookmarksRouteImport.update({
@@ -251,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/achievements': typeof AchievementsRoute
   '/analytics': typeof AnalyticsRoute
+  '/assessment-test': typeof AssessmentTestRoute
   '/bookmarks': typeof BookmarksRoute
   '/calendar': typeof CalendarRoute
   '/certificates': typeof CertificatesRoute
@@ -292,6 +299,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/achievements': typeof AchievementsRoute
   '/analytics': typeof AnalyticsRoute
+  '/assessment-test': typeof AssessmentTestRoute
   '/bookmarks': typeof BookmarksRoute
   '/calendar': typeof CalendarRoute
   '/certificates': typeof CertificatesRoute
@@ -333,6 +341,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/achievements': typeof AchievementsRoute
   '/analytics': typeof AnalyticsRoute
+  '/assessment-test': typeof AssessmentTestRoute
   '/bookmarks': typeof BookmarksRoute
   '/calendar': typeof CalendarRoute
   '/certificates': typeof CertificatesRoute
@@ -376,6 +385,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/achievements'
     | '/analytics'
+    | '/assessment-test'
     | '/bookmarks'
     | '/calendar'
     | '/certificates'
@@ -417,6 +427,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/achievements'
     | '/analytics'
+    | '/assessment-test'
     | '/bookmarks'
     | '/calendar'
     | '/certificates'
@@ -457,6 +468,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/achievements'
     | '/analytics'
+    | '/assessment-test'
     | '/bookmarks'
     | '/calendar'
     | '/certificates'
@@ -499,6 +511,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AchievementsRoute: typeof AchievementsRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  AssessmentTestRoute: typeof AssessmentTestRoute
   BookmarksRoute: typeof BookmarksRoute
   CalendarRoute: typeof CalendarRoute
   CertificatesRoute: typeof CertificatesRoute
@@ -553,6 +566,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assessment-test': {
+      id: '/assessment-test'
+      path: '/assessment-test'
+      fullPath: '/assessment-test'
+      preLoaderRoute: typeof AssessmentTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookmarks': {
@@ -897,6 +917,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AchievementsRoute: AchievementsRoute,
   AnalyticsRoute: AnalyticsRoute,
+  AssessmentTestRoute: AssessmentTestRoute,
   BookmarksRoute: BookmarksRoute,
   CalendarRoute: CalendarRoute,
   CertificatesRoute: CertificatesRoute,

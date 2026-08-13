@@ -23,10 +23,12 @@ interface PlaygroundFileTreeProps {
   presets: PlaygroundPreset[];
   currentPresetId: string;
   onSelectPreset: (presetId: string) => void;
+  isLessonSandbox?: boolean;
 }
 
 export function PlaygroundFileTree(props: PlaygroundFileTreeProps) {
-  const { onAddFile, onDeleteFile, presets, currentPresetId, onSelectPreset } = props;
+  const { onAddFile, onDeleteFile, presets, currentPresetId, onSelectPreset, isLessonSandbox } =
+    props;
   const { files, activeFileId, setActiveFileId, openTabIds, setOpenTabIds } = usePlaygroundStore();
 
   const { onFileSelected } = props;
@@ -67,24 +69,35 @@ export function PlaygroundFileTree(props: PlaygroundFileTreeProps) {
   return (
     <div className="flex h-full flex-col border-r border-border/60 bg-card/40 text-xs">
       {/* Preset Selector */}
-      <div className="border-b border-border/50 p-3 space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="font-semibold uppercase tracking-wider text-[10px] text-muted-foreground flex items-center gap-1">
-            <Sparkles className="h-3 w-3 text-primary" /> Preset Lab
-          </span>
+      {!isLessonSandbox ? (
+        <div className="border-b border-border/50 p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold uppercase tracking-wider text-[10px] text-muted-foreground flex items-center gap-1">
+              <Sparkles className="h-3 w-3 text-primary" /> Preset Lab
+            </span>
+          </div>
+          <select
+            value={currentPresetId}
+            onChange={(e) => onSelectPreset(e.target.value)}
+            className="w-full rounded-md border border-border/60 bg-background/80 px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            {presets.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title} ({p.difficulty})
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          value={currentPresetId}
-          onChange={(e) => onSelectPreset(e.target.value)}
-          className="w-full rounded-md border border-border/60 bg-background/80 px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-        >
-          {presets.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.title} ({p.difficulty})
-            </option>
-          ))}
-        </select>
-      </div>
+      ) : (
+        <div className="border-b border-border/50 p-3 space-y-1">
+          <span className="font-semibold uppercase tracking-wider text-[10px] text-primary flex items-center gap-1">
+            <Sparkles className="h-3 w-3 fill-current" /> Active Lesson
+          </span>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            Running in isolated Lesson Sandbox mode.
+          </p>
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border/50 px-3 py-2 text-muted-foreground">

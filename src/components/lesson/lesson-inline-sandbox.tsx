@@ -4,31 +4,48 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, RefreshCw, Terminal, ExternalLink, Code2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { buildPlaygroundHtml } from "@/lib/playground-compiler";
+import { buildPlaygroundHtml, getSandboxFileInfo } from "@/lib/playground-compiler";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 interface LessonInlineSandboxProps {
   initialCode: string;
   title?: string;
   instructions?: string;
+  lessonId?: string;
+  sandboxId?: string;
+  language?: string;
 }
 
 export function LessonInlineSandbox({
   initialCode,
   title = "Interactive Mini Sandbox",
   instructions,
+  lessonId,
+  sandboxId,
+  language,
 }: LessonInlineSandboxProps) {
   const [code, setCode] = useState(initialCode);
   const [key, setKey] = useState(0);
   const [consoleLogs, setConsoleLogs] = useState<{ level: string; msg: string }[]>([]);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  const fileInfo = getSandboxFileInfo(language);
+
+  const labelText =
+    language === "html"
+      ? "Editable HTML"
+      : language === "css"
+        ? "Editable CSS"
+        : language === "javascript" || language === "js"
+          ? "Editable JavaScript"
+          : "Editable TypeScript / TSX";
+
   const sandboxFiles = [
     {
       id: "app-file",
-      name: "App.tsx",
+      name: fileInfo.name,
       code: code,
-      language: "typescript" as const,
+      language: fileInfo.language,
     },
   ];
 
@@ -66,7 +83,14 @@ export function LessonInlineSandbox({
             </Button>
 
             <Button size="sm" variant="outline" asChild className="h-7 px-2.5 text-xs gap-1">
-              <Link to="/playground">
+              <Link
+                to="/playground"
+                search={{
+                  lessonId,
+                  sandboxId,
+                  code: code !== initialCode ? code : undefined,
+                }}
+              >
                 Full Playground <ExternalLink className="h-3 w-3" />
               </Link>
             </Button>
@@ -82,7 +106,7 @@ export function LessonInlineSandbox({
         {/* Code Input */}
         <div className="flex flex-col bg-[#0b0c10] p-3 font-mono text-xs">
           <div className="text-[10px] font-semibold text-muted-foreground uppercase mb-2 flex items-center justify-between">
-            <span>Editable TypeScript / TSX</span>
+            <span>{labelText}</span>
             <button
               onClick={() => setCode(initialCode)}
               className="text-muted-foreground hover:text-foreground flex items-center gap-1"

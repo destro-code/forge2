@@ -8,12 +8,8 @@
     "estimatedMinutes": 20,
     "interviewFrequency": "Low",
     "prerequisites": [],
-    "next": [
-      "how-the-web-works"
-    ],
-    "related": [
-      "browser-server-and-client"
-    ],
+    "next": ["how-the-web-works"],
+    "related": ["browser-server-and-client"],
     "order": 1
   },
   {
@@ -24,15 +20,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "what-is-frontend-development"
-    ],
-    "next": [
-      "what-happens-when-you-click-a-link"
-    ],
-    "related": [
-      "browser-server-and-client"
-    ],
+    "prerequisites": ["what-is-frontend-development"],
+    "next": ["what-happens-when-you-click-a-link"],
+    "related": ["browser-server-and-client"],
     "order": 2
   },
   {
@@ -43,15 +33,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "how-the-web-works"
-    ],
-    "next": [
-      "browser-server-and-client"
-    ],
-    "related": [
-      "how-the-web-works"
-    ],
+    "prerequisites": ["how-the-web-works"],
+    "next": ["browser-server-and-client"],
+    "related": ["how-the-web-works"],
     "order": 3
   },
   {
@@ -62,15 +46,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "what-happens-when-you-click-a-link"
-    ],
-    "next": [
-      "how-forge-works"
-    ],
-    "related": [
-      "what-is-frontend-development"
-    ],
+    "prerequisites": ["what-happens-when-you-click-a-link"],
+    "next": ["how-forge-works"],
+    "related": ["what-is-frontend-development"],
     "order": 4
   },
   {
@@ -81,9 +59,7 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "browser-server-and-client"
-    ],
+    "prerequisites": ["browser-server-and-client"],
     "next": [],
     "related": [],
     "order": 5
@@ -97,13 +73,8 @@
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
     "prerequisites": [],
-    "next": [
-      "inspecting-html-with-elements"
-    ],
-    "related": [
-      "understanding-the-console",
-      "understanding-network-requests"
-    ],
+    "next": ["inspecting-html-with-elements"],
+    "related": ["understanding-the-console", "understanding-network-requests"],
     "order": 1
   },
   {
@@ -114,15 +85,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "meet-your-browser-devtools"
-    ],
-    "next": [
-      "understanding-the-console"
-    ],
-    "related": [
-      "meet-your-browser-devtools"
-    ],
+    "prerequisites": ["meet-your-browser-devtools"],
+    "next": ["understanding-the-console"],
+    "related": ["meet-your-browser-devtools"],
     "order": 2
   },
   {
@@ -133,16 +98,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "meet-your-browser-devtools"
-    ],
-    "next": [
-      "understanding-network-requests"
-    ],
-    "related": [
-      "inspecting-html-with-elements",
-      "your-first-debugging-exercise"
-    ],
+    "prerequisites": ["meet-your-browser-devtools"],
+    "next": ["understanding-network-requests"],
+    "related": ["inspecting-html-with-elements", "your-first-debugging-exercise"],
     "order": 3
   },
   {
@@ -153,15 +111,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "meet-your-browser-devtools"
-    ],
-    "next": [
-      "your-first-debugging-exercise"
-    ],
-    "related": [
-      "understanding-the-console"
-    ],
+    "prerequisites": ["meet-your-browser-devtools"],
+    "next": ["your-first-debugging-exercise"],
+    "related": ["understanding-the-console"],
     "order": 4
   },
   {
@@ -172,14 +124,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "inspecting-html-with-elements",
-      "understanding-the-console"
-    ],
+    "prerequisites": ["inspecting-html-with-elements", "understanding-the-console"],
     "next": [],
-    "related": [
-      "understanding-network-requests"
-    ],
+    "related": ["understanding-network-requests"],
     "order": 5
   },
   {
@@ -191,12 +138,8 @@
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
     "prerequisites": [],
-    "next": [
-      "elements-tags-and-attributes"
-    ],
-    "related": [
-      "semantic-html"
-    ],
+    "next": ["elements-tags-and-attributes"],
+    "related": ["semantic-html"],
     "order": 1
   },
   {
@@ -207,12 +150,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 25,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "html-structure-of-the-web"
-    ],
-    "next": [
-      "headings-paragraphs-and-text"
-    ],
+    "prerequisites": ["html-structure-of-the-web"],
+    "next": ["headings-paragraphs-and-text"],
     "related": [],
     "order": 2
   },
@@ -224,15 +163,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "elements-tags-and-attributes"
-    ],
-    "next": [
-      "links-images-and-paths"
-    ],
-    "related": [
-      "semantic-html"
-    ],
+    "prerequisites": ["elements-tags-and-attributes"],
+    "next": ["links-images-and-paths"],
+    "related": ["semantic-html"],
     "order": 3
   },
   {
@@ -243,12 +176,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "elements-tags-and-attributes"
-    ],
-    "next": [
-      "lists-and-tables"
-    ],
+    "prerequisites": ["elements-tags-and-attributes"],
+    "next": ["lists-and-tables"],
     "related": [],
     "order": 4
   },
@@ -260,12 +189,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "headings-paragraphs-and-text"
-    ],
-    "next": [
-      "forms-and-user-input"
-    ],
+    "prerequisites": ["headings-paragraphs-and-text"],
+    "next": ["forms-and-user-input"],
     "related": [],
     "order": 5
   },
@@ -277,15 +202,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "headings-paragraphs-and-text"
-    ],
-    "next": [
-      "semantic-html"
-    ],
-    "related": [
-      "semantic-html"
-    ],
+    "prerequisites": ["headings-paragraphs-and-text"],
+    "next": ["semantic-html"],
+    "related": ["semantic-html"],
     "order": 6
   },
   {
@@ -296,16 +215,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "headings-paragraphs-and-text",
-      "forms-and-user-input"
-    ],
-    "next": [
-      "html-challenge-build-a-real-page"
-    ],
-    "related": [
-      "html-structure-of-the-web"
-    ],
+    "prerequisites": ["headings-paragraphs-and-text", "forms-and-user-input"],
+    "next": ["html-challenge-build-a-real-page"],
+    "related": ["html-structure-of-the-web"],
     "order": 7
   },
   {
@@ -316,9 +228,7 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "semantic-html"
-    ],
+    "prerequisites": ["semantic-html"],
     "next": [],
     "related": [],
     "order": 8
@@ -332,9 +242,7 @@
     "estimatedMinutes": 20,
     "interviewFrequency": "Low",
     "prerequisites": [],
-    "next": [
-      "selectors-and-specificity"
-    ],
+    "next": ["selectors-and-specificity"],
     "related": [],
     "order": 1
   },
@@ -346,12 +254,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "what-is-css"
-    ],
-    "next": [
-      "colors-units-and-typography"
-    ],
+    "prerequisites": ["what-is-css"],
+    "next": ["colors-units-and-typography"],
     "related": [],
     "order": 2
   },
@@ -363,12 +267,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "selectors-and-specificity"
-    ],
-    "next": [
-      "the-css-box-model"
-    ],
+    "prerequisites": ["selectors-and-specificity"],
+    "next": ["the-css-box-model"],
     "related": [],
     "order": 3
   },
@@ -380,12 +280,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "selectors-and-specificity"
-    ],
-    "next": [
-      "flexbox-fundamentals"
-    ],
+    "prerequisites": ["selectors-and-specificity"],
+    "next": ["flexbox-fundamentals"],
     "related": [],
     "order": 4
   },
@@ -397,15 +293,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "the-css-box-model"
-    ],
-    "next": [
-      "css-grid-fundamentals"
-    ],
-    "related": [
-      "css-grid-fundamentals"
-    ],
+    "prerequisites": ["the-css-box-model"],
+    "next": ["css-grid-fundamentals"],
+    "related": ["css-grid-fundamentals"],
     "order": 5
   },
   {
@@ -416,15 +306,9 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "flexbox-fundamentals"
-    ],
-    "next": [
-      "responsive-design"
-    ],
-    "related": [
-      "flexbox-fundamentals"
-    ],
+    "prerequisites": ["flexbox-fundamentals"],
+    "next": ["responsive-design"],
+    "related": ["flexbox-fundamentals"],
     "order": 6
   },
   {
@@ -435,13 +319,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "flexbox-fundamentals",
-      "css-grid-fundamentals"
-    ],
-    "next": [
-      "css-challenge-build-a-responsive-interface"
-    ],
+    "prerequisites": ["flexbox-fundamentals", "css-grid-fundamentals"],
+    "next": ["css-challenge-build-a-responsive-interface"],
     "related": [],
     "order": 7
   },
@@ -453,9 +332,7 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 50,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "responsive-design"
-    ],
+    "prerequisites": ["responsive-design"],
     "next": [],
     "related": [],
     "order": 8
@@ -469,9 +346,7 @@
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
     "prerequisites": [],
-    "next": [
-      "variables-and-values"
-    ],
+    "next": ["variables-and-values"],
     "related": [],
     "order": 1
   },
@@ -483,12 +358,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "javascript-and-the-browser"
-    ],
-    "next": [
-      "data-types-and-operators"
-    ],
+    "prerequisites": ["javascript-and-the-browser"],
+    "next": ["data-types-and-operators"],
     "related": [],
     "order": 2
   },
@@ -500,12 +371,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "variables-and-values"
-    ],
-    "next": [
-      "conditions-and-decisions"
-    ],
+    "prerequisites": ["variables-and-values"],
+    "next": ["conditions-and-decisions"],
     "related": [],
     "order": 3
   },
@@ -517,12 +384,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "data-types-and-operators"
-    ],
-    "next": [
-      "loops-and-repetition"
-    ],
+    "prerequisites": ["data-types-and-operators"],
+    "next": ["loops-and-repetition"],
     "related": [],
     "order": 4
   },
@@ -534,12 +397,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "conditions-and-decisions"
-    ],
-    "next": [
-      "functions"
-    ],
+    "prerequisites": ["conditions-and-decisions"],
+    "next": ["functions"],
     "related": [],
     "order": 5
   },
@@ -551,12 +410,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "conditions-and-decisions"
-    ],
-    "next": [
-      "arrays"
-    ],
+    "prerequisites": ["conditions-and-decisions"],
+    "next": ["arrays"],
     "related": [],
     "order": 6
   },
@@ -568,13 +423,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "loops-and-repetition",
-      "functions"
-    ],
-    "next": [
-      "objects"
-    ],
+    "prerequisites": ["loops-and-repetition", "functions"],
+    "next": ["objects"],
     "related": [],
     "order": 7
   },
@@ -586,12 +436,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "arrays"
-    ],
-    "next": [
-      "javascript-mini-project"
-    ],
+    "prerequisites": ["arrays"],
+    "next": ["javascript-mini-project"],
     "related": [],
     "order": 8
   },
@@ -603,9 +449,7 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 60,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "objects"
-    ],
+    "prerequisites": ["objects"],
     "next": [],
     "related": [],
     "order": 9

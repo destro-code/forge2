@@ -692,7 +692,9 @@ function LessonView() {
                         </div>
                         <LessonCheckpoints
                           lessonId={lesson.id}
-                          checkpoints={[{ id: s.id, label: s.label, hint: s.hint }]}
+                          checkpoints={[
+                            { id: s.id, label: s.label, hint: s.hint, assessment: s.assessment },
+                          ]}
                         />
                       </div>
                     );
@@ -714,6 +716,9 @@ function LessonView() {
                           initialCode={s.initialCode}
                           title={s.title}
                           instructions={s.instructions}
+                          lessonId={lesson.id}
+                          sandboxId={s.id}
+                          language={s.language}
                         />
                       </div>
                     );
