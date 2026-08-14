@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { Copy, Check, Terminal, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -424,6 +424,115 @@ function buildInlineCssPreview(code: string): string {
 </html>`;
 }
 
+function buildInlineDomJsPreview(code: string, id: string): string {
+  const cleanCode = code
+    .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
+    .replace(/^export\s+default\s+/gm, "")
+    .replace(/^export\s+/gm, "");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    * { box-sizing: border-box; }
+    .box, .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    button, .btn, #save-button, #submit-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #3b82f6;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover, .btn:hover { background: #2563eb; }
+    input, textarea, select {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      color: #f8fafc;
+      padding: 6px 10px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    form { margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="card container" id="app">
+    <h3 id="title" style="margin-top: 0; margin-bottom: 8px; font-size: 16px;">DOM Preview Fixture</h3>
+    <p id="message" style="margin: 0 0 12px 0; color: #94a3b8;">Interact with the elements below.</p>
+    
+    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+      <input type="text" id="input" placeholder="Type here..." />
+      <button id="save-button">Save Changes</button>
+      <button id="submit-button">Submit</button>
+    </div>
+    
+    <div id="output" style="padding: 8px; background: #000000; color: #a3e635; border-radius: 4px; min-height: 32px; font-family: monospace;"></div>
+  </div>
+
+  <script>
+    (function() {
+      const originalLog = console.log;
+      const originalWarn = console.warn;
+      const originalError = console.error;
+
+      function sendLog(level, args) {
+        try {
+          const message = Array.from(args).map(a => {
+            if (a instanceof HTMLElement) return \`<\${a.tagName.toLowerCase()}>\`;
+            return typeof a === 'object' ? JSON.stringify(a) : String(a);
+          }).join(' ');
+          window.parent.postMessage({ type: 'CONSOLE_LOG', level, message, id: '${id}' }, '*');
+        } catch (e) {
+          window.parent.postMessage({ type: 'CONSOLE_LOG', level: 'error', message: String(e), id: '${id}' }, '*');
+        }
+      }
+
+      console.log = function() { originalLog.apply(console, arguments); sendLog('log', arguments); };
+      console.warn = function() { originalWarn.apply(console, arguments); sendLog('warn', arguments); };
+      console.error = function() { originalError.apply(console, arguments); sendLog('error', arguments); };
+      
+      window.onerror = function(msg, url, line) {
+        sendLog('error', [msg]);
+        return false;
+      };
+    })();
+  </script>
+  
+  <script>
+    try {
+      ${cleanCode}
+    } catch (e) {
+      console.error(e.message || String(e));
+    }
+  </script>
+</body>
+</html>`;
+}
+
 export function LessonInteractiveCode({
   language,
   code,
@@ -437,6 +546,27 @@ export function LessonInteractiveCode({
   const [outputLog, setOutputLog] = useState<string | null>(null);
   const [isErrorLog, setIsErrorLog] = useState(false);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const previewId = useRef(`preview-${Math.random().toString(36).substr(2, 9)}`).current;
+
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.data && e.data.type === "CONSOLE_LOG" && e.data.id === previewId) {
+        const msg = e.data.message;
+        const level = e.data.level;
+
+        setOutputLog((prev) => {
+          const current = prev || "";
+          const prefix = level === "error" ? "[ERROR] " : level === "warn" ? "[WARN] " : "";
+          return current ? current + "\n" + prefix + msg : prefix + msg;
+        });
+        if (level === "error") {
+          setIsErrorLog(true);
+        }
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [previewId]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -555,38 +685,51 @@ export function LessonInteractiveCode({
         toast.error("JSX compilation error");
       }
     } else if (normLang === "javascript" || normLang === "js") {
-      // Plain JavaScript Fast Path
-      try {
-        const logs: string[] = [];
-        const dummyConsole = {
-          log: (...args: unknown[]) =>
-            logs.push(
-              args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
-            ),
-          warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
-          error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
-        };
+      const isDomJs =
+        /\b(document|window|querySelector|querySelectorAll|getElementById|getElementsByClassName|addEventListener|classList|textContent|innerHTML|style|createElement|appendChild|remove|value)\b/.test(
+          code,
+        );
 
-        // Strip imports/exports to allow quick eval of basic JS
-        const cleanCode = code
-          .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
-          .replace(/^export\s+default\s+/gm, "")
-          .replace(/^export\s+/gm, "");
-
-        const fn = new Function("console", cleanCode);
-        fn(dummyConsole);
-
-        if (logs.length > 0) {
-          setOutputLog(logs.join("\n"));
-          toast.success("Snippet executed cleanly");
-        } else {
-          setOutputLog("✓ Executed cleanly (no console output).");
-        }
+      if (isDomJs) {
+        const previewDoc = buildInlineDomJsPreview(code, previewId);
+        setPreviewHtml(previewDoc);
+        setOutputLog("");
         setIsErrorLog(false);
-      } catch (err: unknown) {
-        const errMsg = err instanceof Error ? err.message : String(err);
-        setOutputLog(`Runtime Error:\n${errMsg}`);
-        setIsErrorLog(true);
+        toast.success("DOM Script loaded in preview");
+      } else {
+        // Plain JavaScript Fast Path
+        try {
+          const logs: string[] = [];
+          const dummyConsole = {
+            log: (...args: unknown[]) =>
+              logs.push(
+                args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
+              ),
+            warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
+            error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
+          };
+
+          // Strip imports/exports to allow quick eval of basic JS
+          const cleanCode = code
+            .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
+            .replace(/^export\s+default\s+/gm, "")
+            .replace(/^export\s+/gm, "");
+
+          const fn = new Function("console", cleanCode);
+          fn(dummyConsole);
+
+          if (logs.length > 0) {
+            setOutputLog(logs.join("\n"));
+            toast.success("Snippet executed cleanly");
+          } else {
+            setOutputLog("✓ Executed cleanly (no console output).");
+          }
+          setIsErrorLog(false);
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : String(err);
+          setOutputLog(`Runtime Error:\n${errMsg}`);
+          setIsErrorLog(true);
+        }
       }
     }
   };
