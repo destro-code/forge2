@@ -237,17 +237,24 @@ export function AppSidebar() {
       <SidebarHeader className="px-3 pt-3">
         <Link
           to="/"
-          className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition hover:bg-sidebar-accent/60"
+          aria-label="Forge Frontend Academy Home"
+          className={cn(
+            "flex items-center rounded-lg py-1.5 transition hover:bg-sidebar-accent/60 group",
+            collapsed ? "justify-center px-0" : "gap-2.5 px-2",
+          )}
         >
-          <div
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-md shadow-sm"
-            style={{ background: "var(--gradient-primary)" }}
-          >
-            <Flame className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img
+            src="/forge-logo.png"
+            alt="Forge"
+            width={38}
+            height={38}
+            className="h-9 w-9 shrink-0 rounded-lg object-contain shadow-xs transition-transform duration-200 group-hover:scale-105"
+          />
           {!collapsed && (
             <div className="min-w-0">
-              <div className="truncate text-sm font-semibold leading-tight">Forge</div>
+              <div className="truncate text-sm font-bold leading-tight tracking-tight text-foreground">
+                Forge
+              </div>
               <div className="truncate text-xs font-medium text-muted-foreground/80">
                 Frontend Academy
               </div>

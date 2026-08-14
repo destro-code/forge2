@@ -296,104 +296,25 @@ export function LessonInteractiveCode({
 
   const lines = code.split("\n");
 
+  const normLang = (language || "").toLowerCase().trim();
+  const isQuickRunnable = ["javascript", "js", "jsx", "tsx", "react"].includes(normLang);
+  const isPlaygroundSupported = ["javascript", "js", "jsx", "tsx", "react", "html", "css"].includes(
+    normLang,
+  );
+
   const handleQuickRun = () => {
-    const lang = (language || "").toLowerCase();
+    if (!isQuickRunnable) {
+      return;
+    }
+
     setOutputLog("");
     setIsErrorLog(false);
     setPreviewHtml(null);
 
-    if (lang === "css") {
-      try {
-        const template = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      padding: 16px;
-      margin: 0;
-      background: #0f172a;
-      color: #f8fafc;
-    }
-    .preview-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #94a3b8;
-      margin-bottom: 12px;
-      border-bottom: 1px solid #334155;
-      padding-bottom: 4px;
-    }
-    .demo-container {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    /* User CSS begins */
-    ${code}
-    /* User CSS ends */
-  </style>
-</head>
-<body>
-  <div class="preview-title">Live CSS Preview</div>
-  <div class="demo-container">
-    <div class="box">
-      <strong>.box element</strong> - Useful for padding, margin, borders, and box-sizing checks.
-    </div>
-    <div class="container">
-      <div class="item">Flex Item A</div>
-      <div class="item">Flex Item B</div>
-    </div>
-    <button class="btn">Demo Button</button>
-  </div>
-</body>
-</html>`;
-        setPreviewHtml(template);
-        setOutputLog("CSS Applied successfully to live preview element.");
-        setIsErrorLog(false);
-        toast.success("CSS applied successfully to live preview");
-      } catch (err: unknown) {
-        const errMsg = err instanceof Error ? err.message : String(err);
-        setOutputLog(`Failed to apply CSS: ${errMsg}`);
-        setIsErrorLog(true);
-      }
-    } else if (lang === "html") {
-      try {
-        let template = code;
-        if (!code.includes("<html") && !code.includes("<body")) {
-          template = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      padding: 16px;
-      margin: 0;
-      background: #0f172a;
-      color: #f8fafc;
-    }
-  </style>
-</head>
-<body>
-  ${code}
-</body>
-</html>`;
-        }
-        setPreviewHtml(template);
-        setOutputLog("HTML Rendered successfully inside preview frame.");
-        setIsErrorLog(false);
-        toast.success("HTML rendered successfully");
-      } catch (err: unknown) {
-        const errMsg = err instanceof Error ? err.message : String(err);
-        setOutputLog(`Failed to render HTML: ${errMsg}`);
-        setIsErrorLog(true);
-      }
-    } else if (lang === "jsx" || lang === "tsx" || lang === "react") {
+    if (normLang === "jsx" || normLang === "tsx" || normLang === "react") {
       // JSX / TSX / React compilation & preview mount path via Babel standalone
       try {
-        const previewDoc = buildInlineJsxPreviewHtml(code, lang);
+        const previewDoc = buildInlineJsxPreviewHtml(code, normLang);
 
         const logs: string[] = [];
         const dummyConsole = {
@@ -413,7 +334,7 @@ export function LessonInteractiveCode({
               ["typescript", { ignoreExtensions: false }],
             ],
             parserOpts: { allowReturnOutsideFunction: true },
-            filename: `snippet.${lang === "tsx" ? "tsx" : "jsx"}`,
+            filename: `snippet.${normLang === "tsx" ? "tsx" : "jsx"}`,
           });
           const transpiledCode = transformed.code || "";
           if (transpiledCode.includes("console.")) {
@@ -509,50 +430,53 @@ export function LessonInteractiveCode({
             {language}
           </Badge>
 
-          <Button
-            size="sm"
-            onClick={handleQuickRun}
-            className="h-7 px-2.5 text-xs gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 font-medium"
-            title="Evaluate console output"
-          >
-            <Play className="h-3.5 w-3.5 text-emerald-400 fill-emerald-400/20" />
-            <span className="hidden sm:inline">Run Quick</span>
-            <span className="sm:hidden">Run</span>
-          </Button>
-
-          {onOpenSandbox ? (
+          {isQuickRunnable && (
             <Button
               size="sm"
-              onClick={() => onOpenSandbox(code)}
-              className="h-7 px-2.5 text-xs gap-1.5 bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 font-medium"
-              title="Edit in live sandbox"
+              onClick={handleQuickRun}
+              className="h-7 px-2.5 text-xs gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 font-medium"
+              title="Evaluate console output"
             >
-              <Terminal className="h-3.5 w-3.5" />
-              <span>Sandbox</span>
-            </Button>
-          ) : (
-            <Button
-              size="sm"
-              asChild
-              className="h-7 px-2.5 text-xs gap-1.5 bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 font-medium"
-              title="Open full playground"
-            >
-              <Link
-                to="/playground"
-                search={{
-                  mode: "lesson-inline",
-                  lessonId: lessonId || undefined,
-                  exampleId: exampleId || undefined,
-                  lang: language,
-                  title: title || undefined,
-                  code: code,
-                }}
-              >
-                <Terminal className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Playground</span>
-              </Link>
+              <Play className="h-3.5 w-3.5 text-emerald-400 fill-emerald-400/20" />
+              <span className="hidden sm:inline">Run Quick</span>
+              <span className="sm:hidden">Run</span>
             </Button>
           )}
+
+          {isPlaygroundSupported &&
+            (onOpenSandbox ? (
+              <Button
+                size="sm"
+                onClick={() => onOpenSandbox(code)}
+                className="h-7 px-2.5 text-xs gap-1.5 bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 font-medium"
+                title="Edit in live sandbox"
+              >
+                <Terminal className="h-3.5 w-3.5" />
+                <span>Sandbox</span>
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                asChild
+                className="h-7 px-2.5 text-xs gap-1.5 bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 font-medium"
+                title="Open full playground"
+              >
+                <Link
+                  to="/playground"
+                  search={{
+                    mode: "lesson-inline",
+                    lessonId: lessonId || undefined,
+                    exampleId: exampleId || undefined,
+                    lang: language,
+                    title: title || undefined,
+                    code: code,
+                  }}
+                >
+                  <Terminal className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Playground</span>
+                </Link>
+              </Button>
+            ))}
 
           <Button
             variant="ghost"

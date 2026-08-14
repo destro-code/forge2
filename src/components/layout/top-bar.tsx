@@ -92,6 +92,21 @@ export function TopBar() {
       <div className="flex items-center gap-2 min-w-0 shrink">
         <SidebarTrigger className="h-8 w-8 shrink-0" />
 
+        {/* Mobile Forge Brand Icon Link */}
+        <Link
+          to="/"
+          className="flex items-center gap-1.5 sm:hidden shrink-0 transition-opacity hover:opacity-85"
+          aria-label="Forge Home"
+        >
+          <img
+            src="/forge-logo.png"
+            alt="Forge"
+            width={24}
+            height={24}
+            className="h-6 w-6 rounded-md object-contain shadow-2xs"
+          />
+        </Link>
+
         {/* Desktop Breadcrumb Nav */}
         <nav
           aria-label="Breadcrumb"

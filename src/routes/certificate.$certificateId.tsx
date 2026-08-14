@@ -258,9 +258,13 @@ function CertificateRoute() {
             {/* Header Branding */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border/60 pb-6 print:border-gray-300">
               <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary border border-primary/20 print:border-black">
-                  <GraduationCap className="h-8 w-8 text-primary print:text-black" />
-                </div>
+                <img
+                  src="/forge-logo.png"
+                  alt="Forge"
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-xl object-contain shadow-sm border border-primary/20 shrink-0"
+                />
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest text-primary print:text-black">
                     FORGE ENGINEERING ACADEMY

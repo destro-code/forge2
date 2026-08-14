@@ -21,8 +21,30 @@ export const Route = createFileRoute("/about")({
 function About() {
   return (
     <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-2xl border border-border/60 bg-muted/20 p-6">
+        <img
+          src="/forge-logo.png"
+          alt="Forge Frontend Academy"
+          width={64}
+          height={64}
+          className="h-16 w-16 rounded-2xl object-contain shadow-md shrink-0 border border-primary/20"
+        />
+        <div className="space-y-1">
+          <div className="text-xs font-bold uppercase tracking-widest text-primary">
+            Official Brand & Mission
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            Forge Frontend Academy
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            The deliberate path to master frontend craftsmanship, architecture, and interview
+            execution.
+          </p>
+        </div>
+      </div>
+
       <PageHeader
-        eyebrow="About"
+        eyebrow="Philosophy"
         title={
           <>
             Frontend engineering, <span className="text-gradient-primary">forged</span> deliberately
