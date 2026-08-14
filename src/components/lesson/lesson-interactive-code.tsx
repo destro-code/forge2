@@ -273,6 +273,157 @@ function buildInlineJsxPreviewHtml(code: string, lang: string): string {
 </html>`;
 }
 
+function buildInlineHtmlPreview(code: string): string {
+  if (code.includes("<html") || code.includes("<!DOCTYPE html>")) {
+    return code;
+  }
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    * { box-sizing: border-box; }
+    a { color: #38bdf8; text-decoration: underline; }
+    img { max-width: 100%; height: auto; border-radius: 6px; }
+    h1, h2, h3, h4 { color: #38bdf8; margin-top: 0; margin-bottom: 8px; font-weight: 600; }
+    h1 { font-size: 16px; }
+    h2 { font-size: 14px; }
+    p { margin: 0 0 8px 0; color: #cbd5e1; }
+    button, input, select, textarea { font-family: inherit; }
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #3b82f6;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover, .btn:hover { background: #2563eb; }
+    ul, ol { margin: 0 0 8px 0; padding-left: 20px; color: #cbd5e1; }
+    li { margin-bottom: 4px; }
+    .card, .container, .box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  ${code}
+</body>
+</html>`;
+}
+
+function buildInlineCssPreview(code: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    * { box-sizing: border-box; }
+    .preview-header {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 4px;
+    }
+    .preview-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .box, .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .container {
+      background: #1e293b;
+      border: 1px dashed #475569;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+    }
+    .item {
+      background: #334155;
+      padding: 8px 12px;
+      border-radius: 4px;
+      color: #f8fafc;
+    }
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #3b82f6;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* User CSS begins */
+    ${code}
+    /* User CSS ends */
+  </style>
+</head>
+<body>
+  <div class="preview-header">Live CSS Preview Fixture</div>
+  <div class="preview-stage">
+    <div class="box">
+      <div class="title" style="font-weight: 600; margin-bottom: 4px;">.box / .card element</div>
+      <p style="margin: 0; color: #94a3b8; font-size: 12px;">Demonstrates box-model, padding, borders, typography, and colors.</p>
+    </div>
+
+    <div class="container">
+      <div class="item">Flex/Grid Item A</div>
+      <div class="item">Flex/Grid Item B</div>
+      <div class="item">Flex/Grid Item C</div>
+    </div>
+
+    <div>
+      <button class="btn">Demo Button (.btn)</button>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
 export function LessonInteractiveCode({
   language,
   code,
@@ -297,7 +448,9 @@ export function LessonInteractiveCode({
   const lines = code.split("\n");
 
   const normLang = (language || "").toLowerCase().trim();
-  const isQuickRunnable = ["javascript", "js", "jsx", "tsx", "react"].includes(normLang);
+  const isQuickRunnable = ["javascript", "js", "jsx", "tsx", "react", "html", "css"].includes(
+    normLang,
+  );
   const isPlaygroundSupported = ["javascript", "js", "jsx", "tsx", "react", "html", "css"].includes(
     normLang,
   );
@@ -311,7 +464,31 @@ export function LessonInteractiveCode({
     setIsErrorLog(false);
     setPreviewHtml(null);
 
-    if (normLang === "jsx" || normLang === "tsx" || normLang === "react") {
+    if (normLang === "html") {
+      try {
+        const previewDoc = buildInlineHtmlPreview(code);
+        setPreviewHtml(previewDoc);
+        setOutputLog("✓ HTML rendered in live preview.");
+        setIsErrorLog(false);
+        toast.success("HTML rendered in preview");
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setOutputLog(`Failed to render HTML:\n${errMsg}`);
+        setIsErrorLog(true);
+      }
+    } else if (normLang === "css") {
+      try {
+        const previewDoc = buildInlineCssPreview(code);
+        setPreviewHtml(previewDoc);
+        setOutputLog("✓ CSS applied to live preview fixture.");
+        setIsErrorLog(false);
+        toast.success("CSS applied to preview");
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setOutputLog(`Failed to apply CSS:\n${errMsg}`);
+        setIsErrorLog(true);
+      }
+    } else if (normLang === "jsx" || normLang === "tsx" || normLang === "react") {
       // JSX / TSX / React compilation & preview mount path via Babel standalone
       try {
         const previewDoc = buildInlineJsxPreviewHtml(code, normLang);
@@ -377,7 +554,7 @@ export function LessonInteractiveCode({
         setPreviewHtml(null);
         toast.error("JSX compilation error");
       }
-    } else {
+    } else if (normLang === "javascript" || normLang === "js") {
       // Plain JavaScript Fast Path
       try {
         const logs: string[] = [];
