@@ -86,7 +86,11 @@ export function ContinueLearningCard({
             size="default"
             className="gap-2 shadow-glow px-5 py-2.5 h-10 text-sm font-semibold"
           >
-            <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }}>
+            <Link
+              to="/lesson/$lessonId"
+              params={{ lessonId: lesson.id }}
+              search={{ mode: "curriculum" }}
+            >
               <PlayCircle className="h-4 w-4" />
               Continue Lesson
               <ArrowRight className="h-4 w-4" />

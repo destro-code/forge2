@@ -8,8 +8,9 @@ import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { CurriculumOverviewCard } from "@/components/learning/curriculum-overview-card";
 import { LearningPathCard } from "@/components/learning/learning-path-card";
 import { useCurriculum, getModuleProgress } from "@/lib/hooks/use-curriculum";
-import { useLessons, useTopics, useModules, useLearningPaths } from "@/lib/hooks/use-content";
+import { useLearningPaths } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { useCurriculumResume } from "@/lib/utils/curriculum-order";
 import {
   ArrowRight,
   BookOpen,
@@ -19,6 +20,7 @@ import {
   PlayCircle,
   CheckCircle2,
   GraduationCap,
+  Sparkles,
 } from "lucide-react";
 
 export const Route = createFileRoute("/learn/")({
@@ -41,16 +43,10 @@ export const Route = createFileRoute("/learn/")({
 });
 
 function LearnIndexRoute() {
-  const { learningPaths, stats, modules } = useCurriculum();
-  const lessons = useLessons();
-  const topics = useTopics();
+  const { learningPaths, stats } = useCurriculum();
   const paths = useLearningPaths();
-  const { lessonsCompleted, lastActiveLessonId } = useProgress();
-
-  // Determine active/up-next lesson
-  const lastActiveLesson = lessons.find((l) => l.id === lastActiveLessonId);
-  const nextIncompleteLesson = lessons.find((l) => !lessonsCompleted.includes(l.id)) || lessons[0];
-  const currentLesson = lastActiveLesson || nextIncompleteLesson;
+  const { lessonsCompleted } = useProgress();
+  const { currentLesson, orderedLessons, isReturningLearner } = useCurriculumResume();
 
   const featuredPaths = learningPaths.filter((p) => p.featured);
 
@@ -104,7 +100,7 @@ function LearnIndexRoute() {
         }
       />
 
-      {/* Current Resume / Up Next Card */}
+      {/* Full Curriculum Start/Continue Card */}
       {currentLesson && (
         <Card className="border-primary/40 bg-gradient-to-r from-primary/10 via-card to-card p-6 shadow-glow relative overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
@@ -114,14 +110,21 @@ function LearnIndexRoute() {
                   variant="default"
                   className="bg-primary text-primary-foreground text-[10px] uppercase tracking-wider font-semibold"
                 >
-                  Up Next in Your Roadmap
+                  Full Curriculum Track
                 </Badge>
-                {lessonsCompleted.includes(currentLesson.id) && (
+                {lessonsCompleted.includes(currentLesson.id) ? (
                   <Badge
                     variant="outline"
                     className="border-emerald-500/40 text-emerald-400 text-[10px] gap-1"
                   >
                     <CheckCircle2 className="h-3 w-3" /> Completed
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] font-mono text-muted-foreground"
+                  >
+                    {lessonsCompleted.length} of {orderedCurriculumLessons.length} Completed
                   </Badge>
                 )}
               </div>
@@ -133,10 +136,15 @@ function LearnIndexRoute() {
               </p>
             </div>
 
-            <Button asChild size="lg" className="shrink-0 gap-2 shadow-glow">
-              <Link to="/lesson/$lessonId" params={{ lessonId: currentLesson.id }}>
+            <Button asChild size="lg" className="shrink-0 gap-2 shadow-glow font-semibold">
+              <Link
+                to="/lesson/$lessonId"
+                params={{ lessonId: currentLesson.id }}
+                search={{ mode: "curriculum" }}
+              >
                 <PlayCircle className="h-5 w-5 fill-current" />
-                Resume Lesson Reader
+                {isReturningLearner ? "Continue Curriculum" : "Start Full Curriculum"}
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>

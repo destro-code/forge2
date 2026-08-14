@@ -26,6 +26,7 @@ import { HeatmapCard } from "@/components/dashboard/heatmap-card";
 import { RecommendedTopicsCard } from "@/components/dashboard/recommended-topics-card";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { getModuleProgress, getTopicProgress } from "@/lib/hooks/use-curriculum";
+import { useCurriculumResume } from "@/lib/utils/curriculum-order";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -61,10 +62,8 @@ function Dashboard() {
     }
   }, [progress.lessonsCompleted.length]);
 
-  const continueLesson =
-    lessons.find((l) => l.id === progress.lastActiveLessonId) ??
-    lessons.find((l) => !progress.lessonsCompleted.includes(l.id)) ??
-    lessons[0];
+  const { currentLesson: curriculumContinueLesson } = useCurriculumResume();
+  const continueLesson = curriculumContinueLesson || lessons[0];
   const activeProject = projects[0];
 
   const continueLessonModuleId =

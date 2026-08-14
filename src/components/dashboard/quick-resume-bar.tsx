@@ -61,7 +61,11 @@ export function QuickResumeBar({ lesson, progressPercent }: QuickResumeBarProps)
           className="w-full md:w-auto shadow-glow gap-2 px-5 py-2 h-10 text-sm font-medium"
           size="default"
         >
-          <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }}>
+          <Link
+            to="/lesson/$lessonId"
+            params={{ lessonId: lesson.id }}
+            search={{ mode: "curriculum" }}
+          >
             <PlayCircle className="h-4 w-4" />
             Resume Lesson
             <ArrowRight className="h-4 w-4" />

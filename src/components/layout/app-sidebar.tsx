@@ -42,25 +42,23 @@ import {
   Brain,
 } from "lucide-react";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { useCurriculumResume } from "@/lib/utils/curriculum-order";
 import { cn } from "@/lib/utils";
 
 type Tier = "core" | "secondary" | "utility";
 
 type Item = {
+  id?: string;
   title: string;
   to: string;
+  params?: Record<string, string>;
+  search?: Record<string, unknown>;
   icon: React.ComponentType<{ className?: string }>;
   tier: Tier;
+  customActive?: (pathname: string, search: Record<string, unknown>) => boolean;
 };
 
 const startItems: Item[] = [{ title: "Dashboard", to: "/", icon: LayoutDashboard, tier: "core" }];
-
-const learnItems: Item[] = [
-  { title: "Learn", to: "/learn", icon: GraduationCap, tier: "core" },
-  { title: "Modules", to: "/learn/modules", icon: Layers, tier: "secondary" },
-  { title: "Topics", to: "/learn/topics", icon: FolderTree, tier: "secondary" },
-  { title: "Lessons", to: "/learn/lessons", icon: BookOpen, tier: "secondary" },
-];
 
 const practiceItems: Item[] = [
   { title: "Quizzes", to: "/quizzes", icon: ListChecks, tier: "core" },
@@ -93,16 +91,65 @@ const utilityItems: Item[] = [
 ];
 
 export function AppSidebar() {
-  const path = useRouterState({ select: (s) => s.location.pathname });
+  const { location } = useRouterState();
+  const path = location.pathname;
+  const search = (location.search || {}) as Record<string, unknown>;
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const progress = useProgress();
+  const { currentLesson, orderedLessons } = useCurriculumResume();
 
-  const isActive = (to: string) =>
-    to === "/" ? path === "/" : path === to || path.startsWith(to + "/");
+  const targetCurriculumLessonId = currentLesson?.id || orderedLessons[0]?.id || "html-basics";
+
+  const learnItems: Item[] = [
+    {
+      id: "full-curriculum",
+      title: "Full Curriculum",
+      to: "/lesson/$lessonId",
+      params: { lessonId: targetCurriculumLessonId },
+      search: { mode: "curriculum" },
+      icon: GraduationCap,
+      tier: "core",
+      customActive: (p, s) => p.startsWith("/lesson/") && s.mode === "curriculum",
+    },
+    {
+      id: "modules",
+      title: "Modules",
+      to: "/learn/modules",
+      icon: Layers,
+      tier: "secondary",
+      customActive: (p, s) =>
+        p === "/learn/modules" ||
+        p.startsWith("/learn/modules/") ||
+        (p.startsWith("/lesson/") && s.mode === "module"),
+    },
+    {
+      id: "topics",
+      title: "Topics",
+      to: "/learn/topics",
+      icon: FolderTree,
+      tier: "secondary",
+      customActive: (p) => p === "/learn/topics" || p.startsWith("/learn/topics/"),
+    },
+    {
+      id: "lessons",
+      title: "Lessons",
+      to: "/learn/lessons",
+      icon: BookOpen,
+      tier: "secondary",
+      customActive: (p) => p === "/learn/lessons" || p.startsWith("/learn/lessons/"),
+    },
+  ];
+
+  const isItemActive = (item: Item) => {
+    if (item.customActive) {
+      return item.customActive(path, search);
+    }
+    return item.to === "/" ? path === "/" : path === item.to || path.startsWith(item.to + "/");
+  };
 
   const renderItem = (item: Item) => {
-    const active = isActive(item.to);
+    const active = isItemActive(item);
     const Icon = item.icon;
 
     let textStyle = "text-xs font-medium text-foreground/90";
@@ -140,17 +187,33 @@ export function AppSidebar() {
     }
 
     return (
-      <SidebarMenuItem key={item.to + item.title}>
+      <SidebarMenuItem key={item.id || item.to + item.title}>
         <SidebarMenuButton
           asChild
           isActive={active}
           tooltip={collapsed ? item.title : undefined}
           className={buttonClass}
         >
-          <Link to={item.to} className="group/link flex items-center gap-2.5">
-            <Icon className={iconStyle} />
-            {!collapsed && <span className={cn("truncate", textStyle)}>{item.title}</span>}
-          </Link>
+          {item.params ? (
+            <Link
+              to={item.to}
+              params={item.params}
+              search={item.search}
+              className="group/link flex items-center gap-2.5 min-h-[40px] sm:min-h-[32px]"
+            >
+              <Icon className={iconStyle} />
+              {!collapsed && <span className={cn("truncate", textStyle)}>{item.title}</span>}
+            </Link>
+          ) : (
+            <Link
+              to={item.to}
+              search={item.search}
+              className="group/link flex items-center gap-2.5 min-h-[40px] sm:min-h-[32px]"
+            >
+              <Icon className={iconStyle} />
+              {!collapsed && <span className={cn("truncate", textStyle)}>{item.title}</span>}
+            </Link>
+          )}
         </SidebarMenuButton>
       </SidebarMenuItem>
     );

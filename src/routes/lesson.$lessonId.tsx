@@ -12,10 +12,12 @@ import {
   useTopic,
   useTopics,
   useModule,
+  useModules,
   useQuizzes,
   useBugs,
 } from "@/lib/hooks/use-content";
 import { useProgress } from "@/lib/hooks/use-progress";
+import { getOrderedCurriculumLessons } from "@/lib/utils/curriculum-order";
 import { toast } from "sonner";
 import {
   Bookmark,
@@ -56,6 +58,13 @@ import { LessonTextHighlighter } from "@/components/lesson/lesson-text-highlight
 import { LessonNotesWidget } from "@/components/lesson/lesson-notes-widget";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): {
+    mode?: "curriculum" | "module";
+  } => ({
+    mode: search.mode === "curriculum" ? "curriculum" : "module",
+  }),
   head: ({ params }) => ({
     meta: [
       { title: `Lesson · Forge` },
@@ -79,7 +88,13 @@ const PHASES = [
 
 function LessonView() {
   const { lessonId } = Route.useParams();
+  const search = Route.useSearch();
+  const currentMode: "curriculum" | "module" =
+    search.mode === "curriculum" ? "curriculum" : "module";
+  const isCurriculumMode = currentMode === "curriculum";
+
   const lesson = useLesson(lessonId);
+  const allModules = useModules();
   const allTopics = useTopics();
   const topic = useTopic(lesson?.topicId);
   const currentModuleId = lesson?.moduleId || topic?.moduleId;
@@ -130,27 +145,40 @@ function LessonView() {
       });
   }, [allLessons, currentModuleId, moduleTopics]);
 
+  // 2. Build full global curriculum ordered lesson queue (Module Order -> Topic Order -> Lesson Order)
+  const curriculumLessons = useMemo(() => {
+    return getOrderedCurriculumLessons(allModules, allTopics, allLessons);
+  }, [allModules, allTopics, allLessons]);
+
   // If lesson is not found
   if (!lesson) throw notFound();
 
   const isBookmarked = bookmarks.includes(lesson.id);
   const isCompleted = lessonsCompleted.includes(lesson.id);
 
-  // Scoped sequence indices and adjacent lessons
-  const totalModuleLessons = moduleLessons.length;
-  const currentIndex = moduleLessons.findIndex((l) => l.id === lesson.id);
-  const prevLesson = currentIndex > 0 ? moduleLessons[currentIndex - 1] : null;
+  // Active progression queue according to selected learning mode
+  const activeLessons = isCurriculumMode ? curriculumLessons : moduleLessons;
+  const totalActiveLessons = activeLessons.length;
+  const currentIndex = activeLessons.findIndex((l) => l.id === lesson.id);
+  const prevLesson = currentIndex > 0 ? activeLessons[currentIndex - 1] : null;
   const nextLesson =
-    currentIndex >= 0 && currentIndex < moduleLessons.length - 1
-      ? moduleLessons[currentIndex + 1]
+    currentIndex >= 0 && currentIndex < activeLessons.length - 1
+      ? activeLessons[currentIndex + 1]
       : null;
 
-  // Module completion status
+  // Active sequence completion status
+  const completedActiveLessonsCount = activeLessons.filter((l) =>
+    lessonsCompleted.includes(l.id),
+  ).length;
+  const isSequenceFullyCompleted =
+    totalActiveLessons > 0 && completedActiveLessonsCount === totalActiveLessons;
+
+  // Module completion status specifically
   const completedModuleLessonsCount = moduleLessons.filter((l) =>
     lessonsCompleted.includes(l.id),
   ).length;
   const isModuleFullyCompleted =
-    totalModuleLessons > 0 && completedModuleLessonsCount === totalModuleLessons;
+    moduleLessons.length > 0 && completedModuleLessonsCount === moduleLessons.length;
 
   useEffect(() => {
     if (lesson?.id && lastActiveLessonId !== lesson.id) {
@@ -364,8 +392,23 @@ function LessonView() {
               <div className="flex items-center gap-1.5 font-medium text-muted-foreground min-w-0 truncate">
                 <BookOpen className="h-3.5 w-3.5 text-primary shrink-0" />
                 <span className="truncate">
-                  Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalModuleLessons}
+                  Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalActiveLessons}
                 </span>
+                {isCurriculumMode ? (
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] bg-primary/10 border-primary/30 text-primary py-0 px-1.5 shrink-0"
+                  >
+                    Curriculum
+                  </Badge>
+                ) : parentModule ? (
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] bg-muted/30 py-0 px-1.5 truncate max-w-[100px]"
+                  >
+                    {parentModule.title}
+                  </Badge>
+                ) : null}
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <Sheet open={tocOpen} onOpenChange={setTocOpen}>
@@ -383,7 +426,7 @@ function LessonView() {
                       <SheetTitle className="text-sm font-semibold flex items-center justify-between">
                         <span>On this lesson</span>
                         <span className="text-xs font-normal text-muted-foreground font-mono">
-                          Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalModuleLessons}
+                          Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalActiveLessons}
                         </span>
                       </SheetTitle>
                     </SheetHeader>
@@ -539,8 +582,23 @@ function LessonView() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="outline" className="font-mono text-xs bg-muted/30">
-                    Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalModuleLessons}
+                    Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalActiveLessons}
                   </Badge>
+                  {isCurriculumMode ? (
+                    <Badge
+                      variant="secondary"
+                      className="gap-1 bg-primary/15 text-primary border-primary/20 text-xs font-mono font-medium"
+                    >
+                      <Sparkles className="h-3 w-3" /> Full Curriculum
+                    </Badge>
+                  ) : parentModule ? (
+                    <Badge
+                      variant="secondary"
+                      className="gap-1 bg-muted/50 text-foreground/80 border-border text-xs font-medium"
+                    >
+                      <BookOpen className="h-3 w-3 text-primary" /> {parentModule.title}
+                    </Badge>
+                  ) : null}
                   <DifficultyBadge difficulty={lesson.difficulty} />
                   <Badge variant="outline" className="gap-1 text-xs">
                     <Clock className="h-3 w-3" />
@@ -1009,10 +1067,10 @@ function LessonView() {
                           variant="secondary"
                           className="bg-primary/20 text-primary border-primary/30 text-[10px] font-mono font-bold uppercase"
                         >
-                          Primary Recommended Step
+                          {isCurriculumMode ? "Curriculum Step" : "Primary Recommended Step"}
                         </Badge>
                         <span className="text-xs font-mono text-muted-foreground">
-                          Step {currentIndex + 2} of {totalModuleLessons}
+                          Step {currentIndex + 2} of {totalActiveLessons}
                         </span>
                       </div>
                       <h4 className="text-base sm:text-lg font-bold text-foreground">
@@ -1028,13 +1086,106 @@ function LessonView() {
                       size="lg"
                       className="shrink-0 text-sm font-bold gap-2 shadow-glow w-full sm:w-auto"
                     >
-                      <Link to="/lesson/$lessonId" params={{ lessonId: nextLesson.id }}>
+                      <Link
+                        to="/lesson/$lessonId"
+                        params={{ lessonId: nextLesson.id }}
+                        search={{ mode: currentMode }}
+                      >
                         <span>Start Next Lesson</span>
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
                   </div>
                 </Card>
+              ) : isCurriculumMode ? (
+                isSequenceFullyCompleted ? (
+                  <Card className="border-emerald-500/40 bg-emerald-500/10 p-5 sm:p-6 shadow-sm">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant="secondary"
+                            className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-[10px] font-mono font-bold uppercase"
+                          >
+                            Curriculum Complete
+                          </Badge>
+                          <span className="text-xs font-mono text-emerald-400">
+                            100% Curriculum Progress ({completedActiveLessonsCount}/
+                            {totalActiveLessons} Lessons)
+                          </span>
+                        </div>
+                        <h4 className="text-base sm:text-lg font-bold text-foreground">
+                          Curriculum Complete: {completedActiveLessonsCount} / {totalActiveLessons}{" "}
+                          Lessons Mastered
+                        </h4>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          Congratulations! You have completed the full Forge curriculum across all
+                          27 modules. You have achieved comprehensive frontend engineering mastery.
+                        </p>
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
+                        <Button
+                          asChild
+                          variant="default"
+                          size="default"
+                          className="font-semibold gap-1.5 w-full sm:w-auto"
+                        >
+                          <Link to="/learn">
+                            <RotateCcw className="h-4 w-4" />
+                            <span>Curriculum Overview</span>
+                          </Link>
+                        </Button>
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="default"
+                          className="font-semibold gap-1.5 w-full sm:w-auto"
+                        >
+                          <Link to="/progress">
+                            <span>View Mastery</span>
+                            <ArrowRight className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ) : (
+                  <Card className="border-primary/40 bg-card/60 p-5 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] font-mono font-bold uppercase text-primary border-primary/30"
+                          >
+                            Final Curriculum Lesson
+                          </Badge>
+                          <span className="text-xs font-mono text-muted-foreground">
+                            {completedActiveLessonsCount} of {totalActiveLessons} completed
+                          </span>
+                        </div>
+                        <h4 className="text-base sm:text-lg font-bold text-foreground">
+                          Complete this lesson to master the Forge curriculum
+                        </h4>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          Mark this final lesson complete to finish the entire {totalActiveLessons}
+                          -lesson curriculum.
+                        </p>
+                      </div>
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="default"
+                        className="shrink-0 font-semibold gap-2 w-full sm:w-auto"
+                      >
+                        <Link to="/learn">
+                          <span>Curriculum Overview</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </Card>
+                )
               ) : isModuleFullyCompleted ? (
                 <Card className="border-emerald-500/40 bg-emerald-500/10 p-5 sm:p-6 shadow-sm">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -1047,7 +1198,7 @@ function LessonView() {
                           Course Complete
                         </Badge>
                         <span className="text-xs font-mono text-emerald-400">
-                          100% Module Progress ({completedModuleLessonsCount}/{totalModuleLessons}{" "}
+                          100% Module Progress ({completedModuleLessonsCount}/{totalActiveLessons}{" "}
                           Lessons)
                         </span>
                       </div>
@@ -1102,7 +1253,7 @@ function LessonView() {
                           Final Module Lesson
                         </Badge>
                         <span className="text-xs font-mono text-muted-foreground">
-                          {completedModuleLessonsCount} of {totalModuleLessons} completed
+                          {completedModuleLessonsCount} of {totalActiveLessons} completed
                         </span>
                       </div>
                       <h4 className="text-base sm:text-lg font-bold text-foreground">
@@ -1210,6 +1361,7 @@ function LessonView() {
                     <Link
                       to="/lesson/$lessonId"
                       params={{ lessonId: prevLesson.id }}
+                      search={{ mode: currentMode }}
                       className="truncate"
                     >
                       <ArrowLeft className="h-3.5 w-3.5 shrink-0" />

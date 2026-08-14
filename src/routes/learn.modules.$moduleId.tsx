@@ -246,7 +246,11 @@ function ModuleHubRoute() {
                   size="lg"
                   className="gap-2 text-sm font-semibold shadow-md min-h-[48px] px-6"
                 >
-                  <Link to="/lesson/$lessonId" params={{ lessonId: targetLesson.id }}>
+                  <Link
+                    to="/lesson/$lessonId"
+                    params={{ lessonId: targetLesson.id }}
+                    search={{ mode: "module" }}
+                  >
                     {ctaMode === "review" ? (
                       <>
                         <RotateCcw className="h-4 w-4" /> Review Course
@@ -341,7 +345,11 @@ function ModuleHubRoute() {
               size="default"
               className="w-full sm:w-auto gap-2 shadow-xs shrink-0 min-h-[44px]"
             >
-              <Link to="/lesson/$lessonId" params={{ lessonId: targetLesson.id }}>
+              <Link
+                to="/lesson/$lessonId"
+                params={{ lessonId: targetLesson.id }}
+                search={{ mode: "module" }}
+              >
                 {isStarted ? "Resume Lesson" : "Start Lesson"} <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -597,7 +605,11 @@ function ModuleHubRoute() {
                                 size="sm"
                                 className="min-h-[36px] text-xs gap-1.5 shadow-xs"
                               >
-                                <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }}>
+                                <Link
+                                  to="/lesson/$lessonId"
+                                  params={{ lessonId: lesson.id }}
+                                  search={{ mode: "module" }}
+                                >
                                   {isLessonCompleted ? (
                                     <>
                                       <RotateCcw className="h-3.5 w-3.5" /> Revisit
