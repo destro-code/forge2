@@ -22,7 +22,7 @@ import {
   Filter,
 } from "lucide-react";
 
-export const Route = createFileRoute("/learn/topics")({
+export const Route = createFileRoute("/learn/topics/")({
   validateSearch: (search: Record<string, unknown>): { query?: string; moduleId?: string } => ({
     query: (search.query as string) || undefined,
     moduleId: (search.moduleId as string) || undefined,

@@ -12,7 +12,7 @@ import { useProgress } from "@/lib/hooks/use-progress";
 import { useTopics, useLearningPaths, useLessons } from "@/lib/hooks/use-content";
 import { ArrowRight, Layers, GraduationCap, FolderTree, BookOpen, Clock } from "lucide-react";
 
-export const Route = createFileRoute("/learn/modules")({
+export const Route = createFileRoute("/learn/modules/")({
   head: () => ({
     meta: [
       { title: "Modules · Forge" },

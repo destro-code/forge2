@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import {
   useLesson,
   useLessons,
   useTopic,
+  useTopics,
   useModule,
   useQuizzes,
   useBugs,
@@ -40,6 +41,7 @@ import {
   BrainCircuit,
   Target,
   Award,
+  RotateCcw,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
@@ -78,8 +80,10 @@ const PHASES = [
 function LessonView() {
   const { lessonId } = Route.useParams();
   const lesson = useLesson(lessonId);
+  const allTopics = useTopics();
   const topic = useTopic(lesson?.topicId);
-  const parentModule = useModule(topic?.moduleId);
+  const currentModuleId = lesson?.moduleId || topic?.moduleId;
+  const parentModule = useModule(currentModuleId);
   const allLessons = useLessons();
   const quizzes = useQuizzes();
   const bugs = useBugs();
@@ -103,15 +107,50 @@ function LessonView() {
   const [tocOpen, setTocOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
 
+  // 1. Build module-scoped ordered topic and lesson queue
+  const moduleTopics = useMemo(() => {
+    if (!currentModuleId) return [];
+    return allTopics
+      .filter((t) => t.moduleId === currentModuleId)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+  }, [allTopics, currentModuleId]);
+
+  const moduleLessons = useMemo(() => {
+    if (!currentModuleId) return allLessons;
+    const topicIds = moduleTopics.map((t) => t.id);
+    return allLessons
+      .filter((l) => (l.topicId && topicIds.includes(l.topicId)) || l.moduleId === currentModuleId)
+      .sort((a, b) => {
+        const topicA = moduleTopics.find((t) => t.id === a.topicId);
+        const topicB = moduleTopics.find((t) => t.id === b.topicId);
+        const topicOrderA = topicA?.order ?? 0;
+        const topicOrderB = topicB?.order ?? 0;
+        if (topicOrderA !== topicOrderB) return topicOrderA - topicOrderB;
+        return (a.order || 0) - (b.order || 0);
+      });
+  }, [allLessons, currentModuleId, moduleTopics]);
+
+  // If lesson is not found
   if (!lesson) throw notFound();
 
   const isBookmarked = bookmarks.includes(lesson.id);
   const isCompleted = lessonsCompleted.includes(lesson.id);
 
-  const currentIndex = allLessons.findIndex((l) => l.id === lesson.id);
-  const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
+  // Scoped sequence indices and adjacent lessons
+  const totalModuleLessons = moduleLessons.length;
+  const currentIndex = moduleLessons.findIndex((l) => l.id === lesson.id);
+  const prevLesson = currentIndex > 0 ? moduleLessons[currentIndex - 1] : null;
   const nextLesson =
-    currentIndex >= 0 && currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+    currentIndex >= 0 && currentIndex < moduleLessons.length - 1
+      ? moduleLessons[currentIndex + 1]
+      : null;
+
+  // Module completion status
+  const completedModuleLessonsCount = moduleLessons.filter((l) =>
+    lessonsCompleted.includes(l.id),
+  ).length;
+  const isModuleFullyCompleted =
+    totalModuleLessons > 0 && completedModuleLessonsCount === totalModuleLessons;
 
   useEffect(() => {
     if (lesson?.id && lastActiveLessonId !== lesson.id) {
@@ -325,7 +364,7 @@ function LessonView() {
               <div className="flex items-center gap-1.5 font-medium text-muted-foreground min-w-0 truncate">
                 <BookOpen className="h-3.5 w-3.5 text-primary shrink-0" />
                 <span className="truncate">
-                  Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {allLessons.length}
+                  Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalModuleLessons}
                 </span>
               </div>
               <div className="flex items-center gap-2 shrink-0">
@@ -344,7 +383,7 @@ function LessonView() {
                       <SheetTitle className="text-sm font-semibold flex items-center justify-between">
                         <span>On this lesson</span>
                         <span className="text-xs font-normal text-muted-foreground font-mono">
-                          Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {allLessons.length}
+                          Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalModuleLessons}
                         </span>
                       </SheetTitle>
                     </SheetHeader>
@@ -500,7 +539,7 @@ function LessonView() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="outline" className="font-mono text-xs bg-muted/30">
-                    Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {allLessons.length}
+                    Lesson {currentIndex >= 0 ? currentIndex + 1 : 1} of {totalModuleLessons}
                   </Badge>
                   <DifficultyBadge difficulty={lesson.difficulty} />
                   <Badge variant="outline" className="gap-1 text-xs">
@@ -633,7 +672,8 @@ function LessonView() {
                         {s.text}
                       </Callout>
                     );
-                  if (s.type === "code")
+                  if (s.type === "code") {
+                    const exampleId = "id" in s && s.id ? (s.id as string) : `example-${i}`;
                     return (
                       <div
                         key={i}
@@ -648,6 +688,8 @@ function LessonView() {
                           <span>Interactive Code Example</span>
                         </div>
                         <LessonInteractiveCode
+                          lessonId={lesson.id}
+                          exampleId={exampleId}
                           language={s.language}
                           code={s.code}
                           title={"title" in s ? s.title : undefined}
@@ -655,6 +697,7 @@ function LessonView() {
                         />
                       </div>
                     );
+                  }
                   if (s.type === "diagram")
                     return (
                       <LessonDiagram
@@ -969,7 +1012,7 @@ function LessonView() {
                           Primary Recommended Step
                         </Badge>
                         <span className="text-xs font-mono text-muted-foreground">
-                          Step {currentIndex + 2} of {allLessons.length}
+                          Step {currentIndex + 2} of {totalModuleLessons}
                         </span>
                       </div>
                       <h4 className="text-base sm:text-lg font-bold text-foreground">
@@ -992,33 +1035,97 @@ function LessonView() {
                     </Button>
                   </div>
                 </Card>
-              ) : (
-                <Card className="border-emerald-500/40 bg-emerald-500/10 p-5 sm:p-6">
+              ) : isModuleFullyCompleted ? (
+                <Card className="border-emerald-500/40 bg-emerald-500/10 p-5 sm:p-6 shadow-sm">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <Badge
-                        variant="secondary"
-                        className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-[10px] font-mono font-bold uppercase"
-                      >
-                        Track Complete
-                      </Badge>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="secondary"
+                          className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-[10px] font-mono font-bold uppercase"
+                        >
+                          Course Complete
+                        </Badge>
+                        <span className="text-xs font-mono text-emerald-400">
+                          100% Module Progress ({completedModuleLessonsCount}/{totalModuleLessons}{" "}
+                          Lessons)
+                        </span>
+                      </div>
                       <h4 className="text-base sm:text-lg font-bold text-foreground">
-                        You've completed all lessons in this curriculum track!
+                        Module Complete: {parentModule?.title || "Curriculum Course"}
                       </h4>
                       <p className="text-xs sm:text-sm text-muted-foreground">
-                        Explore other modules or test your knowledge in the playground and quizzes.
+                        Congratulations! You have completed all lessons in this course. You can
+                        review the course overview or explore additional curriculum tracks.
                       </p>
                     </div>
-                    <Button
-                      asChild
-                      size="default"
-                      className="shrink-0 font-semibold gap-2 w-full sm:w-auto"
-                    >
-                      <Link to="/learn/modules">
-                        <span>View All Modules</span>
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
+                      {parentModule && (
+                        <Button
+                          asChild
+                          variant="default"
+                          size="default"
+                          className="font-semibold gap-1.5 w-full sm:w-auto"
+                        >
+                          <Link
+                            to="/learn/modules/$moduleId"
+                            params={{ moduleId: parentModule.id }}
+                          >
+                            <RotateCcw className="h-4 w-4" />
+                            <span>Back to {parentModule.title}</span>
+                          </Link>
+                        </Button>
+                      )}
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="default"
+                        className="font-semibold gap-1.5 w-full sm:w-auto"
+                      >
+                        <Link to="/learn/modules">
+                          <span>Explore All Modules</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ) : (
+                <Card className="border-primary/40 bg-card/60 p-5 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] font-mono font-bold uppercase text-primary border-primary/30"
+                        >
+                          Final Module Lesson
+                        </Badge>
+                        <span className="text-xs font-mono text-muted-foreground">
+                          {completedModuleLessonsCount} of {totalModuleLessons} completed
+                        </span>
+                      </div>
+                      <h4 className="text-base sm:text-lg font-bold text-foreground">
+                        Complete this lesson to finish the module
+                      </h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        Mark this final lesson complete to master{" "}
+                        {parentModule?.title || "this course"} and unlock full module completion.
+                      </p>
+                    </div>
+                    {parentModule && (
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="default"
+                        className="shrink-0 font-semibold gap-2 w-full sm:w-auto"
+                      >
+                        <Link to="/learn/modules/$moduleId" params={{ moduleId: parentModule.id }}>
+                          <span>Module Overview</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 </Card>
               )}

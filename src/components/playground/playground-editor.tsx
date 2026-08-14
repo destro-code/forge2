@@ -31,6 +31,11 @@ interface PlaygroundEditorProps {
 export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: PlaygroundEditorProps) {
   const { files, activeFileId, updateFileContent } = usePlaygroundStore();
   const activeFile = files.find((f) => f.id === activeFileId);
+  const activeFileRef = useRef(activeFile);
+  activeFileRef.current = activeFile;
+
+  const lastSyncedFileIdRef = useRef<string | null>(null);
+  const lastSyncedCodeRef = useRef<string | null>(null);
 
   const [mounted, setMounted] = useState(false);
   const [editorLoaded, setEditorLoaded] = useState(false);
@@ -111,9 +116,9 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     return () => observer.disconnect();
   }, [editorLoaded, activeFile?.id]);
 
-  // Set 12-second loading timeout to catch Monaco mount failures on slow mobile networks
+  // Set 12-second loading timeout to catch genuine Monaco mount failures on slow mobile networks
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || !activeFile) return;
 
     setEditorError(false);
     setEditorLoaded(false);
@@ -130,7 +135,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
       active = false;
       clearTimeout(timer);
     };
-  }, [mounted, retryKey]);
+  }, [mounted, activeFile, retryKey]);
 
   const handleFontSizeChange = (newSize: number) => {
     setFontSize(newSize);
@@ -174,10 +179,32 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
   };
 
   const handleEditorMount = (editor: any, monaco: any) => {
-    console.log("[Forge Monaco] editor mounted");
+    const model = editor?.getModel?.();
+    const modelUri = model?.uri?.toString?.() || "unknown";
+    console.log(`[Forge Monaco] editor mounted for file: ${activeFile?.id}, model: ${modelUri}`);
     setEditorLoaded(true);
     setEditorError(false);
     editorRef.current = editor;
+
+    // 1. Verify the current Monaco model exists.
+    // 2. Verify its value equals activeFile.code.
+    // 3. If not equal, synchronize the model with activeFile.code.
+    // 4. Force Monaco to refresh its view rendering.
+    if (model && activeFile) {
+      const currentModelVal = model.getValue();
+      const targetCode = activeFile.code || "";
+      if (currentModelVal !== targetCode) {
+        console.log(
+          `[Forge Monaco] Synchronizing model value on mount. Expected: ${targetCode.substring(0, 40)}... Actual: ${currentModelVal.substring(0, 40)}...`,
+        );
+        model.setValue(targetCode);
+      }
+      if (typeof editor.render === "function") {
+        editor.render(true);
+      }
+      lastSyncedFileIdRef.current = activeFile.id;
+      lastSyncedCodeRef.current = targetCode;
+    }
 
     const rect = containerRef.current
       ? containerRef.current.getBoundingClientRect()
@@ -226,10 +253,51 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     });
   };
 
+  // Synchronize model and layout whenever active file ID or session changes (with user edit protection)
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor || !activeFile) return;
+
+    const fileChanged = lastSyncedFileIdRef.current !== activeFile.id;
+    if (fileChanged) {
+      const model = editor.getModel();
+      if (model) {
+        const currentVal = model.getValue();
+        const targetCode = activeFile.code || "";
+        if (currentVal !== targetCode) {
+          console.log(
+            `[Forge Monaco] Synchronizing model value on file change. Target: ${targetCode.substring(0, 40)}...`,
+          );
+          model.setValue(targetCode);
+        }
+        if (typeof editor.render === "function") {
+          editor.render(true);
+        }
+      }
+      lastSyncedFileIdRef.current = activeFile.id;
+      lastSyncedCodeRef.current = activeFile.code;
+
+      if (containerRef.current && typeof editor.layout === "function") {
+        const r = containerRef.current.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) {
+          editor.layout({ width: r.width, height: r.height });
+        } else {
+          editor.layout();
+        }
+      }
+    }
+  }, [activeFile]);
+
   if (!activeFile) {
     return (
-      <div className="flex h-full items-center justify-center text-muted-foreground text-xs p-6">
-        No open file selected. Select a file in Files tab.
+      <div className="flex-1 flex flex-col h-full min-h-[400px] bg-background w-full min-w-0 overflow-hidden">
+        <div className="flex h-full w-full items-center justify-center bg-card p-6">
+          <div className="text-xs text-muted-foreground animate-pulse">
+            {files.length === 0
+              ? "Loading workspace files..."
+              : "No open file selected. Select a file in Files tab."}
+          </div>
+        </div>
       </div>
     );
   }
@@ -279,14 +347,17 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
             }
           >
             <MonacoEditor
-              key={retryKey}
+              key={`${activeFile.id}_${retryKey}`}
+              path={activeFile.name ? `${activeFile.id}/${activeFile.name}` : activeFile.id}
               height="100%"
-              language={getLanguage(activeFile?.name)}
-              value={activeFile?.code || ""}
+              language={getLanguage(activeFile.name)}
+              value={activeFile.code || ""}
               onChange={(v) => {
-                const newCode = v ?? "";
-                if (activeFile) {
-                  updateFileContent(activeFile.id, newCode);
+                const currentActive = activeFileRef.current;
+                if (currentActive && activeFile && currentActive.id === activeFile.id) {
+                  const newCode = v ?? "";
+                  lastSyncedCodeRef.current = newCode;
+                  updateFileContent(currentActive.id, newCode);
                   if (onCodeChange) onCodeChange(newCode);
                 }
               }}

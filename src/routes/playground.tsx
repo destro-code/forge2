@@ -16,7 +16,8 @@ import {
   FileCode2,
   ArrowLeft,
 } from "lucide-react";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
 import { buildPlaygroundHtml, getSandboxFileInfo } from "@/lib/playground-compiler";
@@ -35,9 +36,21 @@ import { PlaygroundCodeReviewerModal } from "@/components/playground/playground-
 export const Route = createFileRoute("/playground")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { lessonId?: string; sandboxId?: string; code?: string } => ({
+  ): {
+    mode?: "lesson-inline" | string;
+    lessonId?: string;
+    sandboxId?: string;
+    exampleId?: string;
+    lang?: string;
+    title?: string;
+    code?: string;
+  } => ({
+    mode: (search.mode as string) || undefined,
     lessonId: (search.lessonId as string) || undefined,
     sandboxId: (search.sandboxId as string) || undefined,
+    exampleId: (search.exampleId as string) || undefined,
+    lang: (search.lang as string) || undefined,
+    title: (search.title as string) || undefined,
     code: (search.code as string) || undefined,
   }),
   head: () => ({
@@ -62,21 +75,41 @@ export function Playground() {
     (s: any) => s.type === "interactive-sandbox" && s.id === searchParams.sandboxId,
   );
 
+  const isInlineMode =
+    searchParams.mode === "lesson-inline" ||
+    (!sandboxSection &&
+      !!searchParams.lessonId &&
+      (!!searchParams.code || !!searchParams.exampleId));
+
   const [currentPresetId, setCurrentPresetId] = useState<string>(PLAYGROUND_PRESETS[0].id);
   const activePreset =
     PLAYGROUND_PRESETS.find((p) => p.id === currentPresetId) || PLAYGROUND_PRESETS[0];
 
+  const currentSessionIdentity = sandboxSection
+    ? `sandbox:${searchParams.lessonId}:${searchParams.sandboxId}`
+    : isInlineMode
+      ? `inline:${searchParams.lessonId || "unknown"}:${searchParams.exampleId || "default"}`
+      : `preset:${currentPresetId}`;
+
+  const [hydratedSessionId, setHydratedSessionId] = useState<string | null>(null);
+
   const currentTitle = sandboxSection
     ? `${lesson?.title || "Lesson"}: ${sandboxSection.title}`
-    : activePreset.title;
-  const currentDifficulty = sandboxSection
-    ? lesson?.difficulty || "Beginner"
-    : activePreset.difficulty;
+    : isInlineMode
+      ? `${lesson?.title || "Lesson"}: ${searchParams.title || "Code Example"}`
+      : activePreset.title;
+  const currentDifficulty =
+    sandboxSection || isInlineMode ? lesson?.difficulty || "Beginner" : activePreset.difficulty;
   const currentHints = sandboxSection
     ? sandboxSection.hints && sandboxSection.hints.length > 0
       ? sandboxSection.hints
       : [sandboxSection.instructions || "Follow the exercise instructions inside the lesson."]
-    : activePreset.hints;
+    : isInlineMode
+      ? [
+          "Edit and experiment with this lesson code example in the full isolated playground.",
+          "Use 'Reset' at any time to restore the lesson's original snippet.",
+        ]
+      : activePreset.hints;
 
   const {
     files,
@@ -104,11 +137,12 @@ export function Playground() {
   useEffect(() => {
     let loadedFiles = activePreset.files;
     if (sandboxSection) {
+      const sandboxFileId = `f-sandbox-${searchParams.lessonId}-${searchParams.sandboxId}`;
       const exerciseCode = searchParams.code || sandboxSection.initialCode;
       const fileInfo = getSandboxFileInfo(sandboxSection.language);
       loadedFiles = [
         {
-          id: "f-sandbox-app",
+          id: sandboxFileId,
           name: fileInfo.name,
           language: fileInfo.language,
           code: exerciseCode,
@@ -121,16 +155,48 @@ export function Playground() {
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) loadedFiles = parsed;
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              loadedFiles = parsed.map((f, i) => (i === 0 ? { ...f, id: sandboxFileId } : f));
+            }
           } catch (e) {
             /* ignore */
           }
         }
       }
       setFiles(loadedFiles);
-      setActiveFileId(loadedFiles[0]?.id || "f-sandbox-app");
+      setActiveFileId(loadedFiles[0]?.id || sandboxFileId);
       setOpenTabIds(loadedFiles.map((f) => f.id));
-    } else if (files.length === 0) {
+    } else if (isInlineMode) {
+      const inlineFileId = `f-inline-${searchParams.lessonId || "unknown"}-${searchParams.exampleId || "default"}`;
+      const fileInfo = getSandboxFileInfo(searchParams.lang);
+      const initialCode = searchParams.code || "";
+      loadedFiles = [
+        {
+          id: inlineFileId,
+          name: fileInfo.name,
+          language: fileInfo.language,
+          code: initialCode,
+        },
+      ];
+      // Check if there is a saved state in localStorage for this specific inline example
+      if (typeof window !== "undefined" && searchParams.lessonId) {
+        const key = `forge_playground_inline_${searchParams.lessonId}_${searchParams.exampleId || "default"}`;
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              loadedFiles = parsed.map((f, i) => (i === 0 ? { ...f, id: inlineFileId } : f));
+            }
+          } catch (e) {
+            /* ignore */
+          }
+        }
+      }
+      setFiles(loadedFiles);
+      setActiveFileId(loadedFiles[0]?.id || inlineFileId);
+      setOpenTabIds(loadedFiles.map((f) => f.id));
+    } else {
       if (typeof window !== "undefined") {
         const key = `forge_playground_files_${currentPresetId}`;
         const saved = localStorage.getItem(key);
@@ -142,26 +208,33 @@ export function Playground() {
             /* ignore */
           }
         }
-        setFiles(loadedFiles);
-        setActiveFileId(loadedFiles[0]?.id || "f-1");
-        setOpenTabIds(loadedFiles.map((f) => f.id));
-      } else {
-        setFiles(activePreset.files);
-        setActiveFileId(activePreset.files[0]?.id || "f-1");
-        setOpenTabIds(activePreset.files.map((f) => f.id));
       }
-    } else {
-      loadedFiles = files;
+      setFiles(loadedFiles);
+      setActiveFileId(loadedFiles[0]?.id || "f-1");
+      setOpenTabIds(loadedFiles.map((f) => f.id));
     }
 
     // Build initial compilerOutput for initial mount so iframe has srcDoc
     const initialHtml = buildPlaygroundHtml(loadedFiles, {
-      title: sandboxSection ? sandboxSection.title : "Forge Playground Live Preview",
+      title: sandboxSection
+        ? sandboxSection.title
+        : isInlineMode
+          ? `${lesson?.title || "Lesson"}: ${searchParams.title || "Code Example"}`
+          : "Forge Playground Live Preview",
       baseUrl: "",
     });
     setCompilerOutput(initialHtml, false);
+    setHydratedSessionId(currentSessionIdentity);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.lessonId, searchParams.sandboxId]);
+  }, [
+    currentSessionIdentity,
+    searchParams.lessonId,
+    searchParams.sandboxId,
+    searchParams.exampleId,
+    searchParams.mode,
+    searchParams.code,
+    searchParams.lang,
+  ]);
 
   // Solution modal state
   const [solutionOpen, setSolutionOpen] = useState(false);
@@ -175,19 +248,115 @@ export function Playground() {
     "editor",
   );
 
-  const activeFile = files.find((f) => f.id === activeFileId) || files[0];
+  const isSessionReady = hydratedSessionId === currentSessionIdentity;
+
+  // Synchronously derived session initial files for immediate route synchronization
+  const sessionInitialFiles = useMemo(() => {
+    if (sandboxSection) {
+      const sandboxFileId = `f-sandbox-${searchParams.lessonId}-${searchParams.sandboxId}`;
+      const exerciseCode = searchParams.code || sandboxSection.initialCode;
+      const fileInfo = getSandboxFileInfo(sandboxSection.language);
+      let loaded = [
+        {
+          id: sandboxFileId,
+          name: fileInfo.name,
+          language: fileInfo.language,
+          code: exerciseCode,
+        },
+      ];
+      if (typeof window !== "undefined" && !searchParams.code) {
+        const key = `forge_playground_files_lesson_${searchParams.lessonId}_${searchParams.sandboxId}`;
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              loaded = parsed.map((f, i) => (i === 0 ? { ...f, id: sandboxFileId } : f));
+            }
+          } catch (e) {
+            /* ignore */
+          }
+        }
+      }
+      return loaded;
+    }
+    if (isInlineMode) {
+      const inlineFileId = `f-inline-${searchParams.lessonId || "unknown"}-${searchParams.exampleId || "default"}`;
+      const fileInfo = getSandboxFileInfo(searchParams.lang);
+      const initialCode = searchParams.code || "";
+      let loaded = [
+        {
+          id: inlineFileId,
+          name: fileInfo.name,
+          language: fileInfo.language,
+          code: initialCode,
+        },
+      ];
+      if (typeof window !== "undefined" && searchParams.lessonId) {
+        const key = `forge_playground_inline_${searchParams.lessonId}_${searchParams.exampleId || "default"}`;
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              loaded = parsed.map((f, i) => (i === 0 ? { ...f, id: inlineFileId } : f));
+            }
+          } catch (e) {
+            /* ignore */
+          }
+        }
+      }
+      return loaded;
+    }
+    return null;
+  }, [
+    sandboxSection,
+    isInlineMode,
+    searchParams.lessonId,
+    searchParams.sandboxId,
+    searchParams.exampleId,
+    searchParams.lang,
+    searchParams.code,
+  ]);
+
+  const activeFile = isSessionReady
+    ? files.find((f) => f.id === activeFileId) || files[0]
+    : sessionInitialFiles
+      ? sessionInitialFiles[0]
+      : files.find((f) => f.id === activeFileId) || files[0];
 
   // Auto-persist files to localStorage whenever files change
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // CRITICAL GUARD: Never write in-memory files to storage until the new session is hydrated
+    if (hydratedSessionId !== currentSessionIdentity) {
+      return;
+    }
     if (sandboxSection) {
       const key = `forge_playground_files_lesson_${searchParams.lessonId}_${searchParams.sandboxId}`;
       localStorage.setItem(key, JSON.stringify(files));
       return;
     }
+    if (isInlineMode) {
+      if (searchParams.lessonId) {
+        const key = `forge_playground_inline_${searchParams.lessonId}_${searchParams.exampleId || "default"}`;
+        localStorage.setItem(key, JSON.stringify(files));
+      }
+      return;
+    }
     const key = `forge_playground_files_${currentPresetId}`;
     localStorage.setItem(key, JSON.stringify(files));
-  }, [files, currentPresetId, searchParams.lessonId, searchParams.sandboxId, sandboxSection]);
+  }, [
+    files,
+    hydratedSessionId,
+    currentSessionIdentity,
+    currentPresetId,
+    searchParams.lessonId,
+    searchParams.sandboxId,
+    searchParams.exampleId,
+    sandboxSection,
+    isInlineMode,
+  ]);
 
   // Preset switch handler
   const handleSelectPreset = (presetId: string) => {
@@ -220,6 +389,7 @@ export function Playground() {
       baseUrl: "",
     });
     setCompilerOutput(html, false);
+    setHydratedSessionId(`preset:${presetId}`);
 
     toast.success(`Loaded preset: ${nextPreset.title}`);
   };
@@ -334,7 +504,11 @@ export function Playground() {
       setTimeout(() => {
         try {
           const html = buildPlaygroundHtml(currentFiles, {
-            title: sandboxSection ? sandboxSection.title : "Forge Playground Live Preview",
+            title: sandboxSection
+              ? sandboxSection.title
+              : isInlineMode
+                ? `${lesson?.title || "Lesson"}: ${searchParams.title || "Code Example"}`
+                : "Forge Playground Live Preview",
             baseUrl: "",
           });
           setCompilerOutput(html, false);
@@ -346,7 +520,7 @@ export function Playground() {
             toast.success(`Compiled & executed in ${duration}ms`);
             if (sandboxSection && searchParams.lessonId && searchParams.sandboxId) {
               completePlaygroundExercise(`${searchParams.lessonId}:${searchParams.sandboxId}`);
-            } else if (!sandboxSection) {
+            } else if (!sandboxSection && !isInlineMode) {
               completePlaygroundExercise(activePreset.id);
             }
           }
@@ -368,7 +542,11 @@ export function Playground() {
         // Rebuild compilerOutput so switching to Preview tab displays updated code.
         try {
           const html = buildPlaygroundHtml(currentFiles, {
-            title: sandboxSection ? sandboxSection.title : "Forge Playground Live Preview",
+            title: sandboxSection
+              ? sandboxSection.title
+              : isInlineMode
+                ? `${lesson?.title || "Lesson"}: ${searchParams.title || "Code Example"}`
+                : "Forge Playground Live Preview",
             baseUrl: "",
           });
           setCompilerOutput(html, false);
@@ -390,18 +568,24 @@ export function Playground() {
   // Reset handler
   const handleReset = () => {
     if (sandboxSection) {
+      const sandboxFileId = `f-sandbox-${searchParams.lessonId}-${searchParams.sandboxId}`;
       const fileInfo = getSandboxFileInfo(sandboxSection.language);
       const resetFiles = [
         {
-          id: "f-sandbox-app",
+          id: sandboxFileId,
           name: fileInfo.name,
           language: fileInfo.language,
           code: sandboxSection.initialCode,
         },
       ];
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(
+          `forge_playground_files_lesson_${searchParams.lessonId}_${searchParams.sandboxId}`,
+        );
+      }
       setFiles(resetFiles);
-      setActiveFileId("f-sandbox-app");
-      setOpenTabIds(["f-sandbox-app"]);
+      setActiveFileId(sandboxFileId);
+      setOpenTabIds([sandboxFileId]);
       setConsoleLogs([]);
       setExecutionStatus("idle");
       setExecutionTime(null);
@@ -413,6 +597,40 @@ export function Playground() {
       setCompilerOutput(html, false);
 
       toast.info("Playground reset to original lesson code.");
+      return;
+    }
+
+    if (isInlineMode) {
+      const inlineFileId = `f-inline-${searchParams.lessonId || "unknown"}-${searchParams.exampleId || "default"}`;
+      const fileInfo = getSandboxFileInfo(searchParams.lang);
+      const initialCode = searchParams.code || "";
+      const resetFiles = [
+        {
+          id: inlineFileId,
+          name: fileInfo.name,
+          language: fileInfo.language,
+          code: initialCode,
+        },
+      ];
+      if (typeof window !== "undefined" && searchParams.lessonId) {
+        localStorage.removeItem(
+          `forge_playground_inline_${searchParams.lessonId}_${searchParams.exampleId || "default"}`,
+        );
+      }
+      setFiles(resetFiles);
+      setActiveFileId(inlineFileId);
+      setOpenTabIds([inlineFileId]);
+      setConsoleLogs([]);
+      setExecutionStatus("idle");
+      setExecutionTime(null);
+
+      const html = buildPlaygroundHtml(resetFiles, {
+        title: `${lesson?.title || "Lesson"}: ${searchParams.title || "Code Example"}`,
+        baseUrl: "",
+      });
+      setCompilerOutput(html, false);
+
+      toast.info("Playground reset to original lesson example code.");
       return;
     }
 
@@ -526,7 +744,7 @@ export function Playground() {
               <span className="inline sm:hidden">AI Review</span>
             </Button>
 
-            {!sandboxSection && (
+            {!sandboxSection && !isInlineMode && (
               <Button
                 variant="outline"
                 size="sm"
@@ -659,6 +877,7 @@ export function Playground() {
                 presets={PLAYGROUND_PRESETS}
                 currentPresetId={currentPresetId}
                 onSelectPreset={handleSelectPreset}
+                isLessonSandbox={!!sandboxSection || isInlineMode}
               />
             </div>
           )}
@@ -671,7 +890,11 @@ export function Playground() {
                 }
               />
               <div className="flex-1 flex flex-col min-h-0 w-full min-w-0 overflow-hidden">
-                {activeFile ? (
+                {!isSessionReady ? (
+                  <div className="flex h-full w-full items-center justify-center bg-card p-6">
+                    <Skeleton className="h-full w-full rounded-lg" />
+                  </div>
+                ) : activeFile ? (
                   <PlaygroundEditor
                     onCodeChange={handleCodeChange}
                     onFormatCode={handleFormatCode}
@@ -716,7 +939,7 @@ export function Playground() {
                 ))}
               </div>
 
-              {!sandboxSection && (
+              {!sandboxSection && !isInlineMode && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -742,7 +965,7 @@ export function Playground() {
                 presets={PLAYGROUND_PRESETS}
                 currentPresetId={currentPresetId}
                 onSelectPreset={handleSelectPreset}
-                isLessonSandbox={!!sandboxSection}
+                isLessonSandbox={!!sandboxSection || isInlineMode}
               />
             </div>
           )}
@@ -758,7 +981,11 @@ export function Playground() {
 
             {/* Monaco Editor */}
             <div className="flex-1 min-h-0 w-full min-w-0 overflow-hidden">
-              {activeFile ? (
+              {!isSessionReady ? (
+                <div className="flex h-full w-full items-center justify-center bg-card p-6">
+                  <Skeleton className="h-full w-full rounded-lg" />
+                </div>
+              ) : activeFile ? (
                 <PlaygroundEditor
                   onCodeChange={handleCodeChange}
                   onFormatCode={handleFormatCode}

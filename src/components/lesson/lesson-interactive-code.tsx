@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Copy, Check, Terminal, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import * as Babel from "@babel/standalone";
 
 interface LessonInteractiveCodeProps {
   language: string;
@@ -10,6 +12,265 @@ interface LessonInteractiveCodeProps {
   title?: string;
   highlightLines?: number[];
   onOpenSandbox?: (code: string) => void;
+  lessonId?: string;
+  exampleId?: string;
+}
+
+function buildInlineJsxPreviewHtml(code: string, lang: string): string {
+  // Transpile JSX/TSX via Babel standalone
+  const transformed = Babel.transform(code, {
+    presets: [
+      ["react", { runtime: "classic" }],
+      ["typescript", { ignoreExtensions: false }],
+    ],
+    parserOpts: {
+      allowReturnOutsideFunction: true,
+    },
+    filename: `snippet.${lang === "tsx" ? "tsx" : "jsx"}`,
+  });
+
+  const transpiledJs = transformed.code || "";
+
+  // Detect declared PascalCase component names
+  const regex =
+    /(?:function\s+([A-Z]\w*)|const\s+([A-Z]\w*)\s*=|class\s+([A-Z]\w*)|let\s+([A-Z]\w*)\s*=|var\s+([A-Z]\w*)\s*=)/g;
+  const compNames: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(code)) !== null) {
+    const name = m[1] || m[2] || m[3] || m[4] || m[5];
+    if (name) compNames.push(name);
+  }
+
+  // Safe script tag escaping
+  const safeJs = transpiledJs.replace(/<\/script>/gi, "<\\/script>");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="/vendor/react.development.js"></script>
+  <script src="/vendor/react-dom.development.js"></script>
+  <script>
+    if (!window.React) {
+      document.write('<script src="https://unpkg.com/react@18/umd/react.development.js"><\\/script>');
+      document.write('<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"><\\/script>');
+    }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 14px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    * { box-sizing: border-box; }
+    h1, h2, h3, h4 { color: #38bdf8; margin-top: 0; margin-bottom: 8px; font-weight: 600; }
+    h1 { font-size: 16px; }
+    h2 { font-size: 14px; }
+    p { margin: 0 0 8px 0; color: #cbd5e1; }
+    section, article {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #3b82f6;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+    button:hover, .btn:hover {
+      background: #2563eb;
+    }
+    button:active, .btn:active {
+      transform: scale(0.98);
+    }
+    input, select, textarea {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      outline: none;
+    }
+    input:focus { border-color: #38bdf8; }
+    ul, ol {
+      margin: 0 0 8px 0;
+      padding-left: 20px;
+      color: #cbd5e1;
+    }
+    li { margin-bottom: 4px; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      background: #334155;
+      color: #94a3b8;
+    }
+    #runtime-error {
+      display: none;
+      background: #450a0a;
+      border: 1px solid #dc2626;
+      color: #fca5a5;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 11px;
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="runtime-error"></div>
+  <div id="root"></div>
+
+  <script>
+    (function() {
+      function showErr(msg) {
+        var el = document.getElementById('runtime-error');
+        if (el) {
+          el.style.display = 'block';
+          el.textContent = 'Runtime Error: ' + msg;
+        }
+      }
+
+      window.onerror = function(msg) {
+        showErr(msg);
+        return true;
+      };
+
+      if (!window.React || !window.ReactDOM) {
+        showErr('React runtime failed to initialize.');
+        return;
+      }
+
+      var useState = React.useState;
+      var useEffect = React.useEffect;
+      var useMemo = React.useMemo;
+      var useCallback = React.useCallback;
+      var useRef = React.useRef;
+      var useContext = React.useContext;
+      var createContext = React.createContext;
+      var useReducer = React.useReducer;
+
+      var exports = {};
+      var module = { exports: exports };
+
+      // Helper mock components & state for curriculum snippets
+      var LessonCard = function(props) {
+        return React.createElement('article', { className: 'lesson-card' },
+          React.createElement('h2', null, props.title || 'Lesson Card'),
+          props.duration ? React.createElement('p', null, props.duration + ' mins') : null,
+          props.completed !== undefined ? React.createElement('p', null, props.completed ? 'Complete' : 'In progress') : null,
+          props.children
+        );
+      };
+      var LessonSkeleton = function() {
+        return React.createElement('div', { style: { padding: '8px', color: '#94a3b8', fontStyle: 'italic' } }, 'Loading lesson skeleton…');
+      };
+      var SaveButton = function() {
+        var s = React.useState(false);
+        return React.createElement('button', { onClick: function() { s[1](true); } }, s[0] ? 'Saved' : 'Save');
+      };
+
+      var initialLessons = [
+        { id: '1', title: 'Scope & Closures', duration: 30, completed: true },
+        { id: '2', title: 'Prototypes & Objects', duration: 45, completed: false },
+        { id: '3', title: 'React Fundamentals', duration: 40, completed: false }
+      ];
+      var lessons = initialLessons;
+      var isSaving = false;
+      var isOffline = false;
+      var email = 'learner@example.com';
+      var handleClick = function() { console.log('Clicked'); };
+      var setLesson = function() {};
+      var setCount = function() {};
+
+      var defaultProps = {
+        title: 'Closures',
+        duration: 45,
+        completed: true,
+        saved: false,
+        total: 100,
+        status: 'ready',
+        loading: false,
+        error: null,
+        lessons: initialLessons,
+        lesson: initialLessons[0],
+        onComplete: function() { console.log('Completed'); },
+        onClick: function() { console.log('Clicked'); }
+      };
+
+      try {
+        ${safeJs}
+
+        var candidateComp = null;
+
+        // 1. Check exports
+        if (module.exports && (typeof module.exports === 'function' || module.exports.$$typeof)) {
+          candidateComp = module.exports;
+        } else if (module.exports && module.exports.default) {
+          candidateComp = module.exports.default;
+        } else if (exports.default) {
+          candidateComp = exports.default;
+        }
+
+        // 2. Check candidate components detected from code in reverse order
+        if (!candidateComp) {
+          var names = ${JSON.stringify(compNames.reverse())};
+          for (var i = 0; i < names.length; i++) {
+            try {
+              var fn = eval(names[i]);
+              if (typeof fn === 'function') {
+                candidateComp = fn;
+                break;
+              }
+            } catch(e) {}
+          }
+        }
+
+        var rootEl = document.getElementById('root');
+        if (candidateComp) {
+          var element;
+          if (React.isValidElement(candidateComp)) {
+            element = candidateComp;
+          } else {
+            element = React.createElement(candidateComp, defaultProps);
+          }
+
+          if (ReactDOM.createRoot) {
+            var root = ReactDOM.createRoot(rootEl);
+            root.render(element);
+          } else if (ReactDOM.render) {
+            ReactDOM.render(element, rootEl);
+          }
+        } else {
+          rootEl.innerHTML = '<div style="color: #94a3b8; font-style: italic;">JSX snippet compiled cleanly.</div>';
+        }
+      } catch (err) {
+        showErr(err.message);
+      }
+    })();
+  </script>
+</body>
+</html>`;
 }
 
 export function LessonInteractiveCode({
@@ -18,9 +279,12 @@ export function LessonInteractiveCode({
   title,
   highlightLines = [],
   onOpenSandbox,
+  lessonId,
+  exampleId,
 }: LessonInteractiveCodeProps) {
   const [copied, setCopied] = useState(false);
   const [outputLog, setOutputLog] = useState<string | null>(null);
+  const [isErrorLog, setIsErrorLog] = useState(false);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
 
   const handleCopy = () => {
@@ -35,6 +299,7 @@ export function LessonInteractiveCode({
   const handleQuickRun = () => {
     const lang = (language || "").toLowerCase();
     setOutputLog("");
+    setIsErrorLog(false);
     setPreviewHtml(null);
 
     if (lang === "css") {
@@ -86,10 +351,12 @@ export function LessonInteractiveCode({
 </html>`;
         setPreviewHtml(template);
         setOutputLog("CSS Applied successfully to live preview element.");
+        setIsErrorLog(false);
         toast.success("CSS applied successfully to live preview");
       } catch (err: unknown) {
         const errMsg = err instanceof Error ? err.message : String(err);
         setOutputLog(`Failed to apply CSS: ${errMsg}`);
+        setIsErrorLog(true);
       }
     } else if (lang === "html") {
       try {
@@ -116,13 +383,81 @@ export function LessonInteractiveCode({
         }
         setPreviewHtml(template);
         setOutputLog("HTML Rendered successfully inside preview frame.");
+        setIsErrorLog(false);
         toast.success("HTML rendered successfully");
       } catch (err: unknown) {
         const errMsg = err instanceof Error ? err.message : String(err);
         setOutputLog(`Failed to render HTML: ${errMsg}`);
+        setIsErrorLog(true);
+      }
+    } else if (lang === "jsx" || lang === "tsx" || lang === "react") {
+      // JSX / TSX / React compilation & preview mount path via Babel standalone
+      try {
+        const previewDoc = buildInlineJsxPreviewHtml(code, lang);
+
+        const logs: string[] = [];
+        const dummyConsole = {
+          log: (...args: unknown[]) =>
+            logs.push(
+              args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
+            ),
+          warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
+          error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
+        };
+
+        // Capture any top-level console output
+        try {
+          const transformed = Babel.transform(code, {
+            presets: [
+              ["react", { runtime: "classic" }],
+              ["typescript", { ignoreExtensions: false }],
+            ],
+            parserOpts: { allowReturnOutsideFunction: true },
+            filename: `snippet.${lang === "tsx" ? "tsx" : "jsx"}`,
+          });
+          const transpiledCode = transformed.code || "";
+          if (transpiledCode.includes("console.")) {
+            const dummyReact = {
+              createElement: (...args: unknown[]) => ({
+                type: args[0],
+                props: args[1],
+                children: args.slice(2),
+              }),
+              Fragment: Symbol.for("react.fragment"),
+              useState: (initial: unknown) => [initial, () => {}],
+              useEffect: () => {},
+              useMemo: (fn: () => unknown) => fn(),
+              useCallback: (fn: unknown) => fn,
+              useRef: (initial: unknown) => ({ current: initial }),
+            };
+            const fn = new Function("React", "console", transpiledCode);
+            fn(dummyReact, dummyConsole);
+          }
+        } catch {
+          // Ignore top-level evaluation errors for standalone component declarations
+        }
+
+        setPreviewHtml(previewDoc);
+
+        if (logs.length > 0) {
+          setOutputLog(
+            `✓ JSX compilation successful\nComponent mounted to live preview.\n\nConsole Output:\n${logs.join("\n")}`,
+          );
+        } else {
+          setOutputLog("✓ JSX compilation successful\nComponent mounted to live preview.");
+        }
+        setIsErrorLog(false);
+        toast.success("JSX compiled and rendered successfully");
+      } catch (err: unknown) {
+        const rawMsg = err instanceof Error ? err.message : String(err);
+        const cleanMsg = rawMsg.replace(/^\/?[^:]+:\s*/, "");
+        setOutputLog(`✕ JSX/TSX Compilation Error:\n${cleanMsg}`);
+        setIsErrorLog(true);
+        setPreviewHtml(null);
+        toast.error("JSX compilation error");
       }
     } else {
-      // JS / TS / JSX / TSX
+      // Plain JavaScript Fast Path
       try {
         const logs: string[] = [];
         const dummyConsole = {
@@ -134,24 +469,11 @@ export function LessonInteractiveCode({
           error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
         };
 
-        // Strip imports/exports to allow quick eval of basic JS/TS
+        // Strip imports/exports to allow quick eval of basic JS
         const cleanCode = code
           .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
           .replace(/^export\s+default\s+/gm, "")
           .replace(/^export\s+/gm, "");
-
-        // Detect complex code (JSX tags, types) that raw browser 'new Function()' would throw syntax error on
-        const hasJSX = /<[a-zA-Z]+[^>]*>/.test(cleanCode) || /<\/ [a-zA-Z]+>/.test(cleanCode);
-        const hasTS =
-          /interface\s+\w+|type\s+\w+\s*=|:\s*(string|number|boolean|any|unknown|void|Record<)/.test(
-            cleanCode,
-          );
-
-        if (hasJSX || hasTS) {
-          throw new SyntaxError(
-            "Standard JS evaluation is optimized for plain vanilla JavaScript/ES6 snippets. For complex React/TSX/JSX features, use the interactive 'Sandbox' button above to compile and run with full React context.",
-          );
-        }
 
         const fn = new Function("console", cleanCode);
         fn(dummyConsole);
@@ -162,12 +484,11 @@ export function LessonInteractiveCode({
         } else {
           setOutputLog("✓ Executed cleanly (no console output).");
         }
+        setIsErrorLog(false);
       } catch (err: unknown) {
-        let errMsg = err instanceof Error ? err.message : String(err);
-        if (err instanceof SyntaxError && !errMsg.includes("Sandbox")) {
-          errMsg = `${errMsg}\n\n💡 Tip: If this snippet contains modern TypeScript, JSX, or external package imports, click the "Sandbox" button on the top right to run it in a full-featured browser playground!`;
-        }
-        setOutputLog(`Runtime Note:\n${errMsg}`);
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setOutputLog(`Runtime Error:\n${errMsg}`);
+        setIsErrorLog(true);
       }
     }
   };
@@ -216,10 +537,20 @@ export function LessonInteractiveCode({
               className="h-7 px-2.5 text-xs gap-1.5 bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 font-medium"
               title="Open full playground"
             >
-              <a href="/playground">
+              <Link
+                to="/playground"
+                search={{
+                  mode: "lesson-inline",
+                  lessonId: lessonId || undefined,
+                  exampleId: exampleId || undefined,
+                  lang: language,
+                  title: title || undefined,
+                  code: code,
+                }}
+              >
                 <Terminal className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Playground</span>
-              </a>
+              </Link>
             </Button>
           )}
 
@@ -266,10 +597,13 @@ export function LessonInteractiveCode({
 
       {/* Console output & preview drawer if quick run executed */}
       {(outputLog !== null || previewHtml !== null) && (
-        <div className="border-t border-border/50 bg-[#07080a] p-4 text-[11px] font-mono text-emerald-300">
+        <div className="border-t border-border/50 bg-[#07080a] p-4 text-[11px] font-mono">
           <div className="flex items-center justify-between text-muted-foreground text-[10px] mb-2 font-sans">
             <span className="flex items-center gap-1 font-semibold text-foreground">
-              <Terminal className="h-3 w-3 text-emerald-400" /> Quick Output Log
+              <Terminal
+                className={`h-3 w-3 ${isErrorLog ? "text-rose-400" : "text-emerald-400"}`}
+              />{" "}
+              Quick Output Log
             </span>
             <button
               onClick={() => {
@@ -284,7 +618,13 @@ export function LessonInteractiveCode({
 
           <div className="space-y-3">
             {outputLog && (
-              <div className="whitespace-pre-wrap bg-black/40 p-2.5 rounded border border-border/20 text-emerald-300">
+              <div
+                className={`whitespace-pre-wrap p-2.5 rounded border ${
+                  isErrorLog
+                    ? "bg-rose-950/30 text-rose-300 border-rose-500/30"
+                    : "bg-black/40 text-emerald-300 border-border/20"
+                }`}
+              >
                 {outputLog}
               </div>
             )}

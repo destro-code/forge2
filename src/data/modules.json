@@ -2,7 +2,7 @@
   {
     "id": "module-0-1",
     "title": "Welcome to the Web",
-    "description": "The orientation module: what frontend development actually is, how the client-server model works, what happens between a click and a rendered page, and how Forge's Learn / Practice / Grow loop works.",
+    "description": "Orientation: what frontend development is, how the client-server model works, what happens between a click and a rendered page, and how Forge's Learn/Practice/Grow loop works.",
     "icon": "Globe",
     "difficulty": "Beginner",
     "topicCount": 5,
@@ -10,68 +10,531 @@
     "estimatedHours": 1.7,
     "progress": 0,
     "color": "chart-1",
-    "tags": ["Orientation", "Web Basics"],
+    "tags": [
+      "Orientation",
+      "Web Basics"
+    ],
     "order": 1,
     "prerequisites": []
   },
   {
     "id": "module-0-2",
     "title": "Developer Tools",
-    "description": "Hands-on fluency with the browser's built-in developer tools: inspecting live HTML/CSS in Elements, reading and using the Console, tracing network requests, and running a first guided debugging pass that combines all three.",
+    "description": "Hands-on fluency with the browser's built-in DevTools: Elements, Console, Network, and a first guided debugging session combining all three.",
     "icon": "Terminal",
     "difficulty": "Beginner",
     "topicCount": 5,
     "lessonCount": 5,
     "estimatedHours": 1.7,
     "progress": 0,
-    "color": "chart-1",
-    "tags": ["Orientation", "DevTools", "Debugging"],
+    "color": "chart-2",
+    "tags": [
+      "Orientation",
+      "DevTools",
+      "Debugging"
+    ],
     "order": 2,
-    "prerequisites": ["module-0-1"]
+    "prerequisites": [
+      "module-0-1"
+    ]
   },
   {
     "id": "module-1-1",
     "title": "HTML Fundamentals",
-    "description": "The real starting line: building valid, semantic HTML from scratch — document structure, text, links, images, lists, tables, forms, and the semantic elements that hold it all together — ending in a capstone page built from all of it.",
+    "description": "Real, valid, semantic HTML from scratch: document structure, text, links, images, lists, tables, forms, and semantic regions, ending in a capstone page.",
     "icon": "FileCode",
     "difficulty": "Beginner",
     "topicCount": 8,
     "lessonCount": 8,
     "estimatedHours": 4.0,
     "progress": 0,
-    "color": "chart-2",
-    "tags": ["Web Foundations", "HTML"],
+    "color": "chart-3",
+    "tags": [
+      "Web Foundations",
+      "HTML"
+    ],
     "order": 3,
-    "prerequisites": ["module-0-2"]
+    "prerequisites": [
+      "module-0-2"
+    ]
   },
   {
     "id": "module-1-2",
     "title": "CSS Fundamentals",
-    "description": "Master the presentation layer of the web — selectors, specificity, colors, typography, the CSS box model, display types, normal flow, Flexbox, CSS Grid, and responsive design media queries.",
+    "description": "Styling and layout fundamentals: selectors, the cascade, the box model, spacing and typography, colors, display, Flexbox, Grid, and responsive design, ending in a capstone responsive interface.",
     "icon": "Palette",
     "difficulty": "Beginner",
-    "topicCount": 11,
-    "lessonCount": 11,
-    "estimatedHours": 5.5,
+    "topicCount": 12,
+    "lessonCount": 12,
+    "estimatedHours": 6.2,
     "progress": 0,
-    "color": "chart-3",
-    "tags": ["Web Foundations", "CSS", "Layout"],
+    "color": "chart-4",
+    "tags": [
+      "Web Foundations",
+      "CSS"
+    ],
     "order": 4,
-    "prerequisites": ["module-1-1"]
+    "prerequisites": [
+      "module-1-1"
+    ]
   },
   {
     "id": "module-1-3",
     "title": "JavaScript Fundamentals",
-    "description": "Bring web pages to life with JavaScript — the browser environment, execution flow, developer console, variables, data types, and core programming constructs.",
-    "icon": "Code",
+    "description": "Real programming logic: variables, data types and operators, conditionals, loops, functions, arrays, and objects, ending in a mini project combining all of it.",
+    "icon": "Braces",
     "difficulty": "Beginner",
-    "topicCount": 2,
-    "lessonCount": 2,
-    "estimatedHours": 1.5,
+    "topicCount": 9,
+    "lessonCount": 9,
+    "estimatedHours": 5.7,
+    "progress": 0,
+    "color": "chart-5",
+    "tags": [
+      "Web Foundations",
+      "JavaScript"
+    ],
+    "order": 5,
+    "prerequisites": [
+      "module-1-2"
+    ]
+  },
+  {
+    "id": "module-1-4",
+    "title": "Browser and Debugging Fundamentals",
+    "description": "How a browser turns HTML/CSS/JS into pixels, how to read a JavaScript error and its stack trace, console debugging, and two guided debugging challenges.",
+    "icon": "Bug",
+    "difficulty": "Beginner",
+    "topicCount": 5,
+    "lessonCount": 5,
+    "estimatedHours": 3.0,
+    "progress": 0,
+    "color": "chart-1",
+    "tags": [
+      "Web Foundations",
+      "Debugging"
+    ],
+    "order": 6,
+    "prerequisites": [
+      "module-1-3"
+    ]
+  },
+  {
+    "id": "module-2-1",
+    "title": "Advanced CSS and UI Engineering",
+    "description": "Production-grade CSS: advanced Flexbox/Grid, positioning and stacking, performant transitions and animations, CSS architecture, and design tokens.",
+    "icon": "Layers",
+    "difficulty": "Intermediate",
+    "topicCount": 7,
+    "lessonCount": 7,
+    "estimatedHours": 4.5,
+    "progress": 0,
+    "color": "chart-2",
+    "tags": [
+      "Advanced CSS",
+      "UI Engineering"
+    ],
+    "order": 7,
+    "prerequisites": [
+      "module-1-4"
+    ]
+  },
+  {
+    "id": "module-2-2",
+    "title": "Modern JavaScript",
+    "description": "ES6+ JavaScript for real applications: destructuring, spread/rest, template literals, modules, closures, scope, `this`, and asynchronous JavaScript with Promises and async/await.",
+    "icon": "Sparkles",
+    "difficulty": "Intermediate",
+    "topicCount": 10,
+    "lessonCount": 10,
+    "estimatedHours": 6.8,
+    "progress": 0,
+    "color": "chart-3",
+    "tags": [
+      "Modern JavaScript",
+      "Async"
+    ],
+    "order": 8,
+    "prerequisites": [
+      "module-2-1"
+    ]
+  },
+  {
+    "id": "module-2-3",
+    "title": "Git and GitHub",
+    "description": "Real version control workflow: commits, branches, merges, resolving conflicts, pull requests, and collaborating on a shared repository.",
+    "icon": "GitBranch",
+    "difficulty": "Intermediate",
+    "topicCount": 6,
+    "lessonCount": 6,
+    "estimatedHours": 3.2,
     "progress": 0,
     "color": "chart-4",
-    "tags": ["Web Foundations", "JavaScript"],
-    "order": 5,
-    "prerequisites": ["module-1-2"]
+    "tags": [
+      "Tooling",
+      "Git"
+    ],
+    "order": 9,
+    "prerequisites": [
+      "module-2-2"
+    ]
+  },
+  {
+    "id": "module-2-4",
+    "title": "APIs and Web Data",
+    "description": "Fetching, sending, and handling real data over HTTP: fetch/JSON, REST conventions, error handling, loading states, and authentication basics.",
+    "icon": "Plug",
+    "difficulty": "Intermediate",
+    "topicCount": 8,
+    "lessonCount": 8,
+    "estimatedHours": 5.0,
+    "progress": 0,
+    "color": "chart-5",
+    "tags": [
+      "APIs",
+      "Web Data"
+    ],
+    "order": 10,
+    "prerequisites": [
+      "module-2-3"
+    ]
+  },
+  {
+    "id": "module-2-5",
+    "title": "TypeScript Fundamentals",
+    "description": "Adding static types to JavaScript: basic types, interfaces, typing functions, union types and narrowing, generics, and typing real-world data, ending in a capstone JS-to-TS conversion.",
+    "icon": "FileType",
+    "difficulty": "Intermediate",
+    "topicCount": 8,
+    "lessonCount": 8,
+    "estimatedHours": 4.1,
+    "progress": 0,
+    "color": "chart-1",
+    "tags": [
+      "TypeScript",
+      "Type Safety"
+    ],
+    "order": 11,
+    "prerequisites": [
+      "module-2-4"
+    ]
+  },
+  {
+    "id": "module-3-1",
+    "title": "React Foundations",
+    "description": "Component-based UI from the ground up: JSX, props, component composition, and the mental model that underlies every React application.",
+    "icon": "Component",
+    "difficulty": "Intermediate",
+    "topicCount": 8,
+    "lessonCount": 8,
+    "estimatedHours": 5.2,
+    "progress": 0,
+    "color": "chart-2",
+    "tags": [
+      "React",
+      "Components"
+    ],
+    "order": 12,
+    "prerequisites": [
+      "module-2-5"
+    ]
+  },
+  {
+    "id": "module-3-2",
+    "title": "React Interaction and Effects",
+    "description": "Making React apps interactive: state with useState, event handling, and synchronizing with the outside world using useEffect.",
+    "icon": "Zap",
+    "difficulty": "Intermediate",
+    "topicCount": 7,
+    "lessonCount": 7,
+    "estimatedHours": 5.1,
+    "progress": 0,
+    "color": "chart-3",
+    "tags": [
+      "React",
+      "State",
+      "Effects"
+    ],
+    "order": 13,
+    "prerequisites": [
+      "module-3-1"
+    ]
+  },
+  {
+    "id": "module-3-3",
+    "title": "Component Architecture",
+    "description": "Structuring real React applications: component composition, lifting state up, prop drilling and its alternatives, and reusable component design.",
+    "icon": "Blocks",
+    "difficulty": "Intermediate",
+    "topicCount": 6,
+    "lessonCount": 6,
+    "estimatedHours": 4.1,
+    "progress": 0,
+    "color": "chart-4",
+    "tags": [
+      "React",
+      "Architecture"
+    ],
+    "order": 14,
+    "prerequisites": [
+      "module-3-2"
+    ]
+  },
+  {
+    "id": "module-3-4",
+    "title": "Routing and Application Structure",
+    "description": "Multi-page React applications: client-side routing, nested routes, route parameters, and organizing a growing application's structure.",
+    "icon": "Map",
+    "difficulty": "Intermediate",
+    "topicCount": 6,
+    "lessonCount": 6,
+    "estimatedHours": 4.2,
+    "progress": 0,
+    "color": "chart-5",
+    "tags": [
+      "React",
+      "Routing"
+    ],
+    "order": 15,
+    "prerequisites": [
+      "module-3-3"
+    ]
+  },
+  {
+    "id": "module-4-1",
+    "title": "State Management",
+    "description": "Managing state beyond a single component: Context, common state-management patterns, and when local state genuinely isn't enough.",
+    "icon": "Database",
+    "difficulty": "Advanced",
+    "topicCount": 7,
+    "lessonCount": 7,
+    "estimatedHours": 5.2,
+    "progress": 0,
+    "color": "chart-1",
+    "tags": [
+      "React",
+      "State Management"
+    ],
+    "order": 16,
+    "prerequisites": [
+      "module-3-4"
+    ]
+  },
+  {
+    "id": "module-4-2",
+    "title": "Data Flow and Application Data",
+    "description": "Data fetching patterns in React applications: loading/error states, caching, synchronizing server data with UI, and avoiding common data-flow bugs.",
+    "icon": "GitMerge",
+    "difficulty": "Advanced",
+    "topicCount": 7,
+    "lessonCount": 7,
+    "estimatedHours": 5.0,
+    "progress": 0,
+    "color": "chart-2",
+    "tags": [
+      "React",
+      "Data Flow"
+    ],
+    "order": 17,
+    "prerequisites": [
+      "module-4-1"
+    ]
+  },
+  {
+    "id": "module-4-3",
+    "title": "Testing",
+    "description": "Testing frontend code with confidence: unit tests, component tests, mocking, and testing user interactions rather than implementation details.",
+    "icon": "FlaskConical",
+    "difficulty": "Advanced",
+    "topicCount": 6,
+    "lessonCount": 6,
+    "estimatedHours": 3.6,
+    "progress": 0,
+    "color": "chart-3",
+    "tags": [
+      "Testing",
+      "Quality"
+    ],
+    "order": 18,
+    "prerequisites": [
+      "module-4-2"
+    ]
+  },
+  {
+    "id": "module-4-4",
+    "title": "Accessibility",
+    "description": "Building interfaces that genuinely work for everyone: semantic HTML, ARIA, keyboard navigation, screen reader testing, and manual accessibility auditing.",
+    "icon": "Accessibility",
+    "difficulty": "Advanced",
+    "topicCount": 6,
+    "lessonCount": 6,
+    "estimatedHours": 3.4,
+    "progress": 0,
+    "color": "chart-4",
+    "tags": [
+      "Accessibility",
+      "A11y"
+    ],
+    "order": 19,
+    "prerequisites": [
+      "module-4-3"
+    ]
+  },
+  {
+    "id": "module-4-5",
+    "title": "Performance and Resilience",
+    "description": "Making applications fast and resilient: rendering performance, bundle size, lazy loading, error boundaries, and graceful failure.",
+    "icon": "Gauge",
+    "difficulty": "Advanced",
+    "topicCount": 9,
+    "lessonCount": 9,
+    "estimatedHours": 5.5,
+    "progress": 0,
+    "color": "chart-5",
+    "tags": [
+      "Performance",
+      "Resilience"
+    ],
+    "order": 20,
+    "prerequisites": [
+      "module-4-4"
+    ]
+  },
+  {
+    "id": "module-4-6",
+    "title": "Frontend Security",
+    "description": "Why frontend security matters, XSS and input sanitization, CSRF and the same-origin policy, CORS in practice, and authentication/token storage patterns.",
+    "icon": "ShieldAlert",
+    "difficulty": "Advanced",
+    "topicCount": 6,
+    "lessonCount": 6,
+    "estimatedHours": 3.3,
+    "progress": 0,
+    "color": "chart-1",
+    "tags": [
+      "Security"
+    ],
+    "order": 21,
+    "prerequisites": [
+      "module-4-5"
+    ]
+  },
+  {
+    "id": "module-5-1",
+    "title": "Frontend Architecture",
+    "description": "Architecting large-scale frontend applications: module boundaries, folder structure, scalability trade-offs, and architecture review practices.",
+    "icon": "Building2",
+    "difficulty": "Advanced",
+    "topicCount": 7,
+    "lessonCount": 7,
+    "estimatedHours": 5.5,
+    "progress": 0,
+    "color": "chart-2",
+    "tags": [
+      "Architecture",
+      "Professional Practice"
+    ],
+    "order": 22,
+    "prerequisites": [
+      "module-4-6"
+    ]
+  },
+  {
+    "id": "module-5-2",
+    "title": "Advanced React Patterns",
+    "description": "Professional-level React patterns: compound components, render props, custom hooks, and performance optimization techniques.",
+    "icon": "Puzzle",
+    "difficulty": "Advanced",
+    "topicCount": 6,
+    "lessonCount": 6,
+    "estimatedHours": 4.4,
+    "progress": 0,
+    "color": "chart-3",
+    "tags": [
+      "React",
+      "Advanced Patterns"
+    ],
+    "order": 23,
+    "prerequisites": [
+      "module-5-1"
+    ]
+  },
+  {
+    "id": "module-5-3",
+    "title": "Debugging Mastery",
+    "description": "Professional-level debugging: complex bug hunts, performance profiling, and systematic root-cause analysis under realistic constraints.",
+    "icon": "SearchCode",
+    "difficulty": "Advanced",
+    "topicCount": 7,
+    "lessonCount": 7,
+    "estimatedHours": 5.8,
+    "progress": 0,
+    "color": "chart-4",
+    "tags": [
+      "Debugging",
+      "Professional Practice"
+    ],
+    "order": 24,
+    "prerequisites": [
+      "module-5-2"
+    ]
+  },
+  {
+    "id": "module-5-4",
+    "title": "Frontend Interview Engineering",
+    "description": "Interview-specific preparation: whiteboard-style frontend problems, system design for frontend, and behavioral/technical interview practice.",
+    "icon": "MessagesSquare",
+    "difficulty": "Advanced",
+    "topicCount": 8,
+    "lessonCount": 8,
+    "estimatedHours": 6.4,
+    "progress": 0,
+    "color": "chart-5",
+    "tags": [
+      "Interview Prep"
+    ],
+    "order": 25,
+    "prerequisites": [
+      "module-5-3"
+    ]
+  },
+  {
+    "id": "module-5-5",
+    "title": "Professional Portfolio Projects",
+    "description": "Capstone-level portfolio projects that demonstrate professional frontend engineering judgment end to end.",
+    "icon": "Award",
+    "difficulty": "Advanced",
+    "topicCount": 9,
+    "lessonCount": 9,
+    "estimatedHours": 8.7,
+    "progress": 0,
+    "color": "chart-1",
+    "tags": [
+      "Portfolio",
+      "Capstone"
+    ],
+    "order": 26,
+    "prerequisites": [
+      "module-5-4"
+    ]
+  },
+  {
+    "id": "module-5-6",
+    "title": "Meta-Frameworks",
+    "description": "Building with a modern meta-framework: app router fundamentals, server vs. client components, data fetching, API routes, rendering strategy, and deployment.",
+    "icon": "Layers3",
+    "difficulty": "Advanced",
+    "topicCount": 8,
+    "lessonCount": 8,
+    "estimatedHours": 5.2,
+    "progress": 0,
+    "color": "chart-2",
+    "tags": [
+      "Meta-Frameworks",
+      "Next.js"
+    ],
+    "order": 27,
+    "prerequisites": [
+      "module-5-5"
+    ]
   }
 ]
