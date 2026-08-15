@@ -157,6 +157,22 @@ export type LessonSection =
     }
   | { type: "inline-quiz"; quizId: string };
 
+export type ApplyActionType =
+  "playground" | "devtools" | "quiz" | "debug-lab" | "external" | "none";
+
+export interface LessonExercise {
+  id: string;
+  title: string;
+  brief: string;
+  applyAction?: ApplyActionType;
+  actionUrl?: string;
+  actionLabel?: string;
+  quizId?: string;
+  bugId?: string;
+  playgroundLanguage?: string;
+  playgroundCode?: string;
+}
+
 export interface Lesson {
   id: string;
   topicId: string;
@@ -172,7 +188,7 @@ export interface Lesson {
   previousLessonId?: string | null;
   nextLessonId?: string | null;
   sections: LessonSection[];
-  exercises: { id: string; title: string; brief: string }[];
+  exercises: LessonExercise[];
   quiz: {
     id: string;
     question: string;

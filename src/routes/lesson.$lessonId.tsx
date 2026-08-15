@@ -44,6 +44,7 @@ import {
   Target,
   Award,
   RotateCcw,
+  ExternalLink,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
@@ -56,6 +57,7 @@ import { LessonCheckpoints } from "@/components/lesson/lesson-checkpoints";
 import { LessonInlineSandbox } from "@/components/lesson/lesson-inline-sandbox";
 import { LessonTextHighlighter } from "@/components/lesson/lesson-text-highlighter";
 import { LessonNotesWidget } from "@/components/lesson/lesson-notes-widget";
+import { getApplyActivityCta } from "@/lib/utils/apply-action";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
   validateSearch: (
@@ -917,34 +919,56 @@ function LessonView() {
               </div>
 
               <div className="grid gap-3">
-                {lesson.exercises.map((ex) => (
-                  <Card
-                    key={ex.id}
-                    className="border-border/60 bg-card/80 hover:border-primary/40 transition shadow-2xs"
-                  >
-                    <CardContent className="p-4 sm:p-5">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="space-y-1">
-                          <div className="font-bold text-sm sm:text-base text-foreground">
-                            {ex.title}
+                {lesson.exercises.map((ex) => {
+                  const cta = getApplyActivityCta(ex, lesson);
+                  return (
+                    <Card
+                      key={ex.id}
+                      className="border-border/60 bg-card/80 hover:border-primary/40 transition shadow-2xs"
+                    >
+                      <CardContent className="p-4 sm:p-5">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="space-y-1">
+                            <div className="font-bold text-sm sm:text-base text-foreground">
+                              {ex.title}
+                            </div>
+                            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                              {ex.brief}
+                            </p>
                           </div>
-                          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                            {ex.brief}
-                          </p>
+                          {cta && (
+                            <Button
+                              asChild={Boolean(cta.to || cta.href)}
+                              size="default"
+                              className="text-xs font-semibold shrink-0 gap-1.5 shadow-glow"
+                            >
+                              {cta.isExternal && cta.href ? (
+                                <a href={cta.href} target="_blank" rel="noopener noreferrer">
+                                  {cta.label} <ExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                              ) : cta.to ? (
+                                <Link to={cta.to}>
+                                  {cta.label}{" "}
+                                  {cta.actionType === "playground" ? (
+                                    <Code2 className="h-3.5 w-3.5" />
+                                  ) : cta.actionType === "quiz" ? (
+                                    <HelpCircle className="h-3.5 w-3.5" />
+                                  ) : cta.actionType === "debug-lab" ? (
+                                    <BugIcon className="h-3.5 w-3.5" />
+                                  ) : (
+                                    <ArrowRight className="h-3.5 w-3.5" />
+                                  )}
+                                </Link>
+                              ) : (
+                                <span>{cta.label}</span>
+                              )}
+                            </Button>
+                          )}
                         </div>
-                        <Button
-                          asChild
-                          size="default"
-                          className="text-xs font-semibold shrink-0 gap-1.5 shadow-glow"
-                        >
-                          <Link to="/playground">
-                            Open Playground <Code2 className="h-3.5 w-3.5" />
-                          </Link>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </section>
           )}
