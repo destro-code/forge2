@@ -28,6 +28,70 @@ interface LessonDiagramProps {
   description?: string;
 }
 
+interface TimelinePhase {
+  tool?: string;
+  question?: string;
+  content: string;
+}
+
+function parseTimelinePhases(description: string): TimelinePhase[] {
+  if (!description) return [];
+
+  // Check if description has multiple sentence-like statements containing "→"
+  const rawSentences = description
+    .split(/(?<=[.!?])\s+(?=[A-Z0-9<])/g)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const sentencesWithArrows = rawSentences.filter((s) => s.includes("→"));
+
+  if (
+    sentencesWithArrows.length > 1 ||
+    (sentencesWithArrows.length === 1 && rawSentences.length > 1)
+  ) {
+    return rawSentences.map((sentence) => {
+      if (sentence.includes("→")) {
+        const parts = sentence.split("→").map((p) => p.trim());
+        const left = parts[0].replace(/\.$/, "");
+        const right = parts.slice(1).join(" → ").trim().replace(/\.$/, "");
+
+        const leftIsQuestion =
+          left.endsWith("?") ||
+          /^(what|where|how|why|which|when|who)\b/i.test(left) ||
+          (right.split(" ").length <= 3 && left.split(" ").length > 3);
+
+        if (leftIsQuestion) {
+          return {
+            tool: right,
+            question: left,
+            content: sentence,
+          };
+        } else {
+          return {
+            tool: left,
+            question: right,
+            content: sentence,
+          };
+        }
+      } else {
+        return {
+          content: sentence,
+          question: sentence,
+        };
+      }
+    });
+  }
+
+  // Single sequential pipeline (e.g. A → B → C → D)
+  return description.split("→").map((s) => {
+    const trimmed = s.trim();
+    return {
+      content: trimmed,
+      question: trimmed,
+    };
+  });
+}
+
 export function LessonDiagram({ diagramType, title, description }: LessonDiagramProps) {
   // State for interactive closure diagram
   const [closureStep, setClosureStep] = useState(0);
@@ -167,8 +231,10 @@ export function LessonDiagram({ diagramType, title, description }: LessonDiagram
 
   // Parse steps for timelines and steppers
   let steps: string[] = [];
+  let timelinePhases: TimelinePhase[] = [];
   if (activeType === "timeline" && description) {
-    steps = description.split("→").map((s) => s.trim());
+    timelinePhases = parseTimelinePhases(description);
+    steps = timelinePhases.map((p) => p.question || p.content);
   } else if (activeType === "stepper" && description) {
     // Split description by sentences
     steps = description
@@ -1022,7 +1088,7 @@ export function LessonDiagram({ diagramType, title, description }: LessonDiagram
         {activeType === "timeline" && (
           <div className="space-y-4">
             <div className="relative border-l-2 border-primary/30 pl-4 space-y-4 text-xs font-mono">
-              {steps.map((step, idx) => (
+              {timelinePhases.map((phase, idx) => (
                 <div
                   key={idx}
                   onClick={() => setActiveStepIdx(idx)}
@@ -1040,12 +1106,21 @@ export function LessonDiagram({ diagramType, title, description }: LessonDiagram
                         : "bg-muted-foreground"
                     }`}
                   />
-                  <div className="flex items-center gap-1.5 mb-1 text-[10px] uppercase font-bold text-emerald-400">
-                    <span>
-                      Step {idx + 1} of {steps.length}
-                    </span>
+                  <div className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                    <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-emerald-400">
+                      <span>
+                        Step {idx + 1} of {timelinePhases.length}
+                      </span>
+                    </div>
+                    {phase.tool && (
+                      <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {phase.tool}
+                      </span>
+                    )}
                   </div>
-                  <p className="leading-relaxed font-sans text-xs">{step}</p>
+                  <p className="leading-relaxed font-sans text-xs text-foreground/90 font-normal">
+                    {phase.question || phase.content}
+                  </p>
                 </div>
               ))}
             </div>
@@ -1056,7 +1131,7 @@ export function LessonDiagram({ diagramType, title, description }: LessonDiagram
               </span>
               <Button
                 size="sm"
-                onClick={() => setActiveStepIdx((idx) => (idx + 1) % steps.length)}
+                onClick={() => setActiveStepIdx((idx) => (idx + 1) % (timelinePhases.length || 1))}
                 className="gap-1.5 text-xs border border-emerald-500/30 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300"
               >
                 Next Phase <ChevronRight className="h-3 w-3" />

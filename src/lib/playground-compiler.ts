@@ -29,6 +29,8 @@ export function buildPlaygroundHtml(
   files: PlaygroundFile[],
   options: CompilerOptions = {},
 ): string {
-  const report = runCompilerPipeline(files, options);
+  const effectiveBaseUrl =
+    options.baseUrl || (typeof window !== "undefined" ? window.location.origin : "");
+  const report = runCompilerPipeline(files, { ...options, baseUrl: effectiveBaseUrl });
   return report.outputHtml;
 }

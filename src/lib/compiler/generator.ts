@@ -52,6 +52,32 @@ export function generateOutput(
     }
   });
 
+  // Determine whether this project genuinely requires the React runtime
+  const projectNeedsReact =
+    !isStaticProject &&
+    parsed.codeModules.some((m) => {
+      const raw = m.code || "";
+      if (
+        /\b(React|ReactDOM|useState|useEffect|useContext|useReducer|useCallback|useMemo|useRef)\b/.test(
+          raw,
+        ) ||
+        /from\s+['"]react['"]/.test(raw) ||
+        /from\s+['"]react-dom/.test(raw)
+      ) {
+        return true;
+      }
+      const compiled = precompiledCodeModules.find((p) => p.id === m.id)?.compiled || "";
+      if (
+        compiled.includes("React.createElement") ||
+        compiled.includes("React.") ||
+        compiled.includes('require("react")') ||
+        compiled.includes("require('react')")
+      ) {
+        return true;
+      }
+      return false;
+    });
+
   const safeFilesJson = JSON.stringify(precompiledCodeModules).replace(
     /<\/script>/g,
     "<\\/script>",
@@ -60,15 +86,18 @@ export function generateOutput(
   const vendorBase = (baseUrl || "").replace(/\/$/, "");
   const baseTag = vendorBase ? `<base href="${vendorBase}/" />` : `<base href="/" />`;
 
-  const vendorScripts = isStaticProject
-    ? ""
-    : `
-  <script>console.log('[Forge Preview] Loading React');</script>
-  <script src="${vendorBase}/vendor/react.development.js?v=18.3.1" onload="console.log('[Forge Preview] React loaded')" onerror="window.__reactLoadError=true; console.error('[Forge Preview] React failed to load')"></script>
-  <script>console.log('[Forge Preview] Loading ReactDOM');</script>
-  <script src="${vendorBase}/vendor/react-dom.development.js?v=18.3.1" onload="console.log('[Forge Preview] ReactDOM loaded')" onerror="window.__reactDomLoadError=true; console.error('[Forge Preview] ReactDOM failed to load')"></script>
-  <script>console.log('[Forge Preview] Loading Babel');</script>
-  <script src="${vendorBase}/vendor/babel.min.js?v=8.0.4" onload="console.log('[Forge Preview] Babel loaded')" onerror="window.__babelLoadError=true; console.error('[Forge Preview] Babel failed to load')"></script>
+  const vendorScripts =
+    isStaticProject || !projectNeedsReact
+      ? ""
+      : `
+  <script src="${vendorBase ? vendorBase : ""}/vendor/react.development.js?v=18.3.1" onerror="window.__reactLoadError=true"></script>
+  <script src="${vendorBase ? vendorBase : ""}/vendor/react-dom.development.js?v=18.3.1" onerror="window.__reactDomLoadError=true"></script>
+  <script>
+    if (!window.React) {
+      document.write('<script src="https://unpkg.com/react@18/umd/react.development.js"><\\/script>');
+      document.write('<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"><\\/script>');
+    }
+  </script>
   `;
 
   const html = `<!DOCTYPE html>
@@ -231,22 +260,9 @@ export function generateOutput(
       if (!startTime) startTime = Date.now();
 
       const isStatic = ${isStaticProject};
+      const needsReact = ${projectNeedsReact};
 
-      if (!isStatic) {
-        if (window.__reactLoadError) {
-          console.error('[Forge Preview] React failed to load');
-          window.showErrorOverlay('Runtime Dependency Error', 'Failed to load React library from ' + ${JSON.stringify(vendorBase)} + '/vendor/react.development.js. Please check script load permissions or network.');
-          return;
-        }
-        if (window.__reactDomLoadError) {
-          console.error('[Forge Preview] ReactDOM failed to load');
-          window.showErrorOverlay('Runtime Dependency Error', 'Failed to load ReactDOM library from ' + ${JSON.stringify(vendorBase)} + '/vendor/react-dom.development.js. Please check script load permissions or network.');
-          return;
-        }
-        if (window.__babelLoadError) {
-          console.error('[Forge Preview] Babel failed to load');
-        }
-
+      if (needsReact) {
         const missing = [];
         if (!window.React) missing.push('React');
         if (!window.ReactDOM) missing.push('ReactDOM');
@@ -257,16 +273,14 @@ export function generateOutput(
         }
 
         if (missing.length > 0) {
-          if (Date.now() - startTime < 4000) {
+          if (Date.now() - startTime < 3500) {
             setTimeout(function() { runCompilerAndExecute(newFiles, startTime); }, 50);
             return;
           } else {
-            if (missing.includes('Babel')) {
-              console.error('[Forge Preview] Babel failed to load');
-            }
+            console.error('[Forge Preview] React runtime could not be loaded');
             window.showErrorOverlay(
-              'Preview Initialization Timeout',
-              'Required runtime dependencies failed to load within 4.0s: [' + missing.join(', ') + ']. Please verify script access in iframe.'
+              'Runtime Dependency Error',
+              'Preview unavailable: the React runtime could not be loaded. Please check script load permissions or network.'
             );
             return;
           }
@@ -469,37 +483,51 @@ export function generateOutput(
             }
           }
         } else {
-          // Standard React/TSX/JS Module Execution
-          const entryFile = FILES.find(function(f) { return f.name === 'App.tsx' || f.name === 'App.jsx' || f.name === 'index.tsx' || f.name === 'main.tsx'; }) || FILES[0];
+          // Standard JS/TS/TSX Module Execution
+          const entryFile = FILES.find(function(f) {
+            return f.name === 'App.tsx' || f.name === 'App.ts' || f.name === 'App.jsx' || f.name === 'App.js' || f.name === 'index.tsx' || f.name === 'index.ts' || f.name === 'main.tsx' || f.name === 'main.ts';
+          }) || FILES[0];
           if (!entryFile) return;
+
+          const container = document.getElementById('root');
+          if (container && container.children.length === 0 && !needsReact) {
+            container.innerHTML = '<div style="padding: 14px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; font-family: system-ui, sans-serif;">' +
+              '<h3 id="title" style="margin: 0 0 10px 0; font-size: 14px; color: #58a6ff;">Interactive DOM Sandbox</h3>' +
+              '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">' +
+                '<button id="save-button" class="btn" style="background: #238636; color: #fff; border: 1px solid rgba(240,246,252,0.1); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Save</button>' +
+                '<button id="submit-button" class="btn" style="background: #1f6feb; color: #fff; border: 1px solid rgba(240,246,252,0.1); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Submit</button>' +
+                '<button id="action-btn" class="btn" style="background: #30363d; color: #c9d1d9; border: 1px solid rgba(240,246,252,0.1); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Action</button>' +
+              '</div>' +
+              '<input id="input" placeholder="Type here..." style="background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 5px 10px; border-radius: 6px; font-size: 12px; width: 100%; max-width: 240px; margin-bottom: 8px;" />' +
+              '<div id="output" style="color: #8b949e; font-size: 12px; font-style: italic;">DOM elements ready. Check console output below.</div>' +
+            '</div>';
+          }
 
           const entryExports = requireModule('./' + entryFile.name, 'root');
 
-          const ComponentToRender = 
-            entryExports.default || 
-            entryExports.App || 
-            entryExports.Counter || 
-            entryExports.SearchApp || 
-            entryExports.UserFetcher ||
-            Object.values(entryExports).find(function(val) { return typeof val === 'function' || (val && typeof val === 'object' && val.$$typeof); });
+          if (needsReact && window.React) {
+            const ComponentToRender = 
+              entryExports.default || 
+              entryExports.App || 
+              entryExports.Counter || 
+              entryExports.SearchApp || 
+              entryExports.UserFetcher ||
+              Object.values(entryExports).find(function(val) { return typeof val === 'function' || (val && typeof val === 'object' && val.$$typeof); });
 
-          const container = document.getElementById('root');
-
-          if (ComponentToRender) {
-            const element = React.isValidElement(ComponentToRender) 
-              ? ComponentToRender 
-              : React.createElement(ComponentToRender);
-            
-            if (!window.__reactRoot && ReactDOM.createRoot) {
-              window.__reactRoot = ReactDOM.createRoot(container);
+            if (ComponentToRender && container) {
+              const element = React.isValidElement(ComponentToRender) 
+                ? ComponentToRender 
+                : React.createElement(ComponentToRender);
+              
+              if (!window.__reactRoot && ReactDOM.createRoot) {
+                window.__reactRoot = ReactDOM.createRoot(container);
+              }
+              if (window.__reactRoot) {
+                window.__reactRoot.render(element);
+              } else if (ReactDOM.render) {
+                ReactDOM.render(element, container);
+              }
             }
-            if (window.__reactRoot) {
-              window.__reactRoot.render(element);
-            } else if (ReactDOM.render) {
-              ReactDOM.render(element, container);
-            }
-          } else if (container && container.children.length === 0) {
-            container.innerHTML = '<div style="padding: 16px; color: #a1a1aa; font-size: 13px;">Code compiled successfully.</div>';
           }
         }
       } catch (err) {

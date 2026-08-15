@@ -16,6 +16,47 @@ interface LessonInteractiveCodeProps {
   exampleId?: string;
 }
 
+function checkCodeNeedsReact(code: string, lang: string): boolean {
+  // 1. Direct check for React keywords / imports / hooks
+  if (
+    /\b(React|ReactDOM|useState|useEffect|useContext|useReducer|useCallback|useMemo|useRef)\b/.test(
+      code,
+    ) ||
+    /from\s+['"]react['"]/.test(code) ||
+    /from\s+['"]react-dom/.test(code)
+  ) {
+    return true;
+  }
+
+  // 2. Transpile via Babel with React preset and check if createElement was produced
+  try {
+    const transformed = Babel.transform(code, {
+      presets: [
+        ["react", { runtime: "classic" }],
+        ["typescript", { ignoreExtensions: false }],
+      ],
+      parserOpts: { allowReturnOutsideFunction: true },
+      filename: `snippet.${lang === "tsx" || lang === "ts" || lang === "typescript" ? "tsx" : "jsx"}`,
+    });
+    const compiled = transformed.code || "";
+    if (
+      compiled.includes("React.createElement") ||
+      compiled.includes("React.") ||
+      compiled.includes('require("react")') ||
+      compiled.includes("require('react')")
+    ) {
+      return true;
+    }
+  } catch {
+    // If Babel transform fails, fallback to simple JSX pattern check
+    if (/<[A-Za-z][^>]*>[\s\S]*<\/[A-Za-z]+>/.test(code) || /<[A-Za-z][^>]*\/>/.test(code)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function buildInlineJsxPreviewHtml(code: string, lang: string): string {
   // Transpile JSX/TSX via Babel standalone
   const transformed = Babel.transform(code, {
@@ -157,7 +198,7 @@ function buildInlineJsxPreviewHtml(code: string, lang: string): string {
       };
 
       if (!window.React || !window.ReactDOM) {
-        showErr('React runtime failed to initialize.');
+        showErr('Preview unavailable: the React runtime could not be loaded.');
         return;
       }
 
@@ -453,7 +494,7 @@ function buildInlineDomJsPreview(code: string, id: string): string {
       padding: 12px;
       margin-bottom: 12px;
     }
-    button, .btn, #save-button, #submit-button {
+    button, .btn, #save-button, #submit-button, #action-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -466,7 +507,7 @@ function buildInlineDomJsPreview(code: string, id: string): string {
       font-weight: 500;
       cursor: pointer;
     }
-    button:hover, .btn:hover { background: #2563eb; }
+    button:hover, .btn:hover, #save-button:hover, #submit-button:hover, #action-btn:hover { background: #2563eb; }
     input, textarea, select {
       background: #0f172a;
       border: 1px solid #334155;
@@ -484,10 +525,11 @@ function buildInlineDomJsPreview(code: string, id: string): string {
     <h3 id="title" style="margin-top: 0; margin-bottom: 8px; font-size: 16px;">DOM Preview Fixture</h3>
     <p id="message" style="margin: 0 0 12px 0; color: #94a3b8;">Interact with the elements below.</p>
     
-    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+    <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
       <input type="text" id="input" placeholder="Type here..." />
       <button id="save-button">Save Changes</button>
       <button id="submit-button">Submit</button>
+      <button id="action-btn">Action</button>
     </div>
     
     <div id="output" style="padding: 8px; background: #000000; color: #a3e635; border-radius: 4px; min-height: 32px; font-family: monospace;"></div>
@@ -578,12 +620,28 @@ export function LessonInteractiveCode({
   const lines = code.split("\n");
 
   const normLang = (language || "").toLowerCase().trim();
-  const isQuickRunnable = ["javascript", "js", "jsx", "tsx", "react", "html", "css"].includes(
-    normLang,
-  );
-  const isPlaygroundSupported = ["javascript", "js", "jsx", "tsx", "react", "html", "css"].includes(
-    normLang,
-  );
+  const isQuickRunnable = [
+    "javascript",
+    "js",
+    "jsx",
+    "tsx",
+    "react",
+    "html",
+    "css",
+    "typescript",
+    "ts",
+  ].includes(normLang);
+  const isPlaygroundSupported = [
+    "javascript",
+    "js",
+    "jsx",
+    "tsx",
+    "react",
+    "html",
+    "css",
+    "typescript",
+    "ts",
+  ].includes(normLang);
 
   const handleQuickRun = () => {
     if (!isQuickRunnable) {
@@ -618,87 +676,15 @@ export function LessonInteractiveCode({
         setOutputLog(`Failed to apply CSS:\n${errMsg}`);
         setIsErrorLog(true);
       }
-    } else if (normLang === "jsx" || normLang === "tsx" || normLang === "react") {
-      // JSX / TSX / React compilation & preview mount path via Babel standalone
-      try {
-        const previewDoc = buildInlineJsxPreviewHtml(code, normLang);
+    } else {
+      // JS, TS, TSX, JSX, React execution
+      const needsReact = checkCodeNeedsReact(code, normLang);
 
-        const logs: string[] = [];
-        const dummyConsole = {
-          log: (...args: unknown[]) =>
-            logs.push(
-              args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
-            ),
-          warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
-          error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
-        };
-
-        // Capture any top-level console output
+      if (needsReact) {
+        // Genuine React / JSX snippet path
         try {
-          const transformed = Babel.transform(code, {
-            presets: [
-              ["react", { runtime: "classic" }],
-              ["typescript", { ignoreExtensions: false }],
-            ],
-            parserOpts: { allowReturnOutsideFunction: true },
-            filename: `snippet.${normLang === "tsx" ? "tsx" : "jsx"}`,
-          });
-          const transpiledCode = transformed.code || "";
-          if (transpiledCode.includes("console.")) {
-            const dummyReact = {
-              createElement: (...args: unknown[]) => ({
-                type: args[0],
-                props: args[1],
-                children: args.slice(2),
-              }),
-              Fragment: Symbol.for("react.fragment"),
-              useState: (initial: unknown) => [initial, () => {}],
-              useEffect: () => {},
-              useMemo: (fn: () => unknown) => fn(),
-              useCallback: (fn: unknown) => fn,
-              useRef: (initial: unknown) => ({ current: initial }),
-            };
-            const fn = new Function("React", "console", transpiledCode);
-            fn(dummyReact, dummyConsole);
-          }
-        } catch {
-          // Ignore top-level evaluation errors for standalone component declarations
-        }
+          const previewDoc = buildInlineJsxPreviewHtml(code, normLang);
 
-        setPreviewHtml(previewDoc);
-
-        if (logs.length > 0) {
-          setOutputLog(
-            `✓ JSX compilation successful\nComponent mounted to live preview.\n\nConsole Output:\n${logs.join("\n")}`,
-          );
-        } else {
-          setOutputLog("✓ JSX compilation successful\nComponent mounted to live preview.");
-        }
-        setIsErrorLog(false);
-        toast.success("JSX compiled and rendered successfully");
-      } catch (err: unknown) {
-        const rawMsg = err instanceof Error ? err.message : String(err);
-        const cleanMsg = rawMsg.replace(/^\/?[^:]+:\s*/, "");
-        setOutputLog(`✕ JSX/TSX Compilation Error:\n${cleanMsg}`);
-        setIsErrorLog(true);
-        setPreviewHtml(null);
-        toast.error("JSX compilation error");
-      }
-    } else if (normLang === "javascript" || normLang === "js") {
-      const isDomJs =
-        /\b(document|window|querySelector|querySelectorAll|getElementById|getElementsByClassName|addEventListener|classList|textContent|innerHTML|style|createElement|appendChild|remove|value)\b/.test(
-          code,
-        );
-
-      if (isDomJs) {
-        const previewDoc = buildInlineDomJsPreview(code, previewId);
-        setPreviewHtml(previewDoc);
-        setOutputLog("");
-        setIsErrorLog(false);
-        toast.success("DOM Script loaded in preview");
-      } else {
-        // Plain JavaScript Fast Path
-        try {
           const logs: string[] = [];
           const dummyConsole = {
             log: (...args: unknown[]) =>
@@ -709,26 +695,130 @@ export function LessonInteractiveCode({
             error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
           };
 
-          // Strip imports/exports to allow quick eval of basic JS
-          const cleanCode = code
-            .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
-            .replace(/^export\s+default\s+/gm, "")
-            .replace(/^export\s+/gm, "");
+          // Capture any top-level console output
+          try {
+            const transformed = Babel.transform(code, {
+              presets: [
+                ["react", { runtime: "classic" }],
+                ["typescript", { ignoreExtensions: false }],
+              ],
+              parserOpts: { allowReturnOutsideFunction: true },
+              filename: `snippet.${normLang === "tsx" || normLang === "ts" || normLang === "typescript" ? "tsx" : "jsx"}`,
+            });
+            const transpiledCode = transformed.code || "";
+            if (transpiledCode.includes("console.")) {
+              const dummyReact = {
+                createElement: (...args: unknown[]) => ({
+                  type: args[0],
+                  props: args[1],
+                  children: args.slice(2),
+                }),
+                Fragment: Symbol.for("react.fragment"),
+                useState: (initial: unknown) => [initial, () => {}],
+                useEffect: () => {},
+                useMemo: (fn: () => unknown) => fn(),
+                useCallback: (fn: unknown) => fn,
+                useRef: (initial: unknown) => ({ current: initial }),
+              };
+              const fn = new Function("React", "console", transpiledCode);
+              fn(dummyReact, dummyConsole);
+            }
+          } catch {
+            // Ignore top-level evaluation errors for standalone component declarations
+          }
 
-          const fn = new Function("console", cleanCode);
-          fn(dummyConsole);
+          setPreviewHtml(previewDoc);
 
           if (logs.length > 0) {
-            setOutputLog(logs.join("\n"));
-            toast.success("Snippet executed cleanly");
+            setOutputLog(
+              `✓ JSX compilation successful\nComponent mounted to live preview.\n\nConsole Output:\n${logs.join("\n")}`,
+            );
           } else {
-            setOutputLog("✓ Executed cleanly (no console output).");
+            setOutputLog("✓ JSX compilation successful\nComponent mounted to live preview.");
           }
           setIsErrorLog(false);
+          toast.success("JSX compiled and rendered successfully");
         } catch (err: unknown) {
-          const errMsg = err instanceof Error ? err.message : String(err);
-          setOutputLog(`Runtime Error:\n${errMsg}`);
+          const rawMsg = err instanceof Error ? err.message : String(err);
+          const cleanMsg = rawMsg.replace(/^\/?[^:]+:\s*/, "");
+          setOutputLog(`✕ JSX/TSX Compilation Error:\n${cleanMsg}`);
           setIsErrorLog(true);
+          setPreviewHtml(null);
+          toast.error("JSX compilation error");
+        }
+      } else {
+        // Non-React: Plain TS/JS or DOM TS/JS
+        const isDom =
+          /\b(document|window|querySelector|querySelectorAll|getElementById|getElementsByClassName|addEventListener|classList|textContent|innerHTML|style|createElement|appendChild|remove|value)\b/.test(
+            code,
+          );
+
+        if (isDom) {
+          let cleanJs = code;
+          try {
+            const transformed = Babel.transform(code, {
+              presets: [["typescript", { ignoreExtensions: false }]],
+              parserOpts: { allowReturnOutsideFunction: true },
+              filename: "snippet.ts",
+            });
+            cleanJs = transformed.code || code;
+          } catch {
+            // Fallback to raw code if Babel parsing fails
+          }
+
+          const previewDoc = buildInlineDomJsPreview(cleanJs, previewId);
+          setPreviewHtml(previewDoc);
+          setOutputLog("");
+          setIsErrorLog(false);
+          toast.success("DOM Script loaded in preview");
+        } else {
+          // Plain JavaScript / TypeScript fast path
+          try {
+            const logs: string[] = [];
+            const dummyConsole = {
+              log: (...args: unknown[]) =>
+                logs.push(
+                  args
+                    .map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a)))
+                    .join(" "),
+                ),
+              warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
+              error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
+            };
+
+            let cleanCode = code;
+            try {
+              const transformed = Babel.transform(code, {
+                presets: [["typescript", { ignoreExtensions: false }]],
+                parserOpts: { allowReturnOutsideFunction: true },
+                filename: "snippet.ts",
+              });
+              cleanCode = transformed.code || code;
+            } catch {
+              // Fallback
+            }
+
+            // Strip imports/exports to allow quick eval of basic TS/JS
+            cleanCode = cleanCode
+              .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
+              .replace(/^export\s+default\s+/gm, "")
+              .replace(/^export\s+/gm, "");
+
+            const fn = new Function("console", cleanCode);
+            fn(dummyConsole);
+
+            if (logs.length > 0) {
+              setOutputLog(logs.join("\n"));
+              toast.success("Snippet executed cleanly");
+            } else {
+              setOutputLog("✓ Executed cleanly (no console output).");
+            }
+            setIsErrorLog(false);
+          } catch (err: unknown) {
+            const errMsg = err instanceof Error ? err.message : String(err);
+            setOutputLog(`Runtime Error:\n${errMsg}`);
+            setIsErrorLog(true);
+          }
         }
       }
     }
