@@ -5,6 +5,14 @@ import CssWorker from "monaco-editor/language/css/css.worker?worker";
 import HtmlWorker from "monaco-editor/language/html/html.worker?worker";
 import TsWorker from "monaco-editor/language/typescript/ts.worker?worker";
 
+// Register Vite preload error handler to prevent Safari from throwing on dynamic CSS preloads
+if (typeof window !== "undefined") {
+  window.addEventListener("vite:preloadError", (event) => {
+    console.warn("[Forge Monaco/Vite] Handled dynamic preload error event:", event);
+    event.preventDefault();
+  });
+}
+
 let initPromise: Promise<typeof import("monaco-editor")> | null = null;
 
 /**

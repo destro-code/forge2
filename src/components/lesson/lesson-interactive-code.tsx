@@ -373,8 +373,388 @@ function buildInlineHtmlPreview(code: string): string {
 </html>`;
 }
 
-function buildInlineCssPreview(code: string): string {
-  return `<!DOCTYPE html>
+interface CssPreviewResult {
+  previewHtml: string;
+  matchedElementCount: number;
+}
+
+interface ElementSpec {
+  tag: string;
+  id?: string;
+  classes: string[];
+  attributes: Record<string, string>;
+}
+
+interface TreeElementNode {
+  spec: ElementSpec;
+  children: TreeElementNode[];
+}
+
+function extractCssSelectors(cssCode: string): string[] {
+  const cleaned = cssCode.replace(/\/\*[\s\S]*?\*\//g, "");
+  const mediaUnwrapped = cleaned.replace(/@media[^{]*\{([\s\S]*?)\}\s*\}/gi, "$1");
+  const stripped = mediaUnwrapped.replace(/@[a-z-]+[^{]*\{[\s\S]*?\}/gi, "");
+
+  const selectorGroups: string[] = [];
+  const ruleRegex = /([^{}]+)\{([^{}]*)\}/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = ruleRegex.exec(stripped)) !== null) {
+    const rawGroup = match[1].trim();
+    if (rawGroup && !rawGroup.startsWith("@")) {
+      const selectors = rawGroup
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      selectorGroups.push(...selectors);
+    }
+  }
+
+  return selectorGroups;
+}
+
+function inferTag(
+  explicitTag: string,
+  classes: string[],
+  id: string | undefined,
+  attributes: Record<string, string>,
+): string {
+  const allNames = [...classes, id || ""].join(" ").toLowerCase();
+
+  if (attributes.type === "submit" || attributes.type === "button" || attributes.type === "reset") {
+    return "button";
+  }
+  if (
+    attributes.type &&
+    ["text", "password", "email", "number", "search", "checkbox", "radio"].includes(attributes.type)
+  ) {
+    return "input";
+  }
+
+  if (
+    /\b(button|btn|cta|submit|save|cancel|action|toggle|chip)\b|(-button|-btn|btn-|button-)/i.test(
+      allNames,
+    )
+  ) {
+    return "button";
+  }
+  if (/\b(input|textbox|field|search|searchbar)\b|(-input|-field)/i.test(allNames)) {
+    return "input";
+  }
+  if (/\b(textarea)\b/i.test(allNames)) {
+    return "textarea";
+  }
+  if (/\b(select|dropdown)\b/i.test(allNames)) {
+    return "select";
+  }
+  if (/\b(header)\b/i.test(allNames) && !/\b(h1|h2|h3|heading|title)\b/i.test(allNames)) {
+    return "header";
+  }
+  if (/\b(footer)\b/i.test(allNames)) {
+    return "footer";
+  }
+  if (/\b(nav|navbar|menu)\b/i.test(allNames)) {
+    return "nav";
+  }
+  if (/\b(hero|banner|section)\b/i.test(allNames)) {
+    return "section";
+  }
+  if (/\b(title|heading|headline)\b/i.test(allNames)) {
+    return "h2";
+  }
+  if (/\b(subtitle|caption|desc|description)\b/i.test(allNames)) {
+    return "p";
+  }
+  if (/\b(link)\b/i.test(allNames)) {
+    return "a";
+  }
+  if (/\b(badge|tag|pill|status|label)\b/i.test(allNames)) {
+    return "span";
+  }
+  if (/\b(avatar|image|photo|pic|thumbnail|img)\b/i.test(allNames)) {
+    return "img";
+  }
+  if (/\b(list)\b/i.test(allNames)) {
+    return "ul";
+  }
+  if (/\b(item|list-item)\b/i.test(allNames)) {
+    return "li";
+  }
+
+  return "div";
+}
+
+function parseSingleCompoundSelector(part: string): ElementSpec | null {
+  if (!part) return null;
+
+  const attributes: Record<string, string> = {};
+  let workingPart = part.replace(/\[([a-zA-Z0-9_-]+)(?:=([^{}\]\s"']+))?\]/g, (_, name, val) => {
+    attributes[name] = val ? val.replace(/["']/g, "") : "true";
+    return "";
+  });
+
+  let id: string | undefined;
+  workingPart = workingPart.replace(/#([a-zA-Z0-9_-]+)/g, (_, matchId) => {
+    id = matchId;
+    return "";
+  });
+
+  const classes: string[] = [];
+  workingPart = workingPart.replace(/\.([a-zA-Z0-9_-]+)/g, (_, matchClass) => {
+    classes.push(matchClass);
+    return "";
+  });
+
+  const explicitTag = workingPart.trim().toLowerCase();
+  const knownTags = new Set([
+    "a",
+    "article",
+    "aside",
+    "b",
+    "button",
+    "canvas",
+    "caption",
+    "code",
+    "div",
+    "footer",
+    "form",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "header",
+    "img",
+    "input",
+    "label",
+    "li",
+    "main",
+    "nav",
+    "ol",
+    "p",
+    "section",
+    "select",
+    "span",
+    "strong",
+    "table",
+    "td",
+    "textarea",
+    "th",
+    "tr",
+    "ul",
+  ]);
+
+  let tag = "";
+  if (knownTags.has(explicitTag)) {
+    tag = explicitTag;
+  } else {
+    tag = inferTag(explicitTag, classes, id, attributes);
+  }
+
+  return { tag, id, classes, attributes };
+}
+
+function parseSelectorString(selectorStr: string): ElementSpec[] {
+  let cleaned = selectorStr
+    .replace(
+      /:(hover|focus|active|visited|focus-within|focus-visible|disabled|checked|first-child|last-child|nth-child\([^)]*\)|not\([^)]*\)|before|after|placeholder|root|empty|target|lang\([^)]*\))/gi,
+      "",
+    )
+    .trim();
+
+  if (!cleaned) return [];
+
+  cleaned = cleaned.replace(/\s*([>+~])\s*/g, " ");
+
+  const parts = cleaned.split(/\s+/).filter(Boolean);
+  const specs: ElementSpec[] = [];
+
+  for (const part of parts) {
+    const spec = parseSingleCompoundSelector(part);
+    if (spec) {
+      specs.push(spec);
+    }
+  }
+
+  return specs;
+}
+
+function formatName(name: string): string {
+  if (!name) return "";
+  let clean = name.replace(/[-_]+/g, " ").trim();
+  if (
+    /^(save|submit|cancel|confirm|action|login|signup|reset|close|open|delete|edit|add)\s+(button|btn)$/i.test(
+      clean,
+    )
+  ) {
+    clean = clean.replace(/\s+(button|btn)$/i, "");
+  }
+  return clean.replace(/\b[a-z]/g, (char) => char.toUpperCase());
+}
+
+function generateLabelForSpec(spec: ElementSpec): string {
+  const mainName = spec.classes[0] || spec.id || "";
+  const formatted = formatName(mainName);
+
+  if (formatted) {
+    if (spec.tag === "button" && !/button/i.test(formatted)) {
+      return formatted;
+    }
+    return formatted;
+  }
+
+  switch (spec.tag) {
+    case "button":
+      return "Example Button";
+    case "h1":
+      return "Example Heading 1";
+    case "h2":
+      return "Example Heading 2";
+    case "h3":
+      return "Example Heading 3";
+    case "p":
+      return "Example paragraph text demonstrating applied styles.";
+    case "a":
+      return "Navigation Link";
+    case "span":
+      return "Sample Badge";
+    case "li":
+      return "List Item";
+    case "header":
+      return "Header Section";
+    case "footer":
+      return "Footer Section";
+    case "nav":
+      return "Navigation Menu";
+    default:
+      return "Example Container";
+  }
+}
+
+function renderSpecNodeToHtml(node: TreeElementNode): string {
+  const { spec, children } = node;
+  const tag = spec.tag || "div";
+
+  const attrParts: string[] = [];
+  if (spec.id) {
+    attrParts.push(`id="${spec.id}"`);
+  }
+  if (spec.classes.length > 0) {
+    attrParts.push(`class="${spec.classes.join(" ")}"`);
+  }
+  for (const [k, v] of Object.entries(spec.attributes)) {
+    if (v === "true") {
+      attrParts.push(k);
+    } else {
+      attrParts.push(`${k}="${v}"`);
+    }
+  }
+
+  if (tag === "input") {
+    if (!spec.attributes.type) {
+      attrParts.push('type="text"');
+    }
+    if (!spec.attributes.placeholder) {
+      const phLabel = generateLabelForSpec(spec);
+      attrParts.push(`placeholder="${phLabel}..."`);
+    }
+  } else if (tag === "a" && !spec.attributes.href) {
+    attrParts.push('href="#"');
+  } else if (tag === "img") {
+    if (!spec.attributes.src) {
+      attrParts.push(
+        "src=\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='80' fill='%23334155'><rect width='120' height='80' rx='6'/><text x='50%25' y='50%25' fill='%2394a3b8' font-size='12' text-anchor='middle' dy='.3em'>Image</text></svg>\"",
+      );
+    }
+    if (!spec.attributes.alt) {
+      attrParts.push('alt="Sample Image"');
+    }
+  }
+
+  const attrStr = attrParts.length > 0 ? " " + attrParts.join(" ") : "";
+
+  if (tag === "input" || tag === "img" || tag === "br" || tag === "hr") {
+    return `<${tag}${attrStr} />`;
+  }
+
+  if (children.length > 0) {
+    const childHtmls = children.map((c) => renderSpecNodeToHtml(c)).join("\n");
+    return `<${tag}${attrStr}>\n${childHtmls}\n</${tag}>`;
+  }
+
+  const isContainer =
+    spec.classes.some((c) =>
+      /\b(container|grid|flex|row|gallery|list|wrapper|box|card)\b/i.test(c),
+    ) ||
+    tag === "ul" ||
+    tag === "ol" ||
+    tag === "nav";
+
+  if (tag === "ul" || tag === "ol") {
+    return `<${tag}${attrStr}>\n  <li>List Item 1</li>\n  <li>List Item 2</li>\n  <li>List Item 3</li>\n</${tag}>`;
+  }
+
+  if (tag === "nav") {
+    return `<${tag}${attrStr}>\n  <a href="#">Home</a>\n  <a href="#">About</a>\n  <a href="#">Contact</a>\n</${tag}>`;
+  }
+
+  if (isContainer && tag === "div") {
+    const label = generateLabelForSpec(spec);
+    if (spec.classes.some((c) => /\b(container|grid|flex|row|gallery)\b/i.test(c))) {
+      return `<${tag}${attrStr}>\n  <div class="item">${label} Item A</div>\n  <div class="item">${label} Item B</div>\n  <div class="item">${label} Item C</div>\n</${tag}>`;
+    }
+  }
+
+  const labelText = generateLabelForSpec(spec);
+  return `<${tag}${attrStr}>${labelText}</${tag}>`;
+}
+
+function countNodes(nodes: TreeElementNode[]): number {
+  let count = 0;
+  for (const node of nodes) {
+    count += 1;
+    if (node.children && node.children.length > 0) {
+      count += countNodes(node.children);
+    }
+  }
+  return count;
+}
+
+function buildInlineCssPreview(code: string): CssPreviewResult {
+  const hasHtml =
+    /<(button|div|p|h[1-6]|input|span|article|section|a|header|footer|nav|ul|ol|li|form|table|img|textarea|select)\b/i.test(
+      code,
+    );
+
+  let cssPart = code;
+  let htmlPart = "";
+
+  if (hasHtml) {
+    const styleMatch = code.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    if (styleMatch) {
+      cssPart = styleMatch[1];
+      htmlPart = code.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "").trim();
+    } else {
+      const lines = code.split("\n");
+      const cssLines: string[] = [];
+      const htmlLines: string[] = [];
+
+      for (const line of lines) {
+        if (/<[a-z0-9_-]+/i.test(line) || htmlLines.length > 0) {
+          htmlLines.push(line);
+        } else {
+          cssLines.push(line);
+        }
+      }
+      cssPart = cssLines.join("\n");
+      htmlPart = htmlLines.join("\n");
+    }
+
+    const htmlTagMatches = htmlPart.match(/<([a-z0-9_-]+)\b/gi) || [];
+    const matchedElementCount = Math.max(1, htmlTagMatches.length);
+
+    const previewHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -404,6 +784,146 @@ function buildInlineCssPreview(code: string): string {
       flex-direction: column;
       gap: 12px;
     }
+    ${cssPart}
+  </style>
+</head>
+<body>
+  <div class="preview-header">Live CSS Preview (${matchedElementCount} target ${matchedElementCount === 1 ? "element" : "elements"})</div>
+  <div class="preview-stage">
+    ${htmlPart}
+  </div>
+</body>
+</html>`;
+
+    return { previewHtml, matchedElementCount };
+  }
+
+  const rawSelectors = extractCssSelectors(code);
+  const rootNodes: TreeElementNode[] = [];
+  const nodeKeyMap = new Map<string, TreeElementNode>();
+
+  for (const selectorStr of rawSelectors) {
+    const specChain = parseSelectorString(selectorStr);
+    if (specChain.length === 0) continue;
+
+    const parentSpec = specChain[0];
+    const parentKey = `${parentSpec.tag}#${parentSpec.id || ""}.${parentSpec.classes.sort().join(".")}`;
+
+    let parentNode = nodeKeyMap.get(parentKey);
+    if (!parentNode) {
+      parentNode = { spec: parentSpec, children: [] };
+      nodeKeyMap.set(parentKey, parentNode);
+      rootNodes.push(parentNode);
+    }
+
+    if (specChain.length > 1) {
+      for (let i = 1; i < specChain.length; i++) {
+        const childSpec = specChain[i];
+        const childKey = `${childSpec.tag}#${childSpec.id || ""}.${childSpec.classes.sort().join(".")}`;
+        const existingChild = parentNode.children.find((c) => {
+          const k = `${c.spec.tag}#${c.spec.id || ""}.${c.spec.classes.sort().join(".")}`;
+          return k === childKey;
+        });
+
+        if (!existingChild) {
+          parentNode.children.push({ spec: childSpec, children: [] });
+        }
+      }
+    }
+  }
+
+  const matchedElementCount = countNodes(rootNodes);
+
+  let renderedStageHtml = "";
+  if (matchedElementCount > 0) {
+    renderedStageHtml = rootNodes.map((node) => renderSpecNodeToHtml(node)).join("\n");
+  } else {
+    renderedStageHtml = `
+    <div class="box">
+      <div class="title" style="font-weight: 600; margin-bottom: 4px;">.box / .card element</div>
+      <p style="margin: 0; color: #94a3b8; font-size: 12px;">Demonstrates box-model, padding, borders, typography, and colors.</p>
+    </div>
+    <div class="container">
+      <div class="item">Flex/Grid Item A</div>
+      <div class="item">Flex/Grid Item B</div>
+      <div class="item">Flex/Grid Item C</div>
+    </div>
+    <div>
+      <button class="btn">Demo Button (.btn)</button>
+    </div>`;
+  }
+
+  const previewHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    * { box-sizing: border-box; }
+    .preview-header {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 4px;
+    }
+    .preview-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    button {
+      font-family: inherit;
+      font-size: 13px;
+      padding: 6px 14px;
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    input, textarea, select {
+      font-family: inherit;
+      font-size: 13px;
+      padding: 6px 12px;
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 6px;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #f8fafc;
+    }
+    p {
+      margin: 0 0 8px 0;
+      color: #cbd5e1;
+    }
+    a {
+      color: #38bdf8;
+      text-decoration: underline;
+    }
+    header, footer, nav, section, article {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px;
+    }
     .box, .card {
       background: #1e293b;
       border: 1px solid #334155;
@@ -424,19 +944,6 @@ function buildInlineCssPreview(code: string): string {
       border-radius: 4px;
       color: #f8fafc;
     }
-    button, .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #3b82f6;
-      color: #ffffff;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 14px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-    }
 
     /* User CSS begins */
     ${code}
@@ -444,25 +951,18 @@ function buildInlineCssPreview(code: string): string {
   </style>
 </head>
 <body>
-  <div class="preview-header">Live CSS Preview Fixture</div>
+  <div class="preview-header">Live CSS Preview ${
+    matchedElementCount > 0
+      ? `(${matchedElementCount} target ${matchedElementCount === 1 ? "element" : "elements"})`
+      : "Fixture"
+  }</div>
   <div class="preview-stage">
-    <div class="box">
-      <div class="title" style="font-weight: 600; margin-bottom: 4px;">.box / .card element</div>
-      <p style="margin: 0; color: #94a3b8; font-size: 12px;">Demonstrates box-model, padding, borders, typography, and colors.</p>
-    </div>
-
-    <div class="container">
-      <div class="item">Flex/Grid Item A</div>
-      <div class="item">Flex/Grid Item B</div>
-      <div class="item">Flex/Grid Item C</div>
-    </div>
-
-    <div>
-      <button class="btn">Demo Button (.btn)</button>
-    </div>
+    ${renderedStageHtml}
   </div>
 </body>
 </html>`;
+
+  return { previewHtml, matchedElementCount };
 }
 
 function buildInlineDomJsPreview(code: string, id: string): string {
@@ -666,9 +1166,14 @@ export function LessonInteractiveCode({
       }
     } else if (normLang === "css") {
       try {
-        const previewDoc = buildInlineCssPreview(code);
+        const { previewHtml: previewDoc, matchedElementCount } = buildInlineCssPreview(code);
         setPreviewHtml(previewDoc);
-        setOutputLog("✓ CSS applied to live preview fixture.");
+        if (matchedElementCount > 0) {
+          const unit = matchedElementCount === 1 ? "element" : "elements";
+          setOutputLog(`✓ CSS applied to ${matchedElementCount} live preview ${unit}.`);
+        } else {
+          setOutputLog("✓ CSS applied to live preview fixture.");
+        }
         setIsErrorLog(false);
         toast.success("CSS applied to preview");
       } catch (err: unknown) {
