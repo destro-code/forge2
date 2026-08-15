@@ -38537,4 +38537,8 @@
         "type": "code",
         "language": "text",
         "title": "Required",
-        "code": "COMPONENTS\n□ More than one meaningful component boundary.\n□ One reusable LessonCard implementation.\n□ No duplicated lesson-card markup.\n\nSTATE\n□ Search query has one shared owner.\n□ LessonCard expansion state remains local.\n□ No unnecessary duplicate derived state.\n\nDATA FLOW\n□ Shared query flows down through props.\n□ SearchControls updates it through a callback.\n□ LessonResults consumes the current query.\n\nCOMPOSITION\n□ At least one meaningful use of children/composition.\n□ Composition is used because structure varies, not just for novelty.\n\n
+        "code": "COMPONENTS\n□ More than one meaningful component boundary.\n□ One reusable LessonCard implementation.\n□ No duplicated lesson-card markup.\n\nSTATE\n□ Search query has one shared owner.\n□ LessonCard expansion state remains local.\n□ No unnecessary duplicate derived state.\n\nDATA FLOW\n□ Shared query flows down through props.\n□ SearchControls updates it through a callback.\n□ LessonResults consumes the current query.\n\nCOMPOSITION\n□ At least one meaningful use of children/composition.\n□ Composition is used because structure varies, not just for novelty."
+      }
+    ]
+  }
+]

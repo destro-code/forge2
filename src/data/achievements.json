@@ -5,24 +5,58 @@
     "description": "Complete your first lesson.",
     "icon": "Sparkles",
     "tier": "bronze",
-    "unlocked": true,
-    "unlockedAt": "2026-07-12",
+    "category": "learning",
     "condition": {
       "type": "lessonsCompleted",
       "threshold": 1
     }
   },
   {
-    "id": "week-streak",
-    "title": "Seven Days Strong",
-    "description": "Maintain a 7-day streak.",
-    "icon": "Flame",
-    "tier": "silver",
-    "unlocked": true,
-    "unlockedAt": "2026-07-20",
+    "id": "getting-started",
+    "title": "Getting Started",
+    "description": "Complete 5 lessons.",
+    "icon": "BookOpen",
+    "tier": "bronze",
+    "category": "learning",
     "condition": {
-      "type": "streakDays",
-      "threshold": 7
+      "type": "lessonsCompleted",
+      "threshold": 5
+    }
+  },
+  {
+    "id": "momentum-builder",
+    "title": "Momentum Builder",
+    "description": "Complete 10 lessons.",
+    "icon": "Zap",
+    "tier": "bronze",
+    "category": "learning",
+    "condition": {
+      "type": "lessonsCompleted",
+      "threshold": 10
+    }
+  },
+  {
+    "id": "quarter-century",
+    "title": "Quarter Century",
+    "description": "Complete 25 lessons.",
+    "icon": "Target",
+    "tier": "silver",
+    "category": "learning",
+    "condition": {
+      "type": "lessonsCompleted",
+      "threshold": 25
+    }
+  },
+  {
+    "id": "halfway-there",
+    "title": "Halfway There",
+    "description": "Complete 50 lessons.",
+    "icon": "GraduationCap",
+    "tier": "silver",
+    "category": "learning",
+    "condition": {
+      "type": "lessonsCompleted",
+      "threshold": 50
     }
   },
   {
@@ -31,11 +65,193 @@
     "description": "Complete 100 lessons.",
     "icon": "Trophy",
     "tier": "gold",
-    "unlocked": false,
-    "progress": 0,
+    "category": "learning",
     "condition": {
       "type": "lessonsCompleted",
       "threshold": 100
+    }
+  },
+  {
+    "id": "two-hundred-lessons",
+    "title": "Double Century",
+    "description": "Complete 200 lessons.",
+    "icon": "Award",
+    "tier": "gold",
+    "category": "learning",
+    "condition": {
+      "type": "lessonsCompleted",
+      "threshold": 200
+    }
+  },
+
+  {
+    "id": "first-flame",
+    "title": "First Flame",
+    "description": "Maintain a 3-day learning streak.",
+    "icon": "Flame",
+    "tier": "bronze",
+    "category": "streaks",
+    "condition": {
+      "type": "streakDays",
+      "threshold": 3
+    }
+  },
+  {
+    "id": "week-streak",
+    "title": "Seven Days Strong",
+    "description": "Maintain a 7-day streak.",
+    "icon": "Flame",
+    "tier": "silver",
+    "category": "streaks",
+    "condition": {
+      "type": "streakDays",
+      "threshold": 7
+    }
+  },
+  {
+    "id": "two-weeks-in",
+    "title": "Two Weeks In",
+    "description": "Maintain a 14-day streak.",
+    "icon": "Flame",
+    "tier": "silver",
+    "category": "streaks",
+    "condition": {
+      "type": "streakDays",
+      "threshold": 14
+    }
+  },
+  {
+    "id": "monthly-forge",
+    "title": "Monthly Forge",
+    "description": "Maintain a 30-day streak.",
+    "icon": "Flame",
+    "tier": "gold",
+    "category": "streaks",
+    "condition": {
+      "type": "streakDays",
+      "threshold": 30
+    }
+  },
+  {
+    "id": "unstoppable",
+    "title": "Unstoppable",
+    "description": "Maintain a 60-day streak.",
+    "icon": "Flame",
+    "tier": "gold",
+    "category": "streaks",
+    "condition": {
+      "type": "streakDays",
+      "threshold": 60
+    }
+  },
+  {
+    "id": "forged-in-habit",
+    "title": "Forged in Habit",
+    "description": "Maintain a 100-day streak.",
+    "icon": "Flame",
+    "tier": "platinum",
+    "category": "streaks",
+    "condition": {
+      "type": "streakDays",
+      "threshold": 100
+    }
+  },
+
+  {
+    "id": "quiz-starter",
+    "title": "Quiz Starter",
+    "description": "Complete your first quiz.",
+    "icon": "HelpCircle",
+    "tier": "bronze",
+    "category": "quizzes",
+    "condition": {
+      "type": "quizzesCompleted",
+      "threshold": 1
+    }
+  },
+  {
+    "id": "quiz-regular",
+    "title": "Quiz Regular",
+    "description": "Complete 10 quizzes.",
+    "icon": "HelpCircle",
+    "tier": "silver",
+    "category": "quizzes",
+    "condition": {
+      "type": "quizzesCompleted",
+      "threshold": 10
+    }
+  },
+  {
+    "id": "quiz-machine",
+    "title": "Quiz Machine",
+    "description": "Complete 25 quizzes.",
+    "icon": "HelpCircle",
+    "tier": "gold",
+    "category": "quizzes",
+    "condition": {
+      "type": "quizzesCompleted",
+      "threshold": 25
+    }
+  },
+  {
+    "id": "quiz-master",
+    "title": "Quiz Master",
+    "description": "Complete 50 quizzes.",
+    "icon": "HelpCircle",
+    "tier": "gold",
+    "category": "quizzes",
+    "condition": {
+      "type": "quizzesCompleted",
+      "threshold": 50
+    }
+  },
+  {
+    "id": "perfect-score",
+    "title": "Perfect Score",
+    "description": "Earn a perfect 100% score on a quiz.",
+    "icon": "CheckCircle2",
+    "tier": "silver",
+    "category": "quizzes",
+    "condition": {
+      "type": "perfectQuizzesCount",
+      "threshold": 1
+    }
+  },
+  {
+    "id": "sharp-memory",
+    "title": "Sharp Memory",
+    "description": "Earn 5 perfect 100% quiz scores.",
+    "icon": "Star",
+    "tier": "gold",
+    "category": "quizzes",
+    "condition": {
+      "type": "perfectQuizzesCount",
+      "threshold": 5
+    }
+  },
+
+  {
+    "id": "fast-thinker",
+    "title": "Fast Thinker",
+    "description": "Successfully complete a timed interview question.",
+    "icon": "Timer",
+    "tier": "bronze",
+    "category": "interview",
+    "condition": {
+      "type": "interviewQuestions",
+      "threshold": 1
+    }
+  },
+  {
+    "id": "under-pressure",
+    "title": "Under Pressure",
+    "description": "Complete 10 timed interview questions.",
+    "icon": "Clock",
+    "tier": "silver",
+    "category": "interview",
+    "condition": {
+      "type": "interviewQuestions",
+      "threshold": 10
     }
   },
   {
@@ -44,24 +260,266 @@
     "description": "Pass 20 timed interview questions.",
     "icon": "Briefcase",
     "tier": "gold",
-    "unlocked": false,
-    "progress": 0,
+    "category": "interview",
     "condition": {
       "type": "interviewQuestions",
       "threshold": 20
     }
   },
   {
+    "id": "interview-veteran",
+    "title": "Interview Veteran",
+    "description": "Complete 50 timed interview questions.",
+    "icon": "Briefcase",
+    "tier": "gold",
+    "category": "interview",
+    "condition": {
+      "type": "interviewQuestions",
+      "threshold": 50
+    }
+  },
+  {
+    "id": "interview-master",
+    "title": "Interview Master",
+    "description": "Complete 100 timed interview questions.",
+    "icon": "Briefcase",
+    "tier": "platinum",
+    "category": "interview",
+    "condition": {
+      "type": "interviewQuestions",
+      "threshold": 100
+    }
+  },
+
+  {
+    "id": "bug-hunter",
+    "title": "Bug Hunter",
+    "description": "Solve your first Debug Lab challenge.",
+    "icon": "Bug",
+    "tier": "bronze",
+    "category": "debug-lab",
+    "condition": {
+      "type": "solvedBugs",
+      "threshold": 1
+    }
+  },
+  {
+    "id": "clean-fix",
+    "title": "Clean Fix",
+    "description": "Solve 5 Debug Lab challenges.",
+    "icon": "Bug",
+    "tier": "bronze",
+    "category": "debug-lab",
+    "condition": {
+      "type": "solvedBugs",
+      "threshold": 5
+    }
+  },
+  {
     "id": "debug-master",
     "title": "Bug Whisperer",
-    "description": "Solve 25 challenges in Debug Lab.",
+    "description": "Solve 10 Debug Lab challenges.",
     "icon": "Bug",
     "tier": "silver",
-    "unlocked": false,
-    "progress": 0,
+    "category": "debug-lab",
+    "condition": {
+      "type": "solvedBugs",
+      "threshold": 10
+    }
+  },
+  {
+    "id": "debugger",
+    "title": "Debugger",
+    "description": "Solve 25 Debug Lab challenges.",
+    "icon": "Bug",
+    "tier": "gold",
+    "category": "debug-lab",
     "condition": {
       "type": "solvedBugs",
       "threshold": 25
+    }
+  },
+  {
+    "id": "bug-crusher",
+    "title": "Bug Crusher",
+    "description": "Solve 50 Debug Lab challenges.",
+    "icon": "Bug",
+    "tier": "platinum",
+    "category": "debug-lab",
+    "condition": {
+      "type": "solvedBugs",
+      "threshold": 50
+    }
+  },
+
+  {
+    "id": "hands-on",
+    "title": "Hands On",
+    "description": "Complete your first Code Playground exercise.",
+    "icon": "Code2",
+    "tier": "bronze",
+    "category": "playground",
+    "condition": {
+      "type": "playgroundCompletions",
+      "threshold": 1
+    }
+  },
+  {
+    "id": "code-explorer",
+    "title": "Code Explorer",
+    "description": "Complete 5 Code Playground exercises.",
+    "icon": "Code2",
+    "tier": "bronze",
+    "category": "playground",
+    "condition": {
+      "type": "playgroundCompletions",
+      "threshold": 5
+    }
+  },
+  {
+    "id": "playground-regular",
+    "title": "Playground Regular",
+    "description": "Use the Code Playground 10 times.",
+    "icon": "Terminal",
+    "tier": "silver",
+    "category": "playground",
+    "condition": {
+      "type": "playgroundCompletions",
+      "threshold": 10
+    }
+  },
+  {
+    "id": "experimenter",
+    "title": "Experimenter",
+    "description": "Complete 15 Code Playground exercises.",
+    "icon": "Terminal",
+    "tier": "gold",
+    "category": "playground",
+    "condition": {
+      "type": "playgroundCompletions",
+      "threshold": 15
+    }
+  },
+  {
+    "id": "builder",
+    "title": "Builder",
+    "description": "Complete 25 Code Playground exercises.",
+    "icon": "Layers",
+    "tier": "platinum",
+    "category": "playground",
+    "condition": {
+      "type": "playgroundCompletions",
+      "threshold": 25
+    }
+  },
+
+  {
+    "id": "full-send",
+    "title": "Full Send",
+    "description": "Start the Full Curriculum.",
+    "icon": "Compass",
+    "tier": "bronze",
+    "category": "curriculum",
+    "condition": {
+      "type": "lessonsCompleted",
+      "threshold": 1
+    }
+  },
+  {
+    "id": "curriculum-runner",
+    "title": "Curriculum Runner",
+    "description": "Complete 25% of the full curriculum.",
+    "icon": "Compass",
+    "tier": "silver",
+    "category": "curriculum",
+    "condition": {
+      "type": "curriculumPercent",
+      "threshold": 25
+    }
+  },
+  {
+    "id": "curriculum-climber",
+    "title": "Curriculum Climber",
+    "description": "Complete 50% of the full curriculum.",
+    "icon": "Compass",
+    "tier": "gold",
+    "category": "curriculum",
+    "condition": {
+      "type": "curriculumPercent",
+      "threshold": 50
+    }
+  },
+  {
+    "id": "final-stretch",
+    "title": "Final Stretch",
+    "description": "Complete 75% of the full curriculum.",
+    "icon": "Compass",
+    "tier": "gold",
+    "category": "curriculum",
+    "condition": {
+      "type": "curriculumPercent",
+      "threshold": 75
+    }
+  },
+  {
+    "id": "forged",
+    "title": "Forged",
+    "description": "Complete 100% of the Full Curriculum.",
+    "icon": "ShieldCheck",
+    "tier": "platinum",
+    "category": "curriculum",
+    "condition": {
+      "type": "curriculumPercent",
+      "threshold": 100
+    }
+  },
+
+  {
+    "id": "see-it-through",
+    "title": "See It Through",
+    "description": "Complete your first full module.",
+    "icon": "CheckCircle2",
+    "tier": "silver",
+    "category": "depth",
+    "condition": {
+      "type": "completedModulesCount",
+      "threshold": 1
+    }
+  },
+  {
+    "id": "deep-learner",
+    "title": "Deep Learner",
+    "description": "Complete 3 full modules across the curriculum.",
+    "icon": "Layers",
+    "tier": "silver",
+    "category": "depth",
+    "condition": {
+      "type": "completedModulesCount",
+      "threshold": 3
+    }
+  },
+  {
+    "id": "knowledge-builder",
+    "title": "Knowledge Builder",
+    "description": "Master 5 topics.",
+    "icon": "Brain",
+    "tier": "silver",
+    "category": "depth",
+    "condition": {
+      "type": "masteryCount",
+      "threshold": 5
+    }
+  },
+  {
+    "id": "well-rounded",
+    "title": "Well Rounded",
+    "description": "Master 15 topics across modules.",
+    "icon": "Brain",
+    "tier": "gold",
+    "category": "depth",
+    "condition": {
+      "type": "masteryCount",
+      "threshold": 15
     }
   },
   {
@@ -70,11 +528,59 @@
     "description": "Finish every lesson in Frontend Architecture Lab.",
     "icon": "Blocks",
     "tier": "platinum",
-    "unlocked": false,
-    "progress": 0,
+    "category": "depth",
     "condition": {
       "type": "moduleLessonsCompleted",
       "moduleId": "frontend-architecture"
+    }
+  },
+
+  {
+    "id": "triple-threat",
+    "title": "Triple Threat",
+    "description": "Complete at least 5 lessons, 3 quizzes, and 3 Debug Lab challenges.",
+    "icon": "Activity",
+    "tier": "silver",
+    "category": "combined",
+    "condition": {
+      "type": "combined",
+      "subtype": "tripleThreat"
+    }
+  },
+  {
+    "id": "full-stack-learner",
+    "title": "Full Stack Learner",
+    "description": "Complete 25 lessons, 10 quizzes, and 5 Debug Lab challenges.",
+    "icon": "Layers",
+    "tier": "gold",
+    "category": "combined",
+    "condition": {
+      "type": "combined",
+      "subtype": "fullStackLearner"
+    }
+  },
+  {
+    "id": "forge-regular",
+    "title": "Forge Regular",
+    "description": "Maintain a 7-day streak and complete 15 lessons, 5 quizzes, and 5 Debug Lab challenges.",
+    "icon": "Flame",
+    "tier": "gold",
+    "category": "combined",
+    "condition": {
+      "type": "combined",
+      "subtype": "forgeRegular"
+    }
+  },
+  {
+    "id": "complete-developer",
+    "title": "Complete Developer",
+    "description": "Complete 50 lessons, 20 quizzes, 15 Debug Lab challenges, and 10 interview questions.",
+    "icon": "Trophy",
+    "tier": "platinum",
+    "category": "combined",
+    "condition": {
+      "type": "combined",
+      "subtype": "completeDeveloper"
     }
   }
 ]
