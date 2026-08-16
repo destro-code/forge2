@@ -8,7 +8,13 @@
     "category": "Design Systems",
     "difficulty": "Intermediate",
     "estimatedHours": 20,
-    "tags": ["React", "TypeScript", "Tailwind CSS", "Accessibility", "Design Tokens"],
+    "tags": [
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Accessibility",
+      "Design Tokens"
+    ],
     "milestones": [
       {
         "id": "m1",
@@ -21,7 +27,9 @@
             "milestoneId": "m1",
             "title": "Define CSS custom properties for light & dark color modes",
             "description": "Set up standard CSS variables in global stylesheet for primary, background, surface, muted, and destructive tokens.",
-            "hints": ["Use HSL or OKLCH values for smoother color contrast transitions."],
+            "hints": [
+              "Use HSL or OKLCH values for smoother color contrast transitions."
+            ],
             "estimatedMinutes": 45
           },
           {
@@ -29,7 +37,9 @@
             "milestoneId": "m1",
             "title": "Create a type-safe token utility with class-variance-authority (cva)",
             "description": "Implement variant resolution helpers for Button, Badge, and Card components.",
-            "hints": ["Use cva() to define intent, size, and state variants cleanly."],
+            "hints": [
+              "Use cva() to define intent, size, and state variants cleanly."
+            ],
             "estimatedMinutes": 60
           },
           {
@@ -55,7 +65,9 @@
             "milestoneId": "m2",
             "title": "Build Button with React.forwardRef and loading state",
             "description": "Ensure native button props, accessible aria-disabled, and smooth spinner replacement.",
-            "hints": ["Use React.ComponentPropsWithoutRef<'button'> for full prop pass-through."],
+            "hints": [
+              "Use React.ComponentPropsWithoutRef<'button'> for full prop pass-through."
+            ],
             "estimatedMinutes": 60
           },
           {
@@ -63,7 +75,9 @@
             "milestoneId": "m2",
             "title": "Build Input component with prefix/suffix slot support",
             "description": "Allow icons or prefix buttons inside text input elements without layout shifts.",
-            "hints": ["Wrap the native input in a relative container for absolute icon overlays."],
+            "hints": [
+              "Wrap the native input in a relative container for absolute icon overlays."
+            ],
             "estimatedMinutes": 60
           },
           {
@@ -71,7 +85,9 @@
             "milestoneId": "m2",
             "title": "Build Badge & Avatar primitives",
             "description": "Support online/offline indicators, fallback initials, and image error handling.",
-            "hints": ["Handle broken image URL fallbacks using onError event state."],
+            "hints": [
+              "Handle broken image URL fallbacks using onError event state."
+            ],
             "estimatedMinutes": 120
           }
         ]
@@ -87,7 +103,9 @@
             "milestoneId": "m3",
             "title": "Implement Dialog compound pattern (Dialog.Trigger, Dialog.Content)",
             "description": "Render modal backdrop in a React Portal and handle Escape key dismissal.",
-            "hints": ["Use ReactDOM.createPortal to escape parent DOM overflow bounds."],
+            "hints": [
+              "Use ReactDOM.createPortal to escape parent DOM overflow bounds."
+            ],
             "estimatedMinutes": 120
           },
           {
@@ -95,7 +113,9 @@
             "milestoneId": "m3",
             "title": "Build keyboard-accessible Dropdown Menu",
             "description": "Support ArrowUp/ArrowDown focus navigation and enter/space selection.",
-            "hints": ["Maintain an activeFocusedIndex state inside menu context."],
+            "hints": [
+              "Maintain an activeFocusedIndex state inside menu context."
+            ],
             "estimatedMinutes": 120
           },
           {
@@ -121,7 +141,9 @@
             "milestoneId": "m4",
             "title": "Build interactive prop control inspector",
             "description": "Allow developers to toggle variants, sizes, and disable states dynamically.",
-            "hints": ["Map component props directly to interactive control knobs."],
+            "hints": [
+              "Map component props directly to interactive control knobs."
+            ],
             "estimatedMinutes": 150
           },
           {
@@ -129,7 +151,9 @@
             "milestoneId": "m4",
             "title": "Configure tsup/esbuild package export pipeline",
             "description": "Generate both CJS and ESM build bundles with automatically extracted TypeScript declaration files.",
-            "hints": ["Set external: ['react', 'react-dom'] in tsup config."],
+            "hints": [
+              "Set external: ['react', 'react-dom'] in tsup config."
+            ],
             "estimatedMinutes": 150
           }
         ]
@@ -207,7 +231,13 @@
     "category": "State Management",
     "difficulty": "Advanced",
     "estimatedHours": 30,
-    "tags": ["React", "DnD", "State Management", "Optimistic UI", "TypeScript"],
+    "tags": [
+      "React",
+      "DnD",
+      "State Management",
+      "Optimistic UI",
+      "TypeScript"
+    ],
     "milestones": [
       {
         "id": "m1",
@@ -220,7 +250,9 @@
             "milestoneId": "m1",
             "title": "Define normalized state schema for Board (columnsById, cardsById)",
             "description": "Structure card IDs in column arrays to allow O(1) lookups and swift reordering.",
-            "hints": ["Avoid nested arrays inside cards to keep drag reorders immutable."],
+            "hints": [
+              "Avoid nested arrays inside cards to keep drag reorders immutable."
+            ],
             "estimatedMinutes": 60
           },
           {
@@ -228,7 +260,9 @@
             "milestoneId": "m1",
             "title": "Build responsive column grid layout",
             "description": "Allow horizontal scrolling on smaller screens with sticky column headers.",
-            "hints": ["Use flex-shrink-0 for column containers in horizontal scroll views."],
+            "hints": [
+              "Use flex-shrink-0 for column containers in horizontal scroll views."
+            ],
             "estimatedMinutes": 90
           },
           {
@@ -236,7 +270,9 @@
             "milestoneId": "m1",
             "title": "Implement task creation modal & inline title editing",
             "description": "Allow rapid inline task insertion directly at the top or bottom of any column.",
-            "hints": ["Auto-focus the inline input element on creation."],
+            "hints": [
+              "Auto-focus the inline input element on creation."
+            ],
             "estimatedMinutes": 90
           }
         ]
@@ -262,7 +298,9 @@
             "milestoneId": "m2",
             "title": "Implement cross-column card movement algorithm",
             "description": "Update source column card array and target column card array atomically.",
-            "hints": ["Ensure array splice operations produce fresh immutable object references."],
+            "hints": [
+              "Ensure array splice operations produce fresh immutable object references."
+            ],
             "estimatedMinutes": 120
           },
           {
@@ -288,7 +326,9 @@
             "milestoneId": "m3",
             "title": "Implement optimistic state update hook with rollback state snapshot",
             "description": "Instantly render new card order before triggering async network request.",
-            "hints": ["Save previous state in a ref before executing optimistic dispatch."],
+            "hints": [
+              "Save previous state in a ref before executing optimistic dispatch."
+            ],
             "estimatedMinutes": 150
           },
           {
@@ -296,7 +336,9 @@
             "milestoneId": "m3",
             "title": "Build offline mutation queue with window.navigator.onLine recovery",
             "description": "Store pending moves in LocalStorage when offline and replay them when network returns.",
-            "hints": ["Listen to window.addEventListener('online', syncQueue)."],
+            "hints": [
+              "Listen to window.addEventListener('online', syncQueue)."
+            ],
             "estimatedMinutes": 150
           }
         ]
@@ -358,7 +400,13 @@
     "category": "Full-stack",
     "difficulty": "Beginner",
     "estimatedHours": 12,
-    "tags": ["React", "MDX", "Tailwind CSS", "SEO", "Performance"],
+    "tags": [
+      "React",
+      "MDX",
+      "Tailwind CSS",
+      "SEO",
+      "Performance"
+    ],
     "milestones": [
       {
         "id": "m1",
@@ -371,7 +419,9 @@
             "milestoneId": "m1",
             "title": "Build semantic header with sticky scroll blur effect",
             "description": "Add backdrop-blur-md background to header on scroll.",
-            "hints": ["Use sticky top-0 z-50 with backdrop-blur-md."],
+            "hints": [
+              "Use sticky top-0 z-50 with backdrop-blur-md."
+            ],
             "estimatedMinutes": 45
           },
           {
@@ -379,7 +429,9 @@
             "milestoneId": "m1",
             "title": "Craft Hero layout with animated availability badge",
             "description": "Highlight current role, bio, and status indicator dot (e.g. 'Available for hire').",
-            "hints": ["Use relative flex ping animation for pulsing dot."],
+            "hints": [
+              "Use relative flex ping animation for pulsing dot."
+            ],
             "estimatedMinutes": 75
           }
         ]
@@ -395,7 +447,9 @@
             "milestoneId": "m2",
             "title": "Build responsive Bento Grid project card layout",
             "description": "Feature primary showcase projects in span-2 cards on desktop views.",
-            "hints": ["Use grid-cols-1 md:grid-cols-3 gap-4."],
+            "hints": [
+              "Use grid-cols-1 md:grid-cols-3 gap-4."
+            ],
             "estimatedMinutes": 90
           },
           {
@@ -403,7 +457,9 @@
             "milestoneId": "m2",
             "title": "Add project filter tabs (All, Full-stack, Mobile, Open Source)",
             "description": "Animate active tab pill indicator with layoutId.",
-            "hints": ["Framer motion layoutId provides fluid tab sliding."],
+            "hints": [
+              "Framer motion layoutId provides fluid tab sliding."
+            ],
             "estimatedMinutes": 90
           }
         ]
@@ -419,7 +475,9 @@
             "milestoneId": "m3",
             "title": "Implement estimated reading time calculation utility",
             "description": "Calculate reading minutes based on 200 words-per-minute average.",
-            "hints": ["Strip HTML tags before splitting string by whitespace."],
+            "hints": [
+              "Strip HTML tags before splitting string by whitespace."
+            ],
             "estimatedMinutes": 60
           },
           {
@@ -427,7 +485,9 @@
             "milestoneId": "m3",
             "title": "Integrate code syntax highlighter with copy button",
             "description": "Provide a copy-to-clipboard button on code blocks with brief checkmark feedback.",
-            "hints": ["Use navigator.clipboard.writeText with setTimeout fallback."],
+            "hints": [
+              "Use navigator.clipboard.writeText with setTimeout fallback."
+            ],
             "estimatedMinutes": 180
           }
         ]
@@ -473,7 +533,12 @@
     "category": "State Management",
     "difficulty": "Intermediate",
     "estimatedHours": 18,
-    "tags": ["React", "Form Validation", "State Machine", "E-Commerce"],
+    "tags": [
+      "React",
+      "Form Validation",
+      "State Machine",
+      "E-Commerce"
+    ],
     "milestones": [
       {
         "id": "m1",
@@ -486,7 +551,9 @@
             "milestoneId": "m1",
             "title": "Create step progression bar with active & completed indicators",
             "description": "Visual breadcrumb bar allowing users to click back to previously completed steps.",
-            "hints": ["Prevent forward jump unless previous steps are validated."],
+            "hints": [
+              "Prevent forward jump unless previous steps are validated."
+            ],
             "estimatedMinutes": 60
           },
           {
@@ -494,7 +561,9 @@
             "milestoneId": "m1",
             "title": "Build Shipping Address form with auto-complete & validation",
             "description": "Validate email, ZIP code pattern, and address line items in real time.",
-            "hints": ["Use Zod or custom regex validators for postal code formats."],
+            "hints": [
+              "Use Zod or custom regex validators for postal code formats."
+            ],
             "estimatedMinutes": 120
           }
         ]
@@ -510,7 +579,9 @@
             "milestoneId": "m2",
             "title": "Implement promo code validator with loading & error states",
             "description": "Support percentage discount (e.g., 'FORGE20' -> 20% off) and fixed amount coupons.",
-            "hints": ["Display clear savings breakdown line item in order summary."],
+            "hints": [
+              "Display clear savings breakdown line item in order summary."
+            ],
             "estimatedMinutes": 90
           },
           {
@@ -518,7 +589,9 @@
             "milestoneId": "m2",
             "title": "Build responsive order breakdown drawer for mobile views",
             "description": "Provide sticky collapsed summary banner at bottom of mobile viewports.",
-            "hints": ["Collapsible accordion drawer keeps mobile checkout clean."],
+            "hints": [
+              "Collapsible accordion drawer keeps mobile checkout clean."
+            ],
             "estimatedMinutes": 90
           }
         ]
@@ -558,7 +631,13 @@
     "category": "Full-stack",
     "difficulty": "Advanced",
     "estimatedHours": 25,
-    "tags": ["React", "AI", "Streaming", "TypeScript", "Markdown"],
+    "tags": [
+      "React",
+      "AI",
+      "Streaming",
+      "TypeScript",
+      "Markdown"
+    ],
     "milestones": [
       {
         "id": "m1",
@@ -571,7 +650,9 @@
             "milestoneId": "m1",
             "title": "Implement auto-scroll to bottom with user manual override detection",
             "description": "Pause auto-scroll if user scrolls up to read prior messages during stream.",
-            "hints": ["Compare scrollTop + clientHeight against scrollHeight."],
+            "hints": [
+              "Compare scrollTop + clientHeight against scrollHeight."
+            ],
             "estimatedMinutes": 120
           },
           {
@@ -579,7 +660,9 @@
             "milestoneId": "m1",
             "title": "Render Markdown message content with code copy button",
             "description": "Support bold, lists, inline code, and syntax highlighted blocks.",
-            "hints": ["Use react-markdown inside styled container wrappers."],
+            "hints": [
+              "Use react-markdown inside styled container wrappers."
+            ],
             "estimatedMinutes": 120
           }
         ]
@@ -595,7 +678,9 @@
             "milestoneId": "m2",
             "title": "Build collateral sidebar with conversation search & filter",
             "description": "Organize chat history by date groupings (Today, Yesterday, Last 7 Days).",
-            "hints": ["Group array of threads by date diff offset."],
+            "hints": [
+              "Group array of threads by date diff offset."
+            ],
             "estimatedMinutes": 90
           },
           {
@@ -603,7 +688,9 @@
             "milestoneId": "m2",
             "title": "Add Model selector dropdown (Gemini Flash, Gemini Pro, Custom)",
             "description": "Allow switching model presets per conversation thread.",
-            "hints": ["Store selectedModelId in thread metadata."],
+            "hints": [
+              "Store selectedModelId in thread metadata."
+            ],
             "estimatedMinutes": 90
           }
         ]
@@ -633,5 +720,908 @@
     ],
     "moduleId": "react-professional",
     "order": 5
+  },
+  {
+    "id": "js-to-ts-migration",
+    "title": "Incremental JavaScript-to-TypeScript Migration",
+    "subtitle": "Convert a real plain-JS feature set to fully typed TypeScript, incrementally, without a rewrite",
+    "description": "Take an existing plain-JavaScript task-management feature -- API layer, utility functions, and React components -- and migrate it to TypeScript file by file, the way a real team would on a live codebase.",
+    "overview": "You'll be given a working plain-JS feature (a task list with API calls, formatting utilities, and components). Rather than rewriting it from scratch, you'll convert it incrementally: model the underlying data first, then type the functions that touch it, then the components, coexisting with any remaining JS files via allowJs. You'll practice modeling nullable vs. optional fields, typing fetch responses honestly, using discriminated unions for request state, and avoiding any as a shortcut.",
+    "category": "Language Mastery",
+    "difficulty": "Intermediate",
+    "estimatedHours": 14,
+    "tags": [
+      "TypeScript",
+      "Migration",
+      "React",
+      "API Integration"
+    ],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Model the Data Layer",
+        "description": "Define shared interfaces for the API's actual response shapes, distinguishing nullable from optional fields.",
+        "estimatedMinutes": 150,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Define a Task interface from real sample API responses",
+            "description": "Model id, title, dueDate (nullable), and completed, based on actual response payloads rather than assumptions.",
+            "hints": [
+              "A field the API always sends but sometimes as null needs `| null`, not `?`."
+            ],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Model request state as a discriminated union",
+            "description": "Define a RequestState<T> type with idle/loading/success/error variants sharing a status field.",
+            "hints": [
+              "Switch on the shared status field to narrow safely in consuming code."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t3",
+            "milestoneId": "m1",
+            "title": "Type the fetchTasks function's return value",
+            "description": "Wrap the return type in Promise<Task[]> and avoid asserting the response as any.",
+            "hints": [
+              "res.json() is any by default -- type the parsed value as unknown and validate before trusting it."
+            ],
+            "estimatedMinutes": 45
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Type the Utility and Component Layer",
+        "description": "Convert formatting utilities and React components to TypeScript without falling back to any anywhere.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Type formatDueDate and validateTaskText",
+            "description": "Both functions currently accept untyped parameters; add explicit parameter and return types.",
+            "hints": [
+              "formatDueDate needs to accept string | null to match the Task interface."
+            ],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t5",
+            "milestoneId": "m2",
+            "title": "Convert TaskCard.jsx to TaskCard.tsx",
+            "description": "Define a TaskCardProps interface for task and an onComplete callback, typed as (id: number) => void.",
+            "hints": [
+              "Import the shared Task interface rather than redefining the shape locally."
+            ],
+            "estimatedMinutes": 75
+          },
+          {
+            "id": "t6",
+            "milestoneId": "m2",
+            "title": "Convert TaskList.jsx to TaskList.tsx, consuming RequestState<Task[]>",
+            "description": "Switch on the request state's status field to render loading, error, and success UI distinctly.",
+            "hints": [
+              "This is where the discriminated union from Milestone 1 pays off."
+            ],
+            "estimatedMinutes": 60
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Milestone 3: Verify the Migration Holds Under Change",
+        "description": "Prove the migration actually catches real mistakes, and document your incremental strategy.",
+        "estimatedMinutes": 120,
+        "tasks": [
+          {
+            "id": "t7",
+            "milestoneId": "m3",
+            "title": "Introduce and then fix a deliberate type mismatch",
+            "description": "Temporarily pass a number where Task.title expects a string, confirm TypeScript catches it, then fix it.",
+            "hints": [
+              "This is your evidence the migration adds real safety, not just satisfies the compiler cosmetically."
+            ],
+            "estimatedMinutes": 30
+          },
+          {
+            "id": "t8",
+            "milestoneId": "m3",
+            "title": "Add a new deleteTask(id: number): Promise<void> function fully typed from scratch",
+            "description": "No JS starting point this time -- write it directly in TypeScript.",
+            "hints": [
+              "This tests whether you can type new code, not just convert existing code."
+            ],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t9",
+            "milestoneId": "m3",
+            "title": "Write a short migration strategy writeup",
+            "description": "Document the order you converted files in and why, as if explaining the approach to a team lead.",
+            "hints": [
+              "Justify starting with shared types before components."
+            ],
+            "estimatedMinutes": 45
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Zero any usage",
+        "category": "functional",
+        "description": "No file in the migrated feature uses any anywhere in its type annotations."
+      },
+      {
+        "id": "ac2",
+        "title": "Correct nullable vs. optional modeling",
+        "category": "functional",
+        "description": "Fields that are always present but sometimes null use `| null`; fields that may be entirely absent use `?`."
+      },
+      {
+        "id": "ac3",
+        "title": "Request state modeled as a discriminated union",
+        "category": "architecture",
+        "description": "Loading, error, and success UI states are driven by switching on a shared status field, not separate boolean flags."
+      },
+      {
+        "id": "ac4",
+        "title": "New code written TypeScript-first",
+        "category": "functional",
+        "description": "deleteTask is written directly in TypeScript with no JS starting point, fully typed."
+      }
+    ],
+    "resources": [
+      {
+        "title": "TypeScript Handbook — Migrating from JavaScript",
+        "url": "https://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html",
+        "type": "docs",
+        "description": "Official guidance on allowJs/checkJs and incremental migration strategy."
+      },
+      {
+        "title": "TypeScript Handbook — Narrowing",
+        "url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+        "type": "docs",
+        "description": "Reference for discriminated unions and type guards used throughout this project."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Led an incremental migration of a live feature from JavaScript to TypeScript with zero any usage and no regression in existing behavior."
+      },
+      {
+        "category": "interview",
+        "bullet": "Explain how you'd sequence a larger real codebase migration -- what you'd type first and why."
+      },
+      {
+        "category": "architecture",
+        "bullet": "Discuss the tradeoff between a full rewrite and an incremental, coexisting migration using allowJs."
+      }
+    ],
+    "moduleId": "language-mastery",
+    "order": 6
+  },
+  {
+    "id": "quality-and-security-hardening",
+    "title": "Test Suite and Security Hardening Sprint",
+    "subtitle": "Take an under-tested, vulnerable feature to production-ready: layered tests plus a real security audit",
+    "description": "Given a small existing 'user profile' feature with no tests and two planted security issues, build a layered test suite and run a full security audit, fixing what you find.",
+    "category": "Quality & Security",
+    "difficulty": "Advanced",
+    "estimatedHours": 16,
+    "tags": [
+      "Testing",
+      "Security",
+      "React Testing Library",
+      "XSS",
+      "CSRF"
+    ],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Layered Test Suite",
+        "description": "Build unit, component, and integration test coverage for the profile feature.",
+        "estimatedMinutes": 240,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Unit-test the extracted bio-length validation logic",
+            "description": "Cover valid input, empty input, and over-length input with Vitest.",
+            "hints": [
+              "Arrange-act-assert keeps each case readable."
+            ],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Component-test the ProfileForm's loading/error/success states",
+            "description": "Use React Testing Library queries by role/label, not CSS class.",
+            "hints": [
+              "Don't skip the error and empty states -- they're the most commonly missed."
+            ],
+            "estimatedMinutes": 75
+          },
+          {
+            "id": "t3",
+            "milestoneId": "m1",
+            "title": "Integration-test the save flow against a mocked API with MSW",
+            "description": "Mock only the network boundary; let real component and validation logic run.",
+            "hints": [
+              "Cover both a successful save and a server-side validation error response."
+            ],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t4",
+            "milestoneId": "m1",
+            "title": "Document your test coverage decisions",
+            "description": "Write a short note explaining what you tested at each layer and why.",
+            "hints": [
+              "Frame it as you would in a pull request description."
+            ],
+            "estimatedMinutes": 30
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Security Audit",
+        "description": "Apply a real security checklist to the feature and find the two planted vulnerabilities.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t5",
+            "milestoneId": "m2",
+            "title": "Run the XSS/CSRF/CORS/token-storage checklist against the feature",
+            "description": "The bio field renders user content, and the auth token is stored somewhere -- check both carefully.",
+            "hints": [
+              "One vulnerability is in how content renders; the other is in where the token lives."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t6",
+            "milestoneId": "m2",
+            "title": "Fix the unsanitized bio rendering with DOMPurify",
+            "description": "The profile bio currently uses dangerouslySetInnerHTML with no sanitization.",
+            "hints": [
+              "Preserve legitimate formatting while stripping executable content."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t7",
+            "milestoneId": "m2",
+            "title": "Move the auth token from localStorage to an httpOnly cookie",
+            "description": "Update both the login flow and how subsequent requests authenticate.",
+            "hints": [
+              "Remember this reopens a CSRF consideration -- add SameSite as part of the fix."
+            ],
+            "estimatedMinutes": 60
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Milestone 3: Prioritized Findings Report",
+        "description": "Write the audit up the way a real security review would be delivered to a team.",
+        "estimatedMinutes": 90,
+        "tasks": [
+          {
+            "id": "t8",
+            "milestoneId": "m3",
+            "title": "Write a findings report ranking issues by real exploitability",
+            "description": "Explain why the XSS-plus-localStorage-token combination is a chained, critical finding.",
+            "hints": [
+              "A finding without a specific fix isn't a complete audit."
+            ],
+            "estimatedMinutes": 90
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Three-layer test coverage",
+        "category": "functional",
+        "description": "The feature has unit, component, and integration test coverage, not just one layer."
+      },
+      {
+        "id": "ac2",
+        "title": "No unsanitized HTML rendering",
+        "category": "security",
+        "description": "All user-generated content rendered as HTML is sanitized with a maintained library."
+      },
+      {
+        "id": "ac3",
+        "title": "Token not readable by JavaScript",
+        "category": "security",
+        "description": "The auth token is stored in an httpOnly cookie, not localStorage or sessionStorage."
+      },
+      {
+        "id": "ac4",
+        "title": "Findings report includes specific fixes",
+        "category": "documentation",
+        "description": "Every finding in the report specifies an exact remediation, not just a flagged concern."
+      }
+    ],
+    "resources": [
+      {
+        "title": "OWASP Top 10",
+        "url": "https://owasp.org/www-project-top-ten/",
+        "type": "docs",
+        "description": "Reference checklist for the security audit portion of this project."
+      },
+      {
+        "title": "Testing Library — Guiding Principles",
+        "url": "https://testing-library.com/docs/guiding-principles/",
+        "type": "docs",
+        "description": "Reference for the component and integration testing approach used here."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Built a layered test suite (unit/component/integration) and led a security audit that identified and remediated a chained XSS-to-token-theft vulnerability."
+      },
+      {
+        "category": "interview",
+        "bullet": "Walk through how the XSS and token-storage findings compounded into a more critical combined risk than either alone."
+      },
+      {
+        "category": "architecture",
+        "bullet": "Discuss how you'd prioritize a findings list under a real deadline with limited engineering time."
+      }
+    ],
+    "moduleId": "testing-and-tooling",
+    "order": 6
+  },
+  {
+    "id": "nextjs-server-components-migration",
+    "title": "Client-Rendered App to Next.js App Router Migration",
+    "subtitle": "Migrate a client-side rendered product catalog to Server Components, Server Actions, and a real rendering strategy",
+    "description": "Take an existing fully client-side rendered product catalog and rebuild its core pages in Next.js's App Router, choosing an appropriate rendering strategy per route and moving mutations to Server Actions.",
+    "category": "Architecture",
+    "difficulty": "Advanced",
+    "estimatedHours": 18,
+    "tags": [
+      "Next.js",
+      "Server Components",
+      "Server Actions",
+      "Performance"
+    ],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Routing and Rendering Strategy",
+        "description": "Rebuild the app's routes using the App Router and choose a rendering strategy per route.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Recreate the catalog's routes using file-based routing",
+            "description": "Home, /products, and a dynamic /products/[id] page, with a shared persistent layout.",
+            "hints": [
+              "Layouts persist across navigation between pages that share them -- verify this in practice."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Choose and justify a rendering strategy per route",
+            "description": "Product listing might fit ISR; a user's order history should stay dynamic.",
+            "hints": [
+              "Base the choice on each route's actual freshness and traffic needs, not a single default."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t3",
+            "milestoneId": "m1",
+            "title": "Convert the product detail page to fetch data directly in an async Server Component",
+            "description": "Remove the previous useEffect + loading-state pattern entirely for this page's initial data.",
+            "hints": [
+              "No client-side loading state is needed once this runs server-side."
+            ],
+            "estimatedMinutes": 60
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Server/Client Boundary and Mutations",
+        "description": "Draw the Server/Client Component boundary correctly and move the add-to-cart flow to a Server Action.",
+        "estimatedMinutes": 210,
+        "tasks": [
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Extract only the interactive pieces into Client Components",
+            "description": "The add-to-cart button and quantity selector need 'use client'; the surrounding page content does not.",
+            "hints": [
+              "If you find yourself adding 'use client' to the whole page, that's a sign to extract further."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t5",
+            "milestoneId": "m2",
+            "title": "Implement addToCart as a Server Action",
+            "description": "Validate the quantity server-side and check the user is authenticated before mutating the cart.",
+            "hints": [
+              "Never trust the client-side quantity input alone -- validate again on the server."
+            ],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t6",
+            "milestoneId": "m2",
+            "title": "Wrap the product reviews section in Suspense",
+            "description": "Reviews load slower than the rest of the page; stream them in with a skeleton fallback instead of blocking the whole page.",
+            "hints": [
+              "This should visibly improve the page's perceived load time."
+            ],
+            "estimatedMinutes": 60
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Milestone 3: Deploy and Verify",
+        "description": "Deploy the migrated app and verify its real behavior in production, not just locally.",
+        "estimatedMinutes": 150,
+        "tasks": [
+          {
+            "id": "t7",
+            "milestoneId": "m3",
+            "title": "Configure environment variables correctly for deployment",
+            "description": "Distinguish server-only secrets from any NEXT_PUBLIC_ values genuinely needed client-side.",
+            "hints": [
+              "Double-check no secret accidentally has the NEXT_PUBLIC_ prefix."
+            ],
+            "estimatedMinutes": 30
+          },
+          {
+            "id": "t8",
+            "milestoneId": "m3",
+            "title": "Deploy to a live, publicly accessible URL",
+            "description": "Push to your connected repository and verify the build succeeds.",
+            "hints": [
+              "Confirm the ISR route actually revalidates on the schedule you configured."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t9",
+            "milestoneId": "m3",
+            "title": "Measure and record Core Web Vitals before and after the migration",
+            "description": "Compare LCP and INP against the original client-rendered version.",
+            "hints": [
+              "The reduced client bundle from Server Components should show up as a measurable improvement."
+            ],
+            "estimatedMinutes": 60
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Per-route rendering strategy documented",
+        "category": "architecture",
+        "description": "Each route's rendering strategy (static/ISR/dynamic) is chosen deliberately and documented with a reason."
+      },
+      {
+        "id": "ac2",
+        "title": "Minimal Client Component surface",
+        "category": "architecture",
+        "description": "'use client' is applied only to genuinely interactive leaf components, not whole pages."
+      },
+      {
+        "id": "ac3",
+        "title": "Server Action validates and authorizes",
+        "category": "security",
+        "description": "addToCart validates input and checks authentication server-side, not relying on client-side checks alone."
+      },
+      {
+        "id": "ac4",
+        "title": "Live deployment with measured Core Web Vitals",
+        "category": "performance",
+        "description": "The app is deployed to a public URL with before/after LCP and INP measurements recorded."
+      }
+    ],
+    "resources": [
+      {
+        "title": "Next.js — Routing Fundamentals",
+        "url": "https://nextjs.org/docs/app/building-your-application/routing",
+        "type": "docs",
+        "description": "Reference for the App Router's file-based routing conventions."
+      },
+      {
+        "title": "Next.js — Server Actions and Mutations",
+        "url": "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations",
+        "type": "docs",
+        "description": "Reference for implementing the addToCart Server Action."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Migrated a client-rendered product catalog to Next.js App Router with per-route rendering strategy, cutting client bundle size and improving measured Core Web Vitals."
+      },
+      {
+        "category": "interview",
+        "bullet": "Walk through how you decided the Server/Client Component boundary for the product page."
+      },
+      {
+        "category": "architecture",
+        "bullet": "Discuss the tradeoff introduced by moving from client-side fetching to Server Actions for mutations."
+      }
+    ],
+    "moduleId": "frontend-architecture",
+    "order": 6
+  },
+  {
+    "id": "accessible-component-audit",
+    "title": "Accessible Component Library Audit & Remediation",
+    "subtitle": "Take an existing, visually-complete component library from inaccessible to WCAG-conformant",
+    "description": "You're given a small component library (modal, dropdown menu, tabs, form inputs) that looks correct but was built with zero accessibility consideration. Audit it against a real checklist and remediate every component.",
+    "overview": "Each component in the starter library has at least one real accessibility gap: the modal doesn't trap or restore focus, the dropdown is unreachable by keyboard, the tabs have no ARIA roles, and a form input relies on a placeholder instead of a real label. You'll run both automated and required manual (keyboard-only and screen-reader) audits, then fix each component while preserving its existing visual design and API.",
+    "category": "Design Systems",
+    "difficulty": "Advanced",
+    "estimatedHours": 15,
+    "tags": [
+      "Accessibility",
+      "WCAG",
+      "ARIA",
+      "Design Systems"
+    ],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Audit",
+        "description": "Run the full accessibility checklist against every component, combining automated tooling with required manual verification.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "Run an automated scan (axe or Lighthouse) against each component",
+            "description": "Record every finding, even ones you already suspect are false positives.",
+            "hints": [
+              "Automated tools catch under half of real issues -- don't treat this as the complete audit."
+            ],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "Complete a full keyboard-only pass through every component",
+            "description": "Unplug your mouse and try to operate the modal, dropdown, tabs, and form using only Tab, Shift+Tab, Enter, Space, and arrow keys.",
+            "hints": [
+              "Note every place focus gets lost, skipped, or has no visible indicator."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t3",
+            "milestoneId": "m1",
+            "title": "Complete a full screen-reader pass through every component",
+            "description": "Use VoiceOver, NVDA, or a mobile screen reader to interact with each component and note what's announced incorrectly or not at all.",
+            "hints": [
+              "Pay special attention to whether the modal announces itself when it opens."
+            ],
+            "estimatedMinutes": 75
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Remediate Each Component",
+        "description": "Fix every finding from Milestone 1 without breaking the components' existing visual design or public API.",
+        "estimatedMinutes": 270,
+        "tasks": [
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Fix the Modal: focus trap, focus restoration, and Escape to close",
+            "description": "Focus should move into the modal on open and back to the trigger button on close.",
+            "hints": [
+              "role=\"dialog\" and aria-modal=\"true\" are part of the fix, but focus management is the harder half."
+            ],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t5",
+            "milestoneId": "m2",
+            "title": "Fix the Dropdown: full keyboard support and ARIA roles",
+            "description": "Arrow keys to navigate options, Enter to select, Escape to close, with role=\"listbox\"/\"option\".",
+            "hints": [
+              "Check whether a native <select> could replace this entirely for simpler cases."
+            ],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t6",
+            "milestoneId": "m2",
+            "title": "Fix the Tabs and the form input's missing label",
+            "description": "Add proper tab/tablist/tabpanel roles and replace the placeholder-only input with a real associated label.",
+            "hints": [
+              "A visually-hidden label is fine if the design can't accommodate a visible one."
+            ],
+            "estimatedMinutes": 90
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Milestone 3: Re-Verify and Document",
+        "description": "Confirm every fix actually resolves the original finding, and document the audit for the rest of the team.",
+        "estimatedMinutes": 120,
+        "tasks": [
+          {
+            "id": "t7",
+            "milestoneId": "m3",
+            "title": "Re-run the full keyboard and screen-reader pass against the fixed components",
+            "description": "Confirm every originally-noted issue is actually resolved, not just visually plausible.",
+            "hints": [
+              "Re-verification is not optional -- a fix that looks right isn't confirmed until you've actually tested it the same way you found the bug."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t8",
+            "milestoneId": "m3",
+            "title": "Write an audit report documenting each finding and its fix",
+            "description": "Format it the way you'd hand it to a design systems team lead.",
+            "hints": [
+              "Prioritize by real user impact, not by category count."
+            ],
+            "estimatedMinutes": 60
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Full keyboard operability",
+        "category": "accessibility",
+        "description": "Every component can be fully operated using only a keyboard, with a visible focus indicator throughout."
+      },
+      {
+        "id": "ac2",
+        "title": "Focus management on the modal",
+        "category": "accessibility",
+        "description": "Focus moves into the modal on open and back to the trigger on close, with no keyboard trap beyond the intended one."
+      },
+      {
+        "id": "ac3",
+        "title": "Accurate accessible names throughout",
+        "category": "accessibility",
+        "description": "Every control has a correct accessible name via native semantics, a real label, or aria-label -- not a placeholder alone."
+      },
+      {
+        "id": "ac4",
+        "title": "Manual verification documented",
+        "category": "documentation",
+        "description": "The audit report includes findings from the required manual keyboard and screen-reader passes, not only automated tool output."
+      }
+    ],
+    "resources": [
+      {
+        "title": "WAI-ARIA Authoring Practices Guide",
+        "url": "https://www.w3.org/WAI/ARIA/apg/",
+        "type": "docs",
+        "description": "Reference patterns for the modal, dropdown, and tabs components in this project."
+      },
+      {
+        "title": "The A11y Project Checklist",
+        "url": "https://www.a11yproject.com/checklist/",
+        "type": "docs",
+        "description": "A practical checklist to structure the Milestone 1 audit."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Audited and remediated a component library to WCAG conformance, fixing focus management, keyboard operability, and ARIA semantics across modal, dropdown, and tabs components."
+      },
+      {
+        "category": "interview",
+        "bullet": "Walk through how you found and fixed the modal's focus trap issue specifically."
+      },
+      {
+        "category": "architecture",
+        "bullet": "Discuss how you'd prevent this class of issue from being introduced in future components -- linting, review checklist, or a shared base component."
+      }
+    ],
+    "moduleId": "performance-and-a11y",
+    "order": 9
+  },
+  {
+    "id": "product-spec-to-architecture-plan",
+    "title": "From Product Spec to Architecture Plan",
+    "subtitle": "Turn a real, messy product requirements document into a concrete technical architecture and build plan",
+    "description": "You're given an actual product spec for a 'team task board' feature -- written by a product manager, with ambiguities, undefined edge cases, and competing stakeholder asks. Turn it into a technical plan you could hand to a team.",
+    "overview": "The spec describes what the feature should do from a user's perspective but leaves real technical decisions open: how state is structured, what's client vs. server-owned, how real-time updates should work, and what happens in edge cases the spec doesn't mention. You'll extract the actual requirements, identify the ambiguities worth clarifying versus the ones you can reasonably resolve yourself, and produce an architecture plan with justified tradeoffs.",
+    "category": "Architecture",
+    "difficulty": "Advanced",
+    "estimatedHours": 12,
+    "tags": [
+      "Architecture",
+      "Product Specs",
+      "System Design",
+      "Tradeoffs"
+    ],
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Milestone 1: Extract and Question the Spec",
+        "description": "Read the spec critically, separating clear requirements from ambiguous or missing ones.",
+        "estimatedMinutes": 120,
+        "tasks": [
+          {
+            "id": "t1",
+            "milestoneId": "m1",
+            "title": "List every explicit functional requirement in the spec",
+            "description": "Extract concrete, unambiguous requirements as a checklist.",
+            "hints": [
+              "Distinguish 'must have' language from 'nice to have' or aspirational language."
+            ],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t2",
+            "milestoneId": "m1",
+            "title": "List every ambiguity or undefined edge case",
+            "description": "What happens if two users edit the same card simultaneously? What happens offline? The spec doesn't say.",
+            "hints": [
+              "A good technical read of a spec surfaces the questions a product manager didn't think to answer."
+            ],
+            "estimatedMinutes": 45
+          },
+          {
+            "id": "t3",
+            "milestoneId": "m1",
+            "title": "Decide which ambiguities you'll resolve yourself vs. flag for clarification",
+            "description": "Not every open question needs a meeting -- some have a reasonable default a competent engineer can just decide.",
+            "hints": [
+              "Justify each decision briefly rather than picking silently."
+            ],
+            "estimatedMinutes": 30
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Milestone 2: Architecture Decisions",
+        "description": "Make and justify the real technical decisions the spec leaves open.",
+        "estimatedMinutes": 180,
+        "tasks": [
+          {
+            "id": "t4",
+            "milestoneId": "m2",
+            "title": "Decide the state ownership model: what's client state vs. server-owned",
+            "description": "Card position during a drag is a good example of a genuinely debatable boundary.",
+            "hints": [
+              "Consider what needs to survive a page refresh versus what's purely transient UI state."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t5",
+            "milestoneId": "m2",
+            "title": "Decide how real-time updates between collaborators should work",
+            "description": "Polling, websockets, or a simpler eventual-consistency approach -- justify the tradeoff.",
+            "hints": [
+              "Consider the actual expected team size and update frequency, not a hypothetical worst case."
+            ],
+            "estimatedMinutes": 60
+          },
+          {
+            "id": "t6",
+            "milestoneId": "m2",
+            "title": "Choose a rendering strategy for the board's initial load",
+            "description": "Should the board be server-rendered, client-rendered, or something in between?",
+            "hints": [
+              "Tie this back to what you learned about SSR/SSG/ISR tradeoffs earlier in the course."
+            ],
+            "estimatedMinutes": 60
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Milestone 3: Write the Plan",
+        "description": "Produce a document a real engineering team could actually build from.",
+        "estimatedMinutes": 150,
+        "tasks": [
+          {
+            "id": "t7",
+            "milestoneId": "m3",
+            "title": "Write the architecture plan with explicit tradeoffs for each major decision",
+            "description": "Each decision should state what you chose, what you didn't, and why.",
+            "hints": [
+              "A plan that only states conclusions without tradeoffs is much less useful to a reviewing team."
+            ],
+            "estimatedMinutes": 90
+          },
+          {
+            "id": "t8",
+            "milestoneId": "m3",
+            "title": "Break the plan into a rough milestone sequence a team could execute",
+            "description": "What would be built first, and why that order?",
+            "hints": [
+              "Sequence by what unblocks the most subsequent work, not just by perceived difficulty."
+            ],
+            "estimatedMinutes": 60
+          }
+        ]
+      }
+    ],
+    "acceptanceCriteria": [
+      {
+        "id": "ac1",
+        "title": "Requirements and ambiguities separated clearly",
+        "category": "documentation",
+        "description": "The plan distinguishes explicit spec requirements from ambiguities the author identified and resolved."
+      },
+      {
+        "id": "ac2",
+        "title": "Every major decision includes a stated tradeoff",
+        "category": "architecture",
+        "description": "State ownership, real-time strategy, and rendering strategy each include what was chosen, what was rejected, and why."
+      },
+      {
+        "id": "ac3",
+        "title": "Plan is sequenced, not just listed",
+        "category": "documentation",
+        "description": "The plan proposes a build order with reasoning, not just a flat list of decisions."
+      }
+    ],
+    "resources": [
+      {
+        "title": "React — Thinking in React",
+        "url": "https://react.dev/learn/thinking-in-react",
+        "type": "docs",
+        "description": "A useful model for breaking a spec down into a structured technical plan."
+      },
+      {
+        "title": "web.dev — Rendering on the Web",
+        "url": "https://web.dev/articles/rendering-on-the-web",
+        "type": "docs",
+        "description": "Reference for the rendering-strategy decision in Milestone 2."
+      }
+    ],
+    "portfolioTips": [
+      {
+        "category": "resume",
+        "bullet": "Translated an ambiguous product spec into a full technical architecture plan, including state ownership, real-time sync strategy, and rendering approach, with documented tradeoffs."
+      },
+      {
+        "category": "interview",
+        "bullet": "Walk through how you decided which spec ambiguities to resolve yourself versus flag for product clarification."
+      },
+      {
+        "category": "architecture",
+        "bullet": "Discuss the tradeoff you made between real-time collaboration complexity and simpler eventual consistency."
+      }
+    ],
+    "moduleId": "frontend-architecture",
+    "order": 10
   }
 ]

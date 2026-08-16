@@ -10,8 +10,13 @@
         "id": "q1",
         "type": "mcq",
         "question": "What does 'typeof null' evaluate to in JavaScript?",
-        "options": ["'null'", "'object'", "'undefined'", "'number'"],
-        "correctIndex": 1,
+        "options": [
+          "'object'",
+          "'null'",
+          "'undefined'",
+          "'number'"
+        ],
+        "correctIndex": 0,
         "explanation": "This is a historic JS bug. In original JS implementations, values were represented with type tags, and object's tag was 0. Since null was representation pointer NULL (0x00), typeof null evaluates to 'object'."
       },
       {
@@ -24,7 +29,11 @@
           "const z = 30;",
           "function foo() {} in strict mode block"
         ],
-        "correctIndices": [0, 2, 3],
+        "correctIndices": [
+          0,
+          2,
+          3
+        ],
         "explanation": "let and const are block-scoped. Function declarations inside block statements are also block-scoped in ES6 strict mode. var is function-scoped or globally scoped."
       },
       {
@@ -78,7 +87,12 @@
         "type": "code",
         "question": "What will be printed to the console when the following code executes?",
         "codeSnippet": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
-        "options": ["A, B, C, D", "A, D, C, B", "A, D, B, C", "A, C, D, B"],
+        "options": [
+          "A, B, C, D",
+          "A, D, C, B",
+          "A, D, B, C",
+          "A, C, D, B"
+        ],
         "correctIndex": 1,
         "explanation": "Synchronous logs run first ('A', 'D'). Then microtask Promise.then runs ('C'). Finally, macrotask setTimeout runs ('B'). Output: A, D, C, B."
       },
@@ -87,7 +101,11 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the correct ES6 array method to check if at least one element passes a test function:",
         "template": "const hasAdmin = users.______(user => user.role === 'admin');",
-        "acceptedAnswers": ["some", ".some", "some()"],
+        "acceptedAnswers": [
+          "some",
+          ".some",
+          "some()"
+        ],
         "explanation": "Array.prototype.some() returns true if at least one array element passes the test implemented by the callback function."
       }
     ],
@@ -109,12 +127,12 @@
         "type": "mcq",
         "question": "When should you use useLayoutEffect instead of useEffect?",
         "options": [
-          "When you need to measure or write layout before browser paint to prevent visual flicker",
-          "When performing asynchronous data fetching calls",
           "When running long-running computations",
+          "When performing asynchronous data fetching calls",
+          "When you need to measure or write layout before browser paint to prevent visual flicker",
           "Always, as it is faster than useEffect"
         ],
-        "correctIndex": 0,
+        "correctIndex": 2,
         "explanation": "useLayoutEffect fires synchronously after all DOM mutations but before browser paint, preventing visual layout jumps during measurement."
       },
       {
@@ -127,7 +145,11 @@
           "useEffect dependency arrays can safely contain unmemoized object literals created in render",
           "useOptimistic enables optimistic UI updates during background server actions"
         ],
-        "correctIndices": [0, 1, 3],
+        "correctIndices": [
+          0,
+          1,
+          3
+        ],
         "explanation": "Hooks must follow top-level calling rules. React 19 introduced useActionState and useOptimistic. Unmemoized objects in useEffect dependency arrays cause infinite re-renders."
       },
       {
@@ -159,11 +181,11 @@
         "codeSnippet": "function Timer() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    const id = setInterval(() => {\n      setCount(count + 1);\n    }, 1000);\n    return () => clearInterval(id);\n  }, []);\n  return <div>{count}</div>;\n}",
         "options": [
           "Infinite loop re-renders because count is in dependencies",
-          "Stale closure bug: count inside setInterval is locked at 0, so count never increments beyond 1",
+          "Memory leak because setInterval is never cleared",
           "Syntax error in cleanup function return",
-          "Memory leak because setInterval is never cleared"
+          "Stale closure bug: count inside setInterval is locked at 0, so count never increments beyond 1"
         ],
-        "correctIndex": 1,
+        "correctIndex": 3,
         "explanation": "Because the dependency array is empty [], the closure captures count=0. Calling setCount(0+1) repeatedly sets count to 1. Fix by using functional update setCount(prev => prev + 1)."
       },
       {
@@ -171,9 +193,830 @@
         "type": "fill_in_blank",
         "question": "Complete the Hook call to defer a non-urgent UI state recalculation during fast input typing:",
         "template": "const deferredQuery = _________(searchQuery);",
-        "acceptedAnswers": ["useDeferredValue", "React.useDeferredValue"],
+        "acceptedAnswers": [
+          "useDeferredValue",
+          "React.useDeferredValue"
+        ],
         "explanation": "useDeferredValue accepts a value and returns a deferred copy that lags behind urgent state updates to keep rendering responsive."
       }
     ]
+  },
+  {
+    "id": "quiz-html-css-foundations",
+    "title": "Semantic HTML & CSS Layout",
+    "description": "Semantic structure, the box model, specificity, and Flexbox layout fundamentals.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 12,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "Why is <section> generally preferred over <div> for a thematic grouping of content?",
+        "options": [
+          "<section> is a semantic landmark that communicates meaning to assistive technology; <div> carries none",
+          "<div> is deprecated in HTML5",
+          "<section> renders faster",
+          "There's no real difference"
+        ],
+        "correctIndex": 0,
+        "explanation": "Semantic elements like <section> give assistive technology and other tools real structural meaning that a generic <div> doesn't provide."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these increase a CSS selector's specificity? (Select all that apply)",
+        "options": [
+          "An ID selector (#header)",
+          "A class selector (.card)",
+          "A universal selector (*)",
+          "An attribute selector ([type=\"text\"])"
+        ],
+        "correctIndices": [
+          0,
+          1,
+          3
+        ],
+        "explanation": "IDs, classes, and attribute selectors all add specificity. The universal selector (*) adds none."
+      },
+      {
+        "id": "q3",
+        "type": "ordering",
+        "question": "Order these from LOWEST to HIGHEST CSS specificity:",
+        "items": [
+          "element selector (p)",
+          "class selector (.card)",
+          "id selector (#main)",
+          "inline style attribute"
+        ],
+        "correctOrder": [
+          "element selector (p)",
+          "class selector (.card)",
+          "id selector (#main)",
+          "inline style attribute"
+        ],
+        "explanation": "Specificity increases from element < class < id < inline style, with !important overriding all of them regardless of specificity."
+      },
+      {
+        "id": "q4",
+        "type": "code",
+        "question": "Given `.card { padding: 16px; box-sizing: border-box; width: 200px; }`, what is the rendered content-box width?",
+        "codeSnippet": ".card {\n  width: 200px;\n  padding: 16px;\n  box-sizing: border-box;\n}",
+        "options": [
+          "232px total",
+          "200px total, content area shrinks to 168px",
+          "216px total",
+          "184px total"
+        ],
+        "correctIndex": 1,
+        "explanation": "border-box makes padding and border count inward from the specified width, so the element stays 200px total while the content area shrinks to accommodate the 16px padding on each side."
+      },
+      {
+        "id": "q5",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the Flexbox property that distributes extra space between flex items (not around them):",
+        "template": ".container { display: flex; justify-content: ______; }",
+        "acceptedAnswers": [
+          "space-between"
+        ],
+        "explanation": "justify-content: space-between distributes extra space evenly between items, with no space before the first or after the last."
+      }
+    ],
+    "topicId": "semantic-html",
+    "lessonId": "lesson-1-1-1",
+    "moduleId": "module-1-1",
+    "category": "HTML/CSS"
+  },
+  {
+    "id": "quiz-typescript-foundations",
+    "title": "TypeScript Fundamentals",
+    "description": "Type inference, unions and narrowing, generics, and typing real API data.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 15,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "What's the key difference between `any` and `unknown`?",
+        "options": [
+          "They behave identically",
+          "any is only for numbers",
+          "unknown forces a narrowing check before use; any disables checking entirely",
+          "unknown cannot hold objects"
+        ],
+        "correctIndex": 2,
+        "explanation": "unknown is the type-safe alternative to any -- it still accepts any value, but requires narrowing before you can operate on it."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these correctly narrow a `string | number` union inside an if block? (Select all that apply)",
+        "options": [
+          "if (typeof id === 'string')",
+          "if (id instanceof String)",
+          "if (Array.isArray(id))",
+          "if (typeof id === 'number')"
+        ],
+        "correctIndices": [
+          0,
+          3
+        ],
+        "explanation": "typeof checks correctly narrow a string | number union. instanceof String and Array.isArray don't apply to this particular union."
+      },
+      {
+        "id": "q3",
+        "type": "code",
+        "question": "What does this generic function's return type resolve to when called as shown?",
+        "codeSnippet": "function firstElement<T>(arr: T[]): T {\n  return arr[0];\n}\n\nconst result = firstElement(['a', 'b', 'c']);",
+        "options": [
+          "any",
+          "string[]",
+          "T",
+          "string"
+        ],
+        "correctIndex": 3,
+        "explanation": "TypeScript infers T as string from the array argument, so the generic function's return type resolves concretely to string for this call."
+      },
+      {
+        "id": "q4",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank to model a field the API always sends but sometimes as null:",
+        "template": "interface User {\n  avatarUrl: string ______ null;\n}",
+        "acceptedAnswers": [
+          "|"
+        ],
+        "explanation": "A union with null (string | null) models a field that's always present but whose value can be null, distinct from an optional field with `?`."
+      },
+      {
+        "id": "q5",
+        "type": "mcq",
+        "question": "What does `res.json() as ApiUser` actually guarantee?",
+        "options": [
+          "Nothing at runtime -- it's purely a compile-time promise to the type checker",
+          "A real runtime check that the response matches ApiUser",
+          "Automatic validation with a thrown error on mismatch",
+          "That the response is valid JSON"
+        ],
+        "correctIndex": 0,
+        "explanation": "Type assertions perform no runtime validation; if the real API response doesn't match, nothing catches the mismatch until something downstream breaks."
+      }
+    ],
+    "topicId": "union-types-and-narrowing",
+    "lessonId": "lesson-2-5-5",
+    "moduleId": "module-2-5",
+    "category": "TypeScript"
+  },
+  {
+    "id": "quiz-testing-fundamentals",
+    "title": "Testing with Vitest & React Testing Library",
+    "description": "Unit vs. component vs. integration tests, RTL query priority, and avoiding over-mocking.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 14,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "What does an integration test verify that a unit test alone cannot?",
+        "options": [
+          "Code style",
+          "That several real units actually work correctly together, not just in isolation",
+          "TypeScript types",
+          "CSS specificity"
+        ],
+        "correctIndex": 1,
+        "explanation": "Integration tests exercise multiple real pieces together, catching wiring problems that isolated unit tests can't surface."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these are reasons React Testing Library favors getByRole over getByTestId? (Select all that apply)",
+        "options": [
+          "It mirrors how assistive technology perceives the page",
+          "It's the only query type available in RTL",
+          "A passing test doubles as a lightweight accessibility check",
+          "getByTestId is deprecated"
+        ],
+        "correctIndices": [
+          0,
+          2
+        ],
+        "explanation": "Role-based queries reflect real user/assistive-tech perception of the page and act as a bonus accessibility signal -- getByTestId still exists and isn't deprecated, it's just a weaker signal."
+      },
+      {
+        "id": "q3",
+        "type": "ordering",
+        "question": "Order these steps of the arrange-act-assert testing pattern:",
+        "items": [
+          "Render the component with initial props",
+          "Simulate the user interaction (click, type)",
+          "Assert on the resulting visible output"
+        ],
+        "correctOrder": [
+          "Render the component with initial props",
+          "Simulate the user interaction (click, type)",
+          "Assert on the resulting visible output"
+        ],
+        "explanation": "Arrange (render with initial state) comes first, then act (simulate interaction), then assert (check the outcome)."
+      },
+      {
+        "id": "q4",
+        "type": "code",
+        "question": "Why does this test fail to actually verify the intended behavior?",
+        "codeSnippet": "vi.mock('./validateEmail', () => ({\n  validateEmail: () => true\n}));\n\ntest('rejects an invalid email', async () => {\n  render(<SignupForm onSubmit={vi.fn()} />);\n  await user.type(screen.getByLabelText('Email'), 'not-an-email');\n  await user.click(screen.getByRole('button', { name: 'Sign up' }));\n});",
+        "options": [
+          "It's missing an await",
+          "getByLabelText doesn't exist",
+          "It mocks the exact validation logic it claims to test, and never asserts on the outcome",
+          "It uses the wrong button role"
+        ],
+        "correctIndex": 2,
+        "explanation": "The mock always returns true, so the real validation logic never runs -- and there's no assertion checking for the expected error message either."
+      },
+      {
+        "id": "q5",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the Testing Library API that mocks network requests at the network boundary:",
+        "template": "import { setupServer } from '______/node';",
+        "acceptedAnswers": [
+          "msw",
+          "MSW"
+        ],
+        "explanation": "Mock Service Worker (MSW) intercepts requests at the network level, letting your real fetching code run against a faked server response."
+      }
+    ],
+    "topicId": "integration-tests",
+    "lessonId": "lesson-4-3-4",
+    "moduleId": "module-4-3",
+    "category": "Testing"
+  },
+  {
+    "id": "quiz-accessibility-fundamentals",
+    "title": "Web Accessibility (WCAG) Fundamentals",
+    "description": "Semantic interfaces, keyboard navigation, focus management, and accessible names.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 14,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "What is the 'first rule of ARIA'?",
+        "options": [
+          "Add role attributes to every element",
+          "ARIA should only be used in forms",
+          "Always include aria-label",
+          "Use a native HTML element with the right semantics instead of patching a div with ARIA"
+        ],
+        "correctIndex": 3,
+        "explanation": "The first rule of ARIA use is to prefer a native element that already has the needed semantics and behavior, since ARIA alone doesn't grant things like keyboard interaction."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these are legitimate uses of tabindex=\"-1\"? (Select all that apply)",
+        "options": [
+          "Removing an element from the natural Tab sequence while still allowing programmatic focus",
+          "Moving focus into a modal on open via .focus()",
+          "Making an element the very first stop in Tab order",
+          "Disabling an element entirely"
+        ],
+        "correctIndices": [
+          0,
+          1
+        ],
+        "explanation": "tabindex=\"-1\" removes an element from the Tab sequence but still allows it to receive focus programmatically -- exactly what's needed to move focus into a modal on open."
+      },
+      {
+        "id": "q3",
+        "type": "code",
+        "question": "What's wrong with this button in terms of accessibility?",
+        "codeSnippet": "<button><svg>...</svg></button>",
+        "options": [
+          "It has no accessible name -- a screen reader announces it as just 'button' with no purpose",
+          "It's missing an onClick handler",
+          "SVG can't be used inside a button",
+          "It needs a type attribute"
+        ],
+        "correctIndex": 0,
+        "explanation": "An icon-only button with no text content or aria-label has no accessible name, so a screen reader user has no idea what it does."
+      },
+      {
+        "id": "q4",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the attribute that gives this icon-only button an accessible name:",
+        "template": "<button ______=\"Close menu\"><svg>...</svg></button>",
+        "acceptedAnswers": [
+          "aria-label"
+        ],
+        "explanation": "aria-label supplies an accessible name directly as a string, which is exactly what an icon-only button with no visible text needs."
+      },
+      {
+        "id": "q5",
+        "type": "mcq",
+        "question": "Why is `button:focus { outline: none; }` alone considered an accessibility regression?",
+        "options": [
+          "It slows down rendering",
+          "It removes the only visual indicator of keyboard focus without providing any replacement",
+          "It's a CSS syntax error",
+          "It disables the button"
+        ],
+        "correctIndex": 1,
+        "explanation": "Removing the focus outline with no replacement leaves keyboard users with no way to see where they currently are on the page."
+      }
+    ],
+    "topicId": "semantic-interfaces",
+    "lessonId": "lesson-4-4-2",
+    "moduleId": "module-4-4",
+    "category": "Accessibility"
+  },
+  {
+    "id": "quiz-security-fundamentals",
+    "title": "Frontend Security: XSS, CSRF & CORS",
+    "description": "Cross-site scripting, cross-site request forgery, CORS, and safe token storage.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 16,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "Why is plain JSX interpolation like `<p>{text}</p>` safe from XSS by default?",
+        "options": [
+          "React blocks all user content",
+          "Browsers block script tags entirely",
+          "JSX escapes interpolated values automatically instead of rendering them as executable HTML",
+          "It isn't safe by default"
+        ],
+        "correctIndex": 2,
+        "explanation": "React's JSX interpolation escapes values by default -- the safety only breaks when you explicitly opt out with dangerouslySetInnerHTML or a similar API."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these mitigate CSRF? (Select all that apply)",
+        "options": [
+          "SameSite cookies",
+          "CSRF tokens",
+          "The same-origin policy alone",
+          "Storing the token in localStorage instead of a cookie"
+        ],
+        "correctIndices": [
+          0,
+          1
+        ],
+        "explanation": "SameSite cookies and CSRF tokens directly address CSRF. The same-origin policy alone doesn't prevent it (it blocks reading the response, not sending the forged request), and moving to localStorage trades one risk (CSRF) for another (XSS-based token theft)."
+      },
+      {
+        "id": "q3",
+        "type": "code",
+        "question": "What class of vulnerability does this code introduce if `text` comes from user input?",
+        "codeSnippet": "function Comment({ text }) {\n  return <div dangerouslySetInnerHTML={{ __html: text }} />;\n}",
+        "options": [
+          "SQL injection",
+          "CORS misconfiguration",
+          "CSRF",
+          "Stored XSS"
+        ],
+        "correctIndex": 3,
+        "explanation": "Rendering untrusted content as raw HTML allows an attacker's injected script to execute in any other user's browser who views that content -- a classic stored XSS vector."
+      },
+      {
+        "id": "q4",
+        "type": "ordering",
+        "question": "Order these from LEAST to MOST protected token storage approach:",
+        "items": [
+          "localStorage with no other protections",
+          "sessionStorage with no other protections",
+          "httpOnly cookie without SameSite",
+          "httpOnly, Secure, SameSite=Strict cookie"
+        ],
+        "correctOrder": [
+          "localStorage with no other protections",
+          "sessionStorage with no other protections",
+          "httpOnly cookie without SameSite",
+          "httpOnly, Secure, SameSite=Strict cookie"
+        ],
+        "explanation": "localStorage and sessionStorage are both readable by any page JavaScript (XSS-vulnerable); httpOnly closes that gap but still needs Secure and SameSite to be fully protected against interception and CSRF."
+      },
+      {
+        "id": "q5",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the cookie flag that makes it invisible to JavaScript entirely:",
+        "template": "Set-Cookie: session=abc123; ______; Secure; SameSite=Strict",
+        "acceptedAnswers": [
+          "HttpOnly",
+          "httpOnly",
+          "httponly"
+        ],
+        "explanation": "HttpOnly prevents JavaScript from reading the cookie via document.cookie, closing the exact access an XSS payload would need to steal it."
+      }
+    ],
+    "topicId": "xss-and-input-sanitization",
+    "lessonId": "lesson-4-6-2",
+    "moduleId": "module-4-6",
+    "category": "Security"
+  },
+  {
+    "id": "quiz-performance-fundamentals",
+    "title": "Rendering Performance & Core Web Vitals",
+    "description": "Memoization, code splitting, error boundaries, and measuring real performance.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 15,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "What does CLS (Cumulative Layout Shift) measure?",
+        "options": [
+          "How much visible content unexpectedly shifts position during load",
+          "How long the largest element takes to render",
+          "How responsive the page is to clicks",
+          "Total JavaScript bundle size"
+        ],
+        "correctIndex": 0,
+        "explanation": "CLS captures unexpected visual movement during load -- content jumping just as a user is about to interact with it."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these directly reduce the amount of JavaScript shipped to the browser? (Select all that apply)",
+        "options": [
+          "Code splitting with lazy loading",
+          "Using React Server Components for non-interactive content",
+          "Adding more useEffect calls",
+          "Removing an unused dependency"
+        ],
+        "correctIndices": [
+          0,
+          1,
+          3
+        ],
+        "explanation": "Code splitting, Server Components, and removing unused dependencies all reduce client bundle size. Adding more effects doesn't reduce bundle size."
+      },
+      {
+        "id": "q3",
+        "type": "code",
+        "question": "What's wrong with this error boundary usage?",
+        "codeSnippet": "function App() {\n  return (\n    <ErrorBoundary fallback={<p>Something went wrong.</p>}>\n      <Nav />\n      <MainContent />\n      <StockTicker />\n    </ErrorBoundary>\n  );\n}",
+        "options": [
+          "ErrorBoundary must be a function component",
+          "A single app-wide boundary means any failure anywhere, even in StockTicker, blanks the entire page including Nav",
+          "fallback must be a string",
+          "It's missing a componentDidCatch"
+        ],
+        "correctIndex": 1,
+        "explanation": "Wrapping the whole app in one boundary means a crash in any single risky component takes the entire page down -- boundaries should be scoped around specific risky sections."
+      },
+      {
+        "id": "q4",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the React API used to stream in a slow, non-critical section without blocking the rest of the page:",
+        "template": "<______ fallback={<ReviewsSkeleton />}>\n  <Reviews />\n</______>",
+        "acceptedAnswers": [
+          "Suspense"
+        ],
+        "explanation": "Suspense lets a slow section render its fallback immediately while the rest of the page loads, streaming in the real content when ready."
+      },
+      {
+        "id": "q5",
+        "type": "mcq",
+        "question": "Why is Lighthouse data called 'lab data' rather than 'field data'?",
+        "options": [
+          "It only works in a physical lab",
+          "It requires a lab license",
+          "It's a synthetic, single-run audit under simulated conditions, not a record of real user experience",
+          "There's no real difference"
+        ],
+        "correctIndex": 2,
+        "explanation": "Lighthouse runs a controlled, simulated audit -- useful for catching regressions, but real field data from actual users reflects true device and network diversity."
+      }
+    ],
+    "topicId": "performance-measurement-and-budgets",
+    "lessonId": "lesson-4-5-9",
+    "moduleId": "module-4-5",
+    "category": "Performance"
+  },
+  {
+    "id": "quiz-nextjs-architecture",
+    "title": "Next.js Server Components & Rendering Strategy",
+    "description": "Server vs. Client Components, data fetching, Server Actions, and choosing a rendering strategy.",
+    "difficulty": "Advanced",
+    "estimatedMinutes": 15,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "Why can't you use useState inside a Server Component?",
+        "options": [
+          "useState is deprecated",
+          "useState only works with TypeScript",
+          "It's a naming conflict",
+          "Server Components render once on the server with no browser runtime for a hook to attach to"
+        ],
+        "correctIndex": 3,
+        "explanation": "Hooks like useState depend on a live browser runtime that re-renders on state changes -- Server Components produce static output on the server with no such runtime."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these require a Server Component to fetch data (rather than useEffect + fetch)? (Select all that apply)",
+        "options": [
+          "A page's initial data that's known before the component mounts",
+          "Search-as-you-type results triggered by ongoing user interaction",
+          "A product page's description fetched from a database",
+          "Live-polling data that updates after the page has loaded"
+        ],
+        "correctIndices": [
+          0,
+          2
+        ],
+        "explanation": "Server Components handle a page's initial data well since they run before anything reaches the browser. Data that changes after load based on ongoing interaction (search-as-you-type, polling) still needs client-side fetching."
+      },
+      {
+        "id": "q3",
+        "type": "code",
+        "question": "What's the fix for this component, which only needs 'use client' for one small piece?",
+        "codeSnippet": "'use client';\n\nasync function ProductPage({ params }) {\n  const product = await getProduct(params.id);\n  return (\n    <div>\n      <h1>{product.name}</h1>\n      <LikeButton />\n    </div>\n  );\n}",
+        "options": [
+          "Remove 'use client' from ProductPage and extract LikeButton into its own small Client Component",
+          "Remove 'use client' from the whole file entirely",
+          "Add 'use server' as well",
+          "Nothing is wrong"
+        ],
+        "correctIndex": 0,
+        "explanation": "Marking a whole page 'use client' to support one interactive piece loses server-rendering benefits for everything else; extracting just LikeButton keeps ProductPage as a Server Component."
+      },
+      {
+        "id": "q4",
+        "type": "ordering",
+        "question": "Order these rendering strategies from FRESHEST-per-request to LEAST fresh:",
+        "items": [
+          "SSR (per-request rendering)",
+          "ISR (periodic background regeneration)",
+          "SSG (build-time only, never regenerated)"
+        ],
+        "correctOrder": [
+          "SSR (per-request rendering)",
+          "ISR (periodic background regeneration)",
+          "SSG (build-time only, never regenerated)"
+        ],
+        "explanation": "SSR is freshest since it renders on every request; ISR refreshes periodically in the background; SSG is only as fresh as the last build with no further regeneration."
+      },
+      {
+        "id": "q5",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the directive that marks a function as callable directly from a form without a manually written API endpoint:",
+        "template": "async function createProduct(formData) {\n  '______';\n  // ...\n}",
+        "acceptedAnswers": [
+          "use server"
+        ],
+        "explanation": "'use server' marks a function as a Server Action, letting Next.js handle the network call automatically when it's invoked from a form or client interaction."
+      }
+    ],
+    "topicId": "server-components-vs-client-components",
+    "lessonId": "lesson-5-6-3",
+    "moduleId": "module-5-6",
+    "category": "Architecture"
+  },
+  {
+    "id": "quiz-git-fundamentals",
+    "title": "Git & Version Control Workflow",
+    "description": "Merge vs. rebase, resolving conflicts, and a professional PR workflow.",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 10,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "What's the key difference between git merge and git rebase?",
+        "options": [
+          "They produce identical results",
+          "merge creates a new commit joining two histories; rebase replays commits on top of another branch for a linear history",
+          "rebase is only for deleting branches",
+          "merge only works on the main branch"
+        ],
+        "correctIndex": 1,
+        "explanation": "merge preserves both branches' history with a merge commit; rebase rewrites history to appear linear by replaying commits."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "What causes a merge conflict? (Select all that apply)",
+        "options": [
+          "Both branches modified the same lines differently",
+          "One branch deleted a file the other branch modified",
+          "Both branches added the exact same new file with identical content",
+          "Git can't automatically determine how to reconcile the changes"
+        ],
+        "correctIndices": [
+          0,
+          1,
+          3
+        ],
+        "explanation": "Conflicts arise when Git can't automatically reconcile changes -- typically overlapping edits or a delete/modify conflict. Identical additions merge cleanly without conflict."
+      },
+      {
+        "id": "q3",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the command that stages all changes in the current directory:",
+        "template": "git ______ .",
+        "acceptedAnswers": [
+          "add"
+        ],
+        "explanation": "git add . stages all changed files in the current directory (and below) for the next commit."
+      },
+      {
+        "id": "q4",
+        "type": "code",
+        "question": "What will happen when you run this sequence?",
+        "codeSnippet": "git checkout feature-branch\ngit merge main\n# main has a commit changing line 10 of app.js\n# feature-branch has a different commit also changing line 10 of app.js",
+        "options": [
+          "Git silently picks main's version",
+          "Git automatically creates a new file app.js.bak",
+          "Git reports a merge conflict on app.js and pauses for manual resolution",
+          "The merge is rejected entirely and no changes apply"
+        ],
+        "correctIndex": 2,
+        "explanation": "When both branches modify the same lines differently, Git can't automatically reconcile them and pauses with a merge conflict for manual resolution."
+      },
+      {
+        "id": "q5",
+        "type": "mcq",
+        "question": "What does `git rebase -i` (interactive rebase) commonly get used for?",
+        "options": [
+          "Deleting a remote repository",
+          "Installing Git hooks",
+          "Creating a new branch",
+          "Squashing, reordering, or editing commits before they're shared"
+        ],
+        "correctIndex": 3,
+        "explanation": "Interactive rebase lets you rewrite local commit history -- squashing related commits together, reordering them, or editing messages -- typically before pushing or opening a PR."
+      }
+    ],
+    "topicId": "version-control-workflow",
+    "lessonId": "lesson-2-3-1",
+    "moduleId": "module-2-3",
+    "category": "Git"
+  },
+  {
+    "id": "quiz-apis-and-data-fetching",
+    "title": "APIs, HTTP & Data Fetching",
+    "description": "HTTP status codes, REST conventions, caching, and client-side data-fetching patterns.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 14,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "What's the difference between a 401 and a 403 HTTP status code?",
+        "options": [
+          "401 means authentication is missing/invalid; 403 means you're authenticated but not permitted",
+          "They're interchangeable",
+          "401 is client-side only",
+          "403 means the server crashed"
+        ],
+        "correctIndex": 0,
+        "explanation": "401 Unauthorized signals missing or invalid authentication; 403 Forbidden means you're authenticated but still not allowed to access the resource."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these HTTP methods are conventionally idempotent? (Select all that apply)",
+        "options": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE"
+        ],
+        "correctIndices": [
+          0,
+          2,
+          3
+        ],
+        "explanation": "GET, PUT, and DELETE are conventionally idempotent -- repeating them produces the same end state. POST typically is not, since repeating it can create duplicate resources."
+      },
+      {
+        "id": "q3",
+        "type": "code",
+        "question": "What does fetch() do when the server responds with a 500 status code?",
+        "codeSnippet": "const res = await fetch('/api/data');\nconsole.log(res.ok); // ?",
+        "options": [
+          "fetch() throws, so this line never runs",
+          "res.ok is false, but the promise still resolves normally -- no automatic throw",
+          "res.ok is true because the request completed",
+          "The response body is automatically null"
+        ],
+        "correctIndex": 1,
+        "explanation": "fetch only rejects on genuine network failures, not on HTTP error statuses -- a 500 still resolves the promise, just with res.ok set to false, and you have to check it explicitly."
+      },
+      {
+        "id": "q4",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank with the HTTP method that applies a partial update to specific fields of a resource:",
+        "template": "fetch('/api/users/1', { method: '______', body: JSON.stringify({ name: 'New Name' }) });",
+        "acceptedAnswers": [
+          "PATCH"
+        ],
+        "explanation": "PATCH applies a partial update to specific fields; PUT is conventionally used to replace the entire resource."
+      },
+      {
+        "id": "q5",
+        "type": "ordering",
+        "question": "Order these caching freshness strategies from FRESHEST to LEAST fresh, per request:",
+        "items": [
+          "cache: 'no-store' (always refetch)",
+          "next: { revalidate: 60 } (revalidate periodically)",
+          "cache: 'force-cache' (cache indefinitely)"
+        ],
+        "correctOrder": [
+          "cache: 'no-store' (always refetch)",
+          "next: { revalidate: 60 } (revalidate periodically)",
+          "cache: 'force-cache' (cache indefinitely)"
+        ],
+        "explanation": "no-store always fetches fresh data; a revalidate interval refreshes periodically in the background; force-cache serves the same cached response indefinitely until invalidated."
+      }
+    ],
+    "topicId": "api-integration",
+    "lessonId": "lesson-2-4-1",
+    "moduleId": "module-2-4",
+    "category": "APIs"
+  },
+  {
+    "id": "quiz-debugging-fundamentals",
+    "title": "Debugging & Reading Stack Traces",
+    "description": "Reading stack traces, source maps, and systematic debugging under pressure.",
+    "difficulty": "Intermediate",
+    "estimatedMinutes": 13,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "question": "Why is a minified production stack trace hard to read without source maps?",
+        "options": [
+          "Minification removes all error messages",
+          "Stack traces are disabled in production builds",
+          "Minified code strips readable names and collapses structure, so line/column numbers don't map to meaningful source locations",
+          "Source maps are only needed in development"
+        ],
+        "correctIndex": 2,
+        "explanation": "Minification trades readability for smaller bundle size; a source map is what lets an error tracker reconstruct the original file/line/function from a minified trace."
+      },
+      {
+        "id": "q2",
+        "type": "multiple",
+        "question": "Which of these are useful first steps when debugging an unfamiliar stack trace? (Select all that apply)",
+        "options": [
+          "Identify which frame is actually in your own code vs. a library",
+          "Immediately rewrite the whole function from scratch",
+          "Check what the error message and error type actually say, not just the location",
+          "Reproduce it locally with the same inputs if possible"
+        ],
+        "correctIndices": [
+          0,
+          2,
+          3
+        ],
+        "explanation": "Isolating your own code in the trace, reading the actual error message/type carefully, and reproducing locally are all productive first steps. Rewriting blind, before understanding the cause, tends to waste time or introduce new bugs."
+      },
+      {
+        "id": "q3",
+        "type": "code",
+        "question": "This error message is common in React apps. What's the most likely cause?",
+        "codeSnippet": "TypeError: Cannot read properties of undefined (reading 'map')",
+        "options": [
+          "A syntax error in JSX",
+          "The component is missing a key prop",
+          "React itself has a bug",
+          "Code is calling .map() on a value that's undefined, often data that hasn't loaded yet"
+        ],
+        "correctIndex": 3,
+        "explanation": "This is a classic sign of calling .map() on data before it's actually loaded -- commonly needs a loading-state guard or a default empty array before the data arrives."
+      },
+      {
+        "id": "q4",
+        "type": "fill_in_blank",
+        "question": "Fill in the blank: an error boundary catches errors thrown during ______, but not inside event handlers.",
+        "template": "An error boundary catches errors thrown during ______, but not inside event handlers.",
+        "acceptedAnswers": [
+          "rendering",
+          "render"
+        ],
+        "explanation": "Error boundaries catch errors in rendering, lifecycle methods, and constructors of their child tree -- event handler errors need their own try/catch."
+      },
+      {
+        "id": "q5",
+        "type": "mcq",
+        "question": "Why is 'thinking out loud' during a live debugging interview considered a good practice, not just filler talk?",
+        "options": [
+          "It gives the interviewer visibility into your reasoning process, not just the eventual answer",
+          "It fills silence for its own sake",
+          "It's required by most interview platforms",
+          "It makes the debugging session shorter"
+        ],
+        "correctIndex": 0,
+        "explanation": "Narrating your reasoning lets an interviewer follow and evaluate your problem-solving process, which is often what's actually being assessed -- not just whether you land on the right answer."
+      }
+    ],
+    "topicId": "reading-stack-traces",
+    "lessonId": "lesson-5-3-1",
+    "moduleId": "module-5-3",
+    "category": "Debugging"
   }
 ]

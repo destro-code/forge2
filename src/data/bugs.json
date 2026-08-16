@@ -4,7 +4,12 @@
     "title": "The Counter That Lies (Stale Closure)",
     "category": "hooks",
     "difficulty": "Intermediate",
-    "tags": ["React", "Hooks", "useEffect", "Closures"],
+    "tags": [
+      "React",
+      "Hooks",
+      "useEffect",
+      "Closures"
+    ],
     "estimatedMinutes": 15,
     "brief": "A counter component increments once from 0 to 1 and then freezes. Fix the stale closure bug.",
     "symptoms": [
@@ -47,7 +52,12 @@
     "title": "The Jumping Hero Banner (CLS)",
     "category": "css",
     "difficulty": "Beginner",
-    "tags": ["CSS", "CLS", "Performance", "Aspect Ratio"],
+    "tags": [
+      "CSS",
+      "CLS",
+      "Performance",
+      "Aspect Ratio"
+    ],
     "estimatedMinutes": 10,
     "brief": "Dynamic hero banner images load asynchronously and push lower layout elements down abruptly, causing a bad CLS score.",
     "symptoms": [
@@ -90,7 +100,12 @@
     "title": "The Slow Resizing Tab (Retained Event Listener)",
     "category": "memory_leak",
     "difficulty": "Advanced",
-    "tags": ["JavaScript", "Memory Leak", "Event Listeners", "Cleanup"],
+    "tags": [
+      "JavaScript",
+      "Memory Leak",
+      "Event Listeners",
+      "Cleanup"
+    ],
     "estimatedMinutes": 20,
     "brief": "A window resize handler is registered inside useEffect without an unmount cleanup function, causing memory leaks.",
     "symptoms": [
@@ -133,7 +148,12 @@
     "title": "Out-of-Order Search Results (Network Race)",
     "category": "network",
     "difficulty": "Intermediate",
-    "tags": ["Async", "Network", "Fetch", "AbortController"],
+    "tags": [
+      "Async",
+      "Network",
+      "Fetch",
+      "AbortController"
+    ],
     "estimatedMinutes": 20,
     "brief": "Rapid search input displays stale results from earlier, slower network responses instead of the latest search query.",
     "symptoms": [
@@ -176,7 +196,12 @@
     "title": "Unlabeled Icon Buttons & Focus Leak (Accessibility)",
     "category": "a11y",
     "difficulty": "Beginner",
-    "tags": ["Accessibility", "A11y", "ARIA", "Keyboard Navigation"],
+    "tags": [
+      "Accessibility",
+      "A11y",
+      "ARIA",
+      "Keyboard Navigation"
+    ],
     "estimatedMinutes": 15,
     "brief": "Icon-only buttons lack accessible names for screen readers, and custom popovers fail keyboard focus control.",
     "symptoms": [
@@ -219,7 +244,12 @@
     "title": "The Laggy Product Data Grid (Unmemoized Callbacks)",
     "category": "performance",
     "difficulty": "Advanced",
-    "tags": ["React", "Performance", "useCallback", "React.memo"],
+    "tags": [
+      "React",
+      "Performance",
+      "useCallback",
+      "React.memo"
+    ],
     "estimatedMinutes": 25,
     "brief": "Passing new object literals and unmemoized callbacks into list items causes 500+ child components to re-render on every keystroke.",
     "symptoms": [
@@ -262,7 +292,12 @@
     "title": "Cannot read properties of undefined (reading 'map')",
     "category": "console_error",
     "difficulty": "Beginner",
-    "tags": ["Console Error", "JavaScript", "Nullish Coalescing", "Optional Chaining"],
+    "tags": [
+      "Console Error",
+      "JavaScript",
+      "Nullish Coalescing",
+      "Optional Chaining"
+    ],
     "estimatedMinutes": 10,
     "brief": "Accessing array methods on asynchronous state before initial fetch completes triggers a blank screen runtime crash.",
     "symptoms": [
@@ -305,7 +340,12 @@
     "title": "Broken React App: The Uncapped Re-render Storm",
     "category": "react_app",
     "difficulty": "Intermediate",
-    "tags": ["React", "Hooks", "useEffect", "Infinite Loop"],
+    "tags": [
+      "React",
+      "Hooks",
+      "useEffect",
+      "Infinite Loop"
+    ],
     "estimatedMinutes": 15,
     "brief": "Updating state directly inside an un-guarded useEffect dependency array creates an infinite render cycle that freezes the browser.",
     "symptoms": [
@@ -342,5 +382,381 @@
     "topicId": "useeffect",
     "moduleId": "react-professional",
     "order": 8
+  },
+  {
+    "id": "unsafe-type-assertion",
+    "title": "The Cart Total That Isn't a Number (Unsafe Type Assertion)",
+    "category": "typescript",
+    "difficulty": "Intermediate",
+    "tags": [
+      "TypeScript",
+      "Type Assertions",
+      "API Data"
+    ],
+    "estimatedMinutes": 12,
+    "brief": "A cart total renders as 'NaN' in production even though TypeScript reports no errors. Find where an unsafe type assertion let bad data through.",
+    "symptoms": [
+      "TypeScript compiles with zero errors",
+      "Cart total displays 'NaN' whenever a product's price field is missing from the API response",
+      "No runtime error is thrown -- the page just shows wrong data"
+    ],
+    "brokenCode": "interface Product {\n  id: number;\n  name: string;\n  price: number;\n}\n\nasync function getCartTotal(cartId: string): Promise<number> {\n  const res = await fetch(`/api/cart/${cartId}`);\n  const items = await res.json() as Product[]; // ❌ blind assertion, no real check\n  return items.reduce((sum, item) => sum + item.price, 0);\n}",
+    "fixedCode": "interface Product {\n  id: number;\n  name: string;\n  price: number;\n}\n\nfunction isProduct(value: unknown): value is Product {\n  return (\n    typeof value === 'object' && value !== null &&\n    typeof (value as any).price === 'number'\n  );\n}\n\nasync function getCartTotal(cartId: string): Promise<number> {\n  const res = await fetch(`/api/cart/${cartId}`);\n  const data: unknown = await res.json();\n  const items = Array.isArray(data) ? data.filter(isProduct) : [];\n  return items.reduce((sum, item) => sum + item.price, 0);\n}",
+    "hints": [
+      {
+        "title": "What does 'as Product[]' actually check?",
+        "content": "Nothing at runtime -- 'as' is a compile-time-only promise to the type checker. If the real API response doesn't match, TypeScript won't catch it."
+      },
+      {
+        "title": "Type unknown, then narrow",
+        "content": "Typing the parsed response as unknown and writing a real runtime check (a type guard) catches the mismatch instead of silently trusting it."
+      }
+    ],
+    "explanation": "A type assertion (as Product[]) tells TypeScript to trust your model without verifying it -- it performs no runtime check. When the API sends an item missing a price field, the assertion still succeeds at compile time, and the missing value quietly becomes undefined, turning the sum into NaN with no error anywhere. Typing the response as unknown and validating it with a real type guard (or a schema validator) closes this gap.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Handles missing price field",
+        "description": "Verifies the function doesn't silently produce NaN when an item is missing its price."
+      },
+      {
+        "id": "tc-2",
+        "name": "Correct total for valid data",
+        "description": "Verifies the total is still computed correctly for a normal, well-formed response."
+      }
+    ],
+    "interactiveType": "cart_total_nan",
+    "topicId": "typing-real-world-data",
+    "moduleId": "language-mastery",
+    "order": 9
+  },
+  {
+    "id": "unsanitized-comment-render",
+    "title": "The Comment That Ran a Script (Stored XSS)",
+    "category": "security",
+    "difficulty": "Advanced",
+    "tags": [
+      "Security",
+      "XSS",
+      "Sanitization"
+    ],
+    "estimatedMinutes": 15,
+    "brief": "A comment section renders user-submitted HTML directly. Find and fix the stored XSS vulnerability without breaking legitimate rich-text comments.",
+    "symptoms": [
+      "A comment containing a <script> tag executes when any user views the page",
+      "The vulnerability persists for every viewer, not just the person who posted it",
+      "No error appears in the console -- the injected script simply runs"
+    ],
+    "brokenCode": "function Comment({ text }) {\n  return <div dangerouslySetInnerHTML={{ __html: text }} />;\n}",
+    "fixedCode": "import DOMPurify from 'dompurify';\n\nfunction Comment({ text }) {\n  const clean = DOMPurify.sanitize(text);\n  return <div dangerouslySetInnerHTML={{ __html: clean }} />;\n}",
+    "hints": [
+      {
+        "title": "Where does React's default safety break?",
+        "content": "Plain JSX interpolation like {text} escapes content automatically. dangerouslySetInnerHTML explicitly opts out of that protection."
+      },
+      {
+        "title": "Don't hand-roll sanitization",
+        "content": "Use a maintained library like DOMPurify rather than writing your own escaping logic -- XSS payload variations are easy to miss by hand."
+      }
+    ],
+    "explanation": "This is stored XSS: the malicious payload is saved with the comment and executes for every subsequent viewer, since dangerouslySetInnerHTML renders the raw string as real HTML rather than escaping it. Since this component has a genuine need to render rich text, the fix isn't to remove dangerouslySetInnerHTML -- it's to run the content through a sanitization library like DOMPurify first, stripping executable content while preserving legitimate formatting.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Strips script tags",
+        "description": "Verifies a comment containing a <script> tag no longer executes after sanitization."
+      },
+      {
+        "id": "tc-2",
+        "name": "Preserves legitimate formatting",
+        "description": "Verifies safe tags like <b> and <em> still render correctly after sanitization."
+      }
+    ],
+    "interactiveType": "comment_xss",
+    "topicId": "xss-and-input-sanitization",
+    "moduleId": "security-fundamentals",
+    "order": 9
+  },
+  {
+    "id": "over-mocked-validation-test",
+    "title": "The Test That Tests Nothing (Over-Mocked Validation)",
+    "category": "testing",
+    "difficulty": "Intermediate",
+    "tags": [
+      "Testing",
+      "Mocking",
+      "Vitest"
+    ],
+    "estimatedMinutes": 12,
+    "brief": "A signup form's test suite is green, but a real validation bug still shipped to production. Find why the test can't actually catch it.",
+    "symptoms": [
+      "The test suite passes with 100% green checks",
+      "A user reported that invalid emails are being accepted in production",
+      "The relevant test claims to cover 'invalid email rejection'"
+    ],
+    "brokenCode": "vi.mock('./validateEmail', () => ({\n  validateEmail: () => true // ❌ always returns true\n}));\n\ntest('rejects an invalid email', async () => {\n  const user = userEvent.setup();\n  render(<SignupForm onSubmit={vi.fn()} />);\n  await user.type(screen.getByLabelText('Email'), 'not-an-email');\n  await user.click(screen.getByRole('button', { name: 'Sign up' }));\n  // no assertion actually checks for a validation error message\n});",
+    "fixedCode": "test('rejects an invalid email', async () => {\n  const user = userEvent.setup();\n  render(<SignupForm onSubmit={vi.fn()} />); // real validateEmail runs, not mocked\n  await user.type(screen.getByLabelText('Email'), 'not-an-email');\n  await user.click(screen.getByRole('button', { name: 'Sign up' }));\n  expect(screen.getByRole('alert')).toHaveTextContent('Enter a valid email.');\n});",
+    "hints": [
+      {
+        "title": "What is validateEmail's mock actually doing?",
+        "content": "The mock always returns true, meaning the exact validation logic the test claims to verify never actually runs during the test."
+      },
+      {
+        "title": "Mock the boundary, not the logic under test",
+        "content": "Only mock genuine external boundaries (network, timers). Mocking the function you're trying to verify defeats the test's purpose."
+      }
+    ],
+    "explanation": "This test mocked validateEmail directly, replacing the real logic with a function that always returns true -- so the test could never have caught the validation bug, no matter how broken the real implementation was. It also never actually asserted anything about the resulting UI. The fix is to let the real validation logic run (remove the mock) and assert on the user-visible outcome: a validation error message appearing for invalid input.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Real validation logic executes",
+        "description": "Verifies the test no longer mocks out the function it claims to be testing."
+      },
+      {
+        "id": "tc-2",
+        "name": "Asserts on visible error",
+        "description": "Verifies the test actually checks for a user-visible validation error message."
+      }
+    ],
+    "interactiveType": "mocked_validation",
+    "topicId": "integration-tests",
+    "moduleId": "testing-and-tooling",
+    "order": 9
+  },
+  {
+    "id": "unscoped-error-boundary",
+    "title": "One Bad Widget, One Blank Page (Unscoped Error Boundary)",
+    "category": "react_app",
+    "difficulty": "Intermediate",
+    "tags": [
+      "React",
+      "Error Boundaries",
+      "Resilience"
+    ],
+    "estimatedMinutes": 12,
+    "brief": "A single failing third-party widget blanks the entire dashboard, including the navigation. Fix the error boundary scoping without touching the widget itself.",
+    "symptoms": [
+      "When the StockTicker widget throws during render, the whole page goes blank",
+      "Navigation and unrelated dashboard sections disappear along with the broken widget",
+      "The app has exactly one ErrorBoundary, wrapping the entire tree"
+    ],
+    "brokenCode": "function App() {\n  return (\n    <ErrorBoundary fallback={<p>Something went wrong.</p>}>\n      <Nav />\n      <MainContent />\n      <StockTicker />\n    </ErrorBoundary>\n  );\n}",
+    "fixedCode": "function App() {\n  return (\n    <div>\n      <Nav />\n      <MainContent />\n      <ErrorBoundary fallback={<p>Stock data unavailable.</p>}>\n        <StockTicker />\n      </ErrorBoundary>\n    </div>\n  );\n}",
+    "hints": [
+      {
+        "title": "Where should the boundary actually sit?",
+        "content": "Move Nav and MainContent outside the boundary entirely, and wrap only the genuinely risky component."
+      },
+      {
+        "title": "One boundary per independent risky section",
+        "content": "A single app-wide boundary means any failure anywhere blanks the whole page -- barely better than no boundary at all."
+      }
+    ],
+    "explanation": "Wrapping the entire app in one error boundary means a crash anywhere -- even in a minor, non-critical widget -- takes down everything, including navigation the user still needs. Scoping the boundary to just the risky, independent section (here, StockTicker) means only that section shows a fallback while the rest of the page, like Nav and MainContent, keeps working normally.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Nav survives a StockTicker crash",
+        "description": "Verifies Nav and MainContent still render when StockTicker throws."
+      },
+      {
+        "id": "tc-2",
+        "name": "Fallback shows only for the broken section",
+        "description": "Verifies the fallback message appears in place of StockTicker specifically, not the whole page."
+      }
+    ],
+    "interactiveType": "unscoped_boundary",
+    "topicId": "error-boundaries",
+    "moduleId": "performance-and-a11y",
+    "order": 9
+  },
+  {
+    "id": "swallowed-promise-rejection",
+    "title": "The Save That Silently Failed (Swallowed Promise Rejection)",
+    "category": "async",
+    "difficulty": "Intermediate",
+    "tags": [
+      "JavaScript",
+      "Async/Await",
+      "Error Handling"
+    ],
+    "estimatedMinutes": 12,
+    "brief": "A 'Save' button shows no error, but the data never actually persists. Find why the failure is being swallowed silently.",
+    "symptoms": [
+      "Clicking Save shows no error message and no loading indicator gets stuck",
+      "The network tab shows the save request actually failed with a 500",
+      "The UI behaves as if the save succeeded"
+    ],
+    "brokenCode": "async function saveProfile(data) {\n  fetch('/api/profile', {\n    method: 'POST',\n    body: JSON.stringify(data)\n  }); // ❌ missing await, and no error handling at all\n  showSuccessToast();\n}",
+    "fixedCode": "async function saveProfile(data) {\n  try {\n    const res = await fetch('/api/profile', {\n      method: 'POST',\n      body: JSON.stringify(data)\n    });\n    if (!res.ok) {\n      throw new Error(`Save failed with status ${res.status}`);\n    }\n    showSuccessToast();\n  } catch (err) {\n    showErrorToast('Could not save your changes. Please try again.');\n  }\n}",
+    "hints": [
+      {
+        "title": "Is the fetch actually being waited on?",
+        "content": "Without await, showSuccessToast() runs immediately, before the request even resolves -- regardless of whether it succeeds or fails."
+      },
+      {
+        "title": "Does fetch reject on a 500 response?",
+        "content": "fetch only rejects on a network failure, not an HTTP error status -- you have to check res.ok yourself and throw explicitly."
+      }
+    ],
+    "explanation": "Two separate bugs compound here: the missing await means showSuccessToast() runs unconditionally, without ever checking the request's outcome; and even with await added, fetch doesn't reject on a 4xx/5xx response, so a failed save with no res.ok check still looks successful. Both the await and the explicit status check are needed to surface the real failure to the user.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Shows an error toast on a failed save",
+        "description": "Verifies a 500 response triggers a visible error state instead of a silent success toast."
+      },
+      {
+        "id": "tc-2",
+        "name": "Shows success only after a real 2xx response",
+        "description": "Verifies the success toast only appears once the save has genuinely completed."
+      }
+    ],
+    "interactiveType": "swallowed_rejection",
+    "topicId": "async-error-handling",
+    "moduleId": "javascript-deep-dive",
+    "order": 13
+  },
+  {
+    "id": "unreadable-stack-trace",
+    "title": "The Error That Points Nowhere Useful (Minified Stack Trace)",
+    "category": "debugging",
+    "difficulty": "Intermediate",
+    "tags": [
+      "Debugging",
+      "Source Maps",
+      "Production Errors"
+    ],
+    "estimatedMinutes": 10,
+    "brief": "A production error report shows a stack trace pointing to `chunk-7f3a91.js:1:48213` with no useful information. Diagnose why, and fix the build config so future errors are actually debuggable.",
+    "symptoms": [
+      "Production error logs show minified variable names and single-letter function names",
+      "The stack trace line/column numbers don't correspond to any readable source location",
+      "The same error is easy to reproduce and read locally in dev, but useless from the production log"
+    ],
+    "brokenCode": "// vite.config.js\nexport default {\n  build: {\n    sourcemap: false // ❌ no source maps generated for the production build\n  }\n};",
+    "fixedCode": "// vite.config.js\nexport default {\n  build: {\n    sourcemap: true // ✅ generates source maps, uploaded to your error tracker separately from the public bundle\n  }\n};",
+    "hints": [
+      {
+        "title": "What does minification actually remove?",
+        "content": "Minification strips readable names and collapses code, which is great for bundle size but makes raw stack traces meaningless without a map back to the original source."
+      },
+      {
+        "title": "What connects a minified line back to real source?",
+        "content": "A source map file records the mapping from minified output back to original file/line/column -- your error tracking tool needs access to it to de-minify traces."
+      }
+    ],
+    "explanation": "Minified production code trades readability for smaller bundle size, and a raw stack trace against minified code just points to compressed, renamed code with no useful information. Enabling sourcemap generation in the build config lets your error tracking tool (uploaded separately, not served publicly) reconstruct the original file, function name, and line number from a minified stack trace -- turning `chunk-7f3a91.js:1:48213` back into `ProfileForm.tsx:42`.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Source maps are generated on build",
+        "description": "Verifies the build output includes .map files alongside the minified JS."
+      },
+      {
+        "id": "tc-2",
+        "name": "A de-minified trace resolves to real source location",
+        "description": "Verifies a thrown error's stack trace can be mapped back to the actual source file and line."
+      }
+    ],
+    "interactiveType": "minified_stack_trace",
+    "topicId": "reading-stack-traces",
+    "moduleId": "interview-prep",
+    "order": 13
+  },
+  {
+    "id": "stale-prop-drilling-state",
+    "title": "The Sidebar That Doesn't Know It's Selected (Prop Drilling Gone Stale)",
+    "category": "state",
+    "difficulty": "Intermediate",
+    "tags": [
+      "React",
+      "State Management",
+      "Prop Drilling"
+    ],
+    "estimatedMinutes": 12,
+    "brief": "A selected sidebar item stops highlighting correctly after adding a new layer of components. Find where the selection state got disconnected.",
+    "symptoms": [
+      "Clicking a sidebar item calls the onSelect handler (confirmed via console.log)",
+      "The visual highlight doesn't move to the newly selected item",
+      "A newly added wrapper component sits between the state owner and the item that reads it"
+    ],
+    "brokenCode": "function SidebarWrapper({ items, selectedId, onSelect }) {\n  // ❌ destructures selectedId once, at mount, into local state -- never updates after\n  const [localSelectedId] = useState(selectedId);\n  return <SidebarList items={items} selectedId={localSelectedId} onSelect={onSelect} />;\n}",
+    "fixedCode": "function SidebarWrapper({ items, selectedId, onSelect }) {\n  // ✅ just pass the prop through -- no need to copy it into local state at all\n  return <SidebarList items={items} selectedId={selectedId} onSelect={onSelect} />;\n}",
+    "hints": [
+      {
+        "title": "What does useState(selectedId) actually capture?",
+        "content": "useState's argument is only used for the *initial* render -- it doesn't re-sync with the prop on every subsequent render."
+      },
+      {
+        "title": "Does this wrapper need local state at all?",
+        "content": "If a component is just forwarding a value it received as a prop, copying it into local state usually isn't needed -- pass the prop straight through."
+      }
+    ],
+    "explanation": "SidebarWrapper copied the incoming selectedId prop into local state with useState, but useState's initial value is only used on the very first render -- it doesn't track subsequent prop changes automatically. So every later click updates the real selectedId in the parent, but SidebarWrapper's stale localSelectedId snapshot never updates, and the highlight never moves. Since this component has no actual reason to own local state here, the fix is simply to pass the prop straight through instead of shadowing it.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "Highlight moves on selection",
+        "description": "Verifies clicking a different sidebar item visually updates which item is highlighted."
+      },
+      {
+        "id": "tc-2",
+        "name": "Selection persists through the wrapper across re-renders",
+        "description": "Verifies selectedId stays in sync with the parent even after unrelated re-renders."
+      }
+    ],
+    "interactiveType": "stale_prop_state",
+    "topicId": "controlled-and-uncontrolled-components",
+    "moduleId": "react-professional",
+    "order": 13
+  },
+  {
+    "id": "specificity-override-bug",
+    "title": "The Style That Won't Apply (Specificity War)",
+    "category": "css",
+    "difficulty": "Beginner",
+    "tags": [
+      "CSS",
+      "Specificity",
+      "Cascade"
+    ],
+    "estimatedMinutes": 8,
+    "brief": "A utility class meant to override a component's text color has no visible effect. Find which rule is actually winning the cascade, and fix it without reaching for !important.",
+    "symptoms": [
+      "Adding class=\"text-danger\" to a button doesn't change its text color",
+      "The .text-danger rule is confirmed present in the stylesheet with the expected color value",
+      "DevTools shows the rule as present but struck through (overridden)"
+    ],
+    "brokenCode": "/* button.css */\n.card .btn.btn-primary {\n  color: white;\n}\n\n/* utilities.css, loaded after button.css */\n.text-danger {\n  color: red;\n}",
+    "fixedCode": "/* Option: raise the utility's specificity to match, without !important */\n.card .btn.btn-primary.text-danger {\n  color: red;\n}\n\n/* Or, more maintainable: keep utility classes intentionally low-specificity\n   by avoiding multi-class/nested component selectors like .card .btn.btn-primary\n   in the first place. */",
+    "hints": [
+      {
+        "title": "Count the selectors in each competing rule",
+        "content": ".card .btn.btn-primary has three class selectors chained; .text-danger has only one. Specificity is compared by count, not by source order alone."
+      },
+      {
+        "title": "Does load order matter here?",
+        "content": "Load order only breaks ties between selectors of EQUAL specificity -- it never overrides a higher-specificity selector, no matter which stylesheet loads last."
+      }
+    ],
+    "explanation": "CSS specificity is compared before source order ever comes into play. `.card .btn.btn-primary` has three class selectors combined, giving it higher specificity than the single-class `.text-danger`, so it wins regardless of which stylesheet loads later. Reaching for !important would technically fix this instance but creates a worse long-term problem -- it becomes the next thing someone has to fight. The more durable fix is either matching specificity deliberately or keeping component styles from accumulating deeply-nested, multi-class selectors that make simple overrides hard.",
+    "testCases": [
+      {
+        "id": "tc-1",
+        "name": "text-danger applies over the component's own color",
+        "description": "Verifies the danger text color visually wins without using !important."
+      },
+      {
+        "id": "tc-2",
+        "name": "No !important was introduced",
+        "description": "Verifies the fix addresses specificity structurally rather than forcing an override."
+      }
+    ],
+    "interactiveType": "specificity_war",
+    "topicId": "css-architecture",
+    "moduleId": "html-css-foundations",
+    "order": 13
   }
 ]

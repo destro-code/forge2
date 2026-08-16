@@ -38,5 +38,117 @@
     "url": "https://www.w3.org/WAI/WCAG21/quickref/",
     "category": "A11y",
     "type": "site"
+  },
+  {
+    "id": "testing-library",
+    "title": "Testing Library",
+    "description": "Simple and complete testing utilities for React components, focused on user behavior.",
+    "url": "https://testing-library.com/docs/",
+    "category": "Testing",
+    "type": "site"
+  },
+  {
+    "id": "vitest",
+    "title": "Vitest",
+    "description": "A fast, Vite-native unit testing framework.",
+    "url": "https://vitest.dev/guide/",
+    "category": "Testing",
+    "type": "site"
+  },
+  {
+    "id": "msw",
+    "title": "Mock Service Worker",
+    "description": "API mocking at the network level for integration tests.",
+    "url": "https://mswjs.io/docs/getting-started",
+    "category": "Testing",
+    "type": "site"
+  },
+  {
+    "id": "owasp-top-10",
+    "title": "OWASP Top 10",
+    "description": "The standard awareness document for the most critical web application security risks.",
+    "url": "https://owasp.org/www-project-top-ten/",
+    "category": "Security",
+    "type": "site"
+  },
+  {
+    "id": "web-dev-vitals",
+    "title": "web.dev — Core Web Vitals",
+    "description": "Google's guide to measuring and optimizing real-world page experience.",
+    "url": "https://web.dev/articles/vitals",
+    "category": "Performance",
+    "type": "site"
+  },
+  {
+    "id": "nextjs-docs",
+    "title": "Next.js Docs",
+    "description": "Official documentation for the App Router, Server Components, and Server Actions.",
+    "url": "https://nextjs.org/docs",
+    "category": "Framework",
+    "type": "site"
+  },
+  {
+    "id": "git-book",
+    "title": "Pro Git",
+    "description": "The definitive free book on Git, from basics to internals.",
+    "url": "https://git-scm.com/book/en/v2",
+    "category": "Tooling",
+    "type": "book"
+  },
+  {
+    "id": "a11y-project",
+    "title": "The A11y Project Checklist",
+    "description": "A community-driven, practical accessibility checklist for real-world development.",
+    "url": "https://www.a11yproject.com/checklist/",
+    "category": "A11y",
+    "type": "site"
+  },
+  {
+    "id": "aria-authoring-practices",
+    "title": "WAI-ARIA Authoring Practices Guide",
+    "description": "Reference patterns for building accessible custom widgets like modals, menus, and comboboxes.",
+    "url": "https://www.w3.org/WAI/ARIA/apg/",
+    "category": "A11y",
+    "type": "site"
+  },
+  {
+    "id": "owasp-cheatsheets",
+    "title": "OWASP Cheat Sheet Series",
+    "description": "Concise, practical security guidance for specific topics like XSS prevention and authentication.",
+    "url": "https://cheatsheetseries.owasp.org/",
+    "category": "Security",
+    "type": "site"
+  },
+  {
+    "id": "vite-docs",
+    "title": "Vite Docs",
+    "description": "Official documentation for the build tool used throughout this course.",
+    "url": "https://vite.dev/guide/",
+    "category": "Tooling",
+    "type": "site"
+  },
+  {
+    "id": "eslint-docs",
+    "title": "ESLint Docs",
+    "description": "Configuring and writing rules for catching bugs and enforcing conventions before code ships.",
+    "url": "https://eslint.org/docs/latest/",
+    "category": "Tooling",
+    "type": "site"
+  },
+  {
+    "id": "react-router-docs",
+    "title": "React Router Docs",
+    "description": "Official documentation for client-side routing in React applications.",
+    "url": "https://reactrouter.com/",
+    "category": "Framework",
+    "type": "site"
+  },
+  {
+    "id": "zustand-docs",
+    "title": "Zustand",
+    "description": "A small, unopinionated state management library referenced in this course's state-management modules.",
+    "url": "https://zustand.docs.pmnd.rs/",
+    "category": "Framework",
+    "type": "site"
   }
 ]

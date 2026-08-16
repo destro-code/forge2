@@ -6,7 +6,7 @@
     "description": "A React counter increments once and freezes. Diagnose the stale closure without spoiling the solution.",
     "difficulty": "Intermediate",
     "linkType": "debug-lab",
-    "linkId": "counter_stale"
+    "linkId": "stale-closure"
   },
   {
     "id": "c-002",
@@ -34,5 +34,140 @@
     "difficulty": "Advanced",
     "linkType": "playground",
     "linkId": "react-tailwind"
+  },
+  {
+    "id": "c-005",
+    "date": "2026-08-08",
+    "title": "The banner that jumps",
+    "description": "A hero banner loads an image and everything below it suddenly shifts down. Track down the layout shift.",
+    "difficulty": "Beginner",
+    "linkType": "debug-lab",
+    "linkId": "layout-shift"
+  },
+  {
+    "id": "c-006",
+    "date": "2026-08-09",
+    "title": "The tab that gets slower",
+    "description": "A resizable panel gets laggier the longer the tab stays open. Something isn't being cleaned up.",
+    "difficulty": "Advanced",
+    "linkType": "debug-lab",
+    "linkId": "memory-leak-listener"
+  },
+  {
+    "id": "c-007",
+    "date": "2026-08-10",
+    "title": "Search results, out of order",
+    "description": "Typing fast in a search box sometimes shows results for an earlier, already-abandoned query. Fix the race.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "network-race-condition"
+  },
+  {
+    "id": "c-008",
+    "date": "2026-08-11",
+    "title": "The button nobody can name",
+    "description": "A row of icon-only buttons works fine visually but is silent to a screen reader. Find the gap.",
+    "difficulty": "Beginner",
+    "linkType": "debug-lab",
+    "linkId": "a11y-missing-aria"
+  },
+  {
+    "id": "c-009",
+    "date": "2026-08-12",
+    "title": "The grid that can't keep up",
+    "description": "A product data grid gets laggy on every keystroke elsewhere on the page. Diagnose the unnecessary re-renders.",
+    "difficulty": "Advanced",
+    "linkType": "debug-lab",
+    "linkId": "excessive-re-renders"
+  },
+  {
+    "id": "c-010",
+    "date": "2026-08-13",
+    "title": "Cannot read properties of undefined",
+    "description": "A classic runtime crash on page load. Find what's actually undefined before it's mapped.",
+    "difficulty": "Beginner",
+    "linkType": "debug-lab",
+    "linkId": "cannot-read-property-map"
+  },
+  {
+    "id": "c-011",
+    "date": "2026-08-14",
+    "title": "The re-render that won't stop",
+    "description": "A component re-renders continuously, pinning a CPU core. Find the effect that's triggering itself.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "infinite-useeffect-loop"
+  },
+  {
+    "id": "c-012",
+    "date": "2026-08-15",
+    "title": "The total that isn't a number",
+    "description": "TypeScript reports zero errors, yet the cart total sometimes renders as NaN in production.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "unsafe-type-assertion"
+  },
+  {
+    "id": "c-013",
+    "date": "2026-08-16",
+    "title": "The comment that ran a script",
+    "description": "A comment section is rendering more than just comments. Find and close the gap.",
+    "difficulty": "Advanced",
+    "linkType": "debug-lab",
+    "linkId": "unsanitized-comment-render"
+  },
+  {
+    "id": "c-014",
+    "date": "2026-08-17",
+    "title": "The test that tests nothing",
+    "description": "Every test is green, but a real validation bug still shipped. Find out why the suite couldn't catch it.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "over-mocked-validation-test"
+  },
+  {
+    "id": "c-015",
+    "date": "2026-08-18",
+    "title": "One bad widget, one blank page",
+    "description": "A single failing widget takes the entire dashboard down with it. Fix the blast radius.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "unscoped-error-boundary"
+  },
+  {
+    "id": "c-016",
+    "date": "2026-08-19",
+    "title": "The save that silently failed",
+    "description": "A Save button shows no error, but nothing actually gets saved. Find the swallowed failure.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "swallowed-promise-rejection"
+  },
+  {
+    "id": "c-017",
+    "date": "2026-08-20",
+    "title": "The error that points nowhere",
+    "description": "A production stack trace is unreadable minified noise. Fix the build so future errors are actually debuggable.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "unreadable-stack-trace"
+  },
+  {
+    "id": "c-018",
+    "date": "2026-08-21",
+    "title": "The sidebar that forgot",
+    "description": "Clicking a sidebar item registers, but the highlight doesn't move. Something's holding a stale snapshot.",
+    "difficulty": "Intermediate",
+    "linkType": "debug-lab",
+    "linkId": "stale-prop-drilling-state"
+  },
+  {
+    "id": "c-019",
+    "date": "2026-08-22",
+    "title": "The style that won't apply",
+    "description": "A utility class should override a component's color and visibly doesn't. Win the specificity war without !important.",
+    "difficulty": "Beginner",
+    "linkType": "debug-lab",
+    "linkId": "specificity-override-bug"
   }
 ]

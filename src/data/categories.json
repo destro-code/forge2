@@ -5,7 +5,7 @@
     "description": "Semantic markup, layout algorithms, CSS architecture, responsive design, and WCAG accessibility standards.",
     "icon": "LayoutTemplate",
     "color": "chart-1",
-    "moduleCount": 1
+    "moduleCount": 7
   },
   {
     "id": "language-mastery",
@@ -13,7 +13,7 @@
     "description": "Deep understanding of JavaScript mechanics, runtime execution engines, and enterprise-grade TypeScript type systems.",
     "icon": "Braces",
     "color": "chart-2",
-    "moduleCount": 2
+    "moduleCount": 3
   },
   {
     "id": "framework-mastery",
@@ -21,7 +21,7 @@
     "description": "React core primitives, custom hook composition, state modeling, concurrent features, and Server Components.",
     "icon": "Atom",
     "color": "chart-4",
-    "moduleCount": 1
+    "moduleCount": 8
   },
   {
     "id": "architecture",
@@ -29,7 +29,7 @@
     "description": "Frontend system design, micro-frontends, state design patterns, rendering strategies, and staff-level engineering.",
     "icon": "Blocks",
     "color": "chart-3",
-    "moduleCount": 1
+    "moduleCount": 4
   },
   {
     "id": "quality-perf",
@@ -37,7 +37,7 @@
     "description": "Core Web Vitals optimization, bundle diet, automated testing strategies (Vitest/Playwright), and web performance.",
     "icon": "Gauge",
     "color": "chart-5",
-    "moduleCount": 2
+    "moduleCount": 4
   },
   {
     "id": "career-interview",

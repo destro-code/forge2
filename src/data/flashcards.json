@@ -28,5 +28,335 @@
     "front": "TypeScript: any vs unknown?",
     "back": "any opts out of the type system; unknown is a safe top type that requires narrowing before use.",
     "deck": "TypeScript"
+  },
+  {
+    "id": "fc6",
+    "front": "What's the difference between <section> and <div>?",
+    "back": "<section> is a semantic landmark representing a thematic grouping of content, typically with a heading; <div> carries no semantic meaning and is purely a styling/grouping hook.",
+    "deck": "HTML"
+  },
+  {
+    "id": "fc7",
+    "front": "When should you use alt=\"\" versus real alt text?",
+    "back": "alt=\"\" for purely decorative images with no informational value, so screen readers skip them; real descriptive alt text for images that convey information.",
+    "deck": "HTML"
+  },
+  {
+    "id": "fc8",
+    "front": "What's the CSS cascade's tie-breaking order?",
+    "back": "Importance (!important) > specificity (id > class > element) > source order (later rules win when specificity ties).",
+    "deck": "CSS"
+  },
+  {
+    "id": "fc9",
+    "front": "What does `gap` do in a flex or grid container?",
+    "back": "Sets consistent spacing between flex/grid items without needing margin hacks on individual children.",
+    "deck": "CSS"
+  },
+  {
+    "id": "fc10",
+    "front": "What's the temporal dead zone?",
+    "back": "The period between entering a scope and a let/const declaration's actual line, during which the variable exists but accessing it throws a ReferenceError.",
+    "deck": "JavaScript"
+  },
+  {
+    "id": "fc11",
+    "front": "What's the difference between == and ===?",
+    "back": "== performs type coercion before comparing; === compares both value and type without coercion.",
+    "deck": "JavaScript"
+  },
+  {
+    "id": "fc12",
+    "front": "What's the difference between any and unknown?",
+    "back": "any disables type checking entirely; unknown accepts any value but forces a narrowing check before you can use it.",
+    "deck": "TypeScript"
+  },
+  {
+    "id": "fc13",
+    "front": "What does a discriminated union look like?",
+    "back": "A union of object types that share a common literal field (e.g. `kind`), letting TypeScript narrow reliably by switching on that field.",
+    "deck": "TypeScript"
+  },
+  {
+    "id": "fc14",
+    "front": "Why does the useEffect dependency array matter?",
+    "back": "It tells React when to re-run the effect; an incomplete array causes stale closures, an unnecessary one causes extra re-runs.",
+    "deck": "React"
+  },
+  {
+    "id": "fc15",
+    "front": "What's the difference between controlled and uncontrolled components?",
+    "back": "Controlled components have their value driven by React state (value + onChange); uncontrolled components manage their own internal DOM state, read via a ref.",
+    "deck": "React"
+  },
+  {
+    "id": "fc16",
+    "front": "What's the difference between git merge and git rebase?",
+    "back": "merge creates a new commit joining two histories, preserving both branches' commit history; rebase replays your commits on top of another branch, producing a linear history.",
+    "deck": "Git"
+  },
+  {
+    "id": "fc17",
+    "front": "What causes a merge conflict?",
+    "back": "Git can't automatically reconcile changes because both branches modified the same lines (or one deleted what the other modified).",
+    "deck": "Git"
+  },
+  {
+    "id": "fc18",
+    "front": "What does an HTTP 401 vs 403 status code mean?",
+    "back": "401 Unauthorized means authentication is missing or invalid; 403 Forbidden means you're authenticated but not allowed to access this resource.",
+    "deck": "APIs"
+  },
+  {
+    "id": "fc19",
+    "front": "What's the difference between PUT and PATCH?",
+    "back": "PUT replaces the entire resource with the provided representation; PATCH applies a partial update to specific fields.",
+    "deck": "APIs"
+  },
+  {
+    "id": "fc20",
+    "front": "What does 'arrange-act-assert' mean?",
+    "back": "A structuring convention for a test: set up inputs (arrange), call the code (act), check the result (assert).",
+    "deck": "Testing"
+  },
+  {
+    "id": "fc21",
+    "front": "Why does React Testing Library favor getByRole over getByTestId?",
+    "back": "getByRole matches how assistive technology perceives the page, so it doubles as a lightweight accessibility check; getByTestId doesn't.",
+    "deck": "Testing"
+  },
+  {
+    "id": "fc22",
+    "front": "What is the 'first rule of ARIA'?",
+    "back": "Use a native HTML element with the semantics you need instead of re-purposing an element and patching it with ARIA.",
+    "deck": "Accessibility"
+  },
+  {
+    "id": "fc23",
+    "front": "Why shouldn't you remove a focus outline without replacing it?",
+    "back": "It's the only visual indicator a keyboard user has for where they currently are on the page.",
+    "deck": "Accessibility"
+  },
+  {
+    "id": "fc24",
+    "front": "Why can't a token in localStorage be trusted the way an httpOnly cookie can?",
+    "back": "localStorage is readable by any JavaScript on the page, including an attacker's script from an XSS vulnerability; httpOnly cookies are invisible to JavaScript entirely.",
+    "deck": "Security"
+  },
+  {
+    "id": "fc25",
+    "front": "What does CSRF actually exploit?",
+    "back": "The browser's automatic attachment of a site's cookies to any request addressed to that site, regardless of which page initiated the request.",
+    "deck": "Security"
+  },
+  {
+    "id": "fc26",
+    "front": "What do LCP, INP, and CLS each measure?",
+    "back": "LCP: how long the largest visible element takes to render. INP: responsiveness to user interactions. CLS: how much visible content unexpectedly shifts during load.",
+    "deck": "Performance"
+  },
+  {
+    "id": "fc27",
+    "front": "Why should you wrap the whole app in one error boundary?",
+    "back": "You shouldn't — a single top-level boundary means any failure anywhere blanks the whole page; scope boundaries around individual risky sections instead.",
+    "deck": "Performance"
+  },
+  {
+    "id": "fc28",
+    "front": "What's the difference between a Server Component and a Client Component in Next.js?",
+    "back": "Server Components run only on the server and never ship code to the browser; Client Components ('use client') run in the browser and support hooks and interactivity.",
+    "deck": "Architecture"
+  },
+  {
+    "id": "fc29",
+    "front": "What's the tradeoff of SSG compared to SSR?",
+    "back": "SSG serves extremely fast, cheaply-hosted static content, but it's only as fresh as the last build; SSR renders fresh per request at the cost of server compute.",
+    "deck": "Architecture"
+  },
+  {
+    "id": "fc30",
+    "front": "What does the <button type=\"submit\"> default to inside a <form> if type is omitted?",
+    "back": "\"submit\" -- an unspecified <button> inside a form defaults to type=\"submit\", which is a common source of accidental form submissions.",
+    "deck": "HTML"
+  },
+  {
+    "id": "fc31",
+    "front": "Why should you avoid using <br> tags to create paragraph spacing?",
+    "back": "It's presentational, not semantic -- use CSS margin/padding on real block elements like <p> instead, so structure and spacing stay separable.",
+    "deck": "HTML"
+  },
+  {
+    "id": "fc32",
+    "front": "What's the difference between <ol> and <ul>?",
+    "back": "<ol> is for ordered/sequential content where order matters (steps, rankings); <ul> is for unordered collections where order is incidental.",
+    "deck": "HTML"
+  },
+  {
+    "id": "fc33",
+    "front": "What's the difference between visibility: hidden and display: none?",
+    "back": "visibility: hidden hides the element but it still takes up layout space; display: none removes it from the layout entirely.",
+    "deck": "CSS"
+  },
+  {
+    "id": "fc34",
+    "front": "What does `flex-shrink: 0` do?",
+    "back": "Prevents a flex item from shrinking below its base size when the container doesn't have enough room, even as siblings shrink.",
+    "deck": "CSS"
+  },
+  {
+    "id": "fc35",
+    "front": "What's the difference between em and rem units?",
+    "back": "em is relative to the current element's (or its parent's) font size; rem is always relative to the root element's font size, avoiding compounding.",
+    "deck": "CSS"
+  },
+  {
+    "id": "fc36",
+    "front": "Why can margin-top on a child sometimes visually apply to its parent instead?",
+    "back": "Margin collapsing -- adjacent vertical margins between a parent and its first/last child can collapse together unless the parent has padding, a border, or overflow set.",
+    "deck": "CSS"
+  },
+  {
+    "id": "fc37",
+    "front": "What's the difference between null and undefined?",
+    "back": "undefined means a variable has been declared but not assigned a value; null is an explicit, intentional assignment representing 'no value'.",
+    "deck": "JavaScript"
+  },
+  {
+    "id": "fc38",
+    "front": "What does Array.prototype.map return compared to forEach?",
+    "back": "map returns a new array built from the callback's return values; forEach returns undefined and is used purely for side effects.",
+    "deck": "JavaScript"
+  },
+  {
+    "id": "fc39",
+    "front": "What's a closure?",
+    "back": "A function that retains access to variables from its enclosing scope even after that outer function has finished executing.",
+    "deck": "JavaScript"
+  },
+  {
+    "id": "fc40",
+    "front": "What does the spread operator do when copying an object?",
+    "back": "Creates a shallow copy -- top-level properties are copied by value, but nested objects/arrays are still shared by reference.",
+    "deck": "JavaScript"
+  },
+  {
+    "id": "fc41",
+    "front": "What does `interface Admin extends User` do?",
+    "back": "Extends the User interface, inheriting all its fields while allowing Admin to add its own additional fields.",
+    "deck": "TypeScript"
+  },
+  {
+    "id": "fc42",
+    "front": "What's a type guard?",
+    "back": "A function or check that narrows a broader type to a more specific one within a conditional block, e.g. `typeof x === 'string'`.",
+    "deck": "TypeScript"
+  },
+  {
+    "id": "fc43",
+    "front": "What does `keyof` do?",
+    "back": "Produces a union of an object type's own property names as string literal types, useful for constraining generic key parameters.",
+    "deck": "TypeScript"
+  },
+  {
+    "id": "fc44",
+    "front": "Why does React warn about missing 'key' props in a list?",
+    "back": "Keys let React match array items across renders to correctly preserve, update, or discard component state instead of re-creating everything.",
+    "deck": "React"
+  },
+  {
+    "id": "fc45",
+    "front": "What's the difference between useMemo and useCallback?",
+    "back": "useMemo memoizes a computed value; useCallback memoizes a function reference itself, useful for stable callback identity in dependency arrays.",
+    "deck": "React"
+  },
+  {
+    "id": "fc46",
+    "front": "Why must hooks be called unconditionally at the top level?",
+    "back": "React tracks hooks by call order across renders; conditionally skipping a hook call shifts that order and breaks state tracking for subsequent hooks.",
+    "deck": "React"
+  },
+  {
+    "id": "fc47",
+    "front": "What does `git stash` do?",
+    "back": "Temporarily shelves uncommitted changes so you can switch branches cleanly, then reapply them later with `git stash pop`.",
+    "deck": "Git"
+  },
+  {
+    "id": "fc48",
+    "front": "What's the difference between `git fetch` and `git pull`?",
+    "back": "fetch downloads remote changes without merging them into your working branch; pull does a fetch followed by an automatic merge (or rebase).",
+    "deck": "Git"
+  },
+  {
+    "id": "fc49",
+    "front": "What does an HTTP 429 status code mean?",
+    "back": "Too Many Requests -- the client has been rate-limited and should back off before retrying.",
+    "deck": "APIs"
+  },
+  {
+    "id": "fc50",
+    "front": "What's idempotency in the context of HTTP methods?",
+    "back": "An idempotent request produces the same result no matter how many times it's repeated; GET, PUT, and DELETE are idempotent, POST generally is not.",
+    "deck": "APIs"
+  },
+  {
+    "id": "fc51",
+    "front": "What does 'mocking too much' risk in an integration test?",
+    "back": "If you mock the exact logic you're trying to verify, the test can pass even when that logic is broken -- it stops proving anything real.",
+    "deck": "Testing"
+  },
+  {
+    "id": "fc52",
+    "front": "Why prefer userEvent over fireEvent for simulating typing?",
+    "back": "userEvent simulates the fuller, more realistic sequence of real keystrokes and focus behavior, closer to what an actual user does.",
+    "deck": "Testing"
+  },
+  {
+    "id": "fc53",
+    "front": "What's the difference between aria-label and aria-labelledby?",
+    "back": "aria-label supplies an accessible name directly as a string; aria-labelledby points to another element's id whose text becomes the name.",
+    "deck": "Accessibility"
+  },
+  {
+    "id": "fc54",
+    "front": "Why do landmark elements like <main> and <nav> matter?",
+    "back": "They let screen reader users jump directly between page regions instead of reading through everything sequentially.",
+    "deck": "Accessibility"
+  },
+  {
+    "id": "fc55",
+    "front": "What's the difference between authentication and authorization?",
+    "back": "Authentication verifies who you are (login); authorization determines what you're allowed to do once identified.",
+    "deck": "Security"
+  },
+  {
+    "id": "fc56",
+    "front": "Why can't Access-Control-Allow-Origin: * be combined with credentialed requests?",
+    "back": "Browsers explicitly disallow it, since that combination would let any site read authenticated responses on a user's behalf.",
+    "deck": "Security"
+  },
+  {
+    "id": "fc57",
+    "front": "What does memoization actually trade off?",
+    "back": "It trades extra memory (caching a result) for avoiding repeated expensive computation or re-renders -- not free, so it shouldn't be applied everywhere by default.",
+    "deck": "Performance"
+  },
+  {
+    "id": "fc58",
+    "front": "Why is code splitting useful for large apps?",
+    "back": "It breaks the JS bundle into smaller chunks loaded on demand, so users only download the code needed for the page they're actually viewing.",
+    "deck": "Performance"
+  },
+  {
+    "id": "fc59",
+    "front": "What is ISR (Incremental Static Regeneration)?",
+    "back": "Pages are statically generated but can be regenerated in the background after a set interval, without a full site rebuild.",
+    "deck": "Architecture"
+  },
+  {
+    "id": "fc60",
+    "front": "Why do layouts persist across navigation in the Next.js App Router?",
+    "back": "Shared layout.tsx files wrap nested routes without re-rendering on navigation between pages that share them, preserving state like scroll position or an open menu.",
+    "deck": "Architecture"
   }
 ]

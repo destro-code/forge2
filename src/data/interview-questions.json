@@ -5,7 +5,11 @@
     "difficulty": "Medium",
     "question": "Explain DOM parsing, render tree construction, and script execution. What is the difference between <script>, <script async>, and <script defer>?",
     "estimatedMinutes": 10,
-    "companyTags": ["Google", "Meta", "Amazon"],
+    "companyTags": [
+      "Google",
+      "Meta",
+      "Amazon"
+    ],
     "rubric": [
       "Explains HTML parsing into DOM tree and CSS parsing into CSSOM tree",
       "Describes how DOM + CSSOM combine to form the Render Tree and Layout phase",
@@ -33,7 +37,11 @@
     "difficulty": "Hard",
     "question": "How do <picture>, <source>, and srcset with sizes enable responsive media delivery and prevent layout shift?",
     "estimatedMinutes": 8,
-    "companyTags": ["Vercel", "Shopify", "Stripe"],
+    "companyTags": [
+      "Vercel",
+      "Shopify",
+      "Stripe"
+    ],
     "rubric": [
       "Explains the difference between resolution switching (srcset) and art direction (<picture>)",
       "Describes how the 'sizes' attribute gives layout hints to the browser before CSS layout executes",
@@ -59,7 +67,11 @@
     "difficulty": "Hard",
     "question": "Explain Block Formatting Context (BFC), Stacking Contexts (z-index), and Container Queries vs Media Queries.",
     "estimatedMinutes": 12,
-    "companyTags": ["Apple", "Airbnb", "Meta"],
+    "companyTags": [
+      "Apple",
+      "Airbnb",
+      "Meta"
+    ],
     "rubric": [
       "Defines BFC and lists triggers (display: flow-root, overflow: hidden, flex/grid items, position: fixed/absolute)",
       "Explains how BFC prevents margin collapsing and clears floats",
@@ -86,7 +98,11 @@
     "difficulty": "Medium",
     "question": "How do CSS Grid and Flexbox differ in terms of 1D vs 2D layout calculation algorithms?",
     "estimatedMinutes": 8,
-    "companyTags": ["Microsoft", "Uber", "Netflix"],
+    "companyTags": [
+      "Microsoft",
+      "Uber",
+      "Netflix"
+    ],
     "rubric": [
       "Identifies Flexbox as 1D (content-driven layout along main/cross axis) vs Grid as 2D (layout-driven rows and columns)",
       "Explains flex-grow, flex-shrink, flex-basis sizing math",
@@ -112,7 +128,12 @@
     "difficulty": "Medium",
     "question": "Explain the JavaScript Event Loop, Call Stack, Microtask queue, and Macrotask queue with execution order examples.",
     "estimatedMinutes": 10,
-    "companyTags": ["Google", "Amazon", "Meta", "Bloomberg"],
+    "companyTags": [
+      "Google",
+      "Amazon",
+      "Meta",
+      "Bloomberg"
+    ],
     "rubric": [
       "Describes single-threaded call stack execution",
       "Identifies Microtasks (Promise.then, queueMicrotask, MutationObserver)",
@@ -139,7 +160,11 @@
     "difficulty": "Hard",
     "question": "How do Closures and Garbage Collection work in V8? Give an example of a memory leak caused by uncleaned closures.",
     "estimatedMinutes": 12,
-    "companyTags": ["Meta", "Datadog", "Cloudflare"],
+    "companyTags": [
+      "Meta",
+      "Datadog",
+      "Cloudflare"
+    ],
     "rubric": [
       "Defines Closure as a function bundled together with references to its surrounding lexical environment",
       "Explains V8 Mark-and-Sweep garbage collection and root reachability",
@@ -165,7 +190,12 @@
     "difficulty": "Hard",
     "question": "How does React Fiber reconciliation work? How do concurrent features like useTransition and useDeferredValue prioritize render lanes?",
     "estimatedMinutes": 15,
-    "companyTags": ["Meta", "Vercel", "Airbnb", "DoorDash"],
+    "companyTags": [
+      "Meta",
+      "Vercel",
+      "Airbnb",
+      "DoorDash"
+    ],
     "rubric": [
       "Explains Fiber architecture as a linked list tree representation supporting interruptible, incremental rendering",
       "Differentiates Render Phase (pure, asynchronous, interruptible) vs Commit Phase (synchronous DOM mutation)",
@@ -192,7 +222,11 @@
     "difficulty": "Medium",
     "question": "Compare React Server Components (RSC) vs Client Components. What are the rules for serializability across boundaries?",
     "estimatedMinutes": 10,
-    "companyTags": ["Vercel", "Shopify", "Meta"],
+    "companyTags": [
+      "Vercel",
+      "Shopify",
+      "Meta"
+    ],
     "rubric": [
       "Explains RSC execute purely on the server, zero client bundle size impact, direct DB access",
       "Explains Client Components ('use client') run on server for SSR and hydrate on client for interactivity",
@@ -218,7 +252,11 @@
     "difficulty": "Hard",
     "question": "Explain Discriminated Unions, Type Narrowing, conditional types, and how the 'infer' keyword extracts types in generic utility functions.",
     "estimatedMinutes": 12,
-    "companyTags": ["Stripe", "Linear", "Microsoft"],
+    "companyTags": [
+      "Stripe",
+      "Linear",
+      "Microsoft"
+    ],
     "rubric": [
       "Defines Discriminated Union with a common literal property tag",
       "Explains Type Narrowing via switch/if guards and exhaustiveness checking using 'never'",
@@ -245,7 +283,11 @@
     "difficulty": "Medium",
     "question": "What is the difference between type assertions (as), type guards (is), and unknown vs any?",
     "estimatedMinutes": 8,
-    "companyTags": ["Discord", "Vercel", "GitHub"],
+    "companyTags": [
+      "Discord",
+      "Vercel",
+      "GitHub"
+    ],
     "rubric": [
       "Explains 'any' disables type checking vs 'unknown' enforces type checking before usage",
       "Explains Type Assertions ('as') force compiler override without runtime checks",
@@ -271,7 +313,11 @@
     "difficulty": "Hard",
     "question": "How do you build a fully accessible modal dialog (WCAG 2.2 AA compliant)? Detail keyboard focus traps and screen reader roles.",
     "estimatedMinutes": 12,
-    "companyTags": ["Salesforce", "Google", "Government.gov"],
+    "companyTags": [
+      "Salesforce",
+      "Google",
+      "Government.gov"
+    ],
     "rubric": [
       "Identifies key ARIA attributes: role='dialog', aria-modal='true', aria-labelledby, aria-describedby",
       "Explains Focus Management: move focus into dialog on open, trap focus within dialog, restore focus on close",
@@ -298,7 +344,11 @@
     "difficulty": "Medium",
     "question": "What are aria-live regions (polite vs assertive), and how do you announce dynamic SPA updates?",
     "estimatedMinutes": 8,
-    "companyTags": ["Amazon", "Microsoft", "Lyft"],
+    "companyTags": [
+      "Amazon",
+      "Microsoft",
+      "Lyft"
+    ],
     "rubric": [
       "Defines aria-live attribute for screen reader notifications of dynamic DOM changes",
       "Differentiates polite (waits for speech pause) vs assertive (interrupts current speech)",
@@ -324,7 +374,12 @@
     "difficulty": "Hard",
     "question": "Walk through diagnosing and optimizing Core Web Vitals (LCP, INP, CLS) on a heavy e-commerce PDP.",
     "estimatedMinutes": 15,
-    "companyTags": ["Amazon", "Shopify", "Walmart", "Vercel"],
+    "companyTags": [
+      "Amazon",
+      "Shopify",
+      "Walmart",
+      "Vercel"
+    ],
     "rubric": [
       "Defines Core Web Vitals: LCP (< 2.5s), INP (< 200ms), CLS (< 0.1)",
       "Diagnoses LCP bottlenecks: hero image optimization (fetchpriority='high', inline CSS, preloading)",
@@ -351,7 +406,11 @@
     "difficulty": "Medium",
     "question": "Explain how bundler tree-shaking works (ES Modules vs CommonJS) and how to diagnose bundle bloat.",
     "estimatedMinutes": 10,
-    "companyTags": ["Meta", "Vercel", "Stripe"],
+    "companyTags": [
+      "Meta",
+      "Vercel",
+      "Stripe"
+    ],
     "rubric": [
       "Explains Tree-Shaking as dead code elimination based on static import/export analysis",
       "Explains why ES Modules enable static analysis vs CommonJS dynamic execution",
@@ -378,7 +437,11 @@
     "difficulty": "Hard",
     "question": "How do you systematically isolate and resolve a memory leak causing browser tab crashes over time using Chrome DevTools?",
     "estimatedMinutes": 12,
-    "companyTags": ["Datadog", "Google", "Microsoft"],
+    "companyTags": [
+      "Datadog",
+      "Google",
+      "Microsoft"
+    ],
     "rubric": [
       "Outlines reproduction steps: heap snapshot comparison across repeat user workflows",
       "Explains Chrome DevTools Memory tab: Take Snapshot 1 -> Perform action 5x -> Force Garbage Collection -> Take Snapshot 2",
@@ -405,7 +468,11 @@
     "difficulty": "Medium",
     "question": "Explain how to debug a subtle async race condition where network responses return out of order, and how AbortController solves it.",
     "estimatedMinutes": 10,
-    "companyTags": ["Meta", "Uber", "Spotify"],
+    "companyTags": [
+      "Meta",
+      "Uber",
+      "Spotify"
+    ],
     "rubric": [
       "Explains Async Race Condition scenario (stale response overwriting latest UI state)",
       "Explains AbortController and AbortSignal for fetch cancellation",
@@ -431,7 +498,11 @@
     "difficulty": "Medium",
     "question": "Compare git rebase vs git merge. When should you use interactive rebase (git rebase -i), and how do you resolve conflicts?",
     "estimatedMinutes": 8,
-    "companyTags": ["GitHub", "GitLab", "Atlassian"],
+    "companyTags": [
+      "GitHub",
+      "GitLab",
+      "Atlassian"
+    ],
     "rubric": [
       "Compares git merge (non-destructive 3-way merge commit) vs git rebase (re-applies commits on top of tip)",
       "Explains Interactive Rebase (`git rebase -i HEAD~N`): squash, reword, fixup, drop",
@@ -457,7 +528,11 @@
     "difficulty": "Hard",
     "question": "How does git bisect use binary search to locate regression bugs across a large codebase commit history?",
     "estimatedMinutes": 8,
-    "companyTags": ["Meta", "Google", "Square"],
+    "companyTags": [
+      "Meta",
+      "Google",
+      "Square"
+    ],
     "rubric": [
       "Explains binary search algorithm applied to commit graph",
       "Outlines manual bisect workflow: git bisect start -> git bisect bad -> git bisect good <commit>",
@@ -483,7 +558,12 @@
     "difficulty": "Hard",
     "question": "Design a scalable State Management & Caching strategy for a real-time collaborative workspace app (like Figma or Notion).",
     "estimatedMinutes": 20,
-    "companyTags": ["Figma", "Notion", "Atlassian", "Slack"],
+    "companyTags": [
+      "Figma",
+      "Notion",
+      "Atlassian",
+      "Slack"
+    ],
     "rubric": [
       "Architectural layers: UI View layer, Local Client Cache, Real-time Sync Engine, Persistence (IndexedDB)",
       "Conflict Resolution: CRDTs (Conflict-free Replicated Data Types like Yjs or Automerge)",
@@ -510,7 +590,12 @@
     "difficulty": "Hard",
     "question": "Compare Micro-frontends (Module Federation) vs Monorepo vs Monolith architectures for a multi-team engineering org.",
     "estimatedMinutes": 15,
-    "companyTags": ["Uber", "Spotify", "Amazon", "Salesforce"],
+    "companyTags": [
+      "Uber",
+      "Spotify",
+      "Amazon",
+      "Salesforce"
+    ],
     "rubric": [
       "Monolith: Single codebase, simple, but slow build times across large teams",
       "Monorepo (Turborepo, Nx): Unified repository housing distinct applications and shared packages, atomic commits, shared CI caching",
@@ -536,7 +621,12 @@
     "difficulty": "Medium",
     "question": "Tell me about a technical disagreement you had with a senior tech lead. How did you resolve it while keeping team momentum?",
     "estimatedMinutes": 10,
-    "companyTags": ["Google", "Meta", "Amazon", "Netflix"],
+    "companyTags": [
+      "Google",
+      "Meta",
+      "Amazon",
+      "Netflix"
+    ],
     "starFramework": {
       "situation": "Describe the project context, technical approach in debate, and stakes.",
       "task": "Explain your role, alternative technical proposal, and why it was superior.",
@@ -568,7 +658,12 @@
     "difficulty": "Medium",
     "question": "Describe a project where requirements changed mid-flight or a critical deadline was threatened. How did you negotiate scope and deliver?",
     "estimatedMinutes": 10,
-    "companyTags": ["Amazon", "Stripe", "Uber", "Airbnb"],
+    "companyTags": [
+      "Amazon",
+      "Stripe",
+      "Uber",
+      "Airbnb"
+    ],
     "starFramework": {
       "situation": "Original project scope, deadline, and unexpected change event.",
       "task": "Identify core problem: impossible to deliver 100% of revised features on time.",
@@ -593,5 +688,520 @@
     "topicId": "system-design-newsfeed",
     "moduleId": "interview-prep",
     "order": 22
+  },
+  {
+    "id": "test-1",
+    "category": "Testing",
+    "difficulty": "Hard",
+    "question": "Walk through how you'd test a component that fetches data from an API on mount, covering loading, error, and success states. What would you mock, and what would you leave real?",
+    "estimatedMinutes": 12,
+    "companyTags": [
+      "Google",
+      "Stripe",
+      "Airbnb"
+    ],
+    "rubric": [
+      "Identifies this as an integration test spanning the component, its data-fetching logic, and the network boundary",
+      "Proposes mocking only the network call (e.g. via MSW) rather than the component's internal fetch logic",
+      "Covers all three states explicitly: loading, error, and success -- not just the happy path",
+      "Uses role/text-based queries (React Testing Library conventions) rather than querying internal state or CSS classes"
+    ],
+    "sampleAnswer": "I'd treat this as an integration test. I'd use MSW to intercept the actual network request and control what it returns, while letting the component's real fetch logic, state management, and rendering run unmodified -- mocking the fetch function directly would test less of the real code path.\n\nFor each state I'd render the component under a different MSW handler: one that delays or never resolves (loading state, asserting a loading indicator appears), one that returns an error status (asserting an error message with a retry option renders), and one that returns valid data (asserting the actual content renders). I'd query everything the way a user would -- getByRole, getByText -- not by reaching into component internals.",
+    "codeSnippet": "test('shows the error state when the request fails', async () => {\n  server.use(\n    http.get('/api/products', () => HttpResponse.error())\n  );\n  render(<ProductList />);\n  expect(await screen.findByRole('alert')).toHaveTextContent('Could not load');\n});",
+    "commonPitfalls": [
+      "Only testing the success path and skipping loading/error states entirely",
+      "Mocking the component's own fetch wrapper instead of the network boundary, which tests less of the real integration",
+      "Querying by CSS class or test id instead of role/text, coupling the test to markup instead of behavior"
+    ],
+    "followUpQuestions": [
+      "How would this test differ if you were unit-testing a validation function used by the same component?",
+      "What would change about your approach if the data-fetching happened in a Server Component instead?"
+    ],
+    "topicId": "testing-fundamentals",
+    "moduleId": "testing-and-tooling",
+    "order": 23
+  },
+  {
+    "id": "test-2",
+    "category": "Testing",
+    "difficulty": "Medium",
+    "question": "What's the difference between a unit test, a component test, and an integration test, and how would you decide which one a given piece of new code needs?",
+    "estimatedMinutes": 8,
+    "companyTags": [
+      "Meta",
+      "Shopify"
+    ],
+    "rubric": [
+      "Defines a unit test as isolated logic testing (typically a pure function), no DOM or rendering involved",
+      "Defines a component test as rendering a single component and asserting on user-visible output",
+      "Defines an integration test as multiple real units (components, hooks, logic) working together, usually with only the network boundary mocked",
+      "Gives a concrete decision heuristic, e.g. pure logic -> unit, isolated UI behavior -> component, cross-piece wiring -> integration"
+    ],
+    "sampleAnswer": "A unit test checks one isolated piece of logic, usually a pure function, with no rendering involved -- fast and precise. A component test renders a single component and asserts on what a user would see, querying by role or text rather than internals. An integration test exercises multiple real pieces together -- a form, its validation, and a submit handler, for example -- with only the true external boundary (usually the network) mocked.\n\nMy rule of thumb: if it's pure logic with no side effects, unit test it directly. If it's one component's rendering behavior in isolation, component test it. If the value is in verifying that several real pieces actually work together correctly, that's an integration test -- and I try not to over-mock it, since mocking the thing you're trying to verify defeats the point.",
+    "codeSnippet": null,
+    "commonPitfalls": [
+      "Treating every test as an integration test, making the suite slow and hard to debug when something fails",
+      "Mocking so much in an 'integration' test that it no longer verifies real integration",
+      "Not extracting pure logic into testable functions, forcing everything through slower component-level tests"
+    ],
+    "followUpQuestions": [
+      "How would your testing strategy change for a legacy codebase with zero existing test coverage?",
+      "What's a sign that a test suite has too much redundant coverage across these three layers?"
+    ],
+    "topicId": "testing-fundamentals",
+    "moduleId": "testing-and-tooling",
+    "order": 24
+  },
+  {
+    "id": "sec-1",
+    "category": "Security",
+    "difficulty": "Hard",
+    "question": "A teammate wants to store the app's JWT in localStorage because it's simpler to read and attach to requests manually. What's your concern, and what would you propose instead?",
+    "estimatedMinutes": 10,
+    "companyTags": [
+      "Amazon",
+      "Stripe",
+      "Coinbase"
+    ],
+    "rubric": [
+      "Explains that localStorage is readable by any JavaScript on the page, including an attacker's script from any XSS vulnerability",
+      "Proposes an httpOnly cookie as the alternative, explaining that it's invisible to JavaScript entirely",
+      "Identifies the tradeoff: cookie-based auth reopens a CSRF consideration that manually-attached tokens didn't have",
+      "Mentions Secure and SameSite flags as part of a properly configured solution, not just httpOnly alone"
+    ],
+    "sampleAnswer": "My concern is that any XSS vulnerability anywhere on the site -- even in a third-party script -- gives an attacker a trivial way to read the token straight out of localStorage and take over the account. I'd propose storing the token in an httpOnly cookie instead, since JavaScript can't read it at all, closing that vector completely.\n\nThe tradeoff is that cookies are automatically attached to requests by the browser, which reopens CSRF as a consideration in a way manually-attached localStorage tokens didn't have. So I wouldn't treat httpOnly as sufficient on its own -- I'd pair it with Secure (HTTPS-only) and SameSite (restricting cross-site sending), and depending on the app, a CSRF token for state-changing requests too.",
+    "codeSnippet": "Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Strict",
+    "commonPitfalls": [
+      "Treating httpOnly cookies as a strictly safer drop-in replacement without addressing the CSRF tradeoff they introduce",
+      "Forgetting the Secure flag, allowing the cookie over plaintext HTTP",
+      "Assuming client-side token expiration checks are a security measure rather than a UX convenience"
+    ],
+    "followUpQuestions": [
+      "How would you explain the CSRF risk to someone who thinks 'the cookie has HttpOnly so we're safe'?",
+      "What would you check first if you suspected an XSS vulnerability was already present in the app?"
+    ],
+    "topicId": "auth-and-token-storage",
+    "moduleId": "security-fundamentals",
+    "order": 25
+  },
+  {
+    "id": "sec-2",
+    "category": "Security",
+    "difficulty": "Medium",
+    "question": "What's the difference between what the same-origin policy protects against and what CORS actually does? Why doesn't the same-origin policy alone prevent CSRF?",
+    "estimatedMinutes": 9,
+    "companyTags": [
+      "Google",
+      "Microsoft"
+    ],
+    "rubric": [
+      "Explains the same-origin policy as the browser's default restriction blocking cross-origin JavaScript from reading a response",
+      "Explains CORS as a server-controlled, opt-in exception to that default restriction via response headers",
+      "Explains that CSRF doesn't need to read the response -- a forged form submission or image request can still cause damage (e.g. a state change) without the attacker seeing anything back",
+      "Distinguishes this from an authorization failure -- a CORS error means the request succeeded but the browser blocked read access to it"
+    ],
+    "sampleAnswer": "The same-origin policy is the browser's default: JavaScript on one origin can't read the response of a request to a different origin. CORS is the mechanism a server uses to explicitly opt certain origins into being allowed to read its responses, via response headers like Access-Control-Allow-Origin.\n\nCSRF isn't prevented by the same-origin policy because a forged request doesn't need to read the response to cause harm -- a form auto-submitted from a malicious site can trigger a state-changing action like a funds transfer, and the browser still attaches the user's real cookies to it automatically. The same-origin policy blocks the attacker from seeing the result, but the damage is already done by the time that would matter.",
+    "codeSnippet": null,
+    "commonPitfalls": [
+      "Confusing a CORS error with a 401/403 authorization failure -- they're different things at different layers",
+      "Assuming CORS headers protect against CSRF, when they address a different problem (read access to responses, not the request being sent at all)",
+      "Believing the same-origin policy alone is sufficient CSRF protection"
+    ],
+    "followUpQuestions": [
+      "What triggers a CORS preflight request, and why does it exist?",
+      "How would SameSite cookies close the gap the same-origin policy leaves open for CSRF?"
+    ],
+    "topicId": "cors-and-csrf",
+    "moduleId": "security-fundamentals",
+    "order": 26
+  },
+  {
+    "id": "nextjs-1",
+    "category": "Architecture",
+    "difficulty": "Hard",
+    "question": "Explain the difference between a Server Component and a Client Component in Next.js's App Router, and how you'd decide where to draw that boundary in a real page.",
+    "estimatedMinutes": 10,
+    "companyTags": [
+      "Vercel",
+      "Airbnb",
+      "Netflix"
+    ],
+    "rubric": [
+      "Explains Server Components render only on the server and never ship code to the browser, including their imports",
+      "Explains why hooks and browser APIs don't work in Server Components -- there's no browser runtime to attach to",
+      "Explains 'use client' as an explicit opt-in for a specific component that needs interactivity, state, or browser APIs",
+      "Gives a concrete strategy: extract only the genuinely interactive piece into a small Client Component rather than marking a whole page 'use client'"
+    ],
+    "sampleAnswer": "Every component in the App Router is a Server Component by default -- it renders entirely on the server, and its code, including anything it imports, never reaches the browser. That's why hooks like useState don't work there: there's no browser runtime to track state and re-render against. A Client Component, marked with 'use client', opts into running in the browser, which is what you need for interactivity, state, or browser APIs.\n\nIn a real page, I try to keep as much as possible as Server Components -- for the SEO and bundle-size benefits -- and only extract the specific interactive piece, like a 'like' button or a form, into its own small Client Component. Marking an entire page 'use client' just to support one button pulls everything else in that file back into client-rendered territory unnecessarily.",
+    "codeSnippet": "// page.tsx -- stays a Server Component\nasync function ProductPage({ params }) {\n  const product = await getProduct(params.id);\n  return (\n    <div>\n      <h1>{product.name}</h1>\n      <LikeButton /> {/* only this needs 'use client' */}\n    </div>\n  );\n}",
+    "commonPitfalls": [
+      "Adding 'use client' to an entire page to fix one small interactive element, losing server-rendering benefits for the whole file",
+      "Trying to use useState or useEffect inside a Server Component",
+      "Assuming Server Components can't fetch data -- they can, directly, without useEffect"
+    ],
+    "followUpQuestions": [
+      "How does data fetching differ between a Server Component and a Client Component?",
+      "When would you still need a Route Handler instead of a Server Action?"
+    ],
+    "topicId": "server-and-client-components",
+    "moduleId": "frontend-architecture",
+    "order": 27
+  },
+  {
+    "id": "nextjs-2",
+    "category": "Performance",
+    "difficulty": "Medium",
+    "question": "How would you choose between SSR, SSG, and ISR for a given page, and how does that choice affect Core Web Vitals?",
+    "estimatedMinutes": 9,
+    "companyTags": [
+      "Vercel",
+      "Shopify"
+    ],
+    "rubric": [
+      "Defines SSR (per-request rendering), SSG (build-time rendering), and ISR (static with periodic background regeneration)",
+      "Ties the choice to the page's actual freshness and traffic needs, not a one-size-fits-all default",
+      "Connects the choice to LCP specifically -- pre-rendered HTML (SSG/ISR) typically arrives and paints faster than per-request SSR or client-rendered pages",
+      "Mentions that different routes in the same app can use different strategies"
+    ],
+    "sampleAnswer": "SSR renders fresh HTML per request, which is right for content that must be current on every load but costs server compute per request. SSG renders once at build time and serves a static file to everyone, which is extremely fast and cheap but only as fresh as the last build -- good for content like marketing pages that rarely changes. ISR is the middle ground: statically generated, but regenerated periodically in the background, which fits something like a product page that updates a few times a day under high traffic.\n\nFor Core Web Vitals, SSG and ISR routes typically get the best LCP since the HTML arrives already rendered -- there's no per-request server work blocking the first paint. I'd pick per-route: a dashboard that needs live data might stay SSR or fully dynamic, while the marketing pages around it are SSG, all in the same app.",
+    "codeSnippet": "// Opting a specific route into full per-request rendering\nexport const dynamic = 'force-dynamic';",
+    "commonPitfalls": [
+      "Assuming the whole app must use one rendering strategy",
+      "Choosing SSR by default for pages that don't actually need per-request freshness, adding unnecessary server cost",
+      "Not considering ISR as a middle ground between full SSG and full SSR"
+    ],
+    "followUpQuestions": [
+      "How would Suspense and streaming change your answer for a page with one slow, non-critical data dependency?",
+      "How do Server Components affect the amount of JavaScript shipped, independent of the rendering strategy chosen?"
+    ],
+    "topicId": "rendering-strategies",
+    "moduleId": "performance-and-a11y",
+    "order": 28
+  },
+  {
+    "id": "html-3",
+    "category": "HTML",
+    "difficulty": "Medium",
+    "question": "What's the difference between the defer and async attributes on a <script> tag, and when would you use each?",
+    "estimatedMinutes": 7,
+    "companyTags": [
+      "Amazon",
+      "Cloudflare"
+    ],
+    "rubric": [
+      "Explains that both let the script download without blocking HTML parsing",
+      "Explains defer executes scripts in order, after parsing completes",
+      "Explains async executes as soon as the script downloads, in arbitrary order relative to other scripts, potentially before parsing finishes",
+      "Gives a concrete use case for each"
+    ],
+    "sampleAnswer": "Both defer and async let the browser download the script without blocking HTML parsing, but they differ in when and how the script actually runs. defer waits until parsing is completely finished, then runs scripts in their original document order -- good for scripts that depend on the DOM being ready and on each other's order, like most application bundles. async runs the script as soon as it finishes downloading, independent of parsing and independent of other async scripts' order -- good for independent scripts like analytics that don't need to coordinate with anything else on the page.",
+    "codeSnippet": "<script src=\"analytics.js\" async></script>\n<script src=\"app-bundle.js\" defer></script>",
+    "commonPitfalls": [
+      "Assuming async and defer are interchangeable",
+      "Using async for scripts that depend on DOM elements or execution order"
+    ],
+    "followUpQuestions": [
+      "What happens to a normal <script> tag with neither attribute?",
+      "Where would you place a script that needs to run before any HTML renders?"
+    ],
+    "topicId": "html-loading-behavior",
+    "moduleId": "html-css-foundations",
+    "order": 29
+  },
+  {
+    "id": "css-3",
+    "category": "CSS",
+    "difficulty": "Medium",
+    "question": "Explain CSS specificity and walk through how you'd resolve a conflict where a utility class isn't overriding a component's own styles.",
+    "estimatedMinutes": 8,
+    "companyTags": [
+      "Shopify",
+      "Airbnb"
+    ],
+    "rubric": [
+      "Correctly orders specificity: inline styles > ids > classes/attributes/pseudo-classes > elements",
+      "Explains source order only breaks ties between selectors of equal specificity",
+      "Diagnoses that a longer, multi-class chained selector often beats a single utility class",
+      "Prefers a structural fix (matching specificity or reducing component selector nesting) over reaching for !important"
+    ],
+    "sampleAnswer": "Specificity is calculated per selector, roughly: inline styles beat IDs, which beat classes/attributes/pseudo-classes, which beat plain element selectors. Source order only decides ties when two selectors have equal specificity -- a later, lower-specificity rule never overrides an earlier, higher-specificity one just because it loads after.\n\nIf a utility class like .text-danger isn't applying, I'd check what it's actually competing against -- often it's a deeply chained component selector like .card .btn.btn-primary, which has higher specificity than a single class. My first instinct isn't !important, since that just creates the next override problem -- I'd either match specificity deliberately or, longer-term, keep component styles from accumulating multi-class chained selectors that make simple utility overrides hard in the first place.",
+    "codeSnippet": ".card .btn.btn-primary { color: white; } /* higher specificity, wins */\n.text-danger { color: red; } /* loses, regardless of load order */",
+    "commonPitfalls": [
+      "Assuming later-loaded CSS always wins",
+      "Reaching for !important as a first fix rather than a last resort"
+    ],
+    "followUpQuestions": [
+      "How would you design a utility-class system to avoid these conflicts in the first place?",
+      "What's the specificity of an ID selector combined with a class?"
+    ],
+    "topicId": "css-architecture",
+    "moduleId": "html-css-foundations",
+    "order": 30
+  },
+  {
+    "id": "js-3",
+    "category": "JavaScript",
+    "difficulty": "Medium",
+    "question": "What's a closure, and can you give a practical example of where you'd deliberately use one?",
+    "estimatedMinutes": 8,
+    "companyTags": [
+      "Meta",
+      "Google"
+    ],
+    "rubric": [
+      "Defines a closure as a function retaining access to its enclosing scope's variables after that scope has returned",
+      "Gives a concrete, correct example (counter factory, memoization cache, event handler capturing a value)",
+      "Explains why this differs from the variable simply being global"
+    ],
+    "sampleAnswer": "A closure is a function that keeps access to variables from the scope it was created in, even after that outer function has already finished running. A practical example is a counter factory: createCounter() returns an increment function that keeps its own private count variable alive across calls, without that variable being global or accessible from outside. Each call to createCounter() produces an independent counter with its own closure over a separate count.",
+    "codeSnippet": "function createCounter() {\n  let count = 0;\n  return function increment() {\n    count += 1;\n    return count;\n  };\n}\n\nconst counterA = createCounter();\ncounterA(); // 1\ncounterA(); // 2",
+    "commonPitfalls": [
+      "Confusing a closure with simply using a global variable",
+      "Not realizing each call to the outer function creates a distinct closure"
+    ],
+    "followUpQuestions": [
+      "How do closures relate to the stale closure bug common in React's useEffect?",
+      "What's a memory consideration when closures capture large objects?"
+    ],
+    "topicId": "closures",
+    "moduleId": "javascript-deep-dive",
+    "order": 31
+  },
+  {
+    "id": "react-3",
+    "category": "React",
+    "difficulty": "Medium",
+    "question": "Why does React require hooks to be called unconditionally, in the same order, on every render?",
+    "estimatedMinutes": 7,
+    "companyTags": [
+      "Meta",
+      "Netflix"
+    ],
+    "rubric": [
+      "Explains React tracks hooks by call order/index across renders, not by name",
+      "Explains that a conditional hook call shifts that order, misaligning state between hooks on subsequent renders",
+      "Gives an example of the resulting bug (wrong state value attached to the wrong hook)"
+    ],
+    "sampleAnswer": "React tracks each component's hooks by the order they're called in, not by name or any other identifier -- internally it's essentially a list indexed by call order. If a hook call is wrapped in a condition that can differ between renders, the call order shifts on renders where the condition differs, which misaligns every hook after it with the wrong stored state. That's why hooks have to be called unconditionally at the top level, in the same order, every single render -- conditionals need to go inside the hook (like inside a useEffect's callback), not around the hook call itself.",
+    "codeSnippet": "// ❌ breaks hook order between renders\nif (isLoggedIn) {\n  const [name, setName] = useState('');\n}\n\n// ✅ hook always called; condition lives inside\nconst [name, setName] = useState('');\nif (isLoggedIn) {\n  // use name here\n}",
+    "commonPitfalls": [
+      "Putting a hook call inside an if statement or early return",
+      "Calling hooks inside loops with a variable iteration count"
+    ],
+    "followUpQuestions": [
+      "What ESLint rule catches this class of mistake automatically?",
+      "How would you conditionally skip logic inside a useEffect without skipping the hook call itself?"
+    ],
+    "topicId": "hooks-fundamentals",
+    "moduleId": "react-professional",
+    "order": 32
+  },
+  {
+    "id": "ts-3",
+    "category": "TypeScript",
+    "difficulty": "Medium",
+    "question": "What's a discriminated union, and why is it a common pattern for modeling async request state?",
+    "estimatedMinutes": 8,
+    "companyTags": [
+      "Stripe",
+      "Vercel"
+    ],
+    "rubric": [
+      "Defines a discriminated union as a union of object types sharing a common literal field",
+      "Explains that field lets TypeScript narrow reliably by switching on it",
+      "Applies it concretely to loading/error/success request state"
+    ],
+    "sampleAnswer": "A discriminated union is a union of object shapes that all share one common literal field -- often called status or kind -- which TypeScript can switch on to narrow reliably to the right variant. For async request state, it's a much safer alternative to separate boolean flags like isLoading/isError/isSuccess, which can end up in impossible or contradictory combinations. With a discriminated union, only one state is representable at a time, and switching on status gives you fully type-safe access to state-specific fields, like an error message that only exists on the error variant.",
+    "codeSnippet": "type RequestState<T> =\n  | { status: 'idle' }\n  | { status: 'loading' }\n  | { status: 'success'; data: T }\n  | { status: 'error'; message: string };",
+    "commonPitfalls": [
+      "Modeling request state as several independent booleans instead of one discriminated union",
+      "Forgetting the shared literal field, which breaks TypeScript's ability to narrow"
+    ],
+    "followUpQuestions": [
+      "How would you exhaustively check that every variant of the union is handled in a switch statement?",
+      "What's the risk of using separate boolean flags instead?"
+    ],
+    "topicId": "union-types-and-narrowing",
+    "moduleId": "typescript-mastery",
+    "order": 33
+  },
+  {
+    "id": "a11y-3",
+    "category": "Accessibility",
+    "difficulty": "Medium",
+    "question": "How would you make a custom dropdown menu (built from divs, not a native <select>) accessible to keyboard and screen reader users?",
+    "estimatedMinutes": 10,
+    "companyTags": [
+      "Microsoft",
+      "Salesforce"
+    ],
+    "rubric": [
+      "Identifies the need for real keyboard support (Tab, Enter/Space to open, arrow keys to navigate, Escape to close)",
+      "Mentions appropriate ARIA roles (e.g. role=\"listbox\"/\"option\" or a native <button> trigger)",
+      "Mentions focus management -- moving focus into the open menu and back to the trigger on close",
+      "Prefers a native element or well-tested pattern over hand-rolling ARIA where possible"
+    ],
+    "sampleAnswer": "First, I'd check whether a native <select> or an existing accessible library component could do the job -- reinventing this well is genuinely hard. If a custom implementation is truly necessary, I'd make sure the trigger is a real <button>, add appropriate ARIA (role=\"listbox\" and role=\"option\" on the items, aria-expanded on the trigger), and implement full keyboard support: Enter/Space to open, arrow keys to move between options, Enter to select, and Escape to close. I'd also manage focus explicitly -- moving it into the open menu, and back to the trigger button when it closes -- since none of that happens automatically for a custom widget the way it does for a native select.",
+    "codeSnippet": "<button aria-expanded={isOpen} aria-haspopup=\"listbox\">\n  {selected}\n</button>\n{isOpen && (\n  <ul role=\"listbox\">\n    {options.map(o => <li role=\"option\" key={o.id}>{o.label}</li>)}\n  </ul>\n)}",
+    "commonPitfalls": [
+      "Building a visually correct dropdown with zero keyboard support",
+      "Forgetting to manage focus on open/close",
+      "Missing ARIA roles that communicate the widget's structure to screen readers"
+    ],
+    "followUpQuestions": [
+      "Why is reaching for a native element usually better than a custom ARIA implementation?",
+      "How would you test this component's accessibility beyond an automated scanner?"
+    ],
+    "topicId": "keyboard-navigation",
+    "moduleId": "performance-and-a11y",
+    "order": 34
+  },
+  {
+    "id": "debug-3",
+    "category": "Debugging",
+    "difficulty": "Medium",
+    "question": "You're handed a minified production stack trace with no useful information. Walk through how you'd actually debug it.",
+    "estimatedMinutes": 9,
+    "companyTags": [
+      "Amazon",
+      "Datadog"
+    ],
+    "rubric": [
+      "Mentions source maps as the mechanism to de-minify a production trace",
+      "Describes checking the error tracking tool for the de-minified version before anything else",
+      "Describes attempting to reproduce locally with the same inputs/conditions",
+      "Describes isolating which frames are in your own code vs. a dependency"
+    ],
+    "sampleAnswer": "First I'd check whether the error tracking tool already has source maps uploaded and can show me a de-minified trace -- that's usually the fastest path to a real file and line number. If that's not available, I'd try to reproduce the issue locally against the same build config, since a local unminified trace should point to the same underlying bug. Once I have a readable trace, I'd separate which frames are actually in my own code versus a library, since a dependency's internal frames are rarely where the real fix belongs. From there it's normal debugging: understanding what the error type and message actually indicate, not just where it happened.",
+    "codeSnippet": null,
+    "commonPitfalls": [
+      "Trying to debug directly from a minified trace without checking for source maps first",
+      "Assuming the deepest stack frame is always where the real bug is, even when it's inside a third-party library"
+    ],
+    "followUpQuestions": [
+      "Why might source maps be intentionally excluded from a production build, and how would you handle that tradeoff?",
+      "How would you approach an error that only reproduces in production, not locally?"
+    ],
+    "topicId": "reading-stack-traces",
+    "moduleId": "interview-prep",
+    "order": 35
+  },
+  {
+    "id": "git-3",
+    "category": "Git",
+    "difficulty": "Medium",
+    "question": "When would you choose git rebase over git merge, and what real risk does rebase carry that merge doesn't?",
+    "estimatedMinutes": 8,
+    "companyTags": [
+      "GitHub",
+      "GitLab"
+    ],
+    "rubric": [
+      "Explains rebase produces a linear history by replaying commits; merge preserves both branches' actual history",
+      "Gives a reasonable use case for each (rebase for cleaning up a local feature branch before opening a PR; merge for integrating shared/public branches)",
+      "Identifies the core risk: rebasing commits that have already been pushed/shared rewrites history other people may already be building on"
+    ],
+    "sampleAnswer": "I'd reach for rebase to clean up my own local feature branch before opening a PR -- squashing exploratory commits into something coherent, with a linear history that's easier to review. I'd use merge when integrating shared branches, like merging a feature branch into main, since it preserves the actual history of both branches without rewriting anything.\n\nThe real risk with rebase is rewriting history that other people have already pulled and built on -- if you rebase a branch someone else has based work on, their history and yours diverge in a way that creates a genuinely messy, hard-to-reconcile conflict. As a rule, I don't rebase anything that's already been pushed and shared, only my own local, not-yet-shared commits.",
+    "codeSnippet": "git checkout feature-branch\ngit rebase -i main   # clean up local history before opening a PR\n# vs.\ngit checkout main\ngit merge feature-branch   # integrate a shared branch, preserving history",
+    "commonPitfalls": [
+      "Rebasing a branch that others have already pulled from",
+      "Force-pushing after a rebase without communicating to collaborators"
+    ],
+    "followUpQuestions": [
+      "What would you do if you'd already rebased a shared branch and a teammate is now stuck with a broken history?",
+      "What does git rebase --onto do?"
+    ],
+    "topicId": "version-control-workflow",
+    "moduleId": "html-css-foundations",
+    "order": 36
+  },
+  {
+    "id": "beh-3",
+    "category": "Behavioral",
+    "difficulty": "Medium",
+    "question": "Tell me about a time you disagreed with a technical decision made by a teammate or your team. How did you handle it?",
+    "estimatedMinutes": 8,
+    "companyTags": [
+      "Amazon",
+      "Google"
+    ],
+    "rubric": [
+      "Describes a specific, real technical disagreement rather than a vague generality",
+      "Explains how they raised the concern constructively rather than dismissing the other person's approach",
+      "Describes the actual outcome, including if the resolution wasn't fully in their favor",
+      "Reflects on what they'd do differently, if anything"
+    ],
+    "sampleAnswer": "In a past project, a teammate wanted to add a new state management library for a feature I thought could be handled with existing patterns already in the codebase. Instead of just pushing back in a meeting, I asked to understand their reasoning first -- it turned out they were solving for a specific cross-component sync issue I hadn't fully considered. I proposed we prototype both approaches quickly and compare, rather than debate it abstractly. The prototype showed their approach genuinely solved the sync issue more cleanly, so we went with it -- but we also agreed to document the decision so the next person wouldn't have to re-litigate it. I try to treat disagreements as something to resolve with evidence, not persuasion.",
+    "codeSnippet": null,
+    "commonPitfalls": [
+      "Describing a disagreement with no concrete resolution or outcome",
+      "Framing it as being 'right' rather than reaching a good decision together"
+    ],
+    "followUpQuestions": [
+      "What would you have done if the prototype comparison had been inconclusive?",
+      "How do you handle a disagreement with someone more senior than you?"
+    ],
+    "topicId": "collaboration",
+    "moduleId": "interview-prep",
+    "order": 37
+  },
+  {
+    "id": "sec-3",
+    "category": "Security",
+    "difficulty": "Medium",
+    "question": "What's the difference between authentication and authorization, and how does that distinction show up in a real bug you might see in code review?",
+    "estimatedMinutes": 7,
+    "companyTags": [
+      "Stripe",
+      "Coinbase"
+    ],
+    "rubric": [
+      "Correctly defines authentication as verifying identity, authorization as verifying permission",
+      "Gives a concrete example of an authorization bug distinct from an authentication bug",
+      "Notes that both need to be enforced server-side, not just reflected in the UI"
+    ],
+    "sampleAnswer": "Authentication answers 'who are you' -- verifying identity, typically via login. Authorization answers 'what are you allowed to do' -- verifying permission for a specific action, once identity is already known. A common real bug: an app correctly authenticates a user but then only hides an admin-only button in the UI for non-admins, without checking permission server-side on the actual admin API endpoint. That's an authorization gap -- any authenticated user could call the endpoint directly and bypass the UI-level restriction entirely.",
+    "codeSnippet": "// UI hides the button, but the endpoint itself has no check\napp.post('/api/admin/delete-user', async (req, res) => {\n  await deleteUser(req.body.userId); // ❌ no authorization check here\n});",
+    "commonPitfalls": [
+      "Confusing the two terms",
+      "Relying on hiding a UI element as the only access control"
+    ],
+    "followUpQuestions": [
+      "How would you fix the authorization gap in the example?",
+      "What's the difference between role-based and attribute-based access control?"
+    ],
+    "topicId": "auth-and-token-storage",
+    "moduleId": "security-fundamentals",
+    "order": 38
+  },
+  {
+    "id": "test-3",
+    "category": "Testing",
+    "difficulty": "Medium",
+    "question": "How would you approach adding tests to an existing feature that currently has zero test coverage, without blocking on rewriting the whole thing?",
+    "estimatedMinutes": 9,
+    "companyTags": [
+      "Shopify",
+      "Airbnb"
+    ],
+    "rubric": [
+      "Suggests starting with the highest-risk or most-changed code paths rather than attempting full coverage at once",
+      "Suggests extracting pure logic into testable functions where reasonable, rather than testing everything through the UI",
+      "Mentions writing a test for the next bug fix as a practical, incremental habit",
+      "Doesn't propose a full rewrite as a prerequisite to testing"
+    ],
+    "sampleAnswer": "I wouldn't try to reach full coverage in one pass -- I'd start with the highest-risk or most frequently changed parts of the feature, since that's where regressions are most likely and most costly. Where there's business logic tangled up in a component, I'd look for opportunities to extract it into pure, testable functions rather than testing everything indirectly through rendering. And practically, I'd adopt a habit of writing a test alongside every bug fix in that area going forward, so coverage grows incrementally instead of needing a dedicated, hard-to-justify 'add tests' project.",
+    "codeSnippet": null,
+    "commonPitfalls": [
+      "Treating 'add tests' as requiring a full rewrite first",
+      "Trying to reach 100% coverage immediately instead of prioritizing by risk"
+    ],
+    "followUpQuestions": [
+      "How would you convince a team to invest time in this when there's constant feature pressure?",
+      "What would you test first in a checkout flow with zero coverage?"
+    ],
+    "topicId": "capstone-test-suite",
+    "moduleId": "testing-and-tooling",
+    "order": 39
   }
 ]
