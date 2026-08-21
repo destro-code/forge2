@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { X, Plus, FileCode2, FileSpreadsheet, FileText, Code2 } from "lucide-react";
+import { X, Plus, FileCode2, FileSpreadsheet, FileText, Code2, FileCode } from "lucide-react";
 import type { PlaygroundFile } from "@/lib/types/playground";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 
@@ -15,16 +15,22 @@ export function PlaygroundTabs({ onNewFileClick }: PlaygroundTabsProps) {
   const openFiles = files.filter((f) => openTabIds.includes(f.id));
 
   const getFileIcon = (name: string) => {
+    if (name.endsWith(".html") || name.endsWith(".htm")) {
+      return <FileCode className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-orange-400" />;
+    }
+    if (name.endsWith(".css") || name.endsWith(".scss")) {
+      return <FileSpreadsheet className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-pink-400" />;
+    }
+    if (name.endsWith(".json")) {
+      return <FileText className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-400" />;
+    }
     if (name.endsWith(".tsx") || name.endsWith(".jsx")) {
       return <FileCode2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-sky-400" />;
     }
     if (name.endsWith(".ts") || name.endsWith(".js")) {
       return <Code2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-400" />;
     }
-    if (name.endsWith(".css")) {
-      return <FileSpreadsheet className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-pink-400" />;
-    }
-    return <FileText className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-400" />;
+    return <FileCode2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground" />;
   };
 
   return (

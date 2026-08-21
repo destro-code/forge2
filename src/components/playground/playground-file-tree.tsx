@@ -6,6 +6,7 @@ import {
   FileCode2,
   FileSpreadsheet,
   FileText,
+  FileCode,
   Plus,
   Trash2,
   FolderTree,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 import type { PlaygroundFile, PlaygroundPreset } from "@/lib/types/playground";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
+import { normalizeNewFileName, suggestNewFileName } from "@/lib/playground-templates";
 
 interface PlaygroundFileTreeProps {
   onFileSelected?: (fileId: string) => void;
@@ -43,27 +45,31 @@ export function PlaygroundFileTree(props: PlaygroundFileTreeProps) {
   const [newFileName, setNewFileName] = useState("");
 
   const handleCreate = () => {
-    if (!newFileName.trim()) return;
-    let name = newFileName.trim();
-    if (!name.includes(".")) {
-      name += ".tsx";
-    }
+    const raw = newFileName.trim();
+    if (!raw) return;
+    const name = normalizeNewFileName(raw, files);
     onAddFile(name);
     setNewFileName("");
     setIsAdding(false);
   };
 
   const getFileIcon = (name: string) => {
+    if (name.endsWith(".html") || name.endsWith(".htm")) {
+      return <FileCode className="h-4 w-4 text-orange-400" />;
+    }
+    if (name.endsWith(".css") || name.endsWith(".scss")) {
+      return <FileSpreadsheet className="h-4 w-4 text-pink-400" />;
+    }
+    if (name.endsWith(".json")) {
+      return <FileText className="h-4 w-4 text-emerald-400" />;
+    }
     if (name.endsWith(".tsx") || name.endsWith(".jsx")) {
       return <FileCode2 className="h-4 w-4 text-sky-400" />;
     }
     if (name.endsWith(".ts") || name.endsWith(".js")) {
       return <Code2 className="h-4 w-4 text-amber-400" />;
     }
-    if (name.endsWith(".css")) {
-      return <FileSpreadsheet className="h-4 w-4 text-pink-400" />;
-    }
-    return <FileText className="h-4 w-4 text-emerald-400" />;
+    return <FileCode2 className="h-4 w-4 text-muted-foreground" />;
   };
 
   return (
@@ -122,7 +128,7 @@ export function PlaygroundFileTree(props: PlaygroundFileTreeProps) {
             value={newFileName}
             onChange={(e) => setNewFileName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-            placeholder="filename.tsx"
+            placeholder={suggestNewFileName(files)}
             className="h-7 text-xs"
             autoFocus
           />
@@ -136,7 +142,13 @@ export function PlaygroundFileTree(props: PlaygroundFileTreeProps) {
       <div className="flex-1 overflow-y-auto p-1 space-y-0.5">
         {files.map((file) => {
           const isActive = file.id === activeFileId;
-          const isMain = file.name === "App.tsx";
+          const isMain =
+            file.name === "App.tsx" ||
+            file.name === "App.jsx" ||
+            file.name === "App.ts" ||
+            file.name === "App.js" ||
+            file.name === "index.html" ||
+            file.name === "main.tsx";
 
           return (
             <div

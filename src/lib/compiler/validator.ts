@@ -16,13 +16,26 @@ export function validateProject(parsed: ParsedProject): ValidationResult {
   }
 
   const hasEntry = Boolean(parsed.entryModule);
-  if (!hasEntry) {
-    diagnostics.push({
-      id: "diag-missing-entry",
-      severity: "warning",
-      message:
-        "No standard entry file (App.tsx, index.tsx, main.tsx) detected. Defaulting to first file.",
-    });
+  if (!hasEntry && parsed.modules.length > 0) {
+    if (parsed.runtime === "react") {
+      diagnostics.push({
+        id: "diag-missing-react-entry",
+        severity: "error",
+        message: "No standard React entry file (App.tsx, App.jsx, index.tsx, main.tsx) detected.",
+      });
+    } else if (parsed.runtime === "html-css") {
+      diagnostics.push({
+        id: "diag-missing-html-entry",
+        severity: "error",
+        message: "No HTML or CSS entry document (index.html, styles.css) detected.",
+      });
+    } else {
+      diagnostics.push({
+        id: "diag-missing-vanilla-entry",
+        severity: "error",
+        message: "No entry file (App.js, index.html) detected for Vanilla DOM runtime.",
+      });
+    }
   }
 
   // Validate JSON files

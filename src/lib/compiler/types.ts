@@ -1,13 +1,22 @@
-import type { PlaygroundFile } from "../types/playground";
+import type {
+  PlaygroundFile,
+  PlaygroundRuntime,
+  PlaygroundProjectManifest,
+} from "../types/playground";
+
+export type { PlaygroundRuntime, PlaygroundProjectManifest };
 
 export interface CompilerOptions {
+  runtime?: PlaygroundRuntime;
+  entryFile?: string;
   isInline?: boolean;
   title?: string;
   theme?: "dark" | "light";
   baseUrl?: string;
+  workspaceRevision?: number;
 }
 
-export type CompilerInput = PlaygroundFile[];
+export type CompilerInput = PlaygroundFile[] | PlaygroundProjectManifest;
 
 export interface ParsedModule {
   id: string;
@@ -21,6 +30,7 @@ export interface ParsedModule {
 }
 
 export interface ParsedProject {
+  runtime: PlaygroundRuntime;
   files: PlaygroundFile[];
   modules: ParsedModule[];
   entryModule?: ParsedModule;

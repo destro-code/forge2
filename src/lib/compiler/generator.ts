@@ -1,5 +1,6 @@
 import type { CompilerOptions, GeneratedOutput, ParsedProject, ValidationResult } from "./types";
 import * as Babel from "@babel/standalone";
+import { VALIDATION_RUNNER_SCRIPT } from "./validation-runner";
 
 /**
  * Step 3: Generate Phase
@@ -10,13 +11,16 @@ export function generateOutput(
   _validation: ValidationResult,
   options: CompilerOptions = {},
 ): GeneratedOutput {
-  const { isInline = false, title = "Forge Playground Preview", baseUrl = "" } = options;
+  const {
+    isInline = false,
+    title = "Forge Playground Preview",
+    baseUrl = "",
+    workspaceRevision,
+  } = options;
 
-  const isHtmlProject =
-    parsed.entryModule?.language === "html" || parsed.entryModule?.name.endsWith(".html");
-  const isCssProject =
-    parsed.entryModule?.language === "css" || parsed.entryModule?.name.endsWith(".css");
-  const isStaticProject = isHtmlProject || isCssProject;
+  const isReact = parsed.runtime === "react";
+  const isHtmlCss = parsed.runtime === "html-css";
+  const isVanillaDom = parsed.runtime === "vanilla-dom";
 
   const cssBundle = parsed.cssModules.map((m) => m.code).join("\n\n");
 
@@ -52,32 +56,6 @@ export function generateOutput(
     }
   });
 
-  // Determine whether this project genuinely requires the React runtime
-  const projectNeedsReact =
-    !isStaticProject &&
-    parsed.codeModules.some((m) => {
-      const raw = m.code || "";
-      if (
-        /\b(React|ReactDOM|useState|useEffect|useContext|useReducer|useCallback|useMemo|useRef)\b/.test(
-          raw,
-        ) ||
-        /from\s+['"]react['"]/.test(raw) ||
-        /from\s+['"]react-dom/.test(raw)
-      ) {
-        return true;
-      }
-      const compiled = precompiledCodeModules.find((p) => p.id === m.id)?.compiled || "";
-      if (
-        compiled.includes("React.createElement") ||
-        compiled.includes("React.") ||
-        compiled.includes('require("react")') ||
-        compiled.includes("require('react')")
-      ) {
-        return true;
-      }
-      return false;
-    });
-
   const safeFilesJson = JSON.stringify(precompiledCodeModules).replace(
     /<\/script>/g,
     "<\\/script>",
@@ -86,10 +64,9 @@ export function generateOutput(
   const vendorBase = (baseUrl || "").replace(/\/$/, "");
   const baseTag = vendorBase ? `<base href="${vendorBase}/" />` : `<base href="/" />`;
 
-  const vendorScripts =
-    isStaticProject || !projectNeedsReact
-      ? ""
-      : `
+  const vendorScripts = !isReact
+    ? ""
+    : `
   <script src="${vendorBase ? vendorBase : ""}/vendor/react.development.js?v=18.3.1" onerror="window.__reactLoadError=true"></script>
   <script src="${vendorBase ? vendorBase : ""}/vendor/react-dom.development.js?v=18.3.1" onerror="window.__reactDomLoadError=true"></script>
   <script>
@@ -219,6 +196,7 @@ export function generateOutput(
       };
 
       window.showErrorOverlay = function(type, message, file, line, col, stack) {
+        window.__hasInitError = true;
         const overlay = document.getElementById('error-overlay');
         const titleEl = document.getElementById('error-title');
         const badgeEl = document.getElementById('error-badge');
@@ -234,6 +212,15 @@ export function generateOutput(
         const fullLog = type + (file ? ' [' + file + ']' : '') + (line ? ' Line ' + line + ':' + col : '') + ': ' + message;
         window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: fullLog }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'error', msg: fullLog }, '*');
+        window.parent.postMessage({
+          type: 'PLAYGROUND_BUILD_ERROR',
+          message: fullLog,
+          errorType: type,
+          file: file,
+          line: line,
+          column: col,
+          workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
+        }, '*');
       };
 
       window.onerror = function(msg, url, line, col, error) {
@@ -251,18 +238,27 @@ export function generateOutput(
   </script>
 
   <script>
+    window.__WORKSPACE_REVISION__ = ${typeof workspaceRevision === "number" ? workspaceRevision : "undefined"};
+    window.__hasInitError = false;
     let FILES = ${safeFilesJson};
+    const RUNTIME = "${parsed.runtime}";
+    const DEFAULT_ENTRY_NAME = "${parsed.entryModule?.name || ""}";
 
-    function runCompilerAndExecute(newFiles, startTime) {
+    function runCompilerAndExecute(newFiles, startTime, revision) {
+      window.__hasInitError = false;
+      if (typeof revision === 'number') {
+        window.__WORKSPACE_REVISION__ = revision;
+      }
       if (newFiles) {
         FILES = newFiles;
       }
       if (!startTime) startTime = Date.now();
 
-      const isStatic = ${isStaticProject};
-      const needsReact = ${projectNeedsReact};
+      const isReact = RUNTIME === 'react';
+      const isHtmlCss = RUNTIME === 'html-css';
+      const isVanillaDom = RUNTIME === 'vanilla-dom';
 
-      if (needsReact) {
+      if (isReact) {
         const missing = [];
         if (!window.React) missing.push('React');
         if (!window.ReactDOM) missing.push('ReactDOM');
@@ -446,9 +442,12 @@ export function generateOutput(
       }
 
       try {
-        if (isStatic) {
-          const htmlFile = FILES.find(function(f) { return f.name.endsWith('.html') || f.language === 'html'; });
-          const container = document.getElementById('root');
+        const container = document.getElementById('root');
+
+        if (isHtmlCss) {
+          const htmlFile = FILES.find(function(f) {
+            return f.name === DEFAULT_ENTRY_NAME || f.name.endsWith('.html') || f.language === 'html';
+          });
 
           if (htmlFile) {
             const codeLower = htmlFile.code.toLowerCase();
@@ -477,20 +476,33 @@ export function generateOutput(
               });
             }
           } else {
-            // CSS only or other static
+            // CSS only
             if (container) {
               container.innerHTML = '<div style="padding: 24px; text-align: center; color: #a1a1aa;"><p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 500;">CSS Sandbox</p><p style="margin: 0; font-size: 13px; opacity: 0.8;">Styles are active and applied directly to this preview area.</p></div>';
             }
           }
-        } else {
-          // Standard JS/TS/TSX Module Execution
-          const entryFile = FILES.find(function(f) {
-            return f.name === 'App.tsx' || f.name === 'App.ts' || f.name === 'App.jsx' || f.name === 'App.js' || f.name === 'index.tsx' || f.name === 'index.ts' || f.name === 'main.tsx' || f.name === 'main.ts';
-          }) || FILES[0];
-          if (!entryFile) return;
 
-          const container = document.getElementById('root');
-          if (container && container.children.length === 0 && !needsReact) {
+          if (!window.__hasInitError) {
+            window.parent.postMessage({
+              type: 'PLAYGROUND_READY',
+              workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
+            }, '*');
+          }
+        } else if (isVanillaDom) {
+          const htmlFile = FILES.find(function(f) {
+            return f.name.endsWith('.html') || f.language === 'html';
+          });
+
+          if (htmlFile && container) {
+            const codeLower = htmlFile.code.toLowerCase();
+            const isFullDoc = codeLower.indexOf('<!doctype') !== -1 || codeLower.indexOf('<html') !== -1 || codeLower.indexOf('<body') !== -1;
+            let htmlToRender = htmlFile.code;
+            if (isFullDoc) {
+              const bodyMatch = htmlFile.code.match(/<body[^>]*>([\\s\\S]*)<\\/body>/i);
+              htmlToRender = bodyMatch ? bodyMatch[1] : htmlFile.code;
+            }
+            container.innerHTML = htmlToRender;
+          } else if (container && container.children.length === 0) {
             container.innerHTML = '<div style="padding: 14px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; font-family: system-ui, sans-serif;">' +
               '<h3 id="title" style="margin: 0 0 10px 0; font-size: 14px; color: #58a6ff;">Interactive DOM Sandbox</h3>' +
               '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">' +
@@ -503,9 +515,30 @@ export function generateOutput(
             '</div>';
           }
 
+          // Execute JS/TS code modules
+          const jsEntry = FILES.find(function(f) {
+            return f.name === DEFAULT_ENTRY_NAME || f.name === 'App.js' || f.name === 'main.js' || f.name === 'index.js' || f.name === 'script.js' || f.name.endsWith('.js') || f.name.endsWith('.ts');
+          });
+          if (jsEntry && !jsEntry.name.endsWith('.json') && !jsEntry.name.endsWith('.html')) {
+            requireModule('./' + jsEntry.name, 'root');
+          }
+
+          if (!window.__hasInitError) {
+            window.parent.postMessage({
+              type: 'PLAYGROUND_READY',
+              workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
+            }, '*');
+          }
+        } else {
+          // React Runtime Execution
+          const entryFile = FILES.find(function(f) {
+            return f.name === DEFAULT_ENTRY_NAME || f.name === 'App.tsx' || f.name === 'App.jsx' || f.name === 'index.tsx' || f.name === 'main.tsx' || f.name === 'App.ts' || f.name === 'App.js' || f.name === 'index.ts' || f.name === 'main.ts';
+          }) || FILES[0];
+          if (!entryFile) return;
+
           const entryExports = requireModule('./' + entryFile.name, 'root');
 
-          if (needsReact && window.React) {
+          if (window.React) {
             const ComponentToRender = 
               entryExports.default || 
               entryExports.App || 
@@ -529,15 +562,34 @@ export function generateOutput(
               }
             }
           }
+
+          if (!window.__hasInitError) {
+            if (typeof requestAnimationFrame === 'function') {
+              requestAnimationFrame(function() {
+                if (!window.__hasInitError) {
+                  window.parent.postMessage({
+                    type: 'PLAYGROUND_READY',
+                    workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
+                  }, '*');
+                }
+              });
+            } else {
+              window.parent.postMessage({
+                type: 'PLAYGROUND_READY',
+                workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
+              }, '*');
+            }
+          }
         }
       } catch (err) {
         window.showErrorOverlay('Runtime Execution Error', err.message, '', undefined, undefined, err.stack);
       }
     }
 
+
     window.addEventListener('message', function(event) {
       if (event.data && event.data.type === 'PLAYGROUND_UPDATE_FILES' && Array.isArray(event.data.files)) {
-        runCompilerAndExecute(event.data.files);
+        runCompilerAndExecute(event.data.files, undefined, event.data.workspaceRevision);
       }
     });
 
@@ -546,6 +598,10 @@ export function generateOutput(
     } else {
       runCompilerAndExecute();
     }
+  </script>
+
+  <script id="forge-validation-runner">
+    ${VALIDATION_RUNNER_SCRIPT}
   </script>
 </body>
 </html>`;

@@ -1,3 +1,6 @@
+import type { ExerciseValidationSpec } from "./types/validation";
+export * from "./types/validation";
+
 export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
 export type MasteryState =
   "Not Started" | "Learning" | "Practicing" | "Needs Review" | "Interview Ready" | "Mastered";
@@ -176,6 +179,7 @@ export type LessonSection =
       initialCode: string;
       language?: string;
       instructions?: string;
+      validation?: ExerciseValidationSpec;
     }
   | { type: "inline-quiz"; quizId: string };
 
@@ -193,6 +197,7 @@ export interface LessonExercise {
   bugId?: string;
   playgroundLanguage?: string;
   playgroundCode?: string;
+  validation?: ExerciseValidationSpec;
 }
 
 export interface Lesson {

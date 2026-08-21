@@ -26,7 +26,7 @@ export function runCompilerPipeline(
   const startTime = typeof performance !== "undefined" ? performance.now() : Date.now();
 
   // 1. Parse Phase
-  const parsed = parseProject(input);
+  const parsed = parseProject(input, options);
 
   // 2. Validate Phase
   const validation = validateProject(parsed);

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Play, RefreshCw, Terminal, ExternalLink, Code2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { buildPlaygroundHtml, getSandboxFileInfo } from "@/lib/playground-compiler";
+import { buildLessonWorkspaceFiles } from "@/lib/playground-templates";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 interface LessonInlineSandboxProps {
@@ -40,14 +41,8 @@ export function LessonInlineSandbox({
           ? "Editable JavaScript"
           : "Editable TypeScript / TSX";
 
-  const sandboxFiles = [
-    {
-      id: "app-file",
-      name: fileInfo.name,
-      code: code,
-      language: fileInfo.language,
-    },
-  ];
+  const workspace = buildLessonWorkspaceFiles({ title }, undefined, code, language);
+  const sandboxFiles = workspace.files.map((f, i) => (i === 0 ? { ...f, code } : f));
 
   useEffect(() => {
     const handleMsg = (e: MessageEvent) => {
@@ -135,7 +130,14 @@ export function LessonInlineSandbox({
             <iframe
               key={key}
               ref={iframeRef}
-              srcDoc={buildPlaygroundHtml(sandboxFiles, { isInline: true, title })}
+              srcDoc={buildPlaygroundHtml(
+                {
+                  runtime: workspace.runtime,
+                  files: sandboxFiles,
+                  entryFile: workspace.entryFile,
+                },
+                { isInline: true, title },
+              )}
               title="Lesson Inline Sandbox Preview"
               sandbox="allow-scripts"
               className="w-full h-40 rounded-lg border border-border/50 bg-[#090a0f]"

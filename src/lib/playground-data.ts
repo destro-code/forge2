@@ -4,6 +4,7 @@ export const PLAYGROUND_PRESETS: PlaygroundPreset[] = [
   {
     id: "stale-closure-lab",
     title: "React Stale Closures & Timers",
+    runtime: "react",
     category: "React Core",
     difficulty: "Intermediate",
     description:
@@ -150,6 +151,7 @@ export default function Counter() {
   {
     id: "use-debounce-hook",
     title: "Custom Hook: useDebounce & Search",
+    runtime: "react",
     category: "React Hooks",
     difficulty: "Intermediate",
     description:
@@ -308,6 +310,7 @@ export function useDebounce<T>(value: T, delay: number): T {
   {
     id: "async-abort-controller",
     title: "Async Data Fetch & AbortController",
+    runtime: "react",
     category: "Browser APIs",
     difficulty: "Advanced",
     description:

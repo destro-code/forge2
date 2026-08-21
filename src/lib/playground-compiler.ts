@@ -1,8 +1,12 @@
-import type { PlaygroundFile } from "./types/playground";
+import type {
+  PlaygroundFile,
+  PlaygroundProjectManifest,
+  PlaygroundRuntime,
+} from "./types/playground";
 import { runCompilerPipeline } from "./compiler/pipeline";
-import type { CompilerOptions } from "./compiler/types";
+import type { CompilerInput, CompilerOptions } from "./compiler/types";
 
-export type { CompilerOptions };
+export type { CompilerInput, CompilerOptions, PlaygroundRuntime, PlaygroundProjectManifest };
 
 export const getSandboxFileInfo = (lang?: string) => {
   const norm = (lang || "").toLowerCase();
@@ -25,12 +29,16 @@ export const getSandboxFileInfo = (lang?: string) => {
  * Shared compilation & execution engine for both the full Playground
  * and the Lesson Inline Sandboxes. Delegates to the 5-step compiler pipeline.
  */
-export function buildPlaygroundHtml(
-  files: PlaygroundFile[],
-  options: CompilerOptions = {},
-): string {
+export function buildPlaygroundHtml(input: CompilerInput, options: CompilerOptions = {}): string {
+  const report = compilePlaygroundProject(input, options);
+  return report.outputHtml;
+}
+
+/**
+ * Compiles a project and returns the full compiler report including diagnostics and outputHtml.
+ */
+export function compilePlaygroundProject(input: CompilerInput, options: CompilerOptions = {}) {
   const effectiveBaseUrl =
     options.baseUrl || (typeof window !== "undefined" ? window.location.origin : "");
-  const report = runCompilerPipeline(files, { ...options, baseUrl: effectiveBaseUrl });
-  return report.outputHtml;
+  return runCompilerPipeline(input, { ...options, baseUrl: effectiveBaseUrl });
 }

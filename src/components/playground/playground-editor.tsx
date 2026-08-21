@@ -21,6 +21,7 @@ import type { PlaygroundFile } from "@/lib/types/playground";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
 import { MonacoEditor } from "@/components/shared/monaco-editor";
+import { getLanguageFromFileName } from "@/lib/playground-templates";
 
 interface PlaygroundEditorProps {
   onCodeChange?: (code: string) => void;
@@ -148,12 +149,7 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
     editorThemeMode === "auto" ? (appTheme === "light" ? "light" : "vs-dark") : editorThemeMode;
 
   const getLanguage = (fileName: string) => {
-    if (fileName.endsWith(".tsx") || fileName.endsWith(".ts")) return "typescript";
-    if (fileName.endsWith(".jsx") || fileName.endsWith(".js")) return "javascript";
-    if (fileName.endsWith(".css")) return "css";
-    if (fileName.endsWith(".html")) return "html";
-    if (fileName.endsWith(".json")) return "json";
-    return "javascript";
+    return getLanguageFromFileName(fileName || "");
   };
 
   const lineCount = (activeFile?.code || "").split("\n").length;
@@ -375,6 +371,17 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
                 automaticLayout: true,
                 padding: isMobile ? { top: 6, bottom: 6 } : { top: 12, bottom: 12 },
                 lineNumbersMinChars: 3,
+                autoClosingBrackets: "always",
+                autoClosingQuotes: "always",
+                bracketPairColorization: { enabled: true },
+                matchBrackets: "always",
+                autoIndent: "full",
+                suggest: { showWords: true, showSnippets: true },
+                tabCompletion: "on",
+                formatOnType: true,
+                formatOnPaste: true,
+                folding: true,
+                renderLineHighlight: "all",
               }}
             />
           </Suspense>
