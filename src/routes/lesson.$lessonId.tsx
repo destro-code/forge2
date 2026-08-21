@@ -39,7 +39,6 @@ function LessonView() {
   const allTopics = useTopics();
   const topic = useTopic(lesson?.topicId);
   const parentModule = useModule(lesson?.moduleId || topic?.moduleId);
-
   const {
     bookmarks,
     toggleBookmark,
@@ -48,6 +47,12 @@ function LessonView() {
     setLastActiveLesson,
     lastActiveLessonId,
   } = useProgress();
+
+  useEffect(() => {
+    if (lesson?.id && lesson.id !== lastActiveLessonId) {
+      setLastActiveLesson(lesson.id);
+    }
+  }, [lesson?.id, lastActiveLessonId, setLastActiveLesson]);
 
   if (!lesson) throw notFound();
 
@@ -81,12 +86,6 @@ function LessonView() {
       ? activeLessons[currentIndex + 1]
       : null;
 
-  useEffect(() => {
-    if (lesson.id !== lastActiveLessonId) {
-      setLastActiveLesson(lesson.id);
-    }
-  }, [lesson.id, lastActiveLessonId, setLastActiveLesson]);
-
   const handleComplete = () => {
     const wasCompleted = lessonsCompleted.includes(lesson.id);
     completeLesson(lesson.id);
@@ -104,14 +103,24 @@ function LessonView() {
     <div className="min-h-[calc(100vh-5rem)] space-y-4">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 rounded-xl border border-border/60 bg-card/70 px-4 py-3 backdrop-blur-xl sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
-          <Link
-            to={parentModule ? "/learn/modules/$moduleId" : "/learn"}
-            params={parentModule ? { moduleId: parentModule.id } : undefined}
-            className="hidden shrink-0 items-center gap-2 text-xs text-muted-foreground transition hover:text-foreground sm:flex"
-          >
-            <GraduationCap className="h-4 w-4 text-primary" />
-            {parentModule?.title || "Roadmap"}
-          </Link>
+          {parentModule ? (
+            <Link
+              to="/learn/modules/$moduleId"
+              params={{ moduleId: parentModule.id }}
+              className="hidden shrink-0 items-center gap-2 text-xs text-muted-foreground transition hover:text-foreground sm:flex"
+            >
+              <GraduationCap className="h-4 w-4 text-primary" />
+              {parentModule.title}
+            </Link>
+          ) : (
+            <Link
+              to="/learn"
+              className="hidden shrink-0 items-center gap-2 text-xs text-muted-foreground transition hover:text-foreground sm:flex"
+            >
+              <GraduationCap className="h-4 w-4 text-primary" />
+              Roadmap
+            </Link>
+          )}
           <div className="hidden h-5 w-px bg-border/60 sm:block" />
           <div className="min-w-0">
             <div className="truncate text-sm font-semibold">{lesson.title}</div>
