@@ -1416,7 +1416,13 @@
       },
       {
         "type": "paragraph",
-        "text": "What is the parent of <h2>? (Answer: section — h2 is nested directly inside it.)"
+        "text": "What is the parent of <h2>? Decide before reading on."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Check yourself",
+        "text": "The parent of <h2> is section — h2 is nested directly inside it."
       },
       {
         "type": "heading",
@@ -1603,7 +1609,7 @@
       },
       {
         "type": "paragraph",
-        "text": "Tag: the markup itself, like <p> or </p>. Element: the complete thing — opening tag, content, and closing tag together. Opening tag: <p>. Closing tag: </p>. Void element: a self-contained element with no closing tag, like <img>."
+        "text": "Tag: the markup itself, like <p> or </p>. Element: the complete thing — opening tag, content, and closing tag together. Opening tag: <p>. Closing tag: </p>."
       },
       {
         "type": "callout",
@@ -1637,13 +1643,40 @@
       },
       {
         "type": "heading",
+        "text": "Learn: Some Elements Don't Close"
+      },
+      {
+        "type": "paragraph",
+        "text": "Look back at that input tag: <input type=\"email\"> has no </input> anywhere. That's not a mistake. input is a void element — it doesn't wrap any content, so there's nothing for a closing tag to contain."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "text": "You'll meet a handful of these as you go — img is another one you'll use soon. The pattern to remember: if an element has nothing to wrap, it doesn't need a closing tag."
+      },
+      {
+        "type": "heading",
         "text": "Learn: Quote Your Attribute Values"
       },
       {
         "type": "code",
         "language": "html",
         "title": "Quoted attribute values",
-        "code": "<p class=\"lesson-intro\">Welcome to Forge.</p>\n<a href=\"/learn/frontend\">Start learning</a>"
+        "code": "<a href=\"/learn/frontend\">Start learning</a>"
+      },
+      {
+        "type": "paragraph",
+        "text": "Here's why the quotes matter. Watch what happens if you drop them from a value that contains a space:"
+      },
+      {
+        "type": "code",
+        "language": "html",
+        "title": "Unquoted value with a space — broken",
+        "code": "<a href=/learn frontend>Start learning</a>"
+      },
+      {
+        "type": "paragraph",
+        "text": "Without quotes, the browser has no way to tell where the value ends. It reads href=/learn as one attribute and frontend as a second, meaningless one — the link breaks. Quoting the value keeps it together as a single piece, no matter what it contains."
       },
       {
         "type": "paragraph",
@@ -1658,6 +1691,10 @@
         "language": "html",
         "title": "Correct nesting",
         "code": "<p>\n  Learn <strong>HTML</strong> today.\n</p>"
+      },
+      {
+        "type": "paragraph",
+        "text": "One new element here: strong marks text as important, and browsers show it bold by default."
       },
       {
         "type": "paragraph",
@@ -1718,12 +1755,16 @@
         "text": "This snippet has three beginner mistakes: a missing closing tag, an unquoted attribute, and an attribute placed outside an opening tag. Find and fix them."
       },
       {
+        "type": "paragraph",
+        "text": "One more attribute you'll see here: id. Like href or src, it's just a name-value pair — id simply gives a specific element a unique label. You'll use it constantly once you reach the Forms lesson; for now, treat it as another attribute to spot and quote correctly."
+      },
+      {
         "type": "interactive-sandbox",
         "id": "interactive-1-1-2-3",
         "title": "Repair the HTML",
         "instructions": "Fix the broken HTML so the structure is valid and every attribute is correctly placed and quoted.",
         "language": "html",
-        "initialCode": "<section class=lesson>\n  <h2>HTML Practice<h2>\n  <p>Build your first page.</p>\n  </section id=\"practice\">",
+        "initialCode": "<section id=lesson>\n  <h2>HTML Practice<h2>\n  <p>Build your first page.</p>\n  </section id=\"practice\">",
         "runtime": {
           "mode": "html",
           "fixture": "basic"
@@ -1807,15 +1848,15 @@
       {
         "id": "quiz-1-1-2-4",
         "type": "mcq",
-        "question": "You're given <label>Email</label><input type=\"email\">. What's missing before this markup is complete?",
+        "question": "Which of these is a void element, and why doesn't it need a closing tag?",
         "options": [
-          "Nothing — it's already complete.",
-          "An id on the input and a matching for on the label, so they're connected.",
-          "A class attribute on the label.",
-          "A closing tag for input."
+          "<p> — because paragraphs are always short.",
+          "<section> — because it only holds headings.",
+          "<input> — because it doesn't wrap any content.",
+          "<strong> — because bold text never closes."
         ],
-        "correctIndex": 1,
-        "explanation": "As written, the label and input aren't connected. Adding id to the input and a matching for to the label associates them — you'll build on this in the forms lesson."
+        "correctIndex": 2,
+        "explanation": "input is a void element: it has nothing to wrap, so there's no content for a closing tag to contain. p, section, and strong all wrap content and need closing tags."
       }
     ],
     "summary": "HTML elements are complete structures made from markup such as opening and closing tags and, when applicable, content between them. Attributes live in opening tags and provide additional information. Correct nesting, closing tags, and quoted attribute values help the browser build the structure you intended. The next lesson applies these building blocks to headings and paragraphs.",
@@ -1925,7 +1966,7 @@
       },
       {
         "type": "paragraph",
-        "text": "The following page is technically valid HTML, but the author chose heading levels based on how large they wanted each line to look, not on the content's actual structure. Reconstruct the intended outline before you touch the code: Frontend Academy is the main topic; HTML, CSS, and JavaScript are major sections; Selectors is a subsection of CSS."
+        "text": "The following page is technically valid HTML, but the author chose heading levels based on how large they wanted each line to look, not on the content's actual structure. Before you touch the code, read through it and decide for yourself what the real hierarchy should be — what's the main topic, what are the major sections, and does anything nest inside one of those sections?"
       },
       {
         "type": "code",
@@ -2844,7 +2885,7 @@
         "type": "interactive-sandbox",
         "id": "interactive-1-1-5-3",
         "title": "Replace the Layout Table",
-        "instructions": "Explain why the existing table is being misused. Replace the table with meaningful structural elements such as a header, main, and aside where appropriate. Focus on HTML meaning rather than visual styling.",
+        "instructions": "Explain why the existing table is being misused. Replace it with main and section to separate the navigation content from the lesson content — that's as precise as you can get with what you know so far. You'll have the exact right elements for this (header, nav, aside) once you reach the Semantic HTML lesson, and you'll revisit this very example there.",
         "language": "html",
         "initialCode": "<table>\n  <tr>\n    <td>Forge Academy</td>\n    <td>Courses | Progress | Profile</td>\n  </tr>\n  <tr>\n    <td>Module navigation</td>\n    <td>Main lesson content</td>\n  </tr>\n</table>",
         "runtime": {
@@ -3985,6 +4026,10 @@
       {
         "type": "paragraph",
         "text": "Start with the page shell and semantic regions. Do not worry about making every detail perfect yet. Get the document's structure correct first."
+      },
+      {
+        "type": "paragraph",
+        "text": "Two small things you haven't seen yet are already in the starter code: lang=\"en\" on the html tag tells browsers and screen readers what language the page is written in, and <meta charset=\"UTF-8\"> tells the browser how to read the file's text correctly. Both are standard boilerplate that goes on every real page. You don't need to write them yourself here — just leave them as they are."
       },
       {
         "type": "interactive-sandbox",
@@ -5951,6 +5996,10 @@
         "text": "Here, the element can use the available width up to a maximum of 720px. This is often more useful for content containers than saying 'this must always be exactly 720px.'"
       },
       {
+        "type": "paragraph",
+        "text": "One more property in that example: margin-inline: auto centers the element horizontally within its container, once the element has a max-width to center within. It's the modern equivalent of the older margin: 0 auto trick — inline here refers to the horizontal direction in most writing systems."
+      },
+      {
         "type": "callout",
         "variant": "tip",
         "text": "A max-width often says something more useful than a fixed width: 'You may grow, but please stop before becoming a ridiculously long sentence across the entire monitor.'"
@@ -7322,7 +7371,7 @@
       },
       {
         "type": "paragraph",
-        "text": "overflow: auto allows the browser to provide scrolling when the content exceeds the constrained box. This is different from simply hiding the content and hoping nobody notices."
+        "text": "max-height sets the limit that creates the constrained box in the first place — the same idea as width or max-width, just for the vertical dimension. overflow: auto then allows the browser to provide scrolling when the content exceeds that limit. This is different from simply hiding the content and hoping nobody notices."
       },
       {
         "type": "callout",
@@ -8371,7 +8420,7 @@
       },
       {
         "type": "paragraph",
-        "text": "This container can shrink on a small screen while staying limited on a wider one. That is responsive behavior without a single media query."
+        "text": "This container can shrink on a small screen while staying limited on a wider one — margin-inline centers it, the way you saw earlier, and padding-inline adds breathing room on the left and right the same way padding would, just using the logical inline direction instead of physical left/right. That is responsive behavior without a single media query."
       },
       {
         "type": "heading",
@@ -8881,7 +8930,7 @@
       },
       {
         "type": "paragraph",
-        "text": "Do not copy these exact values blindly. Use them as a starting point and adjust them to create a coherent hierarchy."
+        "text": "Do not copy these exact values blindly. Use them as a starting point and adjust them to create a coherent hierarchy. Two you may not have used yet: letter-spacing adjusts the space between characters, and text-transform can force text to uppercase/lowercase regardless of how it was typed — both are just typography properties like the ones you already know."
       },
       {
         "type": "heading",
