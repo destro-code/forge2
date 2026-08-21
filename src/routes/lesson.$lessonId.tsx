@@ -754,6 +754,7 @@ function LessonView() {
                           code={s.code}
                           title={"title" in s ? s.title : undefined}
                           highlightLines={"highlightLines" in s ? s.highlightLines : []}
+                          runtime={"runtime" in s && s.runtime ? s.runtime : lesson.runtime}
                         />
                       </div>
                     );

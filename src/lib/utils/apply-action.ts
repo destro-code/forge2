@@ -20,7 +20,7 @@ export function getApplyActivityCta(
 
     // 1. DevTools / Browser inspection / Network / Console / Sources / DOM inspection
     if (
-      /devtools|inspect|elements panel|console panel|console tab|network panel|network tab|sources panel|sources tab|breakpoint|dom position|applied css rule|real webpage|browser devtools|computed styles/i.test(
+      /devtools|inspect|elements panel|console panel|console tab|network panel|network tab|sources panel|sources tab|breakpoint|dom position|applied css rule|real webpage|browser devtools|computed styles|open devtools|press f12|right-click|browser tab|browser window|performance panel|application panel|lighthouse|memory panel|browser's devtools|browser console|browser element inspector|in your browser|in the browser|browser extension|f12 developer tools/i.test(
         text,
       )
     ) {

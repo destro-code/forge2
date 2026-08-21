@@ -110,6 +110,27 @@ export interface CheckpointAssessmentConfig {
   formFields?: { id: string; label: string; placeholder?: string; type?: "text" | "textarea" }[];
 }
 
+export type LessonRuntimeMode =
+  "console" | "dom" | "events" | "network" | "async" | "storage" | "html" | "css" | "react";
+
+export type LessonRuntimeFixture =
+  | "basic"
+  | "button"
+  | "form"
+  | "list"
+  | "counter"
+  | "events"
+  | "dom-inspector"
+  | "request-response"
+  | "timer"
+  | "storage";
+
+export interface LessonRuntimeConfig {
+  mode?: LessonRuntimeMode | string;
+  fixture?: LessonRuntimeFixture | string;
+  bindings?: Record<string, string>;
+}
+
 export type LessonSection =
   | { type: "heading"; text: string; id?: string }
   | { type: "paragraph"; text: string }
@@ -121,6 +142,7 @@ export type LessonSection =
       title?: string;
       editable?: boolean;
       highlightLines?: number[];
+      runtime?: LessonRuntimeConfig;
     }
   | {
       type: "diagram";
@@ -199,6 +221,7 @@ export interface Lesson {
   summary: string;
   resources: { label: string; url: string }[];
   interviewQuestions: string[];
+  runtime?: LessonRuntimeConfig;
 }
 
 export interface ProjectTask {

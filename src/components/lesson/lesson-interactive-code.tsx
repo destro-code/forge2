@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import * as Babel from "@babel/standalone";
 
+import { LessonRuntimeConfig } from "@/lib/types";
+
 interface LessonInteractiveCodeProps {
   language: string;
   code: string;
@@ -14,6 +16,7 @@ interface LessonInteractiveCodeProps {
   onOpenSandbox?: (code: string) => void;
   lessonId?: string;
   exampleId?: string;
+  runtime?: LessonRuntimeConfig;
 }
 
 function checkCodeNeedsReact(code: string, lang: string): boolean {
@@ -965,11 +968,275 @@ function buildInlineCssPreview(code: string): CssPreviewResult {
   return { previewHtml, matchedElementCount };
 }
 
-function buildInlineDomJsPreview(code: string, id: string): string {
+function getFixtureContent(fixtureName?: string): { title: string; html: string } {
+  const norm = (fixtureName || "basic").toLowerCase().trim();
+
+  switch (norm) {
+    case "button":
+    case "events":
+      return {
+        title: "Event Listener Demo",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">Event Listener Demo</span>
+        <span class="stage-pill">#button</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;">
+        <button id="button" class="btn btn-primary">Click Me</button>
+      </div>
+      <div class="status-bar">
+        <span class="status-dot"></span>
+        <span class="status-label">Status:</span>
+        <span id="status-text" class="status-val">Waiting for click...</span>
+      </div>
+    </div>`,
+      };
+
+    case "form":
+      return {
+        title: "Form Submission Demo",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">Form Submission Demo</span>
+        <span class="stage-pill">#form</span>
+      </div>
+      <form id="form" class="stage-form" style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <input type="text" id="input" name="name" placeholder="Enter text..." style="flex: 1; min-width: 140px;" />
+          <button type="submit" id="button" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+      <div class="status-bar">
+        <span class="status-dot"></span>
+        <span class="status-label">Status:</span>
+        <span id="status-text" class="status-val">Waiting for submission...</span>
+      </div>
+    </div>`,
+      };
+
+    case "input":
+      return {
+        title: "Input Event Demo",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">Input Event Demo</span>
+        <span class="stage-pill">#input</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label for="input" style="font-size: 11px; color: #94a3b8;">Type something:</label>
+        <input type="text" id="input" placeholder="Type here..." style="width: 100%;" />
+        <div style="padding: 6px 10px; background: #090b10; border: 1px solid #232a3b; border-radius: 6px; font-size: 12px; display: flex; gap: 6px; align-items: center;">
+          <span style="color: #64748b; font-size: 11px;">Live value:</span>
+          <span id="live-value" style="color: #38bdf8; font-weight: 500;">(empty)</span>
+        </div>
+      </div>
+    </div>`,
+      };
+
+    case "counter":
+      return {
+        title: "Counter State Demo",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">Counter State Demo</span>
+        <span class="stage-pill">#count</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span style="font-size: 12px; color: #94a3b8;">Count:</span>
+          <span id="count" style="font-size: 24px; font-weight: 700; font-family: ui-monospace, monospace; color: #38bdf8; min-width: 36px;">0</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button id="decrement" class="btn btn-secondary" style="width: 32px; height: 32px; padding: 0; font-size: 16px; font-weight: 600;">−</button>
+          <button id="increment" class="btn btn-primary" style="width: 32px; height: 32px; padding: 0; font-size: 16px; font-weight: 600;">+</button>
+          <button id="reset" class="btn btn-ghost" style="padding: 4px 8px; font-size: 11px;">Reset</button>
+        </div>
+      </div>
+    </div>`,
+      };
+
+    case "list":
+      return {
+        title: "Dynamic List Demo",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">Dynamic List Demo</span>
+        <span class="stage-pill">#list</span>
+      </div>
+      <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+        <input type="text" id="input" placeholder="New item label..." style="flex: 1; min-width: 120px;" />
+        <button id="button" class="btn btn-primary" style="padding: 6px 12px;">Add</button>
+      </div>
+      <ul id="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px;">
+        <li class="item" style="padding: 5px 8px; background: #090b10; border: 1px solid #1f2535; border-radius: 4px; color: #cbd5e1; font-size: 12px;">
+          <span>• Learn HTML</span>
+        </li>
+        <li class="item" style="padding: 5px 8px; background: #090b10; border: 1px solid #1f2535; border-radius: 4px; color: #cbd5e1; font-size: 12px;">
+          <span>• Learn CSS</span>
+        </li>
+        <li class="item" style="padding: 5px 8px; background: #090b10; border: 1px solid #1f2535; border-radius: 4px; color: #cbd5e1; font-size: 12px;">
+          <span>• Learn JavaScript</span>
+        </li>
+      </ul>
+    </div>`,
+      };
+
+    case "dom-inspector":
+      return {
+        title: "Profile Card Demo",
+        html: `
+    <div class="stage-card" id="profile-card">
+      <div class="stage-header">
+        <span class="stage-tag">Profile Card</span>
+        <span class="stage-pill">#profile-card</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+        <div id="avatar" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;">JD</div>
+        <div style="flex: 1; min-width: 0;">
+          <h4 id="name" style="margin: 0; font-size: 13px; font-weight: 600; color: #f8fafc;">Jane Developer</h4>
+          <p id="title" style="margin: 0; font-size: 11px; color: #38bdf8;">Frontend Learner</p>
+        </div>
+        <button id="button" class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;">Follow</button>
+      </div>
+      <p id="bio" style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.4;">Building interactive web apps with semantic DOM and modern JavaScript.</p>
+    </div>`,
+      };
+
+    case "request-response":
+    case "network":
+      return {
+        title: "API Request / Response",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">API Request / Response</span>
+        <span id="status-badge" class="badge ok">200 OK</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: #090b10; border: 1px solid #1f2535; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 11px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="color: #38bdf8; font-weight: 600;">GET</span>
+            <span style="color: #cbd5e1;">/api/users/current</span>
+          </div>
+          <button id="button" class="btn btn-primary" style="padding: 2px 8px; font-size: 10px;">Fetch</button>
+        </div>
+        <div style="text-align: center; color: #64748b; font-size: 10px; line-height: 1;">↓</div>
+        <pre id="response-body" style="margin: 0; padding: 8px; background: #090b10; border: 1px solid #1f2535; border-radius: 4px; color: #34d399; font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.4; max-height: 64px; overflow-y: auto;">{
+  "id": 1,
+  "name": "Alex",
+  "role": "Frontend Engineer"
+}</pre>
+      </div>
+    </div>`,
+      };
+
+    case "timer":
+    case "async":
+      return {
+        title: "Async Timer & Timeline",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">Async Timer & Timeline</span>
+        <span id="timer-display" style="font-family: ui-monospace, monospace; font-size: 13px; font-weight: 700; color: #38bdf8;">00:00.0</span>
+      </div>
+      <div style="margin: 6px 0 8px 0;">
+        <div style="width: 100%; height: 6px; background: #1a202c; border-radius: 3px; overflow: hidden;">
+          <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #38bdf8); transition: width 0.1s linear;"></div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button id="button" class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;">Start</button>
+          <button id="stop-btn" class="btn btn-ghost" style="padding: 4px 10px; font-size: 11px;">Stop</button>
+          <button id="reset-btn" class="btn btn-ghost" style="padding: 4px 10px; font-size: 11px;">Reset</button>
+        </div>
+        <span id="status-text" style="font-size: 11px; color: #94a3b8;">Ready</span>
+      </div>
+    </div>`,
+      };
+
+    case "storage":
+      return {
+        title: "localStorage Inspector",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">localStorage Inspector</span>
+        <span id="storage-count" class="stage-pill">2 items</span>
+      </div>
+      <div id="storage-entries" style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; max-height: 64px; overflow-y: auto;">
+        <div class="storage-row" style="display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: #090b10; border: 1px solid #1f2535; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 11px;">
+          <span style="color: #38bdf8;">theme</span>
+          <span style="color: #64748b;">→</span>
+          <span style="color: #facc15;">"dark"</span>
+        </div>
+        <div class="storage-row" style="display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: #090b10; border: 1px solid #1f2535; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 11px;">
+          <span style="color: #38bdf8;">username</span>
+          <span style="color: #64748b;">→</span>
+          <span style="color: #facc15;">"Alex"</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <input type="text" id="key-input" placeholder="key..." style="flex: 1; min-width: 60px;" />
+        <input type="text" id="value-input" placeholder="value..." style="flex: 1; min-width: 60px;" />
+        <button id="button" class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;">Set</button>
+      </div>
+    </div>`,
+      };
+
+    case "none":
+    case "empty":
+      return {
+        title: "Clean Canvas",
+        html: `<div id="output" style="padding: 8px; background: #090b10; color: #38bdf8; border-radius: 6px; min-height: 32px; font-family: ui-monospace, monospace; font-size: 11px;">[Ready]</div>`,
+      };
+
+    case "basic":
+    default:
+      return {
+        title: "Interactive DOM Stage",
+        html: `
+    <div class="stage-card">
+      <div class="stage-header">
+        <span class="stage-tag">Interactive DOM Stage</span>
+        <span class="stage-pill">#button</span>
+      </div>
+      <h4 id="title" style="margin: 0 0 4px 0; font-size: 13px; font-weight: 600; color: #f1f5f9;">DOM Element Stage</h4>
+      <p id="message" style="margin: 0 0 10px 0; font-size: 11px; color: #94a3b8; line-height: 1.4;">JavaScript controls live elements in this isolated document.</p>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px;">
+        <input type="text" id="input" placeholder="Type here..." style="flex: 1; min-width: 120px;" />
+        <button id="button" class="btn btn-primary">Click Me</button>
+      </div>
+      <div class="status-bar">
+        <span class="status-dot"></span>
+        <span class="status-label">Status:</span>
+        <span id="status-text" class="status-val">Ready</span>
+      </div>
+    </div>`,
+      };
+  }
+}
+
+function buildInlineFixtureDomPreview(
+  code: string,
+  id: string,
+  mode?: string,
+  fixture?: string,
+  bindings?: Record<string, string>,
+): string {
   const cleanCode = code
     .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
     .replace(/^export\s+default\s+/gm, "")
-    .replace(/^export\s+/gm, "");
+    .replace(/^export\s+/gm, "")
+    .replace(/<\/script>/gi, "<\\/script>");
+
+  const fixtureInfo = getFixtureContent(fixture || "basic");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -977,77 +1244,143 @@ function buildInlineDomJsPreview(code: string, id: string): string {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 16px;
+      padding: 10px;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0f172a;
+      background: #090a0f;
       color: #f8fafc;
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.5;
     }
-    * { box-sizing: border-box; }
-    .box, .card {
-      background: #1e293b;
-      border: 1px solid #334155;
+    .stage-card {
+      background: #11141e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 8px;
       padding: 12px;
-      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
-    button, .btn, #save-button, #submit-button, #action-btn {
+    .stage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .stage-tag {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+    }
+    .stage-pill {
+      font-size: 10px;
+      font-family: ui-monospace, monospace;
+      background: rgba(255, 255, 255, 0.06);
+      color: #38bdf8;
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+    button, .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: #3b82f6;
+      background: #2563eb;
       color: #ffffff;
-      border: none;
+      border: 1px solid #3b82f6;
       border-radius: 6px;
-      padding: 6px 14px;
+      padding: 6px 12px;
       font-size: 12px;
       font-weight: 500;
       cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
     }
-    button:hover, .btn:hover, #save-button:hover, #submit-button:hover, #action-btn:hover { background: #2563eb; }
-    input, textarea, select {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 4px;
+    button:hover, .btn:hover { background: #1d4ed8; filter: brightness(1.05); }
+    button:active, .btn:active { transform: scale(0.98); }
+    .btn-secondary {
+      background: #1e2433;
+      color: #cbd5e1;
+      border: 1px solid #333d52;
+    }
+    .btn-secondary:hover { background: #283042; }
+    .btn-ghost {
+      background: transparent;
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-ghost:hover { background: rgba(255, 255, 255, 0.06); color: #f8fafc; }
+    input, select, textarea {
+      background: #090b10;
+      border: 1px solid #232a3b;
+      border-radius: 6px;
       color: #f8fafc;
       padding: 6px 10px;
       font-family: inherit;
-      font-size: 13px;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.15s;
     }
-    form { margin: 0; }
+    input:focus, select:focus, textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px #3b82f6;
+    }
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3b82f6;
+      flex-shrink: 0;
+    }
+    .status-val {
+      color: #38bdf8;
+      font-family: ui-monospace, monospace;
+    }
+    .badge {
+      font-size: 10px;
+      font-family: ui-monospace, monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .badge.ok { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge.wait { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge.err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
   </style>
 </head>
 <body>
-  <div class="card container" id="app">
-    <h3 id="title" style="margin-top: 0; margin-bottom: 8px; font-size: 16px;">DOM Preview Fixture</h3>
-    <p id="message" style="margin: 0 0 12px 0; color: #94a3b8;">Interact with the elements below.</p>
-    
-    <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-      <input type="text" id="input" placeholder="Type here..." />
-      <button id="save-button">Save Changes</button>
-      <button id="submit-button">Submit</button>
-      <button id="action-btn">Action</button>
-    </div>
-    
-    <div id="output" style="padding: 8px; background: #000000; color: #a3e635; border-radius: 4px; min-height: 32px; font-family: monospace;"></div>
+  <div id="app">
+    ${fixtureInfo.html}
   </div>
 
   <script>
     (function() {
+      // 1. Console interceptor
       const originalLog = console.log;
       const originalWarn = console.warn;
       const originalError = console.error;
 
       function sendLog(level, args) {
         try {
-          const message = Array.from(args).map(a => {
-            if (a instanceof HTMLElement) return \`<\${a.tagName.toLowerCase()}>\`;
-            return typeof a === 'object' ? JSON.stringify(a) : String(a);
+          const message = Array.from(args).map(function(a) {
+            if (a instanceof HTMLElement) return '<' + a.tagName.toLowerCase() + (a.id ? '#' + a.id : (a.className ? '.' + a.className.split(' ')[0] : '')) + '>';
+            if (typeof a === 'object' && a !== null) {
+              try { return JSON.stringify(a); } catch(e) { return String(a); }
+            }
+            return String(a);
           }).join(' ');
-          window.parent.postMessage({ type: 'CONSOLE_LOG', level, message, id: '${id}' }, '*');
+          window.parent.postMessage({ type: 'CONSOLE_LOG', level: level, message: message, id: '${id}' }, '*');
         } catch (e) {
           window.parent.postMessage({ type: 'CONSOLE_LOG', level: 'error', message: String(e), id: '${id}' }, '*');
         }
@@ -1056,14 +1389,282 @@ function buildInlineDomJsPreview(code: string, id: string): string {
       console.log = function() { originalLog.apply(console, arguments); sendLog('log', arguments); };
       console.warn = function() { originalWarn.apply(console, arguments); sendLog('warn', arguments); };
       console.error = function() { originalError.apply(console, arguments); sendLog('error', arguments); };
-      
+      console.table = function(data) {
+        originalLog.apply(console, arguments);
+        try {
+          sendLog('log', [typeof data === 'object' ? JSON.stringify(data, null, 2) : String(data)]);
+        } catch (e) {
+          sendLog('log', [String(data)]);
+        }
+      };
+
       window.onerror = function(msg, url, line) {
         sendLog('error', [msg]);
         return false;
       };
+
+      // 2. Mock storage & live UI sync
+      var memStore = { theme: 'dark', username: 'Alex' };
+      function updateStorageUI() {
+        var el = document.getElementById('storage-entries');
+        var cnt = document.getElementById('storage-count');
+        if (!el) return;
+        var keys = Object.keys(memStore);
+        if (cnt) cnt.textContent = keys.length + (keys.length === 1 ? ' item' : ' items');
+        if (keys.length === 0) {
+          el.innerHTML = '<div style="color: #64748b; font-size: 11px; padding: 4px;">Storage is empty</div>';
+          return;
+        }
+        el.innerHTML = keys.map(function(k) {
+          return '<div class="storage-row" style="display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: #090b10; border: 1px solid #1f2535; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 11px;"><span style="color: #38bdf8;">' + k + '</span><span style="color: #64748b;">→</span><span style="color: #facc15;">"' + String(memStore[k]).replace(/"/g, '&quot;') + '"</span></div>';
+        }).join('');
+      }
+
+      var mockStorage = {
+        getItem: function(k) { return memStore[k] !== undefined ? memStore[k] : null; },
+        setItem: function(k, v) { memStore[k] = String(v); updateStorageUI(); },
+        removeItem: function(k) { delete memStore[k]; updateStorageUI(); },
+        clear: function() { memStore = {}; updateStorageUI(); },
+        key: function(i) { return Object.keys(memStore)[i] || null; },
+        get length() { return Object.keys(memStore).length; }
+      };
+
+      try {
+        window.localStorage.getItem('test');
+        var origSet = window.localStorage.setItem.bind(window.localStorage);
+        var origRemove = window.localStorage.removeItem.bind(window.localStorage);
+        var origClear = window.localStorage.clear.bind(window.localStorage);
+        window.localStorage.setItem = function(k, v) { origSet(k, v); updateStorageUI(); };
+        window.localStorage.removeItem = function(k) { origRemove(k); updateStorageUI(); };
+        window.localStorage.clear = function() { origClear(); updateStorageUI(); };
+      } catch(e) {
+        try {
+          Object.defineProperty(window, 'localStorage', { value: mockStorage, configurable: true });
+          Object.defineProperty(window, 'sessionStorage', { value: mockStorage, configurable: true });
+        } catch(err) {}
+      }
+
+      // 3. Mock fetch & API simulator
+      var origFetch = window.fetch;
+      window.fetch = function(url, opts) {
+        var statusBadge = document.getElementById('status-badge');
+        var resBody = document.getElementById('response-body');
+        if (statusBadge) { statusBadge.textContent = 'FETCHING...'; statusBadge.className = 'badge wait'; }
+
+        var responseData = {
+          success: true,
+          status: 200,
+          url: String(url),
+          timestamp: new Date().toISOString(),
+          data: { id: 1, name: 'Alex', role: 'Frontend Engineer' }
+        };
+
+        if (origFetch) {
+          return origFetch(url, opts).then(function(res) {
+            if (statusBadge) { statusBadge.textContent = res.status + ' ' + res.statusText; statusBadge.className = 'badge ' + (res.ok ? 'ok' : 'err'); }
+            return res;
+          }).catch(function() {
+            if (statusBadge) { statusBadge.textContent = '200 OK (Simulated)'; statusBadge.className = 'badge ok'; }
+            if (resBody) { resBody.textContent = JSON.stringify(responseData, null, 2); }
+            return Promise.resolve({
+              ok: true,
+              status: 200,
+              statusText: 'OK',
+              json: function() { return Promise.resolve(responseData); },
+              text: function() { return Promise.resolve(JSON.stringify(responseData)); }
+            });
+          });
+        }
+
+        if (statusBadge) { statusBadge.textContent = '200 OK (Simulated)'; statusBadge.className = 'badge ok'; }
+        if (resBody) { resBody.textContent = JSON.stringify(responseData, null, 2); }
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          json: function() { return Promise.resolve(responseData); },
+          text: function() { return Promise.resolve(JSON.stringify(responseData)); }
+        });
+      };
+
+      // 4. Global DOM binding exposure
+      var hasExplicitBindings = ${Boolean(bindings && Object.keys(bindings).length > 0)};
+      var explicitBindings = ${JSON.stringify(bindings || {})};
+
+      if (hasExplicitBindings) {
+        Object.keys(explicitBindings).forEach(function(varName) {
+          var selector = explicitBindings[varName];
+          if (typeof selector === 'string') {
+            try {
+              var el = document.querySelector(selector);
+              if (el) {
+                window[varName] = el;
+              } else {
+                console.error('Runtime Fixture Error:\\nBinding "' + varName + '" could not find "' + selector + '".');
+              }
+            } catch(err) {
+              console.error('Runtime Fixture Error:\\nInvalid selector "' + selector + '" for binding "' + varName + '".');
+            }
+          }
+        });
+      } else {
+        // Fallback for legacy lessons without explicit runtime.bindings
+        var fixtureType = ${JSON.stringify(fixture || "basic")};
+        if (fixtureType === "button" || fixtureType === "events") {
+          var btnEl = document.querySelector('#button');
+          if (btnEl) window.button = btnEl;
+        } else if (fixtureType === "counter") {
+          var countEl = document.querySelector('#count');
+          var incEl = document.querySelector('#increment');
+          var decEl = document.querySelector('#decrement');
+          if (countEl) window.count = countEl;
+          if (incEl) window.increment = incEl;
+          if (decEl) window.decrement = decEl;
+        } else if (fixtureType === "form") {
+          var formEl = document.querySelector('#form');
+          var inputEl = document.querySelector('#input');
+          var btnEl = document.querySelector('#button');
+          if (formEl) window.form = formEl;
+          if (inputEl) window.input = inputEl;
+          if (btnEl) window.button = btnEl;
+        } else if (fixtureType === "input") {
+          var inputEl = document.querySelector('#input');
+          if (inputEl) window.input = inputEl;
+        } else if (fixtureType === "list") {
+          var listEl = document.querySelector('#list');
+          var inputEl = document.querySelector('#input');
+          var btnEl = document.querySelector('#button');
+          if (listEl) window.list = listEl;
+          if (inputEl) window.input = inputEl;
+          if (btnEl) window.button = btnEl;
+        } else if (fixtureType === "dom-inspector") {
+          var cardEl = document.querySelector('#profile-card');
+          if (cardEl) window.card = cardEl;
+        } else if (fixtureType === "timer" || fixtureType === "async") {
+          var btnEl = document.querySelector('#button');
+          if (btnEl) window.button = btnEl;
+        } else if (fixtureType === "storage") {
+          var btnEl = document.querySelector('#button');
+          if (btnEl) window.button = btnEl;
+        } else if (fixtureType === "basic") {
+          var btnEl = document.querySelector('#button');
+          var inputEl = document.querySelector('#input');
+          if (btnEl) window.button = btnEl;
+          if (inputEl) window.input = inputEl;
+        }
+      }
+
+      // 5. Default stage interactivity
+      var defaultBtn = document.querySelector('#button');
+      var defaultForm = document.querySelector('#form');
+      var defaultInput = document.querySelector('#input');
+      var defaultStatusText = document.querySelector('#status-text');
+
+      if (defaultBtn) {
+        defaultBtn.addEventListener('click', function() {
+          if (defaultStatusText && defaultStatusText.textContent.indexOf('Waiting') !== -1) {
+            defaultStatusText.textContent = '✓ Button clicked';
+            defaultStatusText.style.color = '#34d399';
+          }
+        });
+      }
+      if (defaultForm) {
+        defaultForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          if (defaultStatusText) {
+            var val = defaultInput ? defaultInput.value : '';
+            defaultStatusText.textContent = val ? '✓ Submitted: "' + val + '"' : '✓ Form submitted';
+            defaultStatusText.style.color = '#34d399';
+          }
+        });
+      }
+      if (primaryInput) {
+        primaryInput.addEventListener('input', function() {
+          var liveVal = document.getElementById('live-value');
+          if (liveVal) {
+            liveVal.textContent = primaryInput.value || '(empty)';
+          }
+        });
+      }
+      if (primaryInc && primaryCount) {
+        primaryInc.addEventListener('click', function() {
+          var curr = parseInt(primaryCount.textContent || '0', 10);
+          if (!isNaN(curr)) primaryCount.textContent = String(curr + 1);
+        });
+      }
+      if (primaryDec && primaryCount) {
+        primaryDec.addEventListener('click', function() {
+          var curr = parseInt(primaryCount.textContent || '0', 10);
+          if (!isNaN(curr)) primaryCount.textContent = String(curr - 1);
+        });
+      }
+      var resetBtn = document.getElementById('reset');
+      if (resetBtn && primaryCount) {
+        resetBtn.addEventListener('click', function() {
+          primaryCount.textContent = '0';
+        });
+      }
+      var saveStorageBtn = document.getElementById('save-btn');
+      if (saveStorageBtn) {
+        saveStorageBtn.addEventListener('click', function() {
+          var k = document.getElementById('key-input');
+          var v = document.getElementById('value-input');
+          if (k && v && k.value) {
+            mockStorage.setItem(k.value, v.value);
+            k.value = '';
+            v.value = '';
+          }
+        });
+      }
+      var startTimerBtn = document.getElementById('start-btn');
+      var stopTimerBtn = document.getElementById('stop-btn');
+      var resetTimerBtn = document.getElementById('reset-btn');
+      var timerDisplay = document.getElementById('timer-display');
+      var progressBar = document.getElementById('progress-bar');
+      var timerInterval = null;
+      var timerStart = null;
+      if (startTimerBtn) {
+        startTimerBtn.addEventListener('click', function() {
+          if (!timerInterval) {
+            timerStart = Date.now();
+            if (primaryStatusText) primaryStatusText.textContent = 'Timer Running';
+            timerInterval = setInterval(function() {
+              var elapsed = Date.now() - timerStart;
+              var secs = Math.floor(elapsed / 1000);
+              var tenths = Math.floor((elapsed % 1000) / 100);
+              var mins = Math.floor(secs / 60);
+              var secStr = String(secs % 60).padStart(2, '0');
+              var minStr = String(mins).padStart(2, '0');
+              if (timerDisplay) timerDisplay.textContent = minStr + ':' + secStr + '.' + tenths;
+              if (progressBar) progressBar.style.width = Math.min(100, (elapsed % 10000) / 100) + '%';
+            }, 100);
+          }
+        });
+      }
+      if (stopTimerBtn) {
+        stopTimerBtn.addEventListener('click', function() {
+          if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            if (primaryStatusText) primaryStatusText.textContent = 'Timer Stopped';
+          }
+        });
+      }
+      if (resetTimerBtn) {
+        resetTimerBtn.addEventListener('click', function() {
+          if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+          }
+          timerStart = null;
+          if (timerDisplay) timerDisplay.textContent = '00:00.0';
+          if (progressBar) progressBar.style.width = '0%';
+          if (primaryStatusText) primaryStatusText.textContent = 'Timer Reset';
+        });
+      }
     })();
   </script>
-  
+
   <script>
     try {
       ${cleanCode}
@@ -1083,6 +1684,7 @@ export function LessonInteractiveCode({
   onOpenSandbox,
   lessonId,
   exampleId,
+  runtime,
 }: LessonInteractiveCodeProps) {
   const [copied, setCopied] = useState(false);
   const [outputLog, setOutputLog] = useState<string | null>(null);
@@ -1152,7 +1754,96 @@ export function LessonInteractiveCode({
     setIsErrorLog(false);
     setPreviewHtml(null);
 
-    if (normLang === "html") {
+    // Resolution priority:
+    // 1. Explicit runtime metadata
+    // 2. Automatic code/language detection
+    // 3. Console fallback
+    const explicitMode = runtime?.mode?.toLowerCase()?.trim();
+    const explicitFixture = runtime?.fixture?.toLowerCase()?.trim();
+
+    let resolvedMode = explicitMode;
+    if (!resolvedMode) {
+      if (normLang === "html") {
+        resolvedMode = "html";
+      } else if (normLang === "css") {
+        resolvedMode = "css";
+      } else if (checkCodeNeedsReact(code, normLang)) {
+        resolvedMode = "react";
+      } else if (
+        /\b(document|window|querySelector|querySelectorAll|getElementById|getElementsByClassName|addEventListener|classList|textContent|innerHTML|style|createElement|appendChild|remove|value)\b/.test(
+          code,
+        )
+      ) {
+        resolvedMode = "dom";
+      } else {
+        resolvedMode = "console";
+      }
+    }
+
+    if (resolvedMode === "console") {
+      // Pure console mode — evaluate code, capture console output, do not generate DOM preview
+      try {
+        const logs: string[] = [];
+        const appendLog = (level: "log" | "warn" | "error", args: unknown[]) => {
+          const msg = args
+            .map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a)))
+            .join(" ");
+          const formatted =
+            level === "error" ? `[ERROR] ${msg}` : level === "warn" ? `[WARN] ${msg}` : msg;
+          logs.push(formatted);
+          setOutputLog((prev) =>
+            prev && prev !== "✓ Executed cleanly in console mode (no console output)."
+              ? prev + "\n" + formatted
+              : formatted,
+          );
+        };
+
+        const dummyConsole = {
+          log: (...args: unknown[]) => appendLog("log", args),
+          warn: (...args: unknown[]) => appendLog("warn", args),
+          error: (...args: unknown[]) => appendLog("error", args),
+          table: (data: unknown) =>
+            appendLog("log", [
+              typeof data === "object" ? JSON.stringify(data, null, 2) : String(data),
+            ]),
+        };
+
+        let cleanCode = code;
+        try {
+          const transformed = Babel.transform(code, {
+            presets: [["typescript", { ignoreExtensions: false }]],
+            parserOpts: { allowReturnOutsideFunction: true },
+            filename: "snippet.ts",
+          });
+          cleanCode = transformed.code || code;
+        } catch {
+          // Fallback
+        }
+
+        cleanCode = cleanCode
+          .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
+          .replace(/^export\s+default\s+/gm, "")
+          .replace(/^export\s+/gm, "");
+
+        const fn = new Function("console", cleanCode);
+        fn(dummyConsole);
+
+        setPreviewHtml(null);
+        if (logs.length > 0) {
+          setOutputLog(logs.join("\n"));
+          toast.success("Executed cleanly in console mode");
+        } else {
+          setOutputLog("✓ Executed cleanly in console mode (no console output).");
+          toast.success("Executed cleanly in console mode");
+        }
+        setIsErrorLog(false);
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setOutputLog(`Runtime Error:\n${errMsg}`);
+        setIsErrorLog(true);
+        setPreviewHtml(null);
+      }
+    } else if (resolvedMode === "html") {
       try {
         const previewDoc = buildInlineHtmlPreview(code);
         setPreviewHtml(previewDoc);
@@ -1164,7 +1855,7 @@ export function LessonInteractiveCode({
         setOutputLog(`Failed to render HTML:\n${errMsg}`);
         setIsErrorLog(true);
       }
-    } else if (normLang === "css") {
+    } else if (resolvedMode === "css") {
       try {
         const { previewHtml: previewDoc, matchedElementCount } = buildInlineCssPreview(code);
         setPreviewHtml(previewDoc);
@@ -1181,151 +1872,109 @@ export function LessonInteractiveCode({
         setOutputLog(`Failed to apply CSS:\n${errMsg}`);
         setIsErrorLog(true);
       }
-    } else {
-      // JS, TS, TSX, JSX, React execution
-      const needsReact = checkCodeNeedsReact(code, normLang);
+    } else if (resolvedMode === "react") {
+      try {
+        const previewDoc = buildInlineJsxPreviewHtml(code, normLang);
 
-      if (needsReact) {
-        // Genuine React / JSX snippet path
+        const logs: string[] = [];
+        const dummyConsole = {
+          log: (...args: unknown[]) =>
+            logs.push(
+              args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
+            ),
+          warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
+          error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
+        };
+
         try {
-          const previewDoc = buildInlineJsxPreviewHtml(code, normLang);
-
-          const logs: string[] = [];
-          const dummyConsole = {
-            log: (...args: unknown[]) =>
-              logs.push(
-                args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "),
-              ),
-            warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
-            error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
-          };
-
-          // Capture any top-level console output
-          try {
-            const transformed = Babel.transform(code, {
-              presets: [
-                ["react", { runtime: "classic" }],
-                ["typescript", { ignoreExtensions: false }],
-              ],
-              parserOpts: { allowReturnOutsideFunction: true },
-              filename: `snippet.${normLang === "tsx" || normLang === "ts" || normLang === "typescript" ? "tsx" : "jsx"}`,
-            });
-            const transpiledCode = transformed.code || "";
-            if (transpiledCode.includes("console.")) {
-              const dummyReact = {
-                createElement: (...args: unknown[]) => ({
-                  type: args[0],
-                  props: args[1],
-                  children: args.slice(2),
-                }),
-                Fragment: Symbol.for("react.fragment"),
-                useState: (initial: unknown) => [initial, () => {}],
-                useEffect: () => {},
-                useMemo: (fn: () => unknown) => fn(),
-                useCallback: (fn: unknown) => fn,
-                useRef: (initial: unknown) => ({ current: initial }),
-              };
-              const fn = new Function("React", "console", transpiledCode);
-              fn(dummyReact, dummyConsole);
-            }
-          } catch {
-            // Ignore top-level evaluation errors for standalone component declarations
-          }
-
-          setPreviewHtml(previewDoc);
-
-          if (logs.length > 0) {
-            setOutputLog(
-              `✓ JSX compilation successful\nComponent mounted to live preview.\n\nConsole Output:\n${logs.join("\n")}`,
-            );
-          } else {
-            setOutputLog("✓ JSX compilation successful\nComponent mounted to live preview.");
-          }
-          setIsErrorLog(false);
-          toast.success("JSX compiled and rendered successfully");
-        } catch (err: unknown) {
-          const rawMsg = err instanceof Error ? err.message : String(err);
-          const cleanMsg = rawMsg.replace(/^\/?[^:]+:\s*/, "");
-          setOutputLog(`✕ JSX/TSX Compilation Error:\n${cleanMsg}`);
-          setIsErrorLog(true);
-          setPreviewHtml(null);
-          toast.error("JSX compilation error");
-        }
-      } else {
-        // Non-React: Plain TS/JS or DOM TS/JS
-        const isDom =
-          /\b(document|window|querySelector|querySelectorAll|getElementById|getElementsByClassName|addEventListener|classList|textContent|innerHTML|style|createElement|appendChild|remove|value)\b/.test(
-            code,
-          );
-
-        if (isDom) {
-          let cleanJs = code;
-          try {
-            const transformed = Babel.transform(code, {
-              presets: [["typescript", { ignoreExtensions: false }]],
-              parserOpts: { allowReturnOutsideFunction: true },
-              filename: "snippet.ts",
-            });
-            cleanJs = transformed.code || code;
-          } catch {
-            // Fallback to raw code if Babel parsing fails
-          }
-
-          const previewDoc = buildInlineDomJsPreview(cleanJs, previewId);
-          setPreviewHtml(previewDoc);
-          setOutputLog("");
-          setIsErrorLog(false);
-          toast.success("DOM Script loaded in preview");
-        } else {
-          // Plain JavaScript / TypeScript fast path
-          try {
-            const logs: string[] = [];
-            const dummyConsole = {
-              log: (...args: unknown[]) =>
-                logs.push(
-                  args
-                    .map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a)))
-                    .join(" "),
-                ),
-              warn: (...args: unknown[]) => logs.push(`[WARN] ${args.join(" ")}`),
-              error: (...args: unknown[]) => logs.push(`[ERROR] ${args.join(" ")}`),
+          const transformed = Babel.transform(code, {
+            presets: [
+              ["react", { runtime: "classic" }],
+              ["typescript", { ignoreExtensions: false }],
+            ],
+            parserOpts: { allowReturnOutsideFunction: true },
+            filename: `snippet.${normLang === "tsx" || normLang === "ts" || normLang === "typescript" ? "tsx" : "jsx"}`,
+          });
+          const transpiledCode = transformed.code || "";
+          if (transpiledCode.includes("console.")) {
+            const dummyReact = {
+              createElement: (...args: unknown[]) => ({
+                type: args[0],
+                props: args[1],
+                children: args.slice(2),
+              }),
+              Fragment: Symbol.for("react.fragment"),
+              useState: (initial: unknown) => [initial, () => {}],
+              useEffect: () => {},
+              useMemo: (fn: () => unknown) => fn(),
+              useCallback: (fn: unknown) => fn,
+              useRef: (initial: unknown) => ({ current: initial }),
             };
-
-            let cleanCode = code;
-            try {
-              const transformed = Babel.transform(code, {
-                presets: [["typescript", { ignoreExtensions: false }]],
-                parserOpts: { allowReturnOutsideFunction: true },
-                filename: "snippet.ts",
-              });
-              cleanCode = transformed.code || code;
-            } catch {
-              // Fallback
-            }
-
-            // Strip imports/exports to allow quick eval of basic TS/JS
-            cleanCode = cleanCode
-              .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];?/gm, "")
-              .replace(/^export\s+default\s+/gm, "")
-              .replace(/^export\s+/gm, "");
-
-            const fn = new Function("console", cleanCode);
-            fn(dummyConsole);
-
-            if (logs.length > 0) {
-              setOutputLog(logs.join("\n"));
-              toast.success("Snippet executed cleanly");
-            } else {
-              setOutputLog("✓ Executed cleanly (no console output).");
-            }
-            setIsErrorLog(false);
-          } catch (err: unknown) {
-            const errMsg = err instanceof Error ? err.message : String(err);
-            setOutputLog(`Runtime Error:\n${errMsg}`);
-            setIsErrorLog(true);
+            const fn = new Function("React", "console", transpiledCode);
+            fn(dummyReact, dummyConsole);
           }
+        } catch {
+          // Ignore top-level evaluation errors for standalone component declarations
         }
+
+        setPreviewHtml(previewDoc);
+
+        if (logs.length > 0) {
+          setOutputLog(
+            `✓ JSX compilation successful\nComponent mounted to live preview.\n\nConsole Output:\n${logs.join("\n")}`,
+          );
+        } else {
+          setOutputLog("✓ JSX compilation successful\nComponent mounted to live preview.");
+        }
+        setIsErrorLog(false);
+        toast.success("JSX compiled and rendered successfully");
+      } catch (err: unknown) {
+        const rawMsg = err instanceof Error ? err.message : String(err);
+        const cleanMsg = rawMsg.replace(/^\/?[^:]+:\s*/, "");
+        setOutputLog(`✕ JSX/TSX Compilation Error:\n${cleanMsg}`);
+        setIsErrorLog(true);
+        setPreviewHtml(null);
+        toast.error("JSX compilation error");
       }
+    } else {
+      // dom, events, network, async, storage, etc.
+      let cleanJs = code;
+      try {
+        const transformed = Babel.transform(code, {
+          presets: [["typescript", { ignoreExtensions: false }]],
+          parserOpts: { allowReturnOutsideFunction: true },
+          filename: "snippet.ts",
+        });
+        cleanJs = transformed.code || code;
+      } catch {
+        // Fallback
+      }
+
+      const resolvedFixture =
+        explicitFixture ||
+        (resolvedMode === "events"
+          ? "events"
+          : resolvedMode === "network"
+            ? "request-response"
+            : resolvedMode === "async"
+              ? "timer"
+              : resolvedMode === "storage"
+                ? "storage"
+                : "basic");
+
+      const previewDoc = buildInlineFixtureDomPreview(
+        cleanJs,
+        previewId,
+        resolvedMode,
+        resolvedFixture,
+        runtime?.bindings,
+      );
+      setPreviewHtml(previewDoc);
+      setOutputLog("");
+      setIsErrorLog(false);
+      toast.success(
+        `${resolvedMode.toUpperCase()} script loaded in preview (${resolvedFixture} fixture)`,
+      );
     }
   };
 
