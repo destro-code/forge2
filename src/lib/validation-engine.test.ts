@@ -1103,4 +1103,336 @@ describe("Phase 4 Progression Gating & Integration Tests", () => {
     // Ensure completedLessons array is unchanged
     expect(useProgressStore.getState().lessonsCompleted).toEqual(initialCompletedLessons);
   });
+
+  it("Test 4.8: Behavioral validation suite for Frontend Detective (interactive-0-1-1)", async () => {
+    const { useProgressStore } = await import("./stores/use-progress-store");
+
+    function createInteractive011MockEnv(
+      options: {
+        brokenReveal?: boolean;
+        brokenNext?: boolean;
+        missingDom?: boolean;
+      } = {},
+    ) {
+      let index = 0;
+      const scenarios = [
+        {
+          task: "Choose the typography, colors, spacing, and visual style for a checkout screen.",
+          answer: "Design",
+          explanation: "This is primarily a visual and experience-design decision.",
+        },
+        {
+          task: "Build the checkout form, validate fields, handle loading states, and update the interface when the user submits it.",
+          answer: "Frontend",
+          explanation: "This is browser-facing interface implementation and behavior.",
+        },
+        {
+          task: "Store the order in a database after the checkout request is received.",
+          answer: "Backend",
+          explanation: "Persistent server-side data handling belongs behind the interface.",
+        },
+      ];
+
+      const scenarioTextEl = {
+        tagName: "DIV",
+        id: "scenario-text",
+        textContent: scenarios[0].task,
+        attributes: {},
+        classList: { contains: () => true },
+        getAttribute: () => null,
+      };
+
+      const answerTextEl = {
+        tagName: "STRONG",
+        id: "answer-text",
+        textContent: scenarios[0].answer,
+        attributes: {},
+        classList: { contains: () => true },
+        getAttribute: () => null,
+      };
+
+      const explanationTextEl = {
+        tagName: "P",
+        id: "explanation-text",
+        textContent: scenarios[0].explanation,
+        attributes: {},
+        classList: { contains: () => true },
+        getAttribute: () => null,
+      };
+
+      const answerBoxEl = {
+        tagName: "DIV",
+        id: "answer-box",
+        textContent: scenarios[0].answer,
+        style: { display: "none" },
+        attributes: {},
+        classList: { contains: () => true },
+        getAttribute: () => null,
+      };
+
+      function render() {
+        const s = scenarios[index];
+        scenarioTextEl.textContent = s.task;
+        answerTextEl.textContent = s.answer;
+        explanationTextEl.textContent = s.explanation;
+        answerBoxEl.style.display = "none";
+      }
+
+      const revealBtnEl = {
+        tagName: "BUTTON",
+        id: "reveal-btn",
+        textContent: "Reveal Answer",
+        attributes: {},
+        classList: { contains: () => true },
+        getAttribute: () => null,
+        click: () => {
+          if (!options.brokenReveal) {
+            answerBoxEl.style.display = "block";
+          }
+        },
+      };
+
+      const nextBtnEl = {
+        tagName: "BUTTON",
+        id: "next-btn",
+        textContent: "Next Scenario",
+        attributes: {},
+        classList: { contains: () => true },
+        getAttribute: () => null,
+        click: () => {
+          if (!options.brokenNext) {
+            index = (index + 1) % scenarios.length;
+            render();
+          }
+        },
+      };
+
+      const elements = options.missingDom
+        ? [scenarioTextEl]
+        : [scenarioTextEl, answerBoxEl, answerTextEl, explanationTextEl, revealBtnEl, nextBtnEl];
+
+      const doc = {
+        querySelectorAll: (selector: string) => {
+          if (selector.startsWith("#")) {
+            const id = selector.substring(1);
+            return elements.filter((e) => e.id === id);
+          }
+          return [];
+        },
+        querySelector: (selector: string) => {
+          const res = doc.querySelectorAll(selector);
+          return res.length > 0 ? res[0] : null;
+        },
+      } as unknown as Document;
+
+      const win = {
+        getComputedStyle: (el: { style?: { display?: string } }) => {
+          const displayVal = el && el.style ? el.style.display : "block";
+          return {
+            display: displayVal,
+            getPropertyValue: (prop: string) => (prop === "display" ? displayVal : ""),
+          } as unknown as CSSStyleDeclaration;
+        },
+      } as unknown as Window;
+
+      (globalThis as unknown as Record<string, unknown>).document = doc;
+      (globalThis as unknown as Record<string, unknown>).window = win;
+      (globalThis as unknown as Record<string, unknown>).scenarios = scenarios;
+
+      return { doc, win };
+    }
+
+    const prodSpec: ExerciseValidationSpec = {
+      exerciseId: "interactive-0-1-1",
+      runtime: "html-css",
+      assertions: [
+        {
+          id: "scenario-text-exists",
+          description: "Scenario container #scenario-text must exist in the DOM",
+          strategy: "dom_query",
+          target: "#scenario-text",
+          expected: { exists: true },
+          failureMessage: "The #scenario-text container was not found in the DOM.",
+        },
+        {
+          id: "answer-box-exists",
+          description: "Answer box #answer-box must exist in the DOM",
+          strategy: "dom_query",
+          target: "#answer-box",
+          expected: { exists: true },
+          failureMessage: "The #answer-box element was not found in the DOM.",
+        },
+        {
+          id: "reveal-btn-exists",
+          description: "Reveal button #reveal-btn must exist in the DOM",
+          strategy: "dom_query",
+          target: "#reveal-btn",
+          expected: { exists: true },
+          failureMessage: "The #reveal-btn button was not found in the DOM.",
+        },
+        {
+          id: "next-btn-exists",
+          description: "Next scenario button #next-btn must exist in the DOM",
+          strategy: "dom_query",
+          target: "#next-btn",
+          expected: { exists: true },
+          failureMessage: "The #next-btn button was not found in the DOM.",
+        },
+        {
+          id: "initial-scenario-rendered",
+          description: "Initial scenario task text must be populated inside #scenario-text",
+          strategy: "dom_query",
+          target: "#scenario-text",
+          expected: { textContains: "typography, colors, spacing" },
+          failureMessage:
+            "#scenario-text does not display the expected initial scenario task text.",
+        },
+        {
+          id: "reveal-btn-behavior",
+          description: "Clicking 'Reveal Answer' button displays the answer box",
+          strategy: "js_evaluation",
+          expected: {
+            expression:
+              "(() => { const btn = document.querySelector('#reveal-btn'); const box = document.querySelector('#answer-box'); if (!btn || !box) return false; btn.click(); const display = window.getComputedStyle ? window.getComputedStyle(box).display : box.style.display; return display !== 'none'; })()",
+            expectedValue: true,
+          },
+          failureMessage: "Clicking #reveal-btn did not make #answer-box visible.",
+        },
+        {
+          id: "next-btn-behavior",
+          description:
+            "Clicking 'Next Scenario' button advances scenario text and resets answer box visibility",
+          strategy: "js_evaluation",
+          expected: {
+            expression:
+              "(() => { const nextBtn = document.querySelector('#next-btn'); const textEl = document.querySelector('#scenario-text'); const box = document.querySelector('#answer-box'); if (!nextBtn || !textEl || !box) return false; nextBtn.click(); const textUpdated = textEl.textContent.includes('checkout form'); const display = window.getComputedStyle ? window.getComputedStyle(box).display : box.style.display; return textUpdated && display === 'none'; })()",
+            expectedValue: true,
+          },
+          failureMessage:
+            "Clicking #next-btn did not advance scenario text or reset answer box visibility.",
+        },
+        {
+          id: "scenarios-cycling-behavior",
+          description: "Cycling through scenarios advances to scenario 3 and reveals 'Backend'",
+          strategy: "js_evaluation",
+          expected: {
+            expression:
+              "(() => { const nextBtn = document.querySelector('#next-btn'); const revealBtn = document.querySelector('#reveal-btn'); const textEl = document.querySelector('#scenario-text'); const answerEl = document.querySelector('#answer-text'); if (!nextBtn || !revealBtn || !textEl || !answerEl) return false; nextBtn.click(); revealBtn.click(); return textEl.textContent.includes('database') && answerEl.textContent.trim() === 'Backend'; })()",
+            expectedValue: true,
+          },
+          failureMessage: "Cycling to scenario 3 and revealing answer failed to show 'Backend'.",
+        },
+        {
+          id: "scenarios-array-defined",
+          description: "Global scenarios array must be defined with scenarios",
+          strategy: "js_evaluation",
+          expected: {
+            expression: "Array.isArray(scenarios) && scenarios.length >= 3",
+            expectedValue: true,
+          },
+          failureMessage:
+            "The global `scenarios` array is either missing or contains fewer than 3 scenarios.",
+        },
+      ],
+    };
+
+    try {
+      // TEST A: Correct implementation passes
+      const correctEnv = createInteractive011MockEnv();
+      const passedReport = await executeValidationSuite(prodSpec, correctEnv.doc, correctEnv.win);
+      expect(passedReport.status).toBe("passed");
+      expect(passedReport.passedCount).toBe(9);
+
+      // TEST B: Broken reveal-answer behavior fails
+      const brokenRevealEnv = createInteractive011MockEnv({ brokenReveal: true });
+      const revealFailedReport = await executeValidationSuite(
+        prodSpec,
+        brokenRevealEnv.doc,
+        brokenRevealEnv.win,
+      );
+      expect(revealFailedReport.status).toBe("failed");
+      const revealAssertionRes = revealFailedReport.results.find(
+        (r) => r.assertionId === "reveal-btn-behavior",
+      );
+      expect(revealAssertionRes?.status).toBe("failed");
+
+      // TEST C: Broken next-scenario behavior fails
+      const brokenNextEnv = createInteractive011MockEnv({ brokenNext: true });
+      const nextFailedReport = await executeValidationSuite(
+        prodSpec,
+        brokenNextEnv.doc,
+        brokenNextEnv.win,
+      );
+      expect(nextFailedReport.status).toBe("failed");
+      const nextAssertionRes = nextFailedReport.results.find(
+        (r) => r.assertionId === "next-btn-behavior",
+      );
+      expect(nextAssertionRes?.status).toBe("failed");
+
+      // TEST D: Missing required DOM structure still fails
+      const missingDomEnv = createInteractive011MockEnv({ missingDom: true });
+      const missingDomReport = await executeValidationSuite(
+        prodSpec,
+        missingDomEnv.doc,
+        missingDomEnv.win,
+      );
+      expect(missingDomReport.status).toBe("failed");
+
+      // TEST E: Optional assertions, if any, remain non-blocking
+      const specWithOptional: ExerciseValidationSpec = {
+        ...prodSpec,
+        assertions: [
+          ...prodSpec.assertions,
+          {
+            id: "optional-check",
+            description: "Optional non-blocking check",
+            strategy: "dom_query",
+            target: "#non-existent-optional",
+            expected: { exists: true },
+            isOptional: true,
+          },
+        ],
+      };
+      const optionalTestEnv = createInteractive011MockEnv();
+      const optionalReport = await executeValidationSuite(
+        specWithOptional,
+        optionalTestEnv.doc,
+        optionalTestEnv.win,
+      );
+      expect(optionalReport.status).toBe("passed");
+
+      // TEST F: A passed validation completes exercise exactly once
+      useProgressStore.setState({
+        playgroundCompletions: [],
+      });
+      if (passedReport.status === "passed") {
+        useProgressStore.getState().completePlaygroundExercise(prodSpec.exerciseId);
+      }
+      expect(
+        (useProgressStore.getState().playgroundCompletions || []).filter(
+          (c) => c.templateId === prodSpec.exerciseId,
+        ).length,
+      ).toBe(1);
+
+      // TEST G: A failed validation does not complete exercise or award XP
+      useProgressStore.setState({
+        playgroundCompletions: [],
+        xp: 100,
+      });
+      const initialXp = useProgressStore.getState().xp;
+      if (revealFailedReport.status === "passed") {
+        useProgressStore.getState().completePlaygroundExercise(prodSpec.exerciseId);
+      }
+      expect(
+        (useProgressStore.getState().playgroundCompletions || []).some(
+          (c) => c.templateId === prodSpec.exerciseId,
+        ),
+      ).toBe(false);
+      expect(useProgressStore.getState().xp).toBe(initialXp);
+    } finally {
+      delete (globalThis as unknown as Record<string, unknown>).document;
+      delete (globalThis as unknown as Record<string, unknown>).window;
+      delete (globalThis as unknown as Record<string, unknown>).scenarios;
+    }
+  });
 });
