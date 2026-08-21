@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Bookmark, BookmarkCheck, Clock, GraduationCap } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -80,9 +81,11 @@ function LessonView() {
       ? activeLessons[currentIndex + 1]
       : null;
 
-  if (lesson.id !== lastActiveLessonId) {
-    setLastActiveLesson(lesson.id);
-  }
+  useEffect(() => {
+    if (lesson.id !== lastActiveLessonId) {
+      setLastActiveLesson(lesson.id);
+    }
+  }, [lesson.id, lastActiveLessonId, setLastActiveLesson]);
 
   const handleComplete = () => {
     const wasCompleted = lessonsCompleted.includes(lesson.id);
