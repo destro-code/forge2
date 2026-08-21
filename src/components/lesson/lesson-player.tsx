@@ -34,6 +34,8 @@ type ValidationAwareSection = LessonSection & {
   validation?: { exerciseId?: string };
 };
 
+type ExerciseWithId = Lesson["exercises"][number] & { id?: string };
+
 function stepLabel(step: PlayerStep) {
   if (step.kind === "section") return step.section.type === "heading" ? "Learn" : "Understand";
   if (step.kind === "quiz") return "Check";
@@ -98,14 +100,15 @@ export function LessonPlayer({ lesson, isCompleted, onComplete, prevLessonId, ne
     }
 
     if (current.kind === "exercise") {
-      const exerciseId = current.exerciseId;
+      const exercise = lesson.exercises[current.index] as ExerciseWithId;
+      const exerciseId = exercise.id;
       if (exerciseId && !playgroundCompletions.some((completion) => completion.templateId === exerciseId)) {
         return { blocked: true, reason: "Complete this activity to continue." };
       }
     }
 
     return { blocked: false, reason: "" };
-  }, [current, lesson.id, lesson.quiz, quizAnswers, playgroundCompletions, lessonCheckpoints]);
+  }, [current, lesson.id, lesson.quiz, lesson.exercises, quizAnswers, playgroundCompletions, lessonCheckpoints]);
 
   const goNext = () => {
     if (currentGate.blocked || isLast) return;
@@ -158,5 +161,5 @@ export function LessonPlayer({ lesson, isCompleted, onComplete, prevLessonId, ne
     return <Card className="w-full max-w-3xl border-emerald-500/25 bg-emerald-500/[0.03]"><CardContent className="p-6 sm:p-8 space-y-5"><Badge className="w-fit gap-1"><Check className="h-3.5 w-3.5" />COMPLETE</Badge><h2 className="text-3xl sm:text-4xl font-extrabold">You're done with this lesson.</h2><p className="text-muted-foreground leading-relaxed">Take a moment to lock in what you learned, then continue to the next lesson.</p><div className="flex flex-wrap gap-3">{!isCompleted && <Button onClick={onComplete} size="lg" className="gap-2 shadow-glow"><CheckCircle2 className="h-4 w-4" />Mark lesson complete</Button>}{nextLessonId && <Button asChild size="lg" variant={isCompleted ? "default" : "outline"} className="gap-2"><Link to="/lesson/$lessonId" params={{ lessonId: nextLessonId }}>Next lesson<ArrowRight className="h-4 w-4" /></Link></Button>}</div></CardContent></Card>;
   };
 
-  return <div className="min-h-[calc(100vh-7rem)] flex flex-col"><div className="sticky top-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-3 border-b border-border/50 bg-background/90 backdrop-blur-xl"><div className="mx-auto max-w-5xl space-y-2"><div className="flex items-center justify-between gap-3"><div className="min-w-0"><div className="flex items-center gap-2 text-xs text-muted-foreground font-mono"><BookOpen className="h-3.5 w-3.5 text-primary" /><span className="truncate">{lesson.title}</span></div><div className="text-[11px] text-muted-foreground mt-0.5">Step {stepIndex + 1} of {steps.length} · {stepLabel(current)}</div></div><div className="text-xs font-mono font-semibold text-primary">{progress}%</div></div><div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} /></div></div></div><main className="flex-1 flex items-center justify-center py-8 sm:py-12"><div className="w-full max-w-5xl flex justify-center"><div key={`${stepIndex}-${current.kind}`} className="w-full animate-in fade-in slide-in-from-right-2 duration-200">{renderCurrent()}</div></div></main><footer className="sticky bottom-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-3 border-t border-border/50 bg-background/90 backdrop-blur-xl"><div className="mx-auto max-w-5xl flex items-center justify-between gap-3">{isFirst ? prevLessonId ? <Button asChild variant="ghost" className="gap-2"><Link to="/lesson/$lessonId" params={{ lessonId: prevLessonId }}><ArrowLeft className="h-4 w-4" />Previous lesson</Link></Button> : <div /> : <Button variant="ghost" onClick={() => setStepIndex((value) => Math.max(value - 1, 0))} className="gap-2"><ArrowLeft className="h-4 w-4" />Back</Button>}{!isLast && <div className="flex flex-col items-end gap-1.5"><Button onClick={goNext} disabled={currentGate.blocked} size="lg" className="gap-2 min-w-28 shadow-glow"><span>{currentGate.blocked ? "Locked" : "Next"}</span>{currentGate.blocked ? <LockKeyhole className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}</Button>{currentGate.blocked && <span className="text-[11px] text-muted-foreground text-right max-w-[260px]">{currentGate.reason}</span>}</div>}</div></footer></div>;
+  return <div className="min-h-[calc(100vh-7rem)] flex flex-col"><div className="sticky top-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-3 border-b border-border/50 bg-background/90 backdrop-blur-xl"><div className="mx-auto max-w-5xl space-y-2"><div className="flex items-center justify-between gap-3"><div className="min-w-0"><div className="flex items-center gap-2 text-xs text-muted-foreground font-mono"><BookOpen className="h-3.5 w-3.5 text-primary" /><span className="truncate">{lesson.title}</span></div><div className="text-[11px] text-muted-foreground mt-0.5">Step {stepIndex + 1} of {steps.length} · {stepLabel(current)}</div></div><div className="text-xs font-mono font-semibold text-primary">{progress}%</div></div><div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} /></div></div></div><main className="flex-1 flex items-center justify-center py-8 sm:py-12"><div className="w-full max-w-5xl flex justify-center"><div key={`${stepIndex}-${current.kind}`} className="w-full animate-in fade-in slide-in-from-right-2 duration-200">{renderCurrent()}</div></div></main><footer className="sticky bottom-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-3 border-t border-border/50 bg-background/90 backdrop-blur-xl"><div className="mx-auto max-w-5xl flex items-center justify-between gap-3">{isFirst ? prevLessonId ? <Button asChild variant="ghost" className="gap-2"><Link to="/lesson/$lessonId" params={{ lessonId: prevLessonId }}><ArrowLeft className="h-4 w-4" />Previous lesson</Link></Button> : <div /> : <Button variant="ghost" onClick={() => setStepIndex((value) => Math.max(value - 1, 0))} className="gap-2"> <ArrowLeft className="h-4 w-4" />Back</Button>}{!isLast && <div className="flex flex-col items-end gap-1.5"><Button onClick={goNext} disabled={currentGate.blocked} size="lg" className="gap-2 min-w-28 shadow-glow"><span>{currentGate.blocked ? "Locked" : "Next"}</span>{currentGate.blocked ? <LockKeyhole className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}</Button>{currentGate.blocked && <span className="text-[11px] text-muted-foreground text-right max-w-[260px]">{currentGate.reason}</span>}</div>}</div></footer></div>;
 }
