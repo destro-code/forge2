@@ -100,8 +100,8 @@ function LessonView() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] space-y-4">
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 rounded-xl border border-border/60 bg-card/70 px-4 py-3 backdrop-blur-xl sm:px-5">
+    <div className="min-h-[calc(100vh-5rem)] space-y-2">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 rounded-xl border border-border/60 bg-card/70 px-4 py-2 backdrop-blur-xl sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
           {parentModule ? (
             <Link
