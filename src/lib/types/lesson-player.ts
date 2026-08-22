@@ -16,6 +16,7 @@ export type InteractiveExerciseMode =
   | "project";
 
 export type CodeChallengeSize = "compact" | "standard" | "project";
+export type CodeChallengePreviewType = "browser" | "console" | "none";
 
 export interface LessonStepBase {
   /** Presentation identity for this step */
@@ -87,6 +88,8 @@ export interface InteractiveExerciseLessonStep extends LessonStepBase {
   challengeSize?: CodeChallengeSize;
   /** Whether a compact code challenge should display a live preview output */
   showPreview?: boolean;
+  /** Type of preview output surface: browser iframe, console output, or none */
+  previewType?: CodeChallengePreviewType;
 }
 
 export interface QuizQuestionItem {

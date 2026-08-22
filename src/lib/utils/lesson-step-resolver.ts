@@ -8,6 +8,7 @@ import type {
   InteractiveExerciseLessonStep,
   InteractiveExerciseMode,
   CodeChallengeSize,
+  CodeChallengePreviewType,
   QuizLessonStep,
   CheckpointLessonStep,
   ExerciseLeadIn,
@@ -90,23 +91,48 @@ export interface InferredExerciseModeResult {
   editorRequired: boolean;
   challengeSize?: CodeChallengeSize;
   showPreview?: boolean;
+  previewType?: CodeChallengePreviewType;
 }
 
 /**
- * Derives sizing classification (compact vs standard vs project) and preview visibility
+ * Extracts executable JavaScript from a starter code snippet that might be wrapped in an HTML/DOM test harness.
+ * Returns null if no <script> tag is present or if the content is empty.
+ */
+export function extractEditableJavaScript(code: string): string | null {
+  if (!code) return null;
+  const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+  const matches: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = scriptRegex.exec(code)) !== null) {
+    if (m[1] && m[1].trim().length > 0) {
+      matches.push(m[1].trim());
+    }
+  }
+  if (matches.length > 0) {
+    return matches.join("\n\n");
+  }
+  return null;
+}
+
+/**
+ * Derives sizing classification (compact vs standard vs project) and preview visibility / type
  * for code exercises based on starter code size, language, complexity, and explicit tasks.
  */
 export function inferChallengeSizeAndPreview(
   params: InferExerciseModeParams,
   mode: InteractiveExerciseMode,
   editorRequired: boolean,
-): { challengeSize: CodeChallengeSize; showPreview: boolean } {
+): {
+  challengeSize: CodeChallengeSize;
+  showPreview: boolean;
+  previewType: CodeChallengePreviewType;
+} {
   if (!editorRequired) {
-    return { challengeSize: "compact", showPreview: false };
+    return { challengeSize: "compact", showPreview: false, previewType: "none" };
   }
 
   if (mode === "project") {
-    return { challengeSize: "project", showPreview: true };
+    return { challengeSize: "project", showPreview: true, previewType: "browser" };
   }
 
   const code = (params.initialCode || "").trim();
@@ -124,7 +150,7 @@ export function inferChallengeSizeAndPreview(
     code.includes("export default function");
 
   if (isReact) {
-    return { challengeSize: "standard", showPreview: true };
+    return { challengeSize: "standard", showPreview: true, previewType: "browser" };
   }
 
   // 2. Capstone or full project titles
@@ -132,23 +158,12 @@ export function inferChallengeSizeAndPreview(
     title.includes("mini project") ||
     title.includes("capstone") ||
     inst.includes("mini project") ||
-    inst.includes("capstone")
+    inst.includes("capstone") ||
+    title.includes("portfolio") ||
+    inst.includes("portfolio")
   ) {
-    return { challengeSize: "project", showPreview: true };
+    return { challengeSize: "project", showPreview: true, previewType: "browser" };
   }
-
-  // 3. Check code size & complexity
-  const lineCount = code.split("\n").length;
-  const isSmallCode = code.length <= 480 && lineCount <= 16;
-
-  // Focused drills: targeted 1-file edits, attribute additions, tag fixes, small rules
-  const isFocusedTask =
-    /^(add|fix|repair|change|write a|write your|create a|turn the|connect|replace|move|select|structure)/i.test(
-      title,
-    ) ||
-    /\b(add a|add an|fix the|closing tag|attribute|single rule|change the|href|src|alt|color|font-size|margin|padding|h1|h2|p>)\b/i.test(
-      inst,
-    );
 
   // Exclude multi-step/complex debugger exercises
   const isComplexDebugger =
@@ -158,9 +173,42 @@ export function inferChallengeSizeAndPreview(
     title.includes("event loop visualizer") ||
     inst.includes("debugger panel");
 
-  const isCompact = isSmallCode && !isComplexDebugger && (isFocusedTask || code.length < 250);
+  // 3. Focused drills: targeted 1-file edits, attribute additions, tag fixes, small rules, JS logic drills
+  const isFocusedTask =
+    /\b(add|fix|repair|change|write|create|turn|connect|replace|move|select|structure|adjust|style|build|map|filter|grade|cascade|typography|spacing|debug|loop|condition|contract)\b/i.test(
+      title,
+    ) ||
+    /\b(add a|add an|fix the|closing tag|attribute|single rule|change the|href|src|alt|color|font-size|margin|padding|h1|h2|p>|filter|map|getdisplayname|grade|loop|return statement|off-by-one)\b/i.test(
+      inst,
+    );
 
-  // Check if live preview is applicable (HTML/CSS)
+  const lineCount = code.split("\n").length;
+  const isDirectSmallCode = (code.length <= 480 && lineCount <= 20) || code.length < 250;
+
+  // 4. JavaScript-aware size analysis (when embedded in HTML test harness)
+  const scriptContent = extractEditableJavaScript(code);
+  let isScriptSmall = false;
+  if (scriptContent) {
+    const scriptLen = scriptContent.length;
+    const scriptLines = scriptContent.split("\n").length;
+    isScriptSmall = scriptLen <= 900 && scriptLines <= 25;
+  }
+
+  const isCompact =
+    !isComplexDebugger &&
+    (isDirectSmallCode || isScriptSmall) &&
+    (isFocusedTask || code.length < 250 || (Boolean(scriptContent) && isScriptSmall));
+
+  // Determine preview type & visibility
+  const isPureJs =
+    lang === "javascript" ||
+    lang === "js" ||
+    (!code.includes("<html") &&
+      !code.includes("<div") &&
+      !code.includes("<style>") &&
+      !code.includes("<body") &&
+      (code.includes("function") || code.includes("const ") || code.includes("let ")));
+
   const isHtmlCss =
     lang === "html" ||
     lang === "css" ||
@@ -171,9 +219,39 @@ export function inferChallengeSizeAndPreview(
     code.includes("<style>") ||
     code.includes("<body");
 
+  const isJsLogicDrill =
+    lang === "javascript" ||
+    lang === "js" ||
+    (scriptContent !== null &&
+      (title.includes("function") ||
+        title.includes("loop") ||
+        title.includes("grade") ||
+        title.includes("map") ||
+        title.includes("filter") ||
+        title.includes("property access") ||
+        title.includes("json.parse") ||
+        inst.includes("console.log") ||
+        inst.includes("return statement") ||
+        title.includes("off-by-one")));
+
+  let previewType: CodeChallengePreviewType = "browser";
+  let showPreview = true;
+
+  if (isPureJs) {
+    previewType = "console";
+    showPreview = true;
+  } else if (isJsLogicDrill && !code.includes("<svg") && !code.includes("<canvas")) {
+    previewType = "console";
+    showPreview = true;
+  } else if (!isHtmlCss) {
+    previewType = "none";
+    showPreview = false;
+  }
+
   return {
     challengeSize: isCompact ? "compact" : "standard",
-    showPreview: isHtmlCss,
+    showPreview,
+    previewType,
   };
 }
 
@@ -299,13 +377,18 @@ export function inferExerciseMode(params: InferExerciseModeParams): InferredExer
     editorRequired = false;
   }
 
-  const { challengeSize, showPreview } = inferChallengeSizeAndPreview(params, mode, editorRequired);
+  const { challengeSize, showPreview, previewType } = inferChallengeSizeAndPreview(
+    params,
+    mode,
+    editorRequired,
+  );
 
   return {
     mode,
     editorRequired,
     challengeSize,
     showPreview,
+    previewType,
   };
 }
 
@@ -535,16 +618,18 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
         const stepTitle =
           sandboxSection.title || leadIn?.title || adoptedTitle || "Interactive Exercise";
 
-        const { mode, editorRequired, challengeSize, showPreview } = inferExerciseMode({
-          id: exerciseId,
-          title: stepTitle,
-          instructions: sandboxSection.instructions,
-          initialCode: sandboxSection.initialCode,
-          language: sandboxSection.language,
-          hasValidation: Boolean(sandboxSection.validation),
-          validation: sandboxSection.validation,
-          source: "section",
-        });
+        const { mode, editorRequired, challengeSize, showPreview, previewType } = inferExerciseMode(
+          {
+            id: exerciseId,
+            title: stepTitle,
+            instructions: sandboxSection.instructions,
+            initialCode: sandboxSection.initialCode,
+            language: sandboxSection.language,
+            hasValidation: Boolean(sandboxSection.validation),
+            validation: sandboxSection.validation,
+            source: "section",
+          },
+        );
 
         steps.push({
           id: `${lesson.id}-step-${stepCounter++}-interactive-${exerciseId}`,
@@ -569,6 +654,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           editorRequired,
           challengeSize,
           showPreview,
+          previewType,
         });
         break;
       }
@@ -654,16 +740,18 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           if (canonValId) resolvedExerciseIds.add(canonValId);
         }
 
-        const { mode, editorRequired, challengeSize, showPreview } = inferExerciseMode({
-          id: ex.id,
-          title: ex.title,
-          instructions: ex.brief || ex.instructions,
-          initialCode: ex.playgroundCode || ex.initialCode,
-          language: ex.playgroundLanguage || ex.language,
-          hasValidation: Boolean(ex.validation),
-          validation: ex.validation,
-          source: "lesson-exercise",
-        });
+        const { mode, editorRequired, challengeSize, showPreview, previewType } = inferExerciseMode(
+          {
+            id: ex.id,
+            title: ex.title,
+            instructions: ex.brief || ex.instructions,
+            initialCode: ex.playgroundCode || ex.initialCode,
+            language: ex.playgroundLanguage || ex.language,
+            hasValidation: Boolean(ex.validation),
+            validation: ex.validation,
+            source: "lesson-exercise",
+          },
+        );
 
         const interactiveStep: InteractiveExerciseLessonStep = {
           id: `${lesson.id}-step-${stepCounter++}-exercise-${ex.id}`,
@@ -682,6 +770,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           editorRequired,
           challengeSize,
           showPreview,
+          previewType,
         };
 
         steps.push(interactiveStep);

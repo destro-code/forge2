@@ -12,6 +12,8 @@ import {
   Maximize2,
   Code2,
   Eye,
+  Terminal,
+  Trash2,
   AlertTriangle,
   Loader2,
   CheckCircle,
@@ -35,6 +37,13 @@ export interface CompactCodeChallengeViewProps {
   onComplete?: () => void;
   onExpandToFullPlayground?: () => void;
   className?: string;
+}
+
+interface ConsoleLogItem {
+  id: string;
+  level: "log" | "info" | "warn" | "error";
+  message: string;
+  timestamp: string;
 }
 
 export function CompactCodeChallengeView({
@@ -76,7 +85,7 @@ export function CompactCodeChallengeView({
   const [monacoFailed, setMonacoFailed] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationReport, setValidationReport] = useState<ValidationReport | null>(null);
-  const [activeTab, setActiveTab] = useState<"code" | "preview">("code");
+  const [logs, setLogs] = useState<ConsoleLogItem[]>([]);
   const [previewHtml, setPreviewHtml] = useState<string>("");
   const [previewError, setPreviewError] = useState<string | null>(null);
 
@@ -97,6 +106,14 @@ export function CompactCodeChallengeView({
     );
   }, [step.language, step.showPreview, code]);
 
+  // Derived effective preview type: browser iframe, console output, or none
+  const effectivePreviewType = useMemo(() => {
+    if (step.previewType) return step.previewType;
+    return isHtmlCss ? "browser" : "console";
+  }, [step.previewType, isHtmlCss]);
+
+  const [activeTab, setActiveTab] = useState<"code" | "preview" | "console">("code");
+
   // Determine file entry name
   const entryFileName = useMemo(() => {
     const lang = (step.language || "").toLowerCase();
@@ -106,6 +123,35 @@ export function CompactCodeChallengeView({
     if (lang === "jsx" || lang === "tsx") return "App.jsx";
     return "index.js";
   }, [step.language]);
+
+  // Listen for console logs emitted from the execution sandbox
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (
+        event.data &&
+        (event.data.type === "PLAYGROUND_CONSOLE" || event.data.type === "SANDBOX_LOG")
+      ) {
+        const msg = event.data.message || event.data.msg || "";
+        const level = event.data.level || "log";
+        setLogs((prev) => [
+          ...prev.slice(-49),
+          {
+            id: Math.random().toString(36).substring(2, 9),
+            level,
+            message: String(msg),
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            }),
+          },
+        ]);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   // Generate compilation manifest
   const manifest = useMemo<PlaygroundProjectManifest>(() => {
@@ -169,12 +215,19 @@ export function CompactCodeChallengeView({
     if (typeof window !== "undefined") {
       localStorage.setItem(storageKey, original);
     }
+    setLogs([]);
     setValidationReport(null);
     toast.info("Code reset to starter code.");
   };
 
+  // Clear Console Logs
+  const handleClearLogs = () => {
+    setLogs([]);
+  };
+
   // Handle Validation and Execution
   const handleRunAndValidate = async () => {
+    setLogs([]);
     if (!step.validation) {
       // Direct completion for non-asserted exercises
       completePlaygroundExercise(targetExerciseId);
@@ -226,7 +279,7 @@ export function CompactCodeChallengeView({
       className={className}
     >
       <div className="flex flex-col gap-4 max-w-4xl mx-auto py-1">
-        {/* Editor & Preview Container */}
+        {/* Editor & Output Container */}
         <div className="flex flex-col rounded-xl border border-border/80 bg-card overflow-hidden shadow-sm">
           {/* Editor Header */}
           <div className="flex items-center justify-between border-b border-border/70 bg-muted/40 px-3.5 py-2 text-xs gap-2">
@@ -241,7 +294,7 @@ export function CompactCodeChallengeView({
             </div>
 
             <div className="flex items-center gap-1.5">
-              {isHtmlCss && (
+              {effectivePreviewType === "browser" && (
                 <div className="flex items-center bg-muted/70 rounded-md p-0.5 border border-border/50 mr-1">
                   <button
                     type="button"
@@ -267,6 +320,41 @@ export function CompactCodeChallengeView({
                   >
                     <Eye className="h-3 w-3" />
                     Preview
+                  </button>
+                </div>
+              )}
+
+              {effectivePreviewType === "console" && (
+                <div className="flex items-center bg-muted/70 rounded-md p-0.5 border border-border/50 mr-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("code")}
+                    className={cn(
+                      "px-2 py-0.5 text-[11px] font-medium rounded transition-colors",
+                      activeTab === "code"
+                        ? "bg-background text-foreground shadow-xs font-semibold"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    Code
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("console")}
+                    className={cn(
+                      "px-2 py-0.5 text-[11px] font-medium rounded transition-colors flex items-center gap-1",
+                      activeTab === "console"
+                        ? "bg-background text-foreground shadow-xs font-semibold"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <Terminal className="h-3 w-3" />
+                    Console
+                    {logs.length > 0 && (
+                      <span className="ml-0.5 px-1 py-0.2 rounded-full text-[9px] bg-primary/20 text-primary font-mono">
+                        {logs.length}
+                      </span>
+                    )}
                   </button>
                 </div>
               )}
@@ -350,8 +438,8 @@ export function CompactCodeChallengeView({
                   spellCheck={false}
                 />
               )
-            ) : (
-              /* Live Preview Frame */
+            ) : activeTab === "preview" ? (
+              /* Live Browser Preview Frame */
               <div className="w-full h-[200px] bg-white text-slate-900 overflow-auto">
                 {previewError ? (
                   <div className="p-4 text-xs text-rose-500 font-mono flex items-center gap-1.5">
@@ -368,11 +456,66 @@ export function CompactCodeChallengeView({
                   />
                 )}
               </div>
+            ) : (
+              /* Console Output Panel */
+              <div className="w-full h-[200px] bg-zinc-950 text-zinc-100 flex flex-col overflow-hidden font-mono text-xs">
+                <div className="flex items-center justify-between px-3 py-1.5 bg-zinc-900 border-b border-zinc-800 text-[11px] text-zinc-400">
+                  <span className="flex items-center gap-1.5">
+                    <Terminal className="h-3 w-3 text-primary" />
+                    Output Console
+                  </span>
+                  {logs.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleClearLogs}
+                      className="hover:text-zinc-200 flex items-center gap-1 transition-colors"
+                      title="Clear console"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      Clear
+                    </button>
+                  )}
+                </div>
+                <div className="flex-1 p-3 overflow-auto space-y-1.5">
+                  {logs.length === 0 ? (
+                    <div className="h-full flex items-center justify-center text-zinc-500 italic text-[11px]">
+                      No console output yet. Click &quot;Run &amp; Check Answer&quot; to execute
+                      your code.
+                    </div>
+                  ) : (
+                    logs.map((log) => (
+                      <div
+                        key={log.id}
+                        className={cn(
+                          "flex items-start gap-2 leading-relaxed font-mono text-[11px]",
+                          log.level === "error"
+                            ? "text-rose-400"
+                            : log.level === "warn"
+                              ? "text-amber-400"
+                              : log.level === "info"
+                                ? "text-emerald-400"
+                                : "text-zinc-200",
+                        )}
+                      >
+                        <span className="text-zinc-600 text-[10px] select-none">
+                          {log.timestamp}
+                        </span>
+                        <span className="select-none font-bold uppercase text-[9px] px-1 py-0.2 rounded bg-zinc-800 text-zinc-400">
+                          {log.level}
+                        </span>
+                        <pre className="whitespace-pre-wrap break-all font-mono flex-1 m-0">
+                          {log.message}
+                        </pre>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             )}
           </div>
 
-          {/* Hidden Background Iframe for Validation Runtime if in Code Tab */}
-          {isHtmlCss && activeTab === "code" && previewHtml && (
+          {/* Hidden Background Iframe for Validation & Execution Runtime */}
+          {activeTab === "code" && previewHtml && (
             <iframe
               title="Forge Validation Barrier"
               srcDoc={previewHtml}
