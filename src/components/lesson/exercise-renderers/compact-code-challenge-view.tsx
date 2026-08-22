@@ -96,17 +96,15 @@ export function CompactCodeChallengeView({
 
   const isHtmlCss = useMemo(() => {
     const lang = (step.language || "").toLowerCase();
-    return (
-      step.showPreview ||
-      lang === "html" ||
-      lang === "css" ||
+    const hasMarkup =
       code.includes("<html") ||
       code.includes("<div") ||
       code.includes("<p") ||
       code.includes("<style>") ||
-      code.includes("<body")
-    );
-  }, [step.language, step.showPreview, code]);
+      code.includes("<body");
+
+    return step.previewType === "browser" || lang === "html" || lang === "css" || hasMarkup;
+  }, [step.language, step.previewType, code]);
 
   // Derived effective preview type: browser iframe, console output, or none
   const effectivePreviewType = useMemo(() => {
@@ -169,7 +167,10 @@ export function CompactCodeChallengeView({
   // Generate compilation manifest
   const manifest = useMemo<PlaygroundProjectManifest>(() => {
     const lang = (step.language || "").toLowerCase();
-    const runtime = lang === "html" || lang === "css" || isHtmlCss ? "html-css" : "javascript";
+    const runtime =
+      effectivePreviewType === "browser" || lang === "html" || lang === "css"
+        ? "html-css"
+        : "javascript";
 
     let files = [{ id: "main-file", name: entryFileName, content: code, isEntry: true }];
 
@@ -192,7 +193,7 @@ export function CompactCodeChallengeView({
       title: step.title || "Compact Code Challenge",
       files,
     };
-  }, [code, entryFileName, isHtmlCss, step.language, step.title]);
+  }, [code, entryFileName, effectivePreviewType, step.language, step.title]);
 
   // Update preview when code changes
   useEffect(() => {
