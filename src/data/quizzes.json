@@ -10,12 +10,7 @@
         "id": "q1",
         "type": "mcq",
         "question": "What does 'typeof null' evaluate to in JavaScript?",
-        "options": [
-          "'object'",
-          "'null'",
-          "'undefined'",
-          "'number'"
-        ],
+        "options": ["'object'", "'null'", "'undefined'", "'number'"],
         "correctIndex": 0,
         "explanation": "This is a historic JS bug. In original JS implementations, values were represented with type tags, and object's tag was 0. Since null was representation pointer NULL (0x00), typeof null evaluates to 'object'."
       },
@@ -29,11 +24,7 @@
           "const z = 30;",
           "function foo() {} in strict mode block"
         ],
-        "correctIndices": [
-          0,
-          2,
-          3
-        ],
+        "correctIndices": [0, 2, 3],
         "explanation": "let and const are block-scoped. Function declarations inside block statements are also block-scoped in ES6 strict mode. var is function-scoped or globally scoped."
       },
       {
@@ -87,12 +78,7 @@
         "type": "code",
         "question": "What will be printed to the console when the following code executes?",
         "codeSnippet": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
-        "options": [
-          "A, B, C, D",
-          "A, D, C, B",
-          "A, D, B, C",
-          "A, C, D, B"
-        ],
+        "options": ["A, B, C, D", "A, D, C, B", "A, D, B, C", "A, C, D, B"],
         "correctIndex": 1,
         "explanation": "Synchronous logs run first ('A', 'D'). Then microtask Promise.then runs ('C'). Finally, macrotask setTimeout runs ('B'). Output: A, D, C, B."
       },
@@ -101,11 +87,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the correct ES6 array method to check if at least one element passes a test function:",
         "template": "const hasAdmin = users.______(user => user.role === 'admin');",
-        "acceptedAnswers": [
-          "some",
-          ".some",
-          "some()"
-        ],
+        "acceptedAnswers": ["some", ".some", "some()"],
         "explanation": "Array.prototype.some() returns true if at least one array element passes the test implemented by the callback function."
       }
     ],
@@ -145,11 +127,7 @@
           "useEffect dependency arrays can safely contain unmemoized object literals created in render",
           "useOptimistic enables optimistic UI updates during background server actions"
         ],
-        "correctIndices": [
-          0,
-          1,
-          3
-        ],
+        "correctIndices": [0, 1, 3],
         "explanation": "Hooks must follow top-level calling rules. React 19 introduced useActionState and useOptimistic. Unmemoized objects in useEffect dependency arrays cause infinite re-renders."
       },
       {
@@ -193,10 +171,7 @@
         "type": "fill_in_blank",
         "question": "Complete the Hook call to defer a non-urgent UI state recalculation during fast input typing:",
         "template": "const deferredQuery = _________(searchQuery);",
-        "acceptedAnswers": [
-          "useDeferredValue",
-          "React.useDeferredValue"
-        ],
+        "acceptedAnswers": ["useDeferredValue", "React.useDeferredValue"],
         "explanation": "useDeferredValue accepts a value and returns a deferred copy that lags behind urgent state updates to keep rendering responsive."
       }
     ]
@@ -231,11 +206,7 @@
           "A universal selector (*)",
           "An attribute selector ([type=\"text\"])"
         ],
-        "correctIndices": [
-          0,
-          1,
-          3
-        ],
+        "correctIndices": [0, 1, 3],
         "explanation": "IDs, classes, and attribute selectors all add specificity. The universal selector (*) adds none."
       },
       {
@@ -275,9 +246,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the Flexbox property that distributes extra space between flex items (not around them):",
         "template": ".container { display: flex; justify-content: ______; }",
-        "acceptedAnswers": [
-          "space-between"
-        ],
+        "acceptedAnswers": ["space-between"],
         "explanation": "justify-content: space-between distributes extra space evenly between items, with no space before the first or after the last."
       }
     ],
@@ -316,10 +285,7 @@
           "if (Array.isArray(id))",
           "if (typeof id === 'number')"
         ],
-        "correctIndices": [
-          0,
-          3
-        ],
+        "correctIndices": [0, 3],
         "explanation": "typeof checks correctly narrow a string | number union. instanceof String and Array.isArray don't apply to this particular union."
       },
       {
@@ -327,12 +293,7 @@
         "type": "code",
         "question": "What does this generic function's return type resolve to when called as shown?",
         "codeSnippet": "function firstElement<T>(arr: T[]): T {\n  return arr[0];\n}\n\nconst result = firstElement(['a', 'b', 'c']);",
-        "options": [
-          "any",
-          "string[]",
-          "T",
-          "string"
-        ],
+        "options": ["any", "string[]", "T", "string"],
         "correctIndex": 3,
         "explanation": "TypeScript infers T as string from the array argument, so the generic function's return type resolves concretely to string for this call."
       },
@@ -341,9 +302,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank to model a field the API always sends but sometimes as null:",
         "template": "interface User {\n  avatarUrl: string ______ null;\n}",
-        "acceptedAnswers": [
-          "|"
-        ],
+        "acceptedAnswers": ["|"],
         "explanation": "A union with null (string | null) models a field that's always present but whose value can be null, distinct from an optional field with `?`."
       },
       {
@@ -395,10 +354,7 @@
           "A passing test doubles as a lightweight accessibility check",
           "getByTestId is deprecated"
         ],
-        "correctIndices": [
-          0,
-          2
-        ],
+        "correctIndices": [0, 2],
         "explanation": "Role-based queries reflect real user/assistive-tech perception of the page and act as a bonus accessibility signal -- getByTestId still exists and isn't deprecated, it's just a weaker signal."
       },
       {
@@ -436,10 +392,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the Testing Library API that mocks network requests at the network boundary:",
         "template": "import { setupServer } from '______/node';",
-        "acceptedAnswers": [
-          "msw",
-          "MSW"
-        ],
+        "acceptedAnswers": ["msw", "MSW"],
         "explanation": "Mock Service Worker (MSW) intercepts requests at the network level, letting your real fetching code run against a faked server response."
       }
     ],
@@ -478,10 +431,7 @@
           "Making an element the very first stop in Tab order",
           "Disabling an element entirely"
         ],
-        "correctIndices": [
-          0,
-          1
-        ],
+        "correctIndices": [0, 1],
         "explanation": "tabindex=\"-1\" removes an element from the Tab sequence but still allows it to receive focus programmatically -- exactly what's needed to move focus into a modal on open."
       },
       {
@@ -503,9 +453,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the attribute that gives this icon-only button an accessible name:",
         "template": "<button ______=\"Close menu\"><svg>...</svg></button>",
-        "acceptedAnswers": [
-          "aria-label"
-        ],
+        "acceptedAnswers": ["aria-label"],
         "explanation": "aria-label supplies an accessible name directly as a string, which is exactly what an icon-only button with no visible text needs."
       },
       {
@@ -557,10 +505,7 @@
           "The same-origin policy alone",
           "Storing the token in localStorage instead of a cookie"
         ],
-        "correctIndices": [
-          0,
-          1
-        ],
+        "correctIndices": [0, 1],
         "explanation": "SameSite cookies and CSRF tokens directly address CSRF. The same-origin policy alone doesn't prevent it (it blocks reading the response, not sending the forged request), and moving to localStorage trades one risk (CSRF) for another (XSS-based token theft)."
       },
       {
@@ -568,12 +513,7 @@
         "type": "code",
         "question": "What class of vulnerability does this code introduce if `text` comes from user input?",
         "codeSnippet": "function Comment({ text }) {\n  return <div dangerouslySetInnerHTML={{ __html: text }} />;\n}",
-        "options": [
-          "SQL injection",
-          "CORS misconfiguration",
-          "CSRF",
-          "Stored XSS"
-        ],
+        "options": ["SQL injection", "CORS misconfiguration", "CSRF", "Stored XSS"],
         "correctIndex": 3,
         "explanation": "Rendering untrusted content as raw HTML allows an attacker's injected script to execute in any other user's browser who views that content -- a classic stored XSS vector."
       },
@@ -600,11 +540,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the cookie flag that makes it invisible to JavaScript entirely:",
         "template": "Set-Cookie: session=abc123; ______; Secure; SameSite=Strict",
-        "acceptedAnswers": [
-          "HttpOnly",
-          "httpOnly",
-          "httponly"
-        ],
+        "acceptedAnswers": ["HttpOnly", "httpOnly", "httponly"],
         "explanation": "HttpOnly prevents JavaScript from reading the cookie via document.cookie, closing the exact access an XSS payload would need to steal it."
       }
     ],
@@ -643,11 +579,7 @@
           "Adding more useEffect calls",
           "Removing an unused dependency"
         ],
-        "correctIndices": [
-          0,
-          1,
-          3
-        ],
+        "correctIndices": [0, 1, 3],
         "explanation": "Code splitting, Server Components, and removing unused dependencies all reduce client bundle size. Adding more effects doesn't reduce bundle size."
       },
       {
@@ -669,9 +601,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the React API used to stream in a slow, non-critical section without blocking the rest of the page:",
         "template": "<______ fallback={<ReviewsSkeleton />}>\n  <Reviews />\n</______>",
-        "acceptedAnswers": [
-          "Suspense"
-        ],
+        "acceptedAnswers": ["Suspense"],
         "explanation": "Suspense lets a slow section render its fallback immediately while the rest of the page loads, streaming in the real content when ready."
       },
       {
@@ -723,10 +653,7 @@
           "A product page's description fetched from a database",
           "Live-polling data that updates after the page has loaded"
         ],
-        "correctIndices": [
-          0,
-          2
-        ],
+        "correctIndices": [0, 2],
         "explanation": "Server Components handle a page's initial data well since they run before anything reaches the browser. Data that changes after load based on ongoing interaction (search-as-you-type, polling) still needs client-side fetching."
       },
       {
@@ -764,9 +691,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the directive that marks a function as callable directly from a form without a manually written API endpoint:",
         "template": "async function createProduct(formData) {\n  '______';\n  // ...\n}",
-        "acceptedAnswers": [
-          "use server"
-        ],
+        "acceptedAnswers": ["use server"],
         "explanation": "'use server' marks a function as a Server Action, letting Next.js handle the network call automatically when it's invoked from a form or client interaction."
       }
     ],
@@ -805,11 +730,7 @@
           "Both branches added the exact same new file with identical content",
           "Git can't automatically determine how to reconcile the changes"
         ],
-        "correctIndices": [
-          0,
-          1,
-          3
-        ],
+        "correctIndices": [0, 1, 3],
         "explanation": "Conflicts arise when Git can't automatically reconcile changes -- typically overlapping edits or a delete/modify conflict. Identical additions merge cleanly without conflict."
       },
       {
@@ -817,9 +738,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the command that stages all changes in the current directory:",
         "template": "git ______ .",
-        "acceptedAnswers": [
-          "add"
-        ],
+        "acceptedAnswers": ["add"],
         "explanation": "git add . stages all changed files in the current directory (and below) for the next commit."
       },
       {
@@ -879,17 +798,8 @@
         "id": "q2",
         "type": "multiple",
         "question": "Which of these HTTP methods are conventionally idempotent? (Select all that apply)",
-        "options": [
-          "GET",
-          "POST",
-          "PUT",
-          "DELETE"
-        ],
-        "correctIndices": [
-          0,
-          2,
-          3
-        ],
+        "options": ["GET", "POST", "PUT", "DELETE"],
+        "correctIndices": [0, 2, 3],
         "explanation": "GET, PUT, and DELETE are conventionally idempotent -- repeating them produces the same end state. POST typically is not, since repeating it can create duplicate resources."
       },
       {
@@ -911,9 +821,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank with the HTTP method that applies a partial update to specific fields of a resource:",
         "template": "fetch('/api/users/1', { method: '______', body: JSON.stringify({ name: 'New Name' }) });",
-        "acceptedAnswers": [
-          "PATCH"
-        ],
+        "acceptedAnswers": ["PATCH"],
         "explanation": "PATCH applies a partial update to specific fields; PUT is conventionally used to replace the entire resource."
       },
       {
@@ -968,11 +876,7 @@
           "Check what the error message and error type actually say, not just the location",
           "Reproduce it locally with the same inputs if possible"
         ],
-        "correctIndices": [
-          0,
-          2,
-          3
-        ],
+        "correctIndices": [0, 2, 3],
         "explanation": "Isolating your own code in the trace, reading the actual error message/type carefully, and reproducing locally are all productive first steps. Rewriting blind, before understanding the cause, tends to waste time or introduce new bugs."
       },
       {
@@ -994,10 +898,7 @@
         "type": "fill_in_blank",
         "question": "Fill in the blank: an error boundary catches errors thrown during ______, but not inside event handlers.",
         "template": "An error boundary catches errors thrown during ______, but not inside event handlers.",
-        "acceptedAnswers": [
-          "rendering",
-          "render"
-        ],
+        "acceptedAnswers": ["rendering", "render"],
         "explanation": "Error boundaries catch errors in rendering, lifecycle methods, and constructors of their child tree -- event handler errors need their own try/catch."
       },
       {

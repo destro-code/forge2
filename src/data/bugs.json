@@ -4,12 +4,7 @@
     "title": "The Counter That Lies (Stale Closure)",
     "category": "hooks",
     "difficulty": "Intermediate",
-    "tags": [
-      "React",
-      "Hooks",
-      "useEffect",
-      "Closures"
-    ],
+    "tags": ["React", "Hooks", "useEffect", "Closures"],
     "estimatedMinutes": 15,
     "brief": "A counter component increments once from 0 to 1 and then freezes. Fix the stale closure bug.",
     "symptoms": [
@@ -52,12 +47,7 @@
     "title": "The Jumping Hero Banner (CLS)",
     "category": "css",
     "difficulty": "Beginner",
-    "tags": [
-      "CSS",
-      "CLS",
-      "Performance",
-      "Aspect Ratio"
-    ],
+    "tags": ["CSS", "CLS", "Performance", "Aspect Ratio"],
     "estimatedMinutes": 10,
     "brief": "Dynamic hero banner images load asynchronously and push lower layout elements down abruptly, causing a bad CLS score.",
     "symptoms": [
@@ -100,12 +90,7 @@
     "title": "The Slow Resizing Tab (Retained Event Listener)",
     "category": "memory_leak",
     "difficulty": "Advanced",
-    "tags": [
-      "JavaScript",
-      "Memory Leak",
-      "Event Listeners",
-      "Cleanup"
-    ],
+    "tags": ["JavaScript", "Memory Leak", "Event Listeners", "Cleanup"],
     "estimatedMinutes": 20,
     "brief": "A window resize handler is registered inside useEffect without an unmount cleanup function, causing memory leaks.",
     "symptoms": [
@@ -148,12 +133,7 @@
     "title": "Out-of-Order Search Results (Network Race)",
     "category": "network",
     "difficulty": "Intermediate",
-    "tags": [
-      "Async",
-      "Network",
-      "Fetch",
-      "AbortController"
-    ],
+    "tags": ["Async", "Network", "Fetch", "AbortController"],
     "estimatedMinutes": 20,
     "brief": "Rapid search input displays stale results from earlier, slower network responses instead of the latest search query.",
     "symptoms": [
@@ -196,12 +176,7 @@
     "title": "Unlabeled Icon Buttons & Focus Leak (Accessibility)",
     "category": "a11y",
     "difficulty": "Beginner",
-    "tags": [
-      "Accessibility",
-      "A11y",
-      "ARIA",
-      "Keyboard Navigation"
-    ],
+    "tags": ["Accessibility", "A11y", "ARIA", "Keyboard Navigation"],
     "estimatedMinutes": 15,
     "brief": "Icon-only buttons lack accessible names for screen readers, and custom popovers fail keyboard focus control.",
     "symptoms": [
@@ -244,12 +219,7 @@
     "title": "The Laggy Product Data Grid (Unmemoized Callbacks)",
     "category": "performance",
     "difficulty": "Advanced",
-    "tags": [
-      "React",
-      "Performance",
-      "useCallback",
-      "React.memo"
-    ],
+    "tags": ["React", "Performance", "useCallback", "React.memo"],
     "estimatedMinutes": 25,
     "brief": "Passing new object literals and unmemoized callbacks into list items causes 500+ child components to re-render on every keystroke.",
     "symptoms": [
@@ -292,12 +262,7 @@
     "title": "Cannot read properties of undefined (reading 'map')",
     "category": "console_error",
     "difficulty": "Beginner",
-    "tags": [
-      "Console Error",
-      "JavaScript",
-      "Nullish Coalescing",
-      "Optional Chaining"
-    ],
+    "tags": ["Console Error", "JavaScript", "Nullish Coalescing", "Optional Chaining"],
     "estimatedMinutes": 10,
     "brief": "Accessing array methods on asynchronous state before initial fetch completes triggers a blank screen runtime crash.",
     "symptoms": [
@@ -340,12 +305,7 @@
     "title": "Broken React App: The Uncapped Re-render Storm",
     "category": "react_app",
     "difficulty": "Intermediate",
-    "tags": [
-      "React",
-      "Hooks",
-      "useEffect",
-      "Infinite Loop"
-    ],
+    "tags": ["React", "Hooks", "useEffect", "Infinite Loop"],
     "estimatedMinutes": 15,
     "brief": "Updating state directly inside an un-guarded useEffect dependency array creates an infinite render cycle that freezes the browser.",
     "symptoms": [
@@ -388,11 +348,7 @@
     "title": "The Cart Total That Isn't a Number (Unsafe Type Assertion)",
     "category": "typescript",
     "difficulty": "Intermediate",
-    "tags": [
-      "TypeScript",
-      "Type Assertions",
-      "API Data"
-    ],
+    "tags": ["TypeScript", "Type Assertions", "API Data"],
     "estimatedMinutes": 12,
     "brief": "A cart total renders as 'NaN' in production even though TypeScript reports no errors. Find where an unsafe type assertion let bad data through.",
     "symptoms": [
@@ -435,11 +391,7 @@
     "title": "The Comment That Ran a Script (Stored XSS)",
     "category": "security",
     "difficulty": "Advanced",
-    "tags": [
-      "Security",
-      "XSS",
-      "Sanitization"
-    ],
+    "tags": ["Security", "XSS", "Sanitization"],
     "estimatedMinutes": 15,
     "brief": "A comment section renders user-submitted HTML directly. Find and fix the stored XSS vulnerability without breaking legitimate rich-text comments.",
     "symptoms": [
@@ -482,11 +434,7 @@
     "title": "The Test That Tests Nothing (Over-Mocked Validation)",
     "category": "testing",
     "difficulty": "Intermediate",
-    "tags": [
-      "Testing",
-      "Mocking",
-      "Vitest"
-    ],
+    "tags": ["Testing", "Mocking", "Vitest"],
     "estimatedMinutes": 12,
     "brief": "A signup form's test suite is green, but a real validation bug still shipped to production. Find why the test can't actually catch it.",
     "symptoms": [
@@ -529,11 +477,7 @@
     "title": "One Bad Widget, One Blank Page (Unscoped Error Boundary)",
     "category": "react_app",
     "difficulty": "Intermediate",
-    "tags": [
-      "React",
-      "Error Boundaries",
-      "Resilience"
-    ],
+    "tags": ["React", "Error Boundaries", "Resilience"],
     "estimatedMinutes": 12,
     "brief": "A single failing third-party widget blanks the entire dashboard, including the navigation. Fix the error boundary scoping without touching the widget itself.",
     "symptoms": [
@@ -576,11 +520,7 @@
     "title": "The Save That Silently Failed (Swallowed Promise Rejection)",
     "category": "async",
     "difficulty": "Intermediate",
-    "tags": [
-      "JavaScript",
-      "Async/Await",
-      "Error Handling"
-    ],
+    "tags": ["JavaScript", "Async/Await", "Error Handling"],
     "estimatedMinutes": 12,
     "brief": "A 'Save' button shows no error, but the data never actually persists. Find why the failure is being swallowed silently.",
     "symptoms": [
@@ -623,11 +563,7 @@
     "title": "The Error That Points Nowhere Useful (Minified Stack Trace)",
     "category": "debugging",
     "difficulty": "Intermediate",
-    "tags": [
-      "Debugging",
-      "Source Maps",
-      "Production Errors"
-    ],
+    "tags": ["Debugging", "Source Maps", "Production Errors"],
     "estimatedMinutes": 10,
     "brief": "A production error report shows a stack trace pointing to `chunk-7f3a91.js:1:48213` with no useful information. Diagnose why, and fix the build config so future errors are actually debuggable.",
     "symptoms": [
@@ -670,11 +606,7 @@
     "title": "The Sidebar That Doesn't Know It's Selected (Prop Drilling Gone Stale)",
     "category": "state",
     "difficulty": "Intermediate",
-    "tags": [
-      "React",
-      "State Management",
-      "Prop Drilling"
-    ],
+    "tags": ["React", "State Management", "Prop Drilling"],
     "estimatedMinutes": 12,
     "brief": "A selected sidebar item stops highlighting correctly after adding a new layer of components. Find where the selection state got disconnected.",
     "symptoms": [
@@ -717,11 +649,7 @@
     "title": "The Style That Won't Apply (Specificity War)",
     "category": "css",
     "difficulty": "Beginner",
-    "tags": [
-      "CSS",
-      "Specificity",
-      "Cascade"
-    ],
+    "tags": ["CSS", "Specificity", "Cascade"],
     "estimatedMinutes": 8,
     "brief": "A utility class meant to override a component's text color has no visible effect. Find which rule is actually winning the cascade, and fix it without reaching for !important.",
     "symptoms": [

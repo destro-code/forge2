@@ -1,5 +1,6 @@
 import type { ExerciseValidationSpec } from "./types/validation";
 export * from "./types/validation";
+export * from "./types/lesson-player";
 
 export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
 export type MasteryState =

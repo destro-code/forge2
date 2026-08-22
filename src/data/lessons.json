@@ -357,9 +357,7 @@
       "Explain why loading a webpage involves communication rather than simply opening a local file.",
       "Use the request/response mental model to explain a simple real-world web interaction."
     ],
-    "prerequisites": [
-      "lesson-0-1-1"
-    ],
+    "prerequisites": ["lesson-0-1-1"],
     "previousLessonId": "lesson-0-1-1",
     "nextLessonId": "lesson-0-1-3",
     "sections": [
@@ -612,9 +610,7 @@
       "Explain that the server returns a response that the browser uses to continue loading the page.",
       "Reproduce the complete sequence in the correct order for a new example without following the lesson step by step."
     ],
-    "prerequisites": [
-      "lesson-0-1-2"
-    ],
+    "prerequisites": ["lesson-0-1-2"],
     "previousLessonId": "lesson-0-1-2",
     "nextLessonId": "lesson-0-1-4",
     "sections": [
@@ -911,9 +907,7 @@
       "Explain why durable application data and important authorization rules must be handled by the server.",
       "Use the client-server model to classify the responsibilities of a simple web feature."
     ],
-    "prerequisites": [
-      "lesson-0-1-3"
-    ],
+    "prerequisites": ["lesson-0-1-3"],
     "previousLessonId": "lesson-0-1-3",
     "nextLessonId": "lesson-0-1-5",
     "sections": [
@@ -1168,9 +1162,7 @@
       "Describe what the learner should do after completing a lesson.",
       "Explain why reading a lesson is not the same as mastering the skill it teaches."
     ],
-    "prerequisites": [
-      "lesson-0-1-4"
-    ],
+    "prerequisites": ["lesson-0-1-4"],
     "previousLessonId": "lesson-0-1-4",
     "nextLessonId": "lesson-1-1-1",
     "sections": [
@@ -1409,9 +1401,7 @@
       "Understand nesting: name the parent and children in a small structure.",
       "Build a tiny page containing a heading and a paragraph from a short requirement."
     ],
-    "prerequisites": [
-      "lesson-0-1-5"
-    ],
+    "prerequisites": ["lesson-0-1-5"],
     "previousLessonId": "lesson-0-1-5",
     "nextLessonId": "lesson-1-1-2",
     "sections": [
@@ -1608,12 +1598,7 @@
         "id": "quiz-1-1-1-2",
         "type": "mcq",
         "question": "In this structure, what is the parent of the paragraph?\n\n<main>\n  <section>\n    <p>Hello</p>\n  </section>\n</main>",
-        "options": [
-          "<main>",
-          "<section>",
-          "<p>",
-          "The document itself"
-        ],
+        "options": ["<main>", "<section>", "<p>", "The document itself"],
         "correctIndex": 1,
         "explanation": "The paragraph is directly nested inside the section, so section is its immediate parent."
       },
@@ -1621,12 +1606,7 @@
         "id": "quiz-1-1-1-3",
         "type": "mcq",
         "question": "Which part of a document holds the content a visitor actually sees on the page?",
-        "options": [
-          "head",
-          "body",
-          "doctype",
-          "title"
-        ],
+        "options": ["head", "body", "doctype", "title"],
         "correctIndex": 1,
         "explanation": "body contains the visible content of the page. head holds information about the document, such as its title, that isn't shown directly."
       },
@@ -1679,9 +1659,7 @@
       "Write correctly formatted attributes with quoted values.",
       "Correct simple nesting and attribute-syntax mistakes in HTML."
     ],
-    "prerequisites": [
-      "lesson-1-1-1"
-    ],
+    "prerequisites": ["lesson-1-1-1"],
     "previousLessonId": "lesson-1-1-1",
     "nextLessonId": "lesson-1-1-3",
     "sections": [
@@ -1990,9 +1968,7 @@
       "Identify and correct common heading-structure mistakes.",
       "Build a short, readable HTML document with a logical heading hierarchy."
     ],
-    "prerequisites": [
-      "lesson-1-1-2"
-    ],
+    "prerequisites": ["lesson-1-1-2"],
     "previousLessonId": "lesson-1-1-2",
     "nextLessonId": "lesson-1-1-4",
     "sections": [
@@ -2192,12 +2168,7 @@
         "id": "quiz-1-1-3-2",
         "type": "mcq",
         "question": "A page has an h1 for 'Frontend Engineering' and two major sections, 'HTML' and 'CSS'. Which heading level is the natural starting point for those two major sections?",
-        "options": [
-          "h1",
-          "h2",
-          "h4",
-          "A paragraph"
-        ],
+        "options": ["h1", "h2", "h4", "A paragraph"],
         "correctIndex": 1,
         "explanation": "HTML and CSS are major sections beneath the main topic, so h2 communicates that hierarchy."
       },
@@ -2205,12 +2176,7 @@
         "id": "quiz-1-1-3-3",
         "type": "mcq",
         "question": "Which element is appropriate for ordinary explanatory prose?",
-        "options": [
-          "p",
-          "h5",
-          "h1",
-          "title"
-        ],
+        "options": ["p", "h5", "h1", "title"],
         "correctIndex": 0,
         "explanation": "The p element represents a paragraph of ordinary text."
       },
@@ -2265,9 +2231,7 @@
       "Diagnose and correct a simple broken link or missing image caused by an incorrect path.",
       "Decide whether an image is informative or decorative and write alt text accordingly."
     ],
-    "prerequisites": [
-      "lesson-1-1-3"
-    ],
+    "prerequisites": ["lesson-1-1-3"],
     "previousLessonId": "lesson-1-1-3",
     "nextLessonId": "lesson-1-1-5",
     "sections": [
@@ -2650,12 +2614,7 @@
         "id": "quiz-1-1-4-1",
         "type": "mcq",
         "question": "Which attribute tells an anchor element where to navigate?",
-        "options": [
-          "src",
-          "href",
-          "alt",
-          "path"
-        ],
+        "options": ["src", "href", "alt", "path"],
         "correctIndex": 1,
         "explanation": "The href attribute provides the destination for an anchor link."
       },
@@ -2739,9 +2698,7 @@
       "Build a simple table that represents genuine tabular data.",
       "Distinguish tabular data from page layout and explain why tables should not be used as a layout system."
     ],
-    "prerequisites": [
-      "lesson-1-1-4"
-    ],
+    "prerequisites": ["lesson-1-1-4"],
     "previousLessonId": "lesson-1-1-4",
     "nextLessonId": "lesson-1-1-6",
     "sections": [
@@ -3069,12 +3026,7 @@
         "id": "quiz-1-1-5-1",
         "type": "mcq",
         "question": "Which list type is most appropriate for a sequence of steps where order matters?",
-        "options": [
-          "ul",
-          "ol",
-          "table",
-          "dl"
-        ],
+        "options": ["ul", "ol", "table", "dl"],
         "correctIndex": 1,
         "explanation": "An ordered list communicates that the sequence of the items matters."
       },
@@ -3082,12 +3034,7 @@
         "id": "quiz-1-1-5-2",
         "type": "mcq",
         "question": "Which element represents an individual item inside a ul or ol?",
-        "options": [
-          "tr",
-          "td",
-          "li",
-          "item"
-        ],
+        "options": ["tr", "td", "li", "item"],
         "correctIndex": 2,
         "explanation": "li represents a list item within an unordered or ordered list."
       },
@@ -3156,9 +3103,7 @@
       "Create a submit control and explain its role in the form.",
       "Identify and fix a basic form-structure or label-association mistake."
     ],
-    "prerequisites": [
-      "lesson-1-1-5"
-    ],
+    "prerequisites": ["lesson-1-1-5"],
     "previousLessonId": "lesson-1-1-5",
     "nextLessonId": "lesson-1-1-7",
     "sections": [
@@ -3514,12 +3459,7 @@
         "id": "quiz-1-1-6-3",
         "type": "mcq",
         "question": "Which input type is most appropriate for an email address?",
-        "options": [
-          "text",
-          "email",
-          "password",
-          "number"
-        ],
+        "options": ["text", "email", "password", "number"],
         "correctIndex": 1,
         "explanation": "type=\"email\" communicates that the field expects an email address and enables browser behavior appropriate to that kind of input."
       },
@@ -3578,9 +3518,7 @@
       "Explain how semantic structure can support accessibility, navigation, and maintainability.",
       "Recognize the aside element and when it's the appropriate choice."
     ],
-    "prerequisites": [
-      "lesson-1-1-6"
-    ],
+    "prerequisites": ["lesson-1-1-6"],
     "previousLessonId": "lesson-1-1-6",
     "nextLessonId": "lesson-1-1-8",
     "sections": [
@@ -3931,12 +3869,7 @@
         "id": "quiz-1-1-7-1",
         "type": "mcq",
         "question": "Which element is most appropriate for a collection of important navigation links?",
-        "options": [
-          "nav",
-          "article",
-          "footer",
-          "span"
-        ],
+        "options": ["nav", "article", "footer", "span"],
         "correctIndex": 0,
         "explanation": "The nav element represents a section whose purpose is navigation."
       },
@@ -3944,12 +3877,7 @@
         "id": "quiz-1-1-7-2",
         "type": "mcq",
         "question": "Which element represents the dominant content of a page?",
-        "options": [
-          "main",
-          "header",
-          "nav",
-          "div"
-        ],
+        "options": ["main", "header", "nav", "div"],
         "correctIndex": 0,
         "explanation": "main identifies the primary content of the document."
       },
@@ -4023,9 +3951,7 @@
       "Inspect the finished document for common structural, semantic, and accessibility mistakes.",
       "Explain the major structural decisions made in the completed page."
     ],
-    "prerequisites": [
-      "lesson-1-1-7"
-    ],
+    "prerequisites": ["lesson-1-1-7"],
     "previousLessonId": "lesson-1-1-7",
     "nextLessonId": "lesson-1-1-9",
     "sections": [
@@ -4392,9 +4318,7 @@
       "Explain at a high level that CSS rules are matched to elements and then resolved when multiple rules apply.",
       "Apply one simple CSS rule to an HTML element."
     ],
-    "prerequisites": [
-      "lesson-1-1-9"
-    ],
+    "prerequisites": ["lesson-1-1-9"],
     "previousLessonId": "lesson-1-1-9",
     "nextLessonId": "lesson-1-2-2",
     "sections": [
@@ -4654,12 +4578,7 @@
         "id": "quiz-1-2-1-2",
         "type": "mcq",
         "question": "In this CSS rule, what is the selector?\n\nh1 {\n  color: navy;\n}",
-        "options": [
-          "h1",
-          "color",
-          "navy",
-          "color: navy"
-        ],
+        "options": ["h1", "color", "navy", "color: navy"],
         "correctIndex": 0,
         "explanation": "h1 is the selector. It identifies the elements that the rule targets."
       },
@@ -4667,12 +4586,7 @@
         "id": "quiz-1-2-1-3",
         "type": "mcq",
         "question": "In this declaration, what is the property?\n\ncolor: blue;",
-        "options": [
-          "color",
-          "blue",
-          "color: blue",
-          "The selector"
-        ],
+        "options": ["color", "blue", "color: blue", "The selector"],
         "correctIndex": 0,
         "explanation": "color is the property. blue is its value."
       },
@@ -4721,9 +4635,7 @@
       "Compare the specificity of simple competing selectors.",
       "Diagnose a basic selector conflict by identifying which rule has greater specificity or appears later when specificity is equal."
     ],
-    "prerequisites": [
-      "lesson-1-2-1"
-    ],
+    "prerequisites": ["lesson-1-2-1"],
     "previousLessonId": "lesson-1-2-1",
     "nextLessonId": "lesson-1-2-3",
     "sections": [
@@ -5088,12 +5000,7 @@
         "id": "quiz-1-2-2-1",
         "type": "mcq",
         "question": "Which selector targets every paragraph element?",
-        "options": [
-          "p",
-          ".p",
-          "#p",
-          "paragraph"
-        ],
+        "options": ["p", ".p", "#p", "paragraph"],
         "correctIndex": 0,
         "explanation": "p is a type selector and matches paragraph elements."
       },
@@ -5101,12 +5008,7 @@
         "id": "quiz-1-2-2-2",
         "type": "mcq",
         "question": "Which selector is more specific?",
-        "options": [
-          "p",
-          ".notice",
-          "#warning",
-          "All three have the same specificity."
-        ],
+        "options": ["p", ".notice", "#warning", "All three have the same specificity."],
         "correctIndex": 2,
         "explanation": "For these basic selector types, an ID selector is more specific than a class selector or a type selector."
       },
@@ -5174,9 +5076,7 @@
       "Distinguish inherited styling from styling directly applied by a selector.",
       "Diagnose a simple cascade or inheritance problem and apply the smallest reasonable fix."
     ],
-    "prerequisites": [
-      "lesson-1-2-2"
-    ],
+    "prerequisites": ["lesson-1-2-2"],
     "previousLessonId": "lesson-1-2-2",
     "nextLessonId": "lesson-1-2-4",
     "sections": [
@@ -5606,9 +5506,7 @@
       "Explain how border-box changes the meaning of a declared width or height.",
       "Use DevTools to inspect an element's box model and diagnose a basic spacing problem."
     ],
-    "prerequisites": [
-      "lesson-1-2-3"
-    ],
+    "prerequisites": ["lesson-1-2-3"],
     "previousLessonId": "lesson-1-2-3",
     "nextLessonId": "lesson-1-2-5",
     "sections": [
@@ -5921,12 +5819,7 @@
         "id": "quiz-1-2-4-1",
         "type": "mcq",
         "question": "Which part of the box model creates space between an element's content and its border?",
-        "options": [
-          "Margin",
-          "Padding",
-          "Border",
-          "Content"
-        ],
+        "options": ["Margin", "Padding", "Border", "Content"],
         "correctIndex": 1,
         "explanation": "Padding is the space between the content box and the border."
       },
@@ -5934,12 +5827,7 @@
         "id": "quiz-1-2-4-2",
         "type": "mcq",
         "question": "Which part of the box model creates space outside the border?",
-        "options": [
-          "Padding",
-          "Content",
-          "Margin",
-          "Line-height"
-        ],
+        "options": ["Padding", "Content", "Margin", "Line-height"],
         "correctIndex": 2,
         "explanation": "Margin creates space outside the element's border."
       },
@@ -5947,12 +5835,7 @@
         "id": "quiz-1-2-4-3",
         "type": "mcq",
         "question": "With box-sizing: content-box, a width of 200px and horizontal padding of 20px on each side means the content width is 200px. Ignoring borders, what is the total width?",
-        "options": [
-          "200px",
-          "220px",
-          "240px",
-          "260px"
-        ],
+        "options": ["200px", "220px", "240px", "260px"],
         "correctIndex": 2,
         "explanation": "The content is 200px wide, plus 20px left padding and 20px right padding, for a total of 240px."
       },
@@ -6007,9 +5890,7 @@
       "Use min-width, max-width, min-height, and max-height at a basic level to create safer sizing constraints.",
       "Build a simple repeated component layout with consistent internal and external spacing."
     ],
-    "prerequisites": [
-      "lesson-1-2-4"
-    ],
+    "prerequisites": ["lesson-1-2-4"],
     "previousLessonId": "lesson-1-2-4",
     "nextLessonId": "lesson-1-2-6",
     "sections": [
@@ -6286,12 +6167,7 @@
         "id": "quiz-1-2-5-1",
         "type": "mcq",
         "question": "Which property is most directly responsible for space between the content inside a card and the card's border?",
-        "options": [
-          "margin",
-          "padding",
-          "gap",
-          "max-width"
-        ],
+        "options": ["margin", "padding", "gap", "max-width"],
         "correctIndex": 1,
         "explanation": "Padding creates space between an element's content and its border."
       },
@@ -6299,12 +6175,7 @@
         "id": "quiz-1-2-5-2",
         "type": "mcq",
         "question": "Which property is designed to create consistent space between children of a layout container?",
-        "options": [
-          "gap",
-          "padding",
-          "width",
-          "border"
-        ],
+        "options": ["gap", "padding", "width", "border"],
         "correctIndex": 0,
         "explanation": "gap is designed to control spacing between items in layout contexts such as flex and grid."
       },
@@ -6375,9 +6246,7 @@
       "Explain why line-height and readable line length affect usability.",
       "Create a simple typographic hierarchy for headings, body text, and supporting text."
     ],
-    "prerequisites": [
-      "lesson-1-2-5"
-    ],
+    "prerequisites": ["lesson-1-2-5"],
     "previousLessonId": "lesson-1-2-5",
     "nextLessonId": "lesson-1-2-7",
     "sections": [
@@ -6695,12 +6564,7 @@
         "id": "quiz-1-2-6-1",
         "type": "mcq",
         "question": "Which CSS property controls the size of text?",
-        "options": [
-          "font-weight",
-          "font-size",
-          "line-height",
-          "font-family"
-        ],
+        "options": ["font-weight", "font-size", "line-height", "font-family"],
         "correctIndex": 1,
         "explanation": "font-size controls how large the text appears."
       },
@@ -6785,9 +6649,7 @@
       "Explain why decorative background images should not contain essential information.",
       "Recognize when a color combination may create a basic readability or contrast problem."
     ],
-    "prerequisites": [
-      "lesson-1-2-6"
-    ],
+    "prerequisites": ["lesson-1-2-6"],
     "previousLessonId": "lesson-1-2-6",
     "nextLessonId": "lesson-1-2-8",
     "sections": [
@@ -7105,12 +6967,7 @@
         "id": "quiz-1-2-7-1",
         "type": "mcq",
         "question": "Which property controls the foreground color of text?",
-        "options": [
-          "background-color",
-          "color",
-          "border-color",
-          "fill"
-        ],
+        "options": ["background-color", "color", "border-color", "fill"],
         "correctIndex": 1,
         "explanation": "The color property controls the foreground color, including text in normal HTML content."
       },
@@ -7195,9 +7052,7 @@
       "Explain why changing display affects how an element participates in normal flow.",
       "Diagnose a simple layout issue caused by misunderstanding block and inline behavior."
     ],
-    "prerequisites": [
-      "lesson-1-2-7"
-    ],
+    "prerequisites": ["lesson-1-2-7"],
     "previousLessonId": "lesson-1-2-7",
     "nextLessonId": "lesson-1-2-9",
     "sections": [
@@ -7629,9 +7484,7 @@
       "Use gap to create consistent spacing between flex items.",
       "Build a simple one-dimensional responsive component layout with Flexbox."
     ],
-    "prerequisites": [
-      "lesson-1-2-8"
-    ],
+    "prerequisites": ["lesson-1-2-8"],
     "previousLessonId": "lesson-1-2-8",
     "nextLessonId": "lesson-1-2-10",
     "sections": [
@@ -7985,12 +7838,7 @@
         "id": "quiz-1-2-9-3",
         "type": "mcq",
         "question": "What determines the direction of the flex main axis?",
-        "options": [
-          "align-items",
-          "justify-content",
-          "flex-direction",
-          "gap"
-        ],
+        "options": ["align-items", "justify-content", "flex-direction", "gap"],
         "correctIndex": 2,
         "explanation": "flex-direction determines whether the main axis is row-like or column-like."
       },
@@ -8047,9 +7895,7 @@
       "Place grid items using basic grid-column and grid-row values.",
       "Distinguish a two-dimensional grid problem from a one-dimensional Flexbox problem."
     ],
-    "prerequisites": [
-      "lesson-1-2-9"
-    ],
+    "prerequisites": ["lesson-1-2-9"],
     "previousLessonId": "lesson-1-2-9",
     "nextLessonId": "lesson-1-2-11",
     "sections": [
@@ -8476,9 +8322,7 @@
       "Adapt a simple Flexbox or Grid layout for different viewport sizes.",
       "Test a responsive layout at multiple viewport widths and identify a basic breakpoint problem."
     ],
-    "prerequisites": [
-      "lesson-1-2-10"
-    ],
+    "prerequisites": ["lesson-1-2-10"],
     "previousLessonId": "lesson-1-2-10",
     "nextLessonId": "lesson-1-2-12",
     "sections": [
@@ -8874,9 +8718,7 @@
       "Build a responsive layout that adapts across narrow and wide viewports.",
       "Inspect the finished interface and diagnose at least one visual or responsive issue using DevTools."
     ],
-    "prerequisites": [
-      "lesson-1-2-11"
-    ],
+    "prerequisites": ["lesson-1-2-11"],
     "previousLessonId": "lesson-1-2-11",
     "nextLessonId": "lesson-1-3-1",
     "sections": [
@@ -9184,12 +9026,7 @@
         "id": "quiz-1-2-12-1",
         "type": "mcq",
         "question": "Which layout choice best matches a header containing a brand on the left and navigation actions on the right?",
-        "options": [
-          "Flexbox",
-          "A table",
-          "Only absolute positioning",
-          "A paragraph with spaces"
-        ],
+        "options": ["Flexbox", "A table", "Only absolute positioning", "A paragraph with spaces"],
         "correctIndex": 0,
         "explanation": "The header is primarily a one-dimensional relationship, so Flexbox is a natural choice."
       },
@@ -9197,12 +9034,7 @@
         "id": "quiz-1-2-12-2",
         "type": "mcq",
         "question": "Which choice is most appropriate for a dashboard where rows and columns both matter?",
-        "options": [
-          "Grid",
-          "Only inline elements",
-          "Only margins",
-          "A sequence of <br> elements"
-        ],
+        "options": ["Grid", "Only inline elements", "Only margins", "A sequence of <br> elements"],
         "correctIndex": 0,
         "explanation": "Grid is designed for two-dimensional row-and-column layouts."
       },
@@ -9269,9 +9101,7 @@
       "Explain at a high level how JavaScript can read and modify the DOM.",
       "Describe a simple user interaction as a sequence of event, JavaScript logic, and visible UI change."
     ],
-    "prerequisites": [
-      "module-1-2"
-    ],
+    "prerequisites": ["module-1-2"],
     "previousLessonId": "lesson-1-2-12",
     "nextLessonId": "lesson-1-3-2",
     "sections": [
@@ -9632,12 +9462,7 @@
         "id": "quiz-1-3-1-5",
         "type": "mcq",
         "question": "A button's padding needs to change for visual design reasons. Which layer should normally handle that?",
-        "options": [
-          "HTML",
-          "CSS",
-          "JavaScript",
-          "DNS"
-        ],
+        "options": ["HTML", "CSS", "JavaScript", "DNS"],
         "correctIndex": 1,
         "explanation": "Padding is a presentation/layout concern, so CSS should normally handle it rather than JavaScript."
       }
@@ -9686,9 +9511,7 @@
       "Choose const or let appropriately in simple situations.",
       "Avoid using var for the modern beginner-level examples in this curriculum."
     ],
-    "prerequisites": [
-      "lesson-1-3-1"
-    ],
+    "prerequisites": ["lesson-1-3-1"],
     "previousLessonId": "lesson-1-3-1",
     "nextLessonId": "lesson-1-3-3",
     "sections": [
@@ -10016,12 +9839,7 @@
         "id": "quiz-1-3-2-2",
         "type": "mcq",
         "question": "Which declaration is appropriate when a variable needs to be reassigned?",
-        "options": [
-          "const",
-          "let",
-          "Both are identical.",
-          "Only var can be reassigned."
-        ],
+        "options": ["const", "let", "Both are identical.", "Only var can be reassigned."],
         "correctIndex": 1,
         "explanation": "let allows the variable to be reassigned. const does not."
       },
@@ -10042,12 +9860,7 @@
         "id": "quiz-1-3-2-4",
         "type": "mcq",
         "question": "Which is the best default choice when you are declaring a new variable and do not expect to reassign it?",
-        "options": [
-          "var",
-          "let",
-          "const",
-          "No declaration is needed."
-        ],
+        "options": ["var", "let", "const", "No declaration is needed."],
         "correctIndex": 2,
         "explanation": "Start with const when reassignment is not required. Use let when the variable genuinely needs to change."
       }
@@ -10095,9 +9908,7 @@
       "Use === and !== for predictable strict comparisons.",
       "Predict the result of simple expressions before running them."
     ],
-    "prerequisites": [
-      "lesson-1-3-2"
-    ],
+    "prerequisites": ["lesson-1-3-2"],
     "previousLessonId": "lesson-1-3-2",
     "nextLessonId": "lesson-1-3-4",
     "sections": [
@@ -10449,12 +10260,7 @@
         "id": "quiz-1-3-3-1",
         "type": "mcq",
         "question": "What type of value does a comparison such as 10 > 5 produce?",
-        "options": [
-          "A string",
-          "A number",
-          "A boolean",
-          "An object"
-        ],
+        "options": ["A string", "A number", "A boolean", "An object"],
         "correctIndex": 2,
         "explanation": "Comparison operators produce a boolean result: true or false."
       },
@@ -10462,12 +10268,7 @@
         "id": "quiz-1-3-3-2",
         "type": "mcq",
         "question": "What is the result of this expression?\n\n'5' === 5",
-        "options": [
-          "true",
-          "false",
-          "5",
-          "undefined"
-        ],
+        "options": ["true", "false", "5", "undefined"],
         "correctIndex": 1,
         "explanation": "The values have different types: one is a string and the other is a number. Strict equality does not convert them, so the result is false."
       },
@@ -10488,12 +10289,7 @@
         "id": "quiz-1-3-3-4",
         "type": "mcq",
         "question": "What does && mean in the basic logical model taught here?",
-        "options": [
-          "Or",
-          "And",
-          "Not",
-          "Assign"
-        ],
+        "options": ["Or", "And", "Not", "Assign"],
         "correctIndex": 1,
         "explanation": "At this level, && can be read as 'and' when combining conditions."
       },
@@ -10557,9 +10353,7 @@
       "Predict which branch will execute before running the code.",
       "Recognize and correct the mistake of using = when === was intended."
     ],
-    "prerequisites": [
-      "lesson-1-3-3"
-    ],
+    "prerequisites": ["lesson-1-3-3"],
     "previousLessonId": "lesson-1-3-3",
     "nextLessonId": "lesson-1-3-5",
     "sections": [
@@ -10918,9 +10712,7 @@
       "Identify and fix a simple off-by-one error.",
       "Identify and fix a simple infinite-loop bug."
     ],
-    "prerequisites": [
-      "lesson-1-3-4"
-    ],
+    "prerequisites": ["lesson-1-3-4"],
     "previousLessonId": "lesson-1-3-4",
     "nextLessonId": "lesson-1-3-6",
     "sections": [
@@ -11298,9 +11090,7 @@
       "Distinguish return from console.log.",
       "Apply a function to a small realistic frontend-style problem."
     ],
-    "prerequisites": [
-      "lesson-1-3-5"
-    ],
+    "prerequisites": ["lesson-1-3-5"],
     "previousLessonId": "lesson-1-3-5",
     "nextLessonId": "lesson-1-3-7",
     "sections": [
@@ -11668,12 +11458,7 @@
         "id": "quiz-1-3-6-2",
         "type": "mcq",
         "question": "In this function, what is name?\n\nfunction greet(name) {\n  return 'Hello ' + name;\n}",
-        "options": [
-          "An argument",
-          "A parameter",
-          "The return value",
-          "A variable declaration"
-        ],
+        "options": ["An argument", "A parameter", "The return value", "A variable declaration"],
         "correctIndex": 1,
         "explanation": "name is the parameter declared by the function. A concrete value passed when calling greet is an argument."
       },
@@ -11747,10 +11532,7 @@
       "Predict the output of simple array operations before running them.",
       "Recognize when a built-in array method communicates an operation more clearly than a manual for loop."
     ],
-    "prerequisites": [
-      "lesson-1-3-5",
-      "lesson-1-3-6"
-    ],
+    "prerequisites": ["lesson-1-3-5", "lesson-1-3-6"],
     "previousLessonId": "lesson-1-3-6",
     "nextLessonId": "lesson-1-3-8",
     "sections": [
@@ -12141,12 +11923,7 @@
         "id": "quiz-1-3-7-3",
         "type": "mcq",
         "question": "Which method is the most direct fit for turning ['HTML', 'CSS'] into ['Learn HTML', 'Learn CSS']?",
-        "options": [
-          "filter",
-          "push",
-          "map",
-          "while"
-        ],
+        "options": ["filter", "push", "map", "while"],
         "correctIndex": 2,
         "explanation": "map transforms each input item into a corresponding output item."
       },
@@ -12154,12 +11931,7 @@
         "id": "quiz-1-3-7-4",
         "type": "mcq",
         "question": "Which method is the most direct fit for keeping only scores greater than or equal to 70?",
-        "options": [
-          "map",
-          "filter",
-          "push",
-          "switch"
-        ],
+        "options": ["map", "filter", "push", "switch"],
         "correctIndex": 1,
         "explanation": "filter selects the items that satisfy a condition."
       },
@@ -12167,12 +11939,7 @@
         "id": "quiz-1-3-7-5",
         "type": "mcq",
         "question": "What is the first index of a JavaScript array?",
-        "options": [
-          "0",
-          "1",
-          "-1",
-          "It depends on the array."
-        ],
+        "options": ["0", "1", "-1", "It depends on the array."],
         "correctIndex": 0,
         "explanation": "JavaScript arrays use zero-based indexing, so the first item is at index 0."
       }
@@ -12224,9 +11991,7 @@
       "Choose between dot notation and bracket notation based on the property name.",
       "Use objects to model realistic frontend application data."
     ],
-    "prerequisites": [
-      "lesson-1-3-7"
-    ],
+    "prerequisites": ["lesson-1-3-7"],
     "previousLessonId": "lesson-1-3-7",
     "nextLessonId": "lesson-1-3-9",
     "sections": [
@@ -12743,9 +12508,7 @@
       "Combine the module's JavaScript fundamentals into one working program.",
       "Test the program incrementally and identify bugs before adding more functionality."
     ],
-    "prerequisites": [
-      "lesson-1-3-8"
-    ],
+    "prerequisites": ["lesson-1-3-8"],
     "previousLessonId": "lesson-1-3-8",
     "nextLessonId": "lesson-1-4-1",
     "sections": [
@@ -13189,9 +12952,7 @@
       "Choose the appropriate DevTools panel for a simple HTML, JavaScript, network, or source-code investigation.",
       "Reproduce a basic DevTools inspection workflow independently."
     ],
-    "prerequisites": [
-      "lesson-0-1-5"
-    ],
+    "prerequisites": ["lesson-0-1-5"],
     "previousLessonId": "lesson-1-3-9",
     "nextLessonId": "lesson-1-4-2",
     "sections": [
@@ -13433,12 +13194,7 @@
         "id": "quiz-0-2-1-2",
         "type": "mcq",
         "question": "You want to inspect the live HTML structure of a page and see which CSS rules affect a selected element. Which panel should you use first?",
-        "options": [
-          "Elements",
-          "Console",
-          "Network",
-          "Sources"
-        ],
+        "options": ["Elements", "Console", "Network", "Sources"],
         "correctIndex": 0,
         "explanation": "Elements is designed for inspecting the live DOM and the CSS applied to elements."
       },
@@ -13446,12 +13202,7 @@
         "id": "quiz-0-2-1-3",
         "type": "mcq",
         "question": "A JavaScript error appears after clicking a button. Which DevTools panel is the best first place to inspect the error message?",
-        "options": [
-          "Elements",
-          "Console",
-          "Network",
-          "Application"
-        ],
+        "options": ["Elements", "Console", "Network", "Application"],
         "correctIndex": 1,
         "explanation": "The Console reports JavaScript errors, warnings, logs, and other runtime messages."
       },
@@ -13459,12 +13210,7 @@
         "id": "quiz-0-2-1-4",
         "type": "mcq",
         "question": "A page sends a request that returns status 404. Which DevTools panel should you inspect first?",
-        "options": [
-          "Sources",
-          "Elements",
-          "Network",
-          "Console"
-        ],
+        "options": ["Sources", "Elements", "Network", "Console"],
         "correctIndex": 2,
         "explanation": "Network is the appropriate first tool for inspecting requests, their status codes, timing, and response details."
       }
@@ -13501,9 +13247,7 @@
       "Explain the difference between changing the live page in DevTools and changing the application's source code.",
       "Use the Elements panel to investigate a simple visual problem."
     ],
-    "prerequisites": [
-      "lesson-1-4-1"
-    ],
+    "prerequisites": ["lesson-1-4-1"],
     "previousLessonId": "lesson-1-4-1",
     "nextLessonId": "lesson-1-4-3",
     "sections": [
@@ -13793,9 +13537,7 @@
       "Visually distinguish a log, a warning, and an error by their color and icon.",
       "Explain why the first message in a stack of errors deserves attention before the rest."
     ],
-    "prerequisites": [
-      "lesson-1-4-2"
-    ],
+    "prerequisites": ["lesson-1-4-2"],
     "previousLessonId": "lesson-1-4-2",
     "nextLessonId": "lesson-1-4-4",
     "sections": [
@@ -13913,9 +13655,7 @@
       "Use Network activity to investigate a simple case where a page is missing data or a resource fails to load.",
       "Trace a request from the user action that triggered it to the response the browser received."
     ],
-    "prerequisites": [
-      "lesson-1-4-3"
-    ],
+    "prerequisites": ["lesson-1-4-3"],
     "previousLessonId": "lesson-1-4-3",
     "nextLessonId": "lesson-1-4-5",
     "sections": [
@@ -14260,9 +14000,7 @@
       "Explain the cause of a bug before applying a fix.",
       "Apply the smallest reasonable fix and verify that the behavior now matches the requirement."
     ],
-    "prerequisites": [
-      "lesson-1-4-4"
-    ],
+    "prerequisites": ["lesson-1-4-4"],
     "previousLessonId": "lesson-1-4-4",
     "nextLessonId": "lesson-1-5-1",
     "sections": [
@@ -14580,9 +14318,7 @@
       "Explain what paint means in browser rendering.",
       "Recognize that visual changes are not necessarily free and can require additional browser work."
     ],
-    "prerequisites": [
-      "lesson-1-3-9"
-    ],
+    "prerequisites": ["lesson-1-3-9"],
     "previousLessonId": "lesson-1-4-5",
     "nextLessonId": "lesson-1-5-2",
     "sections": [
@@ -14988,9 +14724,7 @@
       "Use the browser console to reproduce and verify a simple synchronous JavaScript fix.",
       "Avoid ignoring the stack trace after reading only the first line of an error."
     ],
-    "prerequisites": [
-      "lesson-1-5-1"
-    ],
+    "prerequisites": ["lesson-1-5-1"],
     "previousLessonId": "lesson-1-5-1",
     "nextLessonId": "lesson-1-5-3",
     "sections": [
@@ -15425,9 +15159,7 @@
       "Use debugging evidence to determine what a program is actually doing instead of guessing.",
       "Clean up temporary debugging code after the investigation is complete."
     ],
-    "prerequisites": [
-      "lesson-1-5-2"
-    ],
+    "prerequisites": ["lesson-1-5-2"],
     "previousLessonId": "lesson-1-5-2",
     "nextLessonId": "lesson-1-5-4",
     "sections": [
@@ -15801,9 +15533,7 @@
       "Fix the root cause instead of only hiding the visible symptom.",
       "Explain when DOMContentLoaded can be used to ensure the initial document has been parsed before DOM-dependent code runs."
     ],
-    "prerequisites": [
-      "lesson-1-5-3"
-    ],
+    "prerequisites": ["lesson-1-5-3"],
     "previousLessonId": "lesson-1-5-3",
     "nextLessonId": "lesson-1-5-5",
     "sections": [
@@ -16156,12 +15886,7 @@
         "id": "quiz-1-4-4-1",
         "type": "mcq",
         "question": "What does document.querySelector() return when no matching element is found?",
-        "options": [
-          "false",
-          "null",
-          "0",
-          "An empty string"
-        ],
+        "options": ["false", "null", "0", "An empty string"],
         "correctIndex": 1,
         "explanation": "querySelector returns null when no matching element is found."
       },
@@ -16244,9 +15969,7 @@
       "Verify that the original user interaction works after the fix.",
       "Explain the root cause and evidence used to identify it."
     ],
-    "prerequisites": [
-      "lesson-1-5-4"
-    ],
+    "prerequisites": ["lesson-1-5-4"],
     "previousLessonId": "lesson-1-5-4",
     "nextLessonId": "lesson-2-1-1",
     "sections": [
@@ -16612,9 +16335,7 @@
       "Predict how flex items respond when the available space changes.",
       "Diagnose a layout where flex items do not shrink or wrap as expected."
     ],
-    "prerequisites": [
-      "lesson-1-5-5"
-    ],
+    "prerequisites": ["lesson-1-5-5"],
     "previousLessonId": "lesson-1-5-5",
     "nextLessonId": "lesson-2-1-2",
     "sections": [
@@ -17118,9 +16839,7 @@
       "Choose a flexible Grid pattern instead of hardcoding a fixed number of columns when the content should adapt.",
       "Predict how additional items affect an implicitly created grid."
     ],
-    "prerequisites": [
-      "lesson-2-1-1"
-    ],
+    "prerequisites": ["lesson-2-1-1"],
     "previousLessonId": "lesson-2-1-1",
     "nextLessonId": "lesson-2-1-3",
     "sections": [
@@ -17573,9 +17292,7 @@
       "Use z-index to control stacking order when elements overlap.",
       "Diagnose why an absolutely positioned element jumps to an unexpected location."
     ],
-    "prerequisites": [
-      "lesson-2-1-2"
-    ],
+    "prerequisites": ["lesson-2-1-2"],
     "previousLessonId": "lesson-2-1-2",
     "nextLessonId": "lesson-2-1-4",
     "sections": [
@@ -17976,9 +17693,7 @@
       "Create a simple state-change interaction using a transition.",
       "Avoid common motion mistakes such as animating layout-triggering properties unnecessarily."
     ],
-    "prerequisites": [
-      "lesson-2-1-3"
-    ],
+    "prerequisites": ["lesson-2-1-3"],
     "previousLessonId": "lesson-2-1-3",
     "nextLessonId": "lesson-2-1-5",
     "sections": [
@@ -18460,9 +18175,7 @@
       "Describe a sensible way to organize styles across files or layers.",
       "Recognize when a CSS solution is becoming difficult to override or reason about."
     ],
-    "prerequisites": [
-      "lesson-2-1-4"
-    ],
+    "prerequisites": ["lesson-2-1-4"],
     "previousLessonId": "lesson-2-1-4",
     "nextLessonId": "lesson-2-1-6",
     "sections": [
@@ -18811,12 +18524,7 @@
         "id": "quiz-2-1-5-2",
         "type": "mcq",
         "question": "Which is a good example of a component-style class?",
-        "options": [
-          ".blue-box",
-          ".lesson-card",
-          ".mt-16",
-          ".hidden"
-        ],
+        "options": [".blue-box", ".lesson-card", ".mt-16", ".hidden"],
         "correctIndex": 1,
         "explanation": "lesson-card represents a meaningful UI component. The other examples are either appearance-based or utility-style names."
       },
@@ -18886,9 +18594,7 @@
       "Explain how tokens make consistent updates and theming easier.",
       "Recognize the maintenance problems caused by repeated hardcoded visual values."
     ],
-    "prerequisites": [
-      "lesson-2-1-5"
-    ],
+    "prerequisites": ["lesson-2-1-5"],
     "previousLessonId": "lesson-2-1-5",
     "nextLessonId": "lesson-2-1-7",
     "sections": [
@@ -19264,12 +18970,7 @@
         "id": "quiz-2-1-6-3",
         "type": "mcq",
         "question": "Which is the better semantic token name?",
-        "options": [
-          "--blue-500",
-          "--color-primary",
-          "--hex-2563eb",
-          "--button-blue-value"
-        ],
+        "options": ["--blue-500", "--color-primary", "--hex-2563eb", "--button-blue-value"],
         "correctIndex": 1,
         "explanation": "A semantic name communicates the role of the value rather than tying the meaning to one temporary implementation color."
       },
@@ -19327,9 +19028,7 @@
       "Test the interface at narrow, intermediate, and wide viewport sizes.",
       "Review the implementation for excessive nesting, unnecessary positioning, duplicated values, and brittle responsive behavior."
     ],
-    "prerequisites": [
-      "lesson-2-1-6"
-    ],
+    "prerequisites": ["lesson-2-1-6"],
     "previousLessonId": "lesson-2-1-6",
     "nextLessonId": "lesson-2-2-1",
     "sections": [
@@ -19791,9 +19490,7 @@
       "Predict common scope and hoisting examples without relying on guesswork.",
       "Recognize why let and const are generally safer defaults than var."
     ],
-    "prerequisites": [
-      "lesson-2-1-7"
-    ],
+    "prerequisites": ["lesson-2-1-7"],
     "previousLessonId": "lesson-2-1-7",
     "nextLessonId": "lesson-2-2-2",
     "sections": [
@@ -20198,12 +19895,7 @@
         "id": "quiz-2-2-1-2",
         "type": "mcq",
         "question": "Which declaration is block-scoped?",
-        "options": [
-          "var",
-          "let",
-          "Only function parameters",
-          "None of them"
-        ],
+        "options": ["var", "let", "Only function parameters", "None of them"],
         "correctIndex": 1,
         "explanation": "let and const are block-scoped. var is function-scoped."
       },
@@ -20295,9 +19987,7 @@
       "Predict how repeated calls to the same closure affect its remembered state.",
       "Recognize the classic var-in-a-loop closure problem at a beginner level and understand why let behaves differently."
     ],
-    "prerequisites": [
-      "lesson-2-2-1"
-    ],
+    "prerequisites": ["lesson-2-2-1"],
     "previousLessonId": "lesson-2-2-1",
     "nextLessonId": "lesson-2-2-3",
     "sections": [
@@ -20736,9 +20426,7 @@
       "Fix a simple this-related callback bug using an appropriate modern pattern.",
       "Avoid treating this as a variable that simply refers to the object where the function was written."
     ],
-    "prerequisites": [
-      "lesson-2-2-2"
-    ],
+    "prerequisites": ["lesson-2-2-2"],
     "previousLessonId": "lesson-2-2-2",
     "nextLessonId": "lesson-2-2-4",
     "sections": [
@@ -21191,9 +20879,7 @@
       "Distinguish spread syntax from destructuring syntax.",
       "Recognize that destructuring a property that does not exist can produce undefined."
     ],
-    "prerequisites": [
-      "lesson-2-2-3"
-    ],
+    "prerequisites": ["lesson-2-2-3"],
     "previousLessonId": "lesson-2-2-3",
     "nextLessonId": "lesson-2-2-5",
     "sections": [
@@ -21599,9 +21285,7 @@
       "Choose an array method based on the result the code needs.",
       "Predict the output of simple array-method chains before running them."
     ],
-    "prerequisites": [
-      "lesson-2-2-4"
-    ],
+    "prerequisites": ["lesson-2-2-4"],
     "previousLessonId": "lesson-2-2-4",
     "nextLessonId": "lesson-2-2-6",
     "sections": [
@@ -21933,12 +21617,7 @@
         "id": "quiz-2-2-5-1",
         "type": "mcq",
         "question": "Which method should you choose when every input item should produce one transformed output item?",
-        "options": [
-          "map",
-          "filter",
-          "reduce",
-          "find"
-        ],
+        "options": ["map", "filter", "reduce", "find"],
         "correctIndex": 0,
         "explanation": "map creates a new array with one result corresponding to each input item."
       },
@@ -21946,12 +21625,7 @@
         "id": "quiz-2-2-5-2",
         "type": "mcq",
         "question": "Which method should you choose when you want only lessons whose completed property is true?",
-        "options": [
-          "map",
-          "filter",
-          "reduce",
-          "find"
-        ],
+        "options": ["map", "filter", "reduce", "find"],
         "correctIndex": 1,
         "explanation": "filter keeps only the items that satisfy its condition."
       },
@@ -21959,12 +21633,7 @@
         "id": "quiz-2-2-5-3",
         "type": "mcq",
         "question": "Which method is best suited to calculating one total from an entire collection?",
-        "options": [
-          "map",
-          "filter",
-          "reduce",
-          "find"
-        ],
+        "options": ["map", "filter", "reduce", "find"],
         "correctIndex": 2,
         "explanation": "reduce is designed to accumulate many inputs into one result."
       },
@@ -21972,12 +21641,7 @@
         "id": "quiz-2-2-5-4",
         "type": "mcq",
         "question": "What does find return when no item matches?",
-        "options": [
-          "An empty array",
-          "false",
-          "undefined",
-          "0"
-        ],
+        "options": ["An empty array", "false", "undefined", "0"],
         "correctIndex": 2,
         "explanation": "find returns the first matching element or undefined if no match is found."
       },
@@ -22043,9 +21707,7 @@
       "Use modules to keep a small feature split into focused files.",
       "Explain why explicit module dependencies make code easier to reason about."
     ],
-    "prerequisites": [
-      "lesson-2-2-5"
-    ],
+    "prerequisites": ["lesson-2-2-5"],
     "previousLessonId": "lesson-2-2-5",
     "nextLessonId": "lesson-2-2-7",
     "sections": [
@@ -22418,9 +22080,7 @@
       "Predict the order and values produced by a simple Promise chain.",
       "Recognize why forgetting to return a Promise breaks sequencing in a chain."
     ],
-    "prerequisites": [
-      "lesson-2-2-6"
-    ],
+    "prerequisites": ["lesson-2-2-6"],
     "previousLessonId": "lesson-2-2-6",
     "nextLessonId": "lesson-2-2-8",
     "sections": [
@@ -22877,9 +22537,7 @@
       "Predict the behavior of code when await is omitted.",
       "Use multiple await expressions to sequence asynchronous operations."
     ],
-    "prerequisites": [
-      "lesson-2-2-7"
-    ],
+    "prerequisites": ["lesson-2-2-7"],
     "previousLessonId": "lesson-2-2-7",
     "nextLessonId": "lesson-2-2-9",
     "sections": [
@@ -23317,9 +22975,7 @@
       "Recognize when an error should be allowed to propagate rather than silently ignored.",
       "Handle expected failure states without making the application appear successful when it is not."
     ],
-    "prerequisites": [
-      "lesson-2-2-8"
-    ],
+    "prerequisites": ["lesson-2-2-8"],
     "previousLessonId": "lesson-2-2-8",
     "nextLessonId": "lesson-2-2-10",
     "sections": [
@@ -23665,12 +23321,7 @@
         "id": "quiz-2-2-9-1",
         "type": "mcq",
         "question": "Which pattern handles a rejected Promise chain?",
-        "options": [
-          "try only",
-          ".catch()",
-          "finally only",
-          "switch only"
-        ],
+        "options": ["try only", ".catch()", "finally only", "switch only"],
         "correctIndex": 1,
         "explanation": "A Promise chain can use .catch() to handle rejection."
       },
@@ -23759,9 +23410,7 @@
       "Explain the architectural role of each major piece of the implementation.",
       "Review the finished code for inconsistent asynchronous patterns and unnecessary complexity."
     ],
-    "prerequisites": [
-      "lesson-2-2-9"
-    ],
+    "prerequisites": ["lesson-2-2-9"],
     "previousLessonId": "lesson-2-2-9",
     "nextLessonId": "lesson-2-3-1",
     "sections": [
@@ -24222,9 +23871,7 @@
       "Distinguish version control from simply keeping backup copies.",
       "Explain why version control is especially valuable in frontend projects."
     ],
-    "prerequisites": [
-      "lesson-2-2-10"
-    ],
+    "prerequisites": ["lesson-2-2-10"],
     "previousLessonId": "lesson-2-2-10",
     "nextLessonId": "lesson-2-3-2",
     "sections": [
@@ -24575,9 +24222,7 @@
       "Explain the difference between the working tree, staging area, and committed history.",
       "Choose commit messages that describe the meaningful change rather than vague activity."
     ],
-    "prerequisites": [
-      "lesson-2-3-1"
-    ],
+    "prerequisites": ["lesson-2-3-1"],
     "previousLessonId": "lesson-2-3-1",
     "nextLessonId": "lesson-2-3-3",
     "sections": [
@@ -24925,12 +24570,7 @@
         "id": "quiz-2-3-2-3",
         "type": "mcq",
         "question": "Which commit message is most useful?",
-        "options": [
-          "fix stuff",
-          "update",
-          "Add lesson card spacing styles",
-          "changes"
-        ],
+        "options": ["fix stuff", "update", "Add lesson card spacing styles", "changes"],
         "correctIndex": 2,
         "explanation": "A useful commit message communicates the meaningful change represented by the snapshot."
       },
@@ -25003,9 +24643,7 @@
       "Make a commit on a feature branch without changing the main branch's history.",
       "Explain why feature work should usually happen on a branch rather than directly on main."
     ],
-    "prerequisites": [
-      "lesson-2-3-2"
-    ],
+    "prerequisites": ["lesson-2-3-2"],
     "previousLessonId": "lesson-2-3-2",
     "nextLessonId": "lesson-2-3-4",
     "sections": [
@@ -25346,12 +24984,7 @@
         "id": "quiz-2-3-3-4",
         "type": "mcq",
         "question": "After creating a branch from B and committing C and D on it, what does the original main branch still point to if you have not merged?",
-        "options": [
-          "D",
-          "C",
-          "B",
-          "A"
-        ],
+        "options": ["D", "C", "B", "A"],
         "correctIndex": 2,
         "explanation": "The new branch moves forward with C and D, while main remains at B until its history is changed through integration."
       },
@@ -25410,9 +25043,7 @@
       "Read review feedback and make a follow-up change on the same feature branch.",
       "Explain why a pull request is a review and integration workflow rather than simply another name for a merge."
     ],
-    "prerequisites": [
-      "lesson-2-3-3"
-    ],
+    "prerequisites": ["lesson-2-3-3"],
     "previousLessonId": "lesson-2-3-3",
     "nextLessonId": "lesson-2-3-5",
     "sections": [
@@ -25821,9 +25452,7 @@
       "Verify that the resolved code still behaves correctly.",
       "Explain why blindly choosing ours or theirs can produce an incorrect result."
     ],
-    "prerequisites": [
-      "lesson-2-3-4"
-    ],
+    "prerequisites": ["lesson-2-3-4"],
     "previousLessonId": "lesson-2-3-4",
     "nextLessonId": "lesson-2-3-6",
     "sections": [
@@ -26300,9 +25929,7 @@
       "Recognize when a commit or PR contains unrelated changes.",
       "Explain why small, focused changes improve review, debugging, and rollback."
     ],
-    "prerequisites": [
-      "lesson-2-3-5"
-    ],
+    "prerequisites": ["lesson-2-3-5"],
     "previousLessonId": "lesson-2-3-5",
     "nextLessonId": "lesson-2-4-1",
     "sections": [
@@ -26717,9 +26344,7 @@
       "Explain why frontend developers need to read the actual API contract instead of guessing its behavior.",
       "Describe the basic relationship between a frontend client and a web API."
     ],
-    "prerequisites": [
-      "lesson-2-3-6"
-    ],
+    "prerequisites": ["lesson-2-3-6"],
     "previousLessonId": "lesson-2-3-6",
     "nextLessonId": "lesson-2-4-2",
     "sections": [
@@ -27134,9 +26759,7 @@
       "Explain when a request or response may contain a body.",
       "Explain why the response status is meaningful even when a response body exists."
     ],
-    "prerequisites": [
-      "lesson-2-4-1"
-    ],
+    "prerequisites": ["lesson-2-4-1"],
     "previousLessonId": "lesson-2-4-1",
     "nextLessonId": "lesson-2-4-3",
     "sections": [
@@ -27609,9 +27232,7 @@
       "Recognize common JSON syntax errors.",
       "Identify when parsing and stringifying belong at an API boundary."
     ],
-    "prerequisites": [
-      "lesson-2-4-2"
-    ],
+    "prerequisites": ["lesson-2-4-2"],
     "previousLessonId": "lesson-2-4-2",
     "nextLessonId": "lesson-2-4-4",
     "sections": [
@@ -28038,12 +27659,7 @@
         "id": "quiz-2-4-3-5",
         "type": "mcq",
         "question": "A server returns JSON text in a response body. What does the application need before it can access lesson.title as a JavaScript object property?",
-        "options": [
-          "JSON.stringify",
-          "JSON.parse",
-          "git add",
-          "Array.filter"
-        ],
+        "options": ["JSON.stringify", "JSON.parse", "git add", "Array.filter"],
         "correctIndex": 1,
         "explanation": "The JSON text must be parsed into a JavaScript value before normal object-property access."
       }
@@ -28091,9 +27707,7 @@
       "Explain why a response body alone does not determine whether an HTTP request succeeded.",
       "Recognize when a frontend should display success, failure, or another state based on the response outcome."
     ],
-    "prerequisites": [
-      "lesson-2-4-3"
-    ],
+    "prerequisites": ["lesson-2-4-3"],
     "previousLessonId": "lesson-2-4-3",
     "nextLessonId": "lesson-2-4-5",
     "sections": [
@@ -28510,9 +28124,7 @@
       "Choose an appropriate HTTP method from a written API requirement.",
       "Explain why state-changing operations should not be hidden inside GET requests."
     ],
-    "prerequisites": [
-      "lesson-2-4-4"
-    ],
+    "prerequisites": ["lesson-2-4-4"],
     "previousLessonId": "lesson-2-4-4",
     "nextLessonId": "lesson-2-4-6",
     "sections": [
@@ -28815,12 +28427,7 @@
         "id": "quiz-2-4-5-1",
         "type": "mcq",
         "question": "Which method is primarily used to retrieve a resource?",
-        "options": [
-          "GET",
-          "POST",
-          "PATCH",
-          "DELETE"
-        ],
+        "options": ["GET", "POST", "PATCH", "DELETE"],
         "correctIndex": 0,
         "explanation": "GET is used to retrieve a representation of a resource."
       },
@@ -28828,12 +28435,7 @@
         "id": "quiz-2-4-5-2",
         "type": "mcq",
         "question": "Which method is commonly used to create a new resource in a collection?",
-        "options": [
-          "GET",
-          "POST",
-          "DELETE",
-          "PATCH"
-        ],
+        "options": ["GET", "POST", "DELETE", "PATCH"],
         "correctIndex": 1,
         "explanation": "POST commonly submits data for creation or other processing defined by the target resource."
       },
@@ -28867,12 +28469,7 @@
         "id": "quiz-2-4-5-5",
         "type": "mcq",
         "question": "Which method asks the server to remove a resource?",
-        "options": [
-          "POST",
-          "PUT",
-          "DELETE",
-          "GET"
-        ],
+        "options": ["POST", "PUT", "DELETE", "GET"],
         "correctIndex": 2,
         "explanation": "DELETE requests removal of the target resource."
       }
@@ -28935,9 +28532,7 @@
       "Choose UI messaging that tells the learner what is happening and what they can do next.",
       "Recognize why a blank interface is not an adequate loading or empty state."
     ],
-    "prerequisites": [
-      "lesson-2-4-5"
-    ],
+    "prerequisites": ["lesson-2-4-5"],
     "previousLessonId": "lesson-2-4-5",
     "nextLessonId": "lesson-2-4-7",
     "sections": [
@@ -29397,11 +28992,7 @@
       "Explain why fetch() does not reject its Promise merely because the server returned a 4xx or 5xx status.",
       "Update application state according to the actual request outcome."
     ],
-    "prerequisites": [
-      "lesson-2-4-6",
-      "lesson-2-2-7",
-      "lesson-2-2-8"
-    ],
+    "prerequisites": ["lesson-2-4-6", "lesson-2-2-7", "lesson-2-2-8"],
     "previousLessonId": "lesson-2-4-6",
     "nextLessonId": "lesson-2-4-8",
     "sections": [
@@ -29865,11 +29456,7 @@
       "Use Network-panel evidence to diagnose integration problems.",
       "Explain the complete request-to-UI data flow."
     ],
-    "prerequisites": [
-      "lesson-2-4-7",
-      "module-2-2",
-      "module-2-3"
-    ],
+    "prerequisites": ["lesson-2-4-7", "module-2-2", "module-2-3"],
     "previousLessonId": "lesson-2-4-7",
     "nextLessonId": "lesson-2-5-1",
     "sections": [
@@ -30321,10 +29908,7 @@
       "Identify a real JS bug that TypeScript would have caught before the code ever ran.",
       "Explain what TypeScript actually is: a superset of JS that compiles away, not a separate language that ships to the browser."
     ],
-    "prerequisites": [
-      "lesson-2-4-8",
-      "lesson-2-2-1"
-    ],
+    "prerequisites": ["lesson-2-4-8", "lesson-2-2-1"],
     "previousLessonId": "lesson-2-4-8",
     "nextLessonId": "lesson-2-5-2",
     "sections": [
@@ -30438,9 +30022,7 @@
       "Explain when TypeScript infers a type automatically versus when an explicit annotation is needed.",
       "Explain the difference between any (opts out of type checking) and unknown (forces a check before use)."
     ],
-    "prerequisites": [
-      "lesson-2-5-1"
-    ],
+    "prerequisites": ["lesson-2-5-1"],
     "previousLessonId": "lesson-2-5-1",
     "nextLessonId": "lesson-2-5-3",
     "sections": [
@@ -30564,9 +30146,7 @@
       "Extend an interface and intersect a type alias.",
       "Explain the practical guideline for choosing interface vs. type in typical application code."
     ],
-    "prerequisites": [
-      "lesson-2-5-2"
-    ],
+    "prerequisites": ["lesson-2-5-2"],
     "previousLessonId": "lesson-2-5-2",
     "nextLessonId": "lesson-2-5-4",
     "sections": [
@@ -30637,12 +30217,7 @@
         "id": "quiz-2-5-3-2",
         "type": "mcq",
         "question": "What keyword extends an interface with additional fields?",
-        "options": [
-          "implements",
-          "union",
-          "&",
-          "extends"
-        ],
+        "options": ["implements", "union", "&", "extends"],
         "correctIndex": 3,
         "explanation": "interface uses extends to build on another interface, while type aliases achieve a similar result with the & intersection operator."
       },
@@ -30692,9 +30267,7 @@
       "Write a standalone function type signature for use as a prop or callback type.",
       "Explain why an explicit return type is often worth adding even when TypeScript could infer it."
     ],
-    "prerequisites": [
-      "lesson-2-5-3"
-    ],
+    "prerequisites": ["lesson-2-5-3"],
     "previousLessonId": "lesson-2-5-3",
     "nextLessonId": "lesson-2-5-5",
     "sections": [
@@ -30762,12 +30335,7 @@
         "id": "quiz-2-5-4-1",
         "type": "mcq",
         "question": "Inside a function, what's the type of an optional parameter (greeting?: string) when it's omitted by the caller?",
-        "options": [
-          "An empty string.",
-          "undefined.",
-          "null.",
-          "It causes a compile error."
-        ],
+        "options": ["An empty string.", "undefined.", "null.", "It causes a compile error."],
         "correctIndex": 1,
         "explanation": "Optional parameters come through as undefined when omitted, which is why they're often combined with ?? or a default check inside the function."
       },
@@ -30827,9 +30395,7 @@
       "Model a set of related variant shapes as a discriminated union with a common literal field.",
       "Explain why discriminated unions are a common interview and real-world pattern."
     ],
-    "prerequisites": [
-      "lesson-2-5-4"
-    ],
+    "prerequisites": ["lesson-2-5-4"],
     "previousLessonId": "lesson-2-5-4",
     "nextLessonId": "lesson-2-5-6",
     "sections": [
@@ -30925,12 +30491,7 @@
         "id": "quiz-2-5-5-3",
         "type": "mcq",
         "question": "Which narrowing technique checks for the presence of a property on an object?",
-        "options": [
-          "typeof",
-          "instanceof",
-          "in",
-          "as"
-        ],
+        "options": ["typeof", "instanceof", "in", "as"],
         "correctIndex": 2,
         "explanation": "The in operator checks whether a property exists on an object, which TypeScript uses to narrow between object shapes that differ by property presence."
       }
@@ -30968,9 +30529,7 @@
       "Apply a constraint to a generic type parameter with extends.",
       "Read and explain a generic type signature from a library (e.g. Array<T>, Promise<T>)."
     ],
-    "prerequisites": [
-      "lesson-2-5-5"
-    ],
+    "prerequisites": ["lesson-2-5-5"],
     "previousLessonId": "lesson-2-5-5",
     "nextLessonId": "lesson-2-5-7",
     "sections": [
@@ -31064,12 +30623,7 @@
         "id": "quiz-2-5-6-3",
         "type": "mcq",
         "question": "Which of these is an example of a generic already commonly used in React code?",
-        "options": [
-          "useEffect",
-          "useState<T>(initialValue)",
-          "className",
-          "onClick"
-        ],
+        "options": ["useEffect", "useState<T>(initialValue)", "className", "onClick"],
         "correctIndex": 1,
         "explanation": "useState<T> takes a type parameter that determines the type of both the state value and its setter, following the exact same generic pattern as a custom generic function."
       }
@@ -31103,10 +30657,7 @@
       "Type optional and nullable fields that commonly appear in real API responses.",
       "Type a fetch function's return value using Promise<T>."
     ],
-    "prerequisites": [
-      "lesson-2-5-6",
-      "lesson-2-4-7"
-    ],
+    "prerequisites": ["lesson-2-5-6", "lesson-2-4-7"],
     "previousLessonId": "lesson-2-5-6",
     "nextLessonId": "lesson-2-5-8",
     "sections": [
@@ -31399,10 +30950,7 @@
       "Recognize that React is not required for interactivity in general.",
       "Describe why React becomes useful as interfaces contain more shared state, repeated UI, and interaction."
     ],
-    "prerequisites": [
-      "module-2-4",
-      "module-2-2"
-    ],
+    "prerequisites": ["module-2-4", "module-2-2"],
     "previousLessonId": "lesson-2-5-8",
     "nextLessonId": "lesson-3-1-2",
     "sections": [
@@ -31838,9 +31386,7 @@
       "Distinguish JSX syntax from ordinary HTML syntax.",
       "Predict how changing JavaScript inputs changes rendered JSX output."
     ],
-    "prerequisites": [
-      "lesson-3-1-1"
-    ],
+    "prerequisites": ["lesson-3-1-1"],
     "previousLessonId": "lesson-3-1-1",
     "nextLessonId": "lesson-3-1-3",
     "sections": [
@@ -32217,12 +31763,7 @@
         "id": "quiz-3-1-2-3",
         "type": "mcq",
         "question": "Which is the correct JSX property for a CSS class?",
-        "options": [
-          "class",
-          "className",
-          "cssClass",
-          "classnameValue"
-        ],
+        "options": ["class", "className", "cssClass", "classnameValue"],
         "correctIndex": 1,
         "explanation": "React JSX uses className for the DOM class property."
       },
@@ -32285,9 +31826,7 @@
       "Keep component responsibilities focused.",
       "Explain why a single giant component becomes difficult to maintain."
     ],
-    "prerequisites": [
-      "lesson-3-1-2"
-    ],
+    "prerequisites": ["lesson-3-1-2"],
     "previousLessonId": "lesson-3-1-2",
     "nextLessonId": "lesson-3-1-4",
     "sections": [
@@ -32719,9 +32258,7 @@
       "Explain that props are read-only inputs owned by the parent.",
       "Recognize why a child should request changes through callbacks rather than mutate props directly."
     ],
-    "prerequisites": [
-      "lesson-3-1-3"
-    ],
+    "prerequisites": ["lesson-3-1-3"],
     "previousLessonId": "lesson-3-1-3",
     "nextLessonId": "lesson-3-1-5",
     "sections": [
@@ -33157,9 +32694,7 @@
       "Recognize why directly mutating state is incorrect.",
       "Use updater functions when the next state depends on the previous state."
     ],
-    "prerequisites": [
-      "lesson-3-1-4"
-    ],
+    "prerequisites": ["lesson-3-1-4"],
     "previousLessonId": "lesson-3-1-4",
     "nextLessonId": "lesson-3-1-6",
     "sections": [
@@ -33644,9 +33179,7 @@
       "Recognize the JavaScript truthiness behavior that can cause a stray 0 to appear in JSX.",
       "Fix conditional rendering code that produces the wrong UI."
     ],
-    "prerequisites": [
-      "lesson-3-1-5"
-    ],
+    "prerequisites": ["lesson-3-1-5"],
     "previousLessonId": "lesson-3-1-5",
     "nextLessonId": "lesson-3-1-7",
     "sections": [
@@ -33928,12 +33461,7 @@
         "id": "quiz-3-1-6-1",
         "type": "mcq",
         "question": "Which pattern is a natural choice when you need exactly two JSX alternatives?",
-        "options": [
-          "Ternary expression",
-          "map",
-          "useEffect",
-          "reduce"
-        ],
+        "options": ["Ternary expression", "map", "useEffect", "reduce"],
         "correctIndex": 0,
         "explanation": "A ternary clearly represents a two-way conditional choice."
       },
@@ -34000,9 +33528,7 @@
       "Explain how reordering can make index keys associate the wrong component state with an item.",
       "Repair a list implementation that uses an unstable key."
     ],
-    "prerequisites": [
-      "lesson-3-1-6"
-    ],
+    "prerequisites": ["lesson-3-1-6"],
     "previousLessonId": "lesson-3-1-6",
     "nextLessonId": "lesson-3-1-8",
     "sections": [
@@ -34360,9 +33886,7 @@
       "Avoid placing all state and UI logic into one component.",
       "Explain the data flow and ownership decisions in the finished project."
     ],
-    "prerequisites": [
-      "lesson-3-1-7"
-    ],
+    "prerequisites": ["lesson-3-1-7"],
     "previousLessonId": "lesson-3-1-7",
     "nextLessonId": "lesson-3-2-1",
     "sections": [
@@ -34786,9 +34310,7 @@
       "Use inline handlers and named handler functions appropriately.",
       "Identify and repair incorrect event-handler wiring."
     ],
-    "prerequisites": [
-      "lesson-3-1-8"
-    ],
+    "prerequisites": ["lesson-3-1-8"],
     "previousLessonId": "lesson-3-1-8",
     "nextLessonId": "lesson-3-2-2",
     "sections": [
@@ -35197,9 +34719,7 @@
       "Distinguish a controlled input from an uncontrolled/default-value input.",
       "Diagnose and repair a controlled input that appears frozen."
     ],
-    "prerequisites": [
-      "lesson-3-2-1"
-    ],
+    "prerequisites": ["lesson-3-2-1"],
     "previousLessonId": "lesson-3-2-1",
     "nextLessonId": "lesson-3-2-3",
     "sections": [
@@ -35598,9 +35118,7 @@
       "Choose sensible validation timing for the user experience.",
       "Distinguish validation errors from submission or server errors."
     ],
-    "prerequisites": [
-      "lesson-3-2-2"
-    ],
+    "prerequisites": ["lesson-3-2-2"],
     "previousLessonId": "lesson-3-2-2",
     "nextLessonId": "lesson-3-2-4",
     "sections": [
@@ -36028,10 +35546,7 @@
       "Identify missing dependencies that can create stale values.",
       "Identify dependency choices that can create unnecessary or infinite effect loops."
     ],
-    "prerequisites": [
-      "lesson-3-2-3",
-      "lesson-2-2-2"
-    ],
+    "prerequisites": ["lesson-3-2-3", "lesson-2-2-2"],
     "previousLessonId": "lesson-3-2-3",
     "nextLessonId": "lesson-3-2-5",
     "sections": [
@@ -36491,9 +36006,7 @@
       "Diagnose duplicate subscriptions caused by missing cleanup.",
       "Explain why cleanup is part of correct effect synchronization."
     ],
-    "prerequisites": [
-      "lesson-3-2-4"
-    ],
+    "prerequisites": ["lesson-3-2-4"],
     "previousLessonId": "lesson-3-2-4",
     "nextLessonId": "lesson-3-2-6",
     "sections": [

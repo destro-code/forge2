@@ -24,10 +24,10 @@ export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
   }, [onLogCaptured]);
 
   return (
-    <div className="flex-1 flex flex-col h-full min-h-[400px] bg-background w-full min-w-0 overflow-hidden">
-      <div className="flex items-center justify-between border-b border-border/60 bg-card/60 px-3 py-2 text-xs shrink-0">
+    <div className="flex-1 flex flex-col h-full min-h-[200px] bg-background w-full min-w-0 overflow-hidden">
+      <div className="flex items-center justify-between border-b border-border/60 bg-card/60 px-3 py-1.5 text-xs shrink-0">
         <span className="flex items-center gap-1.5 font-medium text-foreground">
-          <Monitor className="h-4 w-4 text-primary" /> Live Render Preview
+          <Monitor className="h-3.5 w-3.5 text-primary" /> Live Render Preview
         </span>
         <Button
           variant="ghost"
@@ -40,7 +40,7 @@ export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
         </Button>
       </div>
 
-      <div className="flex-1 relative p-2 bg-card/20 min-h-[350px] w-full flex flex-col">
+      <div className="flex-1 relative p-2 bg-card/20 min-h-[180px] w-full flex flex-col min-w-0">
         <ErrorBoundary
           title="Playground Live Preview Crash"
           description="The live execution surface encountered an error during rendering."
@@ -52,7 +52,7 @@ export function PlaygroundPreview({ onLogCaptured }: PlaygroundPreviewProps) {
             srcDoc={compilerOutput}
             title="Forge Playground Live Preview"
             sandbox="allow-scripts allow-modals"
-            className="flex-1 h-full w-full min-h-[350px] rounded-lg border border-border/60 bg-background shadow-inner"
+            className="flex-1 h-full w-full min-h-[180px] rounded-lg border border-border/60 bg-background shadow-inner"
             style={{ width: "100%", height: "100%" }}
           />
         </ErrorBoundary>

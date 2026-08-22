@@ -64,65 +64,75 @@ export function MobileConsole() {
 
     console.log = (...args: unknown[]) => {
       originalLog(...args);
-      setLogs((prev) => [
-        ...prev.slice(-199),
-        {
-          id: Math.random().toString(36).substring(2, 9),
-          type: "log",
-          message: formatArgs(args),
-          timestamp: getTimestamp(),
-        },
-      ]);
+      queueMicrotask(() => {
+        setLogs((prev) => [
+          ...prev.slice(-199),
+          {
+            id: Math.random().toString(36).substring(2, 9),
+            type: "log",
+            message: formatArgs(args),
+            timestamp: getTimestamp(),
+          },
+        ]);
+      });
     };
 
     console.warn = (...args: unknown[]) => {
       originalWarn(...args);
-      setLogs((prev) => [
-        ...prev.slice(-199),
-        {
-          id: Math.random().toString(36).substring(2, 9),
-          type: "warn",
-          message: formatArgs(args),
-          timestamp: getTimestamp(),
-        },
-      ]);
+      queueMicrotask(() => {
+        setLogs((prev) => [
+          ...prev.slice(-199),
+          {
+            id: Math.random().toString(36).substring(2, 9),
+            type: "warn",
+            message: formatArgs(args),
+            timestamp: getTimestamp(),
+          },
+        ]);
+      });
     };
 
     console.error = (...args: unknown[]) => {
       originalError(...args);
-      setLogs((prev) => [
-        ...prev.slice(-199),
-        {
-          id: Math.random().toString(36).substring(2, 9),
-          type: "error",
-          message: formatArgs(args),
-          timestamp: getTimestamp(),
-        },
-      ]);
+      queueMicrotask(() => {
+        setLogs((prev) => [
+          ...prev.slice(-199),
+          {
+            id: Math.random().toString(36).substring(2, 9),
+            type: "error",
+            message: formatArgs(args),
+            timestamp: getTimestamp(),
+          },
+        ]);
+      });
     };
 
     const handleWindowError = (event: ErrorEvent) => {
-      setLogs((prev) => [
-        ...prev.slice(-199),
-        {
-          id: Math.random().toString(36).substring(2, 9),
-          type: "error",
-          message: `Uncaught Error: ${event.message} at ${event.filename}:${event.lineno}`,
-          timestamp: getTimestamp(),
-        },
-      ]);
+      queueMicrotask(() => {
+        setLogs((prev) => [
+          ...prev.slice(-199),
+          {
+            id: Math.random().toString(36).substring(2, 9),
+            type: "error",
+            message: `Uncaught Error: ${event.message} at ${event.filename}:${event.lineno}`,
+            timestamp: getTimestamp(),
+          },
+        ]);
+      });
     };
 
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      setLogs((prev) => [
-        ...prev.slice(-199),
-        {
-          id: Math.random().toString(36).substring(2, 9),
-          type: "error",
-          message: `Unhandled Promise Rejection: ${event.reason?.message || String(event.reason)}`,
-          timestamp: getTimestamp(),
-        },
-      ]);
+      queueMicrotask(() => {
+        setLogs((prev) => [
+          ...prev.slice(-199),
+          {
+            id: Math.random().toString(36).substring(2, 9),
+            type: "error",
+            message: `Unhandled Promise Rejection: ${event.reason?.message || String(event.reason)}`,
+            timestamp: getTimestamp(),
+          },
+        ]);
+      });
     };
 
     window.addEventListener("error", handleWindowError);

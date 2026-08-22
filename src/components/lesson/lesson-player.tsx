@@ -1,165 +1,807 @@
-import { useMemo, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, HelpCircle, LockKeyhole, Sparkles } from "lucide-react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import type {
+  Lesson,
+  LessonStep,
+  ContentLessonStep,
+  CodeExampleLessonStep,
+  InteractiveExerciseLessonStep,
+  QuizLessonStep,
+  CheckpointLessonStep,
+} from "@/lib/types";
+import { buildLessonSteps } from "@/lib/utils/lesson-step-resolver";
+import { useProgressStore } from "@/lib/stores/use-progress-store";
+import { useProgress } from "@/lib/hooks/use-progress";
+import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
+import { EmbeddedPlayground } from "@/components/playground/embedded-playground";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Callout } from "@/components/shared/callout";
+import { CodeBlock } from "@/components/shared/code-block";
 import { LessonDiagram } from "@/components/lesson/lesson-diagram";
-import { LessonInteractiveCode } from "@/components/lesson/lesson-interactive-code";
 import { LessonWalkthrough } from "@/components/lesson/lesson-walkthrough";
 import { LessonCollapsible } from "@/components/lesson/lesson-collapsible";
-import { LessonCheckpoints } from "@/components/lesson/lesson-checkpoints";
-import { LessonInlineSandbox } from "@/components/lesson/lesson-inline-sandbox";
-import { getApplyActivityCta } from "@/lib/utils/apply-action";
-import { useProgressStore } from "@/lib/stores/use-progress-store";
-import type { Lesson, LessonSection } from "@/lib/types";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  BookOpen,
+  Code2,
+  Terminal,
+  HelpCircle,
+  CheckSquare,
+  Check,
+  X,
+  Lightbulb,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface LessonPlayerProps {
+export interface LessonPlayerProps {
   lesson: Lesson;
-  isCompleted: boolean;
-  onComplete: () => void;
-  prevLessonId?: string | null;
-  nextLessonId?: string | null;
+  onComplete?: () => void;
+  initialStepIndex?: number;
+  className?: string;
 }
 
-type PlayerStep =
-  | { kind: "section"; section: LessonSection }
-  | { kind: "quiz"; index: number }
-  | { kind: "exercise"; index: number }
-  | { kind: "master" }
-  | { kind: "continue" };
-
-type ValidationAwareSection = LessonSection & {
-  validation?: { exerciseId?: string };
+const STEP_TYPE_META: Record<
+  LessonStep["type"],
+  { label: string; icon: typeof BookOpen; color: string }
+> = {
+  content: {
+    label: "Concept",
+    icon: BookOpen,
+    color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  },
+  "code-example": {
+    label: "Code Example",
+    icon: Code2,
+    color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  },
+  "interactive-exercise": {
+    label: "Interactive Exercise",
+    icon: Terminal,
+    color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+  },
+  quiz: {
+    label: "Knowledge Check",
+    icon: HelpCircle,
+    color: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  },
+  checkpoint: {
+    label: "Checkpoint",
+    icon: CheckSquare,
+    color: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
+  },
 };
 
-type ExerciseWithId = Lesson["exercises"][number] & { id?: string };
+const EMPTY_ARRAY: never[] = [];
+const EMPTY_OBJECT: Record<string, unknown> = {};
 
-function stepLabel(step: PlayerStep) {
-  if (step.kind === "section") return step.section.type === "heading" ? "Learn" : "Understand";
-  if (step.kind === "quiz") return "Check";
-  if (step.kind === "exercise") return "Apply";
-  if (step.kind === "master") return "Master";
-  return "Finish";
+export function LessonPlayer({
+  lesson,
+  onComplete,
+  initialStepIndex,
+  className,
+}: LessonPlayerProps) {
+  const steps = useMemo(() => buildLessonSteps(lesson), [lesson]);
+  const rawPlaygroundCompletions = useProgressStore((state) => state.playgroundCompletions);
+  const rawLessonsCompleted = useProgressStore((state) => state.lessonsCompleted);
+  const rawLessonCheckpoints = useProgressStore((state) => state.lessonCheckpoints);
+
+  const playgroundCompletions = rawPlaygroundCompletions ?? EMPTY_ARRAY;
+  const lessonsCompleted = rawLessonsCompleted ?? EMPTY_ARRAY;
+  const lessonCheckpoints = rawLessonCheckpoints ?? EMPTY_OBJECT;
+  const validationReport = usePlaygroundStore((state) => state.validationReport);
+  const { completeLesson } = useProgress();
+
+  // Derive initial step index safely using resume logic
+  const derivedInitialIndex = useMemo(() => {
+    if (typeof initialStepIndex === "number") {
+      if (initialStepIndex < 0) return 0;
+      if (initialStepIndex >= steps.length) return Math.max(0, steps.length - 1);
+      return initialStepIndex;
+    }
+
+    // Try session storage first for active session persistence
+    if (typeof window !== "undefined" && window.sessionStorage) {
+      const saved = window.sessionStorage.getItem(`forge:lesson_step:${lesson.id}`);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < steps.length) {
+          return parsed;
+        }
+      }
+    }
+
+    // If lesson is already completed, start at 0 for review
+    if (lessonsCompleted.includes(lesson.id)) {
+      return 0;
+    }
+
+    // Scan steps to find the first uncompleted interactive exercise or checkpoint
+    const firstUncompletedIndex = steps.findIndex((st) => {
+      if (st.type === "interactive-exercise") {
+        const exId = st.validation?.exerciseId || st.exerciseId || `${lesson.id}:${st.id}`;
+        const isDone = playgroundCompletions.some(
+          (c) => c.templateId === exId || c.templateId === `${lesson.id}:${st.id}`,
+        );
+        return !isDone;
+      }
+      if (st.type === "checkpoint") {
+        const cpKey = `${lesson.id}:${st.id}`;
+        const cpVal = lessonCheckpoints[cpKey] ?? lessonCheckpoints[st.id];
+        const isDone = Boolean(
+          typeof cpVal === "object" && cpVal !== null ? cpVal.status === "completed" : cpVal,
+        );
+        return !isDone;
+      }
+      return false;
+    });
+
+    if (firstUncompletedIndex > 0) {
+      return firstUncompletedIndex;
+    }
+
+    return 0;
+  }, [
+    initialStepIndex,
+    steps,
+    lesson.id,
+    lessonsCompleted,
+    playgroundCompletions,
+    lessonCheckpoints,
+  ]);
+
+  const [currentStepIndex, setCurrentStepIndex] = useState(derivedInitialIndex);
+
+  const contentRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  const totalSteps = steps.length;
+  const isFirstStep = currentStepIndex === 0;
+  const isLastStep = currentStepIndex === totalSteps - 1;
+  const currentStep = steps[currentStepIndex] || null;
+
+  // Sync active step to sessionStorage for safe session resume
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.sessionStorage && lesson?.id) {
+      window.sessionStorage.setItem(`forge:lesson_step:${lesson.id}`, String(currentStepIndex));
+    }
+  }, [lesson.id, currentStepIndex]);
+
+  // Determine if Next button should be gated/disabled for interactive exercise
+  const isNextDisabled = useMemo(() => {
+    if (!currentStep || currentStep.type !== "interactive-exercise") return false;
+
+    const exerciseStep = currentStep as InteractiveExerciseLessonStep;
+    if (!exerciseStep.hasValidation || !exerciseStep.validation?.exerciseId) {
+      return false; // Legacy exercise or no validation spec attached
+    }
+
+    const exerciseId = exerciseStep.validation.exerciseId;
+    const isCompletedInStore = playgroundCompletions.some(
+      (c) => c.templateId === exerciseId || c.templateId === exerciseStep.exerciseId,
+    );
+    const isPassedInReport =
+      validationReport?.status === "passed" && validationReport?.exerciseId === exerciseId;
+
+    return !isCompletedInStore && !isPassedInReport;
+  }, [currentStep, playgroundCompletions, validationReport]);
+
+  // Reset internal content scroll position and manage focus on step change
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+    if (headingRef.current) {
+      headingRef.current.focus();
+    }
+  }, [currentStepIndex]);
+
+  const handleNext = () => {
+    if (isNextDisabled) return;
+    if (!isLastStep) {
+      setCurrentStepIndex((prev) => prev + 1);
+    } else {
+      completeLesson(lesson.id);
+      if (onComplete) {
+        onComplete();
+      }
+    }
+  };
+
+  const handleBack = () => {
+    if (!isFirstStep) {
+      setCurrentStepIndex((prev) => prev - 1);
+    }
+  };
+
+  const handleStepSelect = (index: number) => {
+    if (index >= 0 && index < totalSteps) {
+      if (index > currentStepIndex && isNextDisabled) {
+        return;
+      }
+      setCurrentStepIndex(index);
+    }
+  };
+
+  // Determine button text & semantic label based on step type
+  const nextButtonLabel = useMemo(() => {
+    if (isLastStep) return "Complete";
+    if (currentStep?.type === "quiz") return "Continue";
+    return "Next";
+  }, [isLastStep, currentStep?.type]);
+
+  if (!currentStep) {
+    return (
+      <div className="p-8 text-center text-muted-foreground">No steps found for this lesson.</div>
+    );
+  }
+
+  const meta = STEP_TYPE_META[currentStep.type];
+  const StepIcon = meta.icon;
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col h-full min-h-0 flex-1 overflow-hidden bg-background text-foreground rounded-xl border border-border/60 shadow-sm relative",
+        className,
+      )}
+      data-testid="lesson-player-shell"
+    >
+      {/* Accessible Screen Reader Announcement for Step Changes */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        Step {currentStepIndex + 1} of {totalSteps}: {currentStep.title || meta.label}
+      </div>
+
+      {/* Header Bar */}
+      <header className="flex-shrink-0 border-b border-border/60 bg-card/70 backdrop-blur-sm px-3.5 py-2.5 md:px-5 md:py-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <Badge
+              variant="outline"
+              className={cn("shrink-0 gap-1 text-[11px] font-semibold py-0.5", meta.color)}
+            >
+              <StepIcon className="h-3 w-3" />
+              {meta.label}
+            </Badge>
+            <span className="text-xs text-muted-foreground truncate font-medium hidden sm:inline">
+              {lesson.title}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
+            <span className="font-medium whitespace-nowrap text-[11px] sm:text-xs">
+              Step {currentStepIndex + 1} of {totalSteps}
+            </span>
+
+            {/* Visual Step Indicator */}
+            {totalSteps <= 10 ? (
+              <div
+                className="flex items-center gap-1 overflow-x-auto max-w-[140px] sm:max-w-[220px] py-1 no-scrollbar"
+                role="tablist"
+                aria-label="Lesson steps navigation"
+              >
+                {steps.map((st, idx) => {
+                  const isCurrent = idx === currentStepIndex;
+                  const isStepGated = idx > currentStepIndex && isNextDisabled;
+                  const isPassed = idx < currentStepIndex;
+
+                  return (
+                    <button
+                      key={st.id || idx}
+                      type="button"
+                      role="tab"
+                      aria-selected={isCurrent}
+                      disabled={isStepGated}
+                      onClick={() => handleStepSelect(idx)}
+                      title={`Step ${idx + 1}: ${st.title || st.type}${isStepGated ? " (Locked until exercise complete)" : ""}`}
+                      className={cn(
+                        "h-2 rounded-full transition-all shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
+                        isCurrent
+                          ? "w-5 bg-primary"
+                          : isPassed
+                            ? "w-2 bg-primary/60 hover:bg-primary/80 cursor-pointer"
+                            : isStepGated
+                              ? "w-2 bg-muted/40 cursor-not-allowed opacity-50"
+                              : "w-2 bg-muted hover:bg-muted-foreground/40 cursor-pointer",
+                      )}
+                      aria-label={`Go to step ${idx + 1}: ${st.title || st.type}`}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div
+                className="w-16 sm:w-24 h-1.5 rounded-full bg-muted overflow-hidden shrink-0"
+                title={`Progress: ${Math.round(((currentStepIndex + 1) / totalSteps) * 100)}%`}
+                aria-hidden="true"
+              >
+                <div
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${((currentStepIndex + 1) / totalSteps) * 100}%` }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Step Title */}
+        {currentStep.title && (
+          <h2
+            ref={headingRef}
+            tabIndex={-1}
+            className="mt-1 text-base md:text-lg font-bold tracking-tight text-foreground focus:outline-none"
+          >
+            {currentStep.title}
+          </h2>
+        )}
+      </header>
+
+      {/* Internal Content Scroll Region */}
+      <main
+        ref={contentRef}
+        tabIndex={-1}
+        data-testid="lesson-player-content"
+        className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 md:p-6 scrollbar-thin focus:outline-none"
+      >
+        <StepRenderer step={currentStep} lesson={lesson} />
+      </main>
+
+      {/* Footer Navigation Controls */}
+      <footer className="flex-shrink-0 border-t border-border/60 bg-card/90 backdrop-blur-sm px-3.5 py-2.5 md:px-5 md:py-3 flex items-center justify-between gap-3">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleBack}
+          disabled={isFirstStep}
+          className="gap-1.5 text-xs h-8 sm:h-9 px-3"
+          aria-label="Previous step"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back</span>
+        </Button>
+
+        <div className="text-xs font-medium text-muted-foreground truncate hidden sm:block max-w-[50%] text-center">
+          {currentStep.title ? (
+            <span>
+              {currentStepIndex + 1}. {currentStep.title}
+            </span>
+          ) : (
+            <span>
+              Step {currentStepIndex + 1} of {totalSteps}
+            </span>
+          )}
+        </div>
+
+        <Button
+          variant="default"
+          size="sm"
+          onClick={handleNext}
+          disabled={isNextDisabled}
+          aria-disabled={isNextDisabled}
+          className={cn(
+            "gap-1.5 text-xs h-8 sm:h-9 px-3.5 font-medium transition-all",
+            isNextDisabled && "opacity-60 cursor-not-allowed",
+          )}
+          aria-label={isLastStep ? "Complete lesson" : `${nextButtonLabel} step`}
+          title={isNextDisabled ? "Complete and validate the exercise to proceed" : undefined}
+        >
+          <span>{nextButtonLabel}</span>
+          {isLastStep ? (
+            <CheckCircle2 className="h-3.5 w-3.5" />
+          ) : (
+            <ArrowRight className="h-3.5 w-3.5" />
+          )}
+        </Button>
+      </footer>
+    </div>
+  );
 }
 
-export function LessonPlayer({ lesson, isCompleted, onComplete, prevLessonId, nextLessonId }: LessonPlayerProps) {
-  const [stepIndex, setStepIndex] = useState(0);
-  const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
-  const playgroundCompletions = useProgressStore((state) => state.playgroundCompletions ?? []);
-  const lessonCheckpoints = useProgressStore((state) => state.lessonCheckpoints ?? {});
+/** Modular Step Dispatcher */
+function StepRenderer({ step, lesson }: { step: LessonStep; lesson?: Lesson }) {
+  switch (step.type) {
+    case "content":
+      return <ContentStepView step={step} />;
+    case "code-example":
+      return <CodeExampleStepView step={step} />;
+    case "interactive-exercise":
+      return <InteractiveExerciseStepView step={step} lesson={lesson} />;
+    case "quiz":
+      return <QuizStepView step={step} lesson={lesson} />;
+    case "checkpoint":
+      return <CheckpointStepView step={step} lesson={lesson} />;
+    default:
+      return <div className="text-muted-foreground">Unknown step type.</div>;
+  }
+}
 
-  const steps = useMemo<PlayerStep[]>(() => [
-    ...lesson.sections.map((section) => ({ kind: "section" as const, section })),
-    ...lesson.quiz.map((_, index) => ({ kind: "quiz" as const, index })),
-    ...lesson.exercises.map((_, index) => ({ kind: "exercise" as const, index })),
-    { kind: "master" as const },
-    { kind: "continue" as const },
-  ], [lesson]);
-
-  const current = steps[stepIndex] ?? steps[steps.length - 1];
-  const progress = steps.length <= 1 ? 100 : Math.round(((stepIndex + 1) / steps.length) * 100);
-  const isFirst = stepIndex === 0;
-  const isLast = stepIndex === steps.length - 1;
-
-  const currentGate = useMemo(() => {
-    if (!current) return { blocked: false, reason: "" };
-
-    if (current.kind === "quiz") {
-      const question = lesson.quiz[current.index];
-      const selected = quizAnswers[question.id];
-      if (selected === undefined) {
-        return { blocked: true, reason: "Answer the question correctly to continue." };
-      }
-      if (selected !== question.correctIndex) {
-        return { blocked: true, reason: "Choose the correct answer to continue." };
-      }
-      return { blocked: false, reason: "" };
-    }
-
-    if (current.kind === "section" && current.section.type === "checkpoint") {
-      const key = `${lesson.id}:${current.section.id}`;
-      const assessment = current.section.assessment;
-      if (assessment?.type === "sandbox-completion") {
-        const sandboxId = `${lesson.id}:${assessment.sandboxId}`;
-        if (!playgroundCompletions.some((completion) => completion.templateId === sandboxId)) {
-          return { blocked: true, reason: "Complete the sandbox checkpoint to continue." };
+/** 1. Content Step Renderer */
+function ContentStepView({ step }: { step: ContentLessonStep }) {
+  return (
+    <div className="space-y-5 max-w-3xl mx-auto py-2">
+      {step.sections.map((section, idx) => {
+        switch (section.type) {
+          case "heading":
+            return (
+              <h3
+                key={section.id || idx}
+                id={section.id}
+                className="text-lg md:text-xl font-bold tracking-tight text-foreground/95 pt-3 first:pt-0 pb-1.5 border-b border-border/30"
+              >
+                {section.text}
+              </h3>
+            );
+          case "paragraph":
+            return (
+              <p
+                key={idx}
+                className="text-foreground/90 leading-relaxed text-sm md:text-base font-normal"
+              >
+                {section.text}
+              </p>
+            );
+          case "callout":
+            return (
+              <Callout key={idx} variant={section.variant || "info"}>
+                {section.text}
+              </Callout>
+            );
+          case "diagram":
+            return section.diagram ? <LessonDiagram key={idx} config={section.diagram} /> : null;
+          case "walkthrough":
+            return section.walkthrough ? (
+              <LessonWalkthrough key={idx} config={section.walkthrough} />
+            ) : null;
+          case "collapsible":
+            return section.title && section.content ? (
+              <LessonCollapsible key={idx} title={section.title} content={section.content} />
+            ) : null;
+          default:
+            return null;
         }
-      } else if (!lessonCheckpoints[key]) {
-        return { blocked: true, reason: "Complete the checkpoint to continue." };
-      }
-      return { blocked: false, reason: "" };
-    }
+      })}
+    </div>
+  );
+}
 
-    if (current.kind === "section" && current.section.type === "interactive-sandbox") {
-      const validationExerciseId = (current.section as ValidationAwareSection).validation?.exerciseId;
-      if (validationExerciseId && !playgroundCompletions.some((completion) => completion.templateId === validationExerciseId)) {
-        return { blocked: true, reason: "Pass the exercise in the Playground to continue." };
-      }
-    }
+/** 2. Code Example Step Renderer */
+function CodeExampleStepView({ step }: { step: CodeExampleLessonStep }) {
+  return (
+    <div className="space-y-4 max-w-3xl mx-auto py-2">
+      {step.codeTitle && (
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+          <Code2 className="h-4 w-4 shrink-0" />
+          <span>{step.codeTitle}</span>
+        </div>
+      )}
+      <CodeBlock code={step.code} language={step.language} />
+    </div>
+  );
+}
 
-    if (current.kind === "exercise") {
-      const exercise = lesson.exercises[current.index] as ExerciseWithId;
-      const exerciseId = exercise.id;
-      if (exerciseId && !playgroundCompletions.some((completion) => completion.templateId === exerciseId)) {
-        return { blocked: true, reason: "Complete this activity to continue." };
-      }
-    }
+/** 3. Interactive Exercise Step Renderer */
+function InteractiveExerciseStepView({
+  step,
+  lesson,
+}: {
+  step: InteractiveExerciseLessonStep;
+  lesson?: Lesson;
+}) {
+  return (
+    <div className="w-full max-w-7xl mx-auto flex flex-col h-full min-h-[440px]">
+      <EmbeddedPlayground
+        exerciseStep={step}
+        lesson={lesson}
+        lessonId={lesson?.id}
+        className="flex-1 min-h-[440px]"
+      />
+    </div>
+  );
+}
 
-    return { blocked: false, reason: "" };
-  }, [current, lesson.id, lesson.quiz, lesson.exercises, quizAnswers, playgroundCompletions, lessonCheckpoints]);
+/** 4. Quiz Step Renderer */
+function QuizStepView({ step, lesson }: { step: QuizLessonStep; lesson?: Lesson }) {
+  const { saveQuizResult } = useProgress();
+  const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
+  const [checkedState, setCheckedState] = useState<Record<string, boolean>>({});
 
-  const goNext = () => {
-    if (currentGate.blocked || isLast) return;
-    setStepIndex((value) => Math.min(value + 1, steps.length - 1));
+  const handleSelectOption = (qId: string, optIdx: number) => {
+    setUserAnswers((prev) => ({ ...prev, [qId]: optIdx }));
+    setCheckedState((prev) => ({ ...prev, [qId]: false }));
   };
 
-  const renderSection = (section: LessonSection) => {
-    switch (section.type) {
-      case "heading":
-        return <div className="space-y-2"><Badge variant="outline" className="text-xs font-mono">CONCEPT</Badge><h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{section.text}</h2></div>;
-      case "paragraph":
-        return <p className="text-base sm:text-lg leading-7 text-foreground/90 max-w-3xl">{section.text}</p>;
-      case "callout":
-        return <Callout variant={section.variant}>{section.text}</Callout>;
-      case "code":
-        return <div className="w-full space-y-2"><LessonInteractiveCode lessonId={lesson.id} exampleId={`example-${section.code.slice(0, 12)}`} language={section.language} code={section.code} title={section.title} highlightLines={section.highlightLines || []} runtime={section.runtime || lesson.runtime} /></div>;
-      case "diagram":
-        return <LessonDiagram diagramType={section.diagramType} title={section.title} description={section.description} />;
-      case "walkthrough":
-        return <LessonWalkthrough title={section.title} steps={section.steps} />;
-      case "collapsible":
-        return <LessonCollapsible title={section.title} subtitle={section.subtitle} content={section.content} variant={section.variant} />;
-      case "checkpoint":
-        return <div className="space-y-3 w-full"><Badge variant="outline" className="text-emerald-400 border-emerald-500/30">QUICK CHECK</Badge><h2 className="text-2xl font-bold">{section.label}</h2><LessonCheckpoints lessonId={lesson.id} checkpoints={[{ id: section.id, label: section.label, hint: section.hint, assessment: section.assessment }]} /></div>;
-      case "interactive-sandbox":
-        return <div className="w-full"><LessonInlineSandbox initialCode={section.initialCode} title={section.title} instructions={section.instructions} lessonId={lesson.id} sandboxId={section.id} language={section.language} /></div>;
-      case "inline-quiz":
-        return <Card className="max-w-3xl"><CardContent className="p-6"><p className="text-sm text-muted-foreground">Continue to the quiz step to check your understanding.</p></CardContent></Card>;
+  const handleCheckAnswer = (qId: string) => {
+    const nextCheckedState = { ...checkedState, [qId]: true };
+    setCheckedState(nextCheckedState);
+
+    if (step.questions.length > 0) {
+      const allChecked = step.questions.every((q) => nextCheckedState[q.id]);
+      if (allChecked) {
+        let correctCount = 0;
+        step.questions.forEach((q) => {
+          const selected = userAnswers[q.id];
+          if (
+            selected !== undefined &&
+            q.correctIndex !== undefined &&
+            selected === q.correctIndex
+          ) {
+            correctCount++;
+          }
+        });
+        const scorePercent = Math.round((correctCount / step.questions.length) * 100);
+        const quizId = step.quizId || (lesson?.id ? `quiz_${lesson.id}_${step.id}` : step.id);
+        saveQuizResult(quizId, scorePercent);
+      }
     }
   };
 
-  const renderCurrent = () => {
-    if (current.kind === "section") return renderSection(current.section);
+  return (
+    <div className="space-y-6 max-w-3xl mx-auto py-2">
+      <div className="flex items-center justify-between pb-2 border-b border-border/40">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <HelpCircle className="h-4 w-4 text-amber-500 shrink-0" />
+          <span>
+            Knowledge Check ({step.questions.length} Question{step.questions.length > 1 ? "s" : ""})
+          </span>
+        </div>
+        <Badge
+          variant="outline"
+          className="text-[11px] font-medium text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10"
+        >
+          Quiz
+        </Badge>
+      </div>
 
-    if (current.kind === "quiz") {
-      const question = lesson.quiz[current.index];
-      const selected = quizAnswers[question.id];
-      const answered = selected !== undefined;
-      return <Card className="w-full max-w-3xl border-border/60 bg-card/80"><CardHeader className="pb-4"><Badge variant="outline" className="w-fit text-emerald-400 border-emerald-500/30">CHECK · {current.index + 1}/{lesson.quiz.length}</Badge><CardTitle className="text-xl sm:text-2xl leading-snug">{question.question}</CardTitle></CardHeader><CardContent className="grid gap-3">{question.options.map((option, index) => { const correct = index === question.correctIndex; const selectedWrong = answered && selected === index && !correct; const style = !answered ? "border-border/60 hover:border-primary/50 hover:bg-accent" : correct ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-300" : selectedWrong ? "border-rose-500/60 bg-rose-500/10 text-rose-300" : "border-border/40 opacity-50"; return <button key={index} onClick={() => setQuizAnswers((prev) => ({ ...prev, [question.id]: index }))} className={`flex items-center justify-between rounded-xl border px-4 py-4 text-left text-sm transition ${style}`}><span>{option}</span>{answered && correct && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />}</button>; })}{answered && question.explanation && <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm leading-relaxed"><div className="font-semibold text-primary mb-1 flex items-center gap-2"><HelpCircle className="h-4 w-4" />Explanation</div>{question.explanation}</div>}</CardContent></Card>;
+      {step.questions.length === 0 ? (
+        <div className="p-6 text-center text-muted-foreground bg-card rounded-lg border border-border">
+          Inline Quiz placeholder ({step.quizId})
+        </div>
+      ) : (
+        step.questions.map((q, idx) => {
+          const selectedOpt = userAnswers[q.id];
+          const isChecked = checkedState[q.id];
+          const isCorrect =
+            selectedOpt !== undefined &&
+            q.correctIndex !== undefined &&
+            selectedOpt === q.correctIndex;
+
+          return (
+            <Card key={q.id || idx} className="border-border/80 shadow-xs">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base font-semibold leading-snug">
+                  {idx + 1}. {q.question}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-2">
+                  {q.options.map((opt, optIdx) => {
+                    const isSelected = selectedOpt === optIdx;
+                    let optStyle = "border-border/60 hover:border-border hover:bg-accent/40";
+
+                    if (isSelected) {
+                      if (isChecked) {
+                        optStyle = isCorrect
+                          ? "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium"
+                          : "border-destructive bg-destructive/10 text-destructive font-medium";
+                      } else {
+                        optStyle = "border-primary bg-primary/10 text-foreground font-medium";
+                      }
+                    } else if (isChecked && optIdx === q.correctIndex) {
+                      optStyle =
+                        "border-emerald-500/50 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400";
+                    }
+
+                    return (
+                      <button
+                        key={optIdx}
+                        onClick={() => handleSelectOption(q.id, optIdx)}
+                        className={cn(
+                          "w-full text-left p-3.5 rounded-lg border text-sm transition-all flex items-center justify-between gap-3 focus:outline-none focus:ring-2 focus:ring-primary/40",
+                          optStyle,
+                        )}
+                      >
+                        <span>{opt}</span>
+                        {isSelected && !isChecked && (
+                          <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                        )}
+                        {isChecked && optIdx === q.correctIndex && (
+                          <Check className="h-4 w-4 text-emerald-500 shrink-0" />
+                        )}
+                        {isChecked && isSelected && !isCorrect && (
+                          <X className="h-4 w-4 text-destructive shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {selectedOpt !== undefined && !isChecked && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleCheckAnswer(q.id)}
+                    className="mt-2 text-xs font-medium"
+                  >
+                    Check Answer
+                  </Button>
+                )}
+
+                {isChecked && (
+                  <div
+                    aria-live="polite"
+                    className={cn(
+                      "p-3.5 rounded-lg text-xs leading-relaxed mt-3 border",
+                      isCorrect
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        : "bg-destructive/10 border-destructive/30 text-destructive",
+                    )}
+                  >
+                    <div className="font-semibold mb-1 flex items-center gap-1.5">
+                      {isCorrect ? (
+                        <>
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Correct!
+                        </>
+                      ) : (
+                        <>
+                          <X className="h-3.5 w-3.5 text-destructive" /> Not quite.
+                        </>
+                      )}
+                    </div>
+                    {q.explanation && <div>{q.explanation}</div>}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
+/** 5. Checkpoint Step Renderer */
+function CheckpointStepView({ step, lesson }: { step: CheckpointLessonStep; lesson?: Lesson }) {
+  const { toggleCheckpoint } = useProgress();
+  const rawLessonCheckpoints = useProgressStore((state) => state.lessonCheckpoints);
+  const lessonCheckpoints = rawLessonCheckpoints ?? EMPTY_OBJECT;
+
+  const checkpointKey = lesson?.id ? `${lesson.id}:${step.id}` : step.id;
+  const isAlreadyCompleted = Boolean(
+    lessonCheckpoints[checkpointKey] || lessonCheckpoints[step.id],
+  );
+
+  const [acknowledged, setAcknowledged] = useState(isAlreadyCompleted);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [checked, setChecked] = useState(false);
+
+  const assessment = step.assessment;
+
+  const handleToggleAcknowledge = () => {
+    const nextState = !acknowledged;
+    setAcknowledged(nextState);
+    if (lesson?.id) {
+      toggleCheckpoint(lesson.id, step.id);
     }
-
-    if (current.kind === "exercise") {
-      const exercise = lesson.exercises[current.index];
-      const cta = getApplyActivityCta(exercise, lesson);
-      return <Card className="w-full max-w-3xl border-amber-500/25 bg-amber-500/[0.03]"><CardHeader><Badge variant="outline" className="w-fit text-amber-400 border-amber-500/30">APPLY · {current.index + 1}/{lesson.exercises.length}</Badge><CardTitle className="text-2xl sm:text-3xl">{exercise.title}</CardTitle><p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{exercise.brief}</p></CardHeader><CardContent>{cta?.to ? <Button asChild size="lg" className="gap-2 shadow-glow"><Link to={cta.to}>{cta.label}<ArrowRight className="h-4 w-4" /></Link></Button> : cta?.href ? <Button asChild size="lg" className="gap-2 shadow-glow"><a href={cta.href} target="_blank" rel="noopener noreferrer">{cta.label}<ArrowRight className="h-4 w-4" /></a></Button> : null}</CardContent></Card>;
-    }
-
-    if (current.kind === "master") return <div className="w-full max-w-3xl space-y-4"><Badge variant="outline" className="text-purple-400 border-purple-500/30">MASTER</Badge><h2 className="text-3xl sm:text-4xl font-extrabold">Can you explain it without looking?</h2><div className="rounded-2xl border border-purple-500/30 bg-purple-500/5 p-5"><div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-purple-400 mb-3"><Sparkles className="h-4 w-4" />Key takeaway</div><p className="text-base sm:text-lg leading-7">{lesson.summary}</p></div>{lesson.interviewQuestions.length > 0 && <div className="space-y-3">{lesson.interviewQuestions.map((question, index) => <div key={index} className="rounded-xl border border-border/60 bg-muted/20 p-4 flex gap-3 text-sm leading-relaxed"><Badge variant="outline" className="shrink-0">Q{index + 1}</Badge><span>{question}</span></div>)}</div>}</div>;
-
-    return <Card className="w-full max-w-3xl border-emerald-500/25 bg-emerald-500/[0.03]"><CardContent className="p-5 sm:p-6 space-y-4"><Badge className="w-fit gap-1"><Check className="h-3.5 w-3.5" />COMPLETE</Badge><h2 className="text-3xl sm:text-4xl font-extrabold">You're done with this lesson.</h2><p className="text-muted-foreground leading-relaxed">Take a moment to lock in what you learned, then continue to the next lesson.</p><div className="flex flex-wrap gap-3">{!isCompleted && <Button onClick={onComplete} size="lg" className="gap-2 shadow-glow"><CheckCircle2 className="h-4 w-4" />Mark lesson complete</Button>}{nextLessonId && <Button asChild size="lg" variant={isCompleted ? "default" : "outline"} className="gap-2"><Link to="/lesson/$lessonId" params={{ lessonId: nextLessonId }}>Next lesson<ArrowRight className="h-4 w-4" /></Link></Button>}</div></CardContent></Card>;
   };
 
-  return <div className="min-h-[calc(100vh-7rem)] flex flex-col"><div className="sticky top-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 border-b border-border/50 bg-background/90 backdrop-blur-xl"><div className="mx-auto max-w-5xl space-y-1.5"><div className="flex items-center justify-between gap-3"><div className="min-w-0"><div className="flex items-center gap-2 text-xs text-muted-foreground font-mono"><BookOpen className="h-3.5 w-3.5 text-primary" /><span className="truncate">{lesson.title}</span></div><div className="text-[11px] text-muted-foreground mt-0.5">Step {stepIndex + 1} of {steps.length} · {stepLabel(current)}</div></div><div className="text-xs font-mono font-semibold text-primary">{progress}%</div></div><div className="h-1.5 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} /></div></div></div><main className="flex-1 flex items-start justify-center py-4 sm:py-6"><div className="w-full max-w-5xl flex justify-center"><div key={`${stepIndex}-${current.kind}`} className="w-full animate-in fade-in slide-in-from-right-2 duration-200">{renderCurrent()}</div></div></main><footer className="sticky bottom-0 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 py-2 border-t border-border/50 bg-background/90 backdrop-blur-xl"><div className="mx-auto max-w-5xl flex items-center justify-between gap-3">{isFirst ? prevLessonId ? <Button asChild variant="ghost" className="gap-2"><Link to="/lesson/$lessonId" params={{ lessonId: prevLessonId }}><ArrowLeft className="h-4 w-4" />Previous lesson</Link></Button> : <div /> : <Button variant="ghost" onClick={() => setStepIndex((value) => Math.max(value - 1, 0))} className="gap-2"> <ArrowLeft className="h-4 w-4" />Back</Button>}{!isLast && <div className="flex flex-col items-end gap-1.5"><Button onClick={goNext} disabled={currentGate.blocked} size="lg" className="gap-2 min-w-28 shadow-glow"><span>{currentGate.blocked ? "Locked" : "Next"}</span>{currentGate.blocked ? <LockKeyhole className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}</Button>{currentGate.blocked && <span className="text-[11px] text-muted-foreground text-right max-w-[260px]">{currentGate.reason}</span>}</div>}</div></footer></div>;
+  const handleCheckAssessment = () => {
+    setChecked(true);
+    if (assessment && selectedOption === assessment.correctAnswer && lesson?.id) {
+      toggleCheckpoint(lesson.id, step.id);
+      setAcknowledged(true);
+    }
+  };
+
+  return (
+    <div className="space-y-6 max-w-3xl mx-auto py-2">
+      <Card className="border-indigo-500/30 bg-indigo-500/5 dark:bg-indigo-950/10 shadow-xs">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base md:text-lg flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <CheckSquare className="h-5 w-5 text-indigo-500 shrink-0" />
+              <span>{step.label || "Understanding Checkpoint"}</span>
+            </div>
+            {(acknowledged || isAlreadyCompleted) && (
+              <Badge
+                variant="outline"
+                className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-500/30 gap-1"
+              >
+                <CheckCircle2 className="h-3 w-3" />
+                <span>Completed</span>
+              </Badge>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {step.hint && (
+            <div className="p-3 rounded-lg bg-background/80 border border-border/50 text-xs text-muted-foreground flex items-start gap-2">
+              <Lightbulb className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-semibold text-foreground">Hint: </span>
+                {step.hint}
+              </div>
+            </div>
+          )}
+
+          {assessment && (
+            <div className="space-y-3 pt-2">
+              <div className="text-sm font-semibold text-foreground">{assessment.prompt}</div>
+              <div className="space-y-2">
+                {assessment.options.map((opt) => {
+                  const isSelected = selectedOption === opt.id;
+                  const isCorrect = checked && opt.id === assessment.correctAnswer;
+                  const isWrongSelected =
+                    checked && isSelected && opt.id !== assessment.correctAnswer;
+
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        setSelectedOption(opt.id);
+                        setChecked(false);
+                      }}
+                      className={cn(
+                        "w-full text-left p-3.5 rounded-lg border text-sm transition-all flex items-center justify-between gap-3 focus:outline-none focus:ring-2 focus:ring-primary/40",
+                        isSelected && !checked && "border-primary bg-primary/10",
+                        isCorrect &&
+                          "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium",
+                        isWrongSelected && "border-destructive bg-destructive/10 text-destructive",
+                      )}
+                    >
+                      <span>{opt.label}</span>
+                      {isCorrect && <Check className="h-4 w-4 text-emerald-500 shrink-0" />}
+                      {isWrongSelected && <X className="h-4 w-4 text-destructive shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {selectedOption && !checked && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCheckAssessment}
+                  className="text-xs font-medium"
+                >
+                  Check Answer
+                </Button>
+              )}
+
+              {checked && assessment.explanation && (
+                <div
+                  aria-live="polite"
+                  className="p-3.5 rounded-lg text-xs bg-indigo-500/10 border border-indigo-500/20 text-foreground/90"
+                >
+                  <div className="font-semibold mb-1">Explanation</div>
+                  {assessment.explanation}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!assessment && (
+            <div className="pt-2 flex items-center gap-3">
+              <Button
+                variant={acknowledged ? "default" : "outline"}
+                size="sm"
+                onClick={handleToggleAcknowledge}
+                className="gap-2 text-xs font-medium"
+              >
+                {acknowledged ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4 text-primary-foreground" /> Checkpoint
+                    Acknowledged
+                  </>
+                ) : (
+                  "I understand this concept"
+                )}
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

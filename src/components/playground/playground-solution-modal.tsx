@@ -25,17 +25,18 @@ export function PlaygroundSolutionModal({
   open,
   onOpenChange,
   preset,
-  userFiles,
+  userFiles = [],
   onApplySolution,
 }: PlaygroundSolutionModalProps) {
   const [copied, setCopied] = useState(false);
-  const [selectedFileName, setSelectedFileName] = useState(
-    preset.solutionFiles[0]?.name || "App.tsx",
-  );
+
+  const solutionFiles = preset?.solutionFiles || [];
+  const hints = preset?.hints || [];
+
+  const [selectedFileName, setSelectedFileName] = useState(solutionFiles[0]?.name || "App.tsx");
 
   const userFile = userFiles.find((f) => f.name === selectedFileName) || userFiles[0];
-  const solutionFile =
-    preset.solutionFiles.find((f) => f.name === selectedFileName) || preset.solutionFiles[0];
+  const solutionFile = solutionFiles.find((f) => f.name === selectedFileName) || solutionFiles[0];
 
   const handleCopy = () => {
     if (!solutionFile) return;
@@ -45,7 +46,7 @@ export function PlaygroundSolutionModal({
   };
 
   const handleApply = () => {
-    onApplySolution(preset.solutionFiles);
+    onApplySolution(solutionFiles);
     onOpenChange(false);
   };
 
@@ -58,11 +59,11 @@ export function PlaygroundSolutionModal({
               <Sparkles className="h-3.5 w-3.5" /> Reference Solution
             </Badge>
             <Badge variant="secondary" className="text-xs">
-              {preset.difficulty}
+              {preset?.difficulty || "Beginner"}
             </Badge>
           </div>
           <DialogTitle className="text-xl font-bold mt-1">
-            Solution & Diff Analysis · {preset.title}
+            Solution & Diff Analysis · {preset?.title || "Exercise"}
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
             Compare your current implementation against the production reference code pattern.
@@ -70,34 +71,38 @@ export function PlaygroundSolutionModal({
         </DialogHeader>
 
         {/* Hints & Key takeaways */}
-        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-1 text-amber-300">
-          <div className="flex items-center gap-1.5 font-semibold text-amber-400">
-            <Lightbulb className="h-4 w-4" /> Architectural Hints & Key Concepts
+        {hints.length > 0 && (
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-1 text-amber-300">
+            <div className="flex items-center gap-1.5 font-semibold text-amber-400">
+              <Lightbulb className="h-4 w-4" /> Architectural Hints & Key Concepts
+            </div>
+            <ul className="list-disc pl-5 space-y-1 text-amber-200/90">
+              {hints.map((hint, idx) => (
+                <li key={idx}>{hint}</li>
+              ))}
+            </ul>
           </div>
-          <ul className="list-disc pl-5 space-y-1 text-amber-200/90">
-            {preset.hints.map((hint, idx) => (
-              <li key={idx}>{hint}</li>
-            ))}
-          </ul>
-        </div>
+        )}
 
         {/* File selector tab bar */}
-        <div className="flex items-center gap-2 pt-2 border-b border-border/40 pb-2">
-          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-            <Code2 className="h-3.5 w-3.5" /> File:
-          </span>
-          {preset.solutionFiles.map((file) => (
-            <Button
-              key={file.name}
-              variant={selectedFileName === file.name ? "default" : "outline"}
-              size="sm"
-              className="h-7 text-xs"
-              onClick={() => setSelectedFileName(file.name)}
-            >
-              {file.name}
-            </Button>
-          ))}
-        </div>
+        {solutionFiles.length > 0 && (
+          <div className="flex items-center gap-2 pt-2 border-b border-border/40 pb-2">
+            <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+              <Code2 className="h-3.5 w-3.5" /> File:
+            </span>
+            {solutionFiles.map((file) => (
+              <Button
+                key={file.name}
+                variant={selectedFileName === file.name ? "default" : "outline"}
+                size="sm"
+                className="h-7 text-xs"
+                onClick={() => setSelectedFileName(file.name)}
+              >
+                {file.name}
+              </Button>
+            ))}
+          </div>
+        )}
 
         {/* Side-by-Side Comparison Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 overflow-hidden min-h-[300px]">

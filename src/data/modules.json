@@ -10,10 +10,7 @@
     "estimatedHours": 1.7,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "Orientation",
-      "Web Basics"
-    ],
+    "tags": ["Orientation", "Web Basics"],
     "order": 1,
     "prerequisites": []
   },
@@ -28,15 +25,9 @@
     "estimatedHours": 1.7,
     "progress": 0,
     "color": "chart-2",
-    "tags": [
-      "Orientation",
-      "DevTools",
-      "Debugging"
-    ],
+    "tags": ["Orientation", "DevTools", "Debugging"],
     "order": 2,
-    "prerequisites": [
-      "module-0-1"
-    ]
+    "prerequisites": ["module-0-1"]
   },
   {
     "id": "module-1-1",
@@ -49,14 +40,9 @@
     "estimatedHours": 4.0,
     "progress": 0,
     "color": "chart-3",
-    "tags": [
-      "Web Foundations",
-      "HTML"
-    ],
+    "tags": ["Web Foundations", "HTML"],
     "order": 3,
-    "prerequisites": [
-      "module-0-2"
-    ]
+    "prerequisites": ["module-0-2"]
   },
   {
     "id": "module-1-2",
@@ -69,14 +55,9 @@
     "estimatedHours": 6.2,
     "progress": 0,
     "color": "chart-4",
-    "tags": [
-      "Web Foundations",
-      "CSS"
-    ],
+    "tags": ["Web Foundations", "CSS"],
     "order": 4,
-    "prerequisites": [
-      "module-1-1"
-    ]
+    "prerequisites": ["module-1-1"]
   },
   {
     "id": "module-1-3",
@@ -89,14 +70,9 @@
     "estimatedHours": 5.7,
     "progress": 0,
     "color": "chart-5",
-    "tags": [
-      "Web Foundations",
-      "JavaScript"
-    ],
+    "tags": ["Web Foundations", "JavaScript"],
     "order": 5,
-    "prerequisites": [
-      "module-1-2"
-    ]
+    "prerequisites": ["module-1-2"]
   },
   {
     "id": "module-1-4",
@@ -109,14 +85,9 @@
     "estimatedHours": 3.0,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "Web Foundations",
-      "Debugging"
-    ],
+    "tags": ["Web Foundations", "Debugging"],
     "order": 6,
-    "prerequisites": [
-      "module-1-3"
-    ]
+    "prerequisites": ["module-1-3"]
   },
   {
     "id": "module-2-1",
@@ -129,14 +100,9 @@
     "estimatedHours": 4.5,
     "progress": 0,
     "color": "chart-2",
-    "tags": [
-      "Advanced CSS",
-      "UI Engineering"
-    ],
+    "tags": ["Advanced CSS", "UI Engineering"],
     "order": 7,
-    "prerequisites": [
-      "module-1-4"
-    ]
+    "prerequisites": ["module-1-4"]
   },
   {
     "id": "module-2-2",
@@ -149,14 +115,9 @@
     "estimatedHours": 6.8,
     "progress": 0,
     "color": "chart-3",
-    "tags": [
-      "Modern JavaScript",
-      "Async"
-    ],
+    "tags": ["Modern JavaScript", "Async"],
     "order": 8,
-    "prerequisites": [
-      "module-2-1"
-    ]
+    "prerequisites": ["module-2-1"]
   },
   {
     "id": "module-2-3",
@@ -169,14 +130,9 @@
     "estimatedHours": 3.2,
     "progress": 0,
     "color": "chart-4",
-    "tags": [
-      "Tooling",
-      "Git"
-    ],
+    "tags": ["Tooling", "Git"],
     "order": 9,
-    "prerequisites": [
-      "module-2-2"
-    ]
+    "prerequisites": ["module-2-2"]
   },
   {
     "id": "module-2-4",
@@ -189,14 +145,9 @@
     "estimatedHours": 5.0,
     "progress": 0,
     "color": "chart-5",
-    "tags": [
-      "APIs",
-      "Web Data"
-    ],
+    "tags": ["APIs", "Web Data"],
     "order": 10,
-    "prerequisites": [
-      "module-2-3"
-    ]
+    "prerequisites": ["module-2-3"]
   },
   {
     "id": "module-2-5",
@@ -209,14 +160,9 @@
     "estimatedHours": 4.1,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "TypeScript",
-      "Type Safety"
-    ],
+    "tags": ["TypeScript", "Type Safety"],
     "order": 11,
-    "prerequisites": [
-      "module-2-4"
-    ]
+    "prerequisites": ["module-2-4"]
   },
   {
     "id": "module-3-1",
@@ -229,14 +175,9 @@
     "estimatedHours": 5.2,
     "progress": 0,
     "color": "chart-2",
-    "tags": [
-      "React",
-      "Components"
-    ],
+    "tags": ["React", "Components"],
     "order": 12,
-    "prerequisites": [
-      "module-2-5"
-    ]
+    "prerequisites": ["module-2-5"]
   },
   {
     "id": "module-3-2",
@@ -249,15 +190,9 @@
     "estimatedHours": 5.1,
     "progress": 0,
     "color": "chart-3",
-    "tags": [
-      "React",
-      "State",
-      "Effects"
-    ],
+    "tags": ["React", "State", "Effects"],
     "order": 13,
-    "prerequisites": [
-      "module-3-1"
-    ]
+    "prerequisites": ["module-3-1"]
   },
   {
     "id": "module-3-3",
@@ -270,14 +205,9 @@
     "estimatedHours": 4.1,
     "progress": 0,
     "color": "chart-4",
-    "tags": [
-      "React",
-      "Architecture"
-    ],
+    "tags": ["React", "Architecture"],
     "order": 14,
-    "prerequisites": [
-      "module-3-2"
-    ]
+    "prerequisites": ["module-3-2"]
   },
   {
     "id": "module-3-4",
@@ -290,14 +220,9 @@
     "estimatedHours": 4.2,
     "progress": 0,
     "color": "chart-5",
-    "tags": [
-      "React",
-      "Routing"
-    ],
+    "tags": ["React", "Routing"],
     "order": 15,
-    "prerequisites": [
-      "module-3-3"
-    ]
+    "prerequisites": ["module-3-3"]
   },
   {
     "id": "module-4-1",
@@ -310,14 +235,9 @@
     "estimatedHours": 5.2,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "React",
-      "State Management"
-    ],
+    "tags": ["React", "State Management"],
     "order": 16,
-    "prerequisites": [
-      "module-3-4"
-    ]
+    "prerequisites": ["module-3-4"]
   },
   {
     "id": "module-4-2",
@@ -330,14 +250,9 @@
     "estimatedHours": 5.0,
     "progress": 0,
     "color": "chart-2",
-    "tags": [
-      "React",
-      "Data Flow"
-    ],
+    "tags": ["React", "Data Flow"],
     "order": 17,
-    "prerequisites": [
-      "module-4-1"
-    ]
+    "prerequisites": ["module-4-1"]
   },
   {
     "id": "module-4-3",
@@ -350,14 +265,9 @@
     "estimatedHours": 3.6,
     "progress": 0,
     "color": "chart-3",
-    "tags": [
-      "Testing",
-      "Quality"
-    ],
+    "tags": ["Testing", "Quality"],
     "order": 18,
-    "prerequisites": [
-      "module-4-2"
-    ]
+    "prerequisites": ["module-4-2"]
   },
   {
     "id": "module-4-4",
@@ -370,14 +280,9 @@
     "estimatedHours": 3.4,
     "progress": 0,
     "color": "chart-4",
-    "tags": [
-      "Accessibility",
-      "A11y"
-    ],
+    "tags": ["Accessibility", "A11y"],
     "order": 19,
-    "prerequisites": [
-      "module-4-3"
-    ]
+    "prerequisites": ["module-4-3"]
   },
   {
     "id": "module-4-5",
@@ -390,14 +295,9 @@
     "estimatedHours": 5.5,
     "progress": 0,
     "color": "chart-5",
-    "tags": [
-      "Performance",
-      "Resilience"
-    ],
+    "tags": ["Performance", "Resilience"],
     "order": 20,
-    "prerequisites": [
-      "module-4-4"
-    ]
+    "prerequisites": ["module-4-4"]
   },
   {
     "id": "module-4-6",
@@ -410,13 +310,9 @@
     "estimatedHours": 3.3,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "Security"
-    ],
+    "tags": ["Security"],
     "order": 21,
-    "prerequisites": [
-      "module-4-5"
-    ]
+    "prerequisites": ["module-4-5"]
   },
   {
     "id": "module-5-1",
@@ -429,14 +325,9 @@
     "estimatedHours": 5.5,
     "progress": 0,
     "color": "chart-2",
-    "tags": [
-      "Architecture",
-      "Professional Practice"
-    ],
+    "tags": ["Architecture", "Professional Practice"],
     "order": 22,
-    "prerequisites": [
-      "module-4-6"
-    ]
+    "prerequisites": ["module-4-6"]
   },
   {
     "id": "module-5-2",
@@ -449,14 +340,9 @@
     "estimatedHours": 4.4,
     "progress": 0,
     "color": "chart-3",
-    "tags": [
-      "React",
-      "Advanced Patterns"
-    ],
+    "tags": ["React", "Advanced Patterns"],
     "order": 23,
-    "prerequisites": [
-      "module-5-1"
-    ]
+    "prerequisites": ["module-5-1"]
   },
   {
     "id": "module-5-3",
@@ -469,14 +355,9 @@
     "estimatedHours": 5.8,
     "progress": 0,
     "color": "chart-4",
-    "tags": [
-      "Debugging",
-      "Professional Practice"
-    ],
+    "tags": ["Debugging", "Professional Practice"],
     "order": 24,
-    "prerequisites": [
-      "module-5-2"
-    ]
+    "prerequisites": ["module-5-2"]
   },
   {
     "id": "module-5-4",
@@ -489,13 +370,9 @@
     "estimatedHours": 6.4,
     "progress": 0,
     "color": "chart-5",
-    "tags": [
-      "Interview Prep"
-    ],
+    "tags": ["Interview Prep"],
     "order": 25,
-    "prerequisites": [
-      "module-5-3"
-    ]
+    "prerequisites": ["module-5-3"]
   },
   {
     "id": "module-5-5",
@@ -508,14 +385,9 @@
     "estimatedHours": 8.7,
     "progress": 0,
     "color": "chart-1",
-    "tags": [
-      "Portfolio",
-      "Capstone"
-    ],
+    "tags": ["Portfolio", "Capstone"],
     "order": 26,
-    "prerequisites": [
-      "module-5-4"
-    ]
+    "prerequisites": ["module-5-4"]
   },
   {
     "id": "module-5-6",
@@ -528,13 +400,8 @@
     "estimatedHours": 5.2,
     "progress": 0,
     "color": "chart-2",
-    "tags": [
-      "Meta-Frameworks",
-      "Next.js"
-    ],
+    "tags": ["Meta-Frameworks", "Next.js"],
     "order": 27,
-    "prerequisites": [
-      "module-5-5"
-    ]
+    "prerequisites": ["module-5-5"]
   }
 ]

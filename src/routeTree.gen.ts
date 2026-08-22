@@ -8,897 +8,946 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as AboutRouteImport } from "./routes/about";
-import { Route as AchievementsRouteImport } from "./routes/achievements";
-import { Route as AnalyticsRouteImport } from "./routes/analytics";
-import { Route as AssessmentTestRouteImport } from "./routes/assessment-test";
-import { Route as BookmarksRouteImport } from "./routes/bookmarks";
-import { Route as CalendarRouteImport } from "./routes/calendar";
-import { Route as CertificatesRouteImport } from "./routes/certificates";
-import { Route as ChallengesRouteImport } from "./routes/challenges";
-import { Route as DebugLabRouteImport } from "./routes/debug-lab";
-import { Route as DocsRouteImport } from "./routes/docs";
-import { Route as FlashcardsRouteImport } from "./routes/flashcards";
-import { Route as InterviewRouteImport } from "./routes/interview";
-import { Route as JournalRouteImport } from "./routes/journal";
-import { Route as LearnRouteImport } from "./routes/learn";
-import { Route as MasteryRouteImport } from "./routes/mastery";
-import { Route as MentorRouteImport } from "./routes/mentor";
-import { Route as PlaygroundRouteImport } from "./routes/playground";
-import { Route as PracticeRouteImport } from "./routes/practice";
-import { Route as ProgressRouteImport } from "./routes/progress";
-import { Route as ProjectsRouteImport } from "./routes/projects";
-import { Route as QuizzesRouteImport } from "./routes/quizzes";
-import { Route as ResourcesRouteImport } from "./routes/resources";
-import { Route as SettingsRouteImport } from "./routes/settings";
-import { Route as StatisticsRouteImport } from "./routes/statistics";
-import { Route as WhiteboardRouteImport } from "./routes/whiteboard";
-import { Route as AssessmentPathIdRouteImport } from "./routes/assessment.$pathId";
-import { Route as CertificateCertificateIdRouteImport } from "./routes/certificate.$certificateId";
-import { Route as DebugLabBugIdRouteImport } from "./routes/debug-lab.$bugId";
-import { Route as InterviewSessionRouteImport } from "./routes/interview.session";
-import { Route as LearnIndexRouteImport } from "./routes/learn.index";
-import { Route as LearnLessonsRouteImport } from "./routes/learn.lessons";
-import { Route as LearnModulesRouteImport } from "./routes/learn.modules";
-import { Route as LearnPathsRouteImport } from "./routes/learn.paths";
-import { Route as LearnTopicsRouteImport } from "./routes/learn.topics";
-import { Route as LessonLessonIdRouteImport } from "./routes/lesson.$lessonId";
-import { Route as ProjectsProjectIdRouteImport } from "./routes/projects.$projectId";
-import { Route as QuizzesQuizIdRouteImport } from "./routes/quizzes.$quizId";
-import { Route as LearnModulesModuleIdRouteImport } from "./routes/learn.modules.$moduleId";
-import { Route as LearnTopicsTopicIdRouteImport } from "./routes/learn.topics.$topicId";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AchievementsRouteImport } from './routes/achievements'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AssessmentTestRouteImport } from './routes/assessment-test'
+import { Route as BookmarksRouteImport } from './routes/bookmarks'
+import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as CertificatesRouteImport } from './routes/certificates'
+import { Route as ChallengesRouteImport } from './routes/challenges'
+import { Route as DebugLabRouteImport } from './routes/debug-lab'
+import { Route as DocsRouteImport } from './routes/docs'
+import { Route as FlashcardsRouteImport } from './routes/flashcards'
+import { Route as InterviewRouteImport } from './routes/interview'
+import { Route as JournalRouteImport } from './routes/journal'
+import { Route as LearnRouteImport } from './routes/learn'
+import { Route as MasteryRouteImport } from './routes/mastery'
+import { Route as MentorRouteImport } from './routes/mentor'
+import { Route as PlaygroundRouteImport } from './routes/playground'
+import { Route as PracticeRouteImport } from './routes/practice'
+import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as QuizzesRouteImport } from './routes/quizzes'
+import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as StatisticsRouteImport } from './routes/statistics'
+import { Route as WhiteboardRouteImport } from './routes/whiteboard'
+import { Route as AssessmentPathIdRouteImport } from './routes/assessment.$pathId'
+import { Route as CertificateCertificateIdRouteImport } from './routes/certificate.$certificateId'
+import { Route as DebugLabIndexRouteImport } from './routes/debug-lab.index'
+import { Route as DebugLabBugIdRouteImport } from './routes/debug-lab.$bugId'
+import { Route as InterviewSessionRouteImport } from './routes/interview.session'
+import { Route as LearnIndexRouteImport } from './routes/learn.index'
+import { Route as LearnLessonsRouteImport } from './routes/learn.lessons'
+import { Route as LearnPathsRouteImport } from './routes/learn.paths'
+import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
+import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
+import { Route as QuizzesIndexRouteImport } from './routes/quizzes.index'
+import { Route as QuizzesQuizIdRouteImport } from './routes/quizzes.$quizId'
+import { Route as LearnModulesIndexRouteImport } from './routes/learn.modules.index'
+import { Route as LearnModulesModuleIdRouteImport } from './routes/learn.modules.$moduleId'
+import { Route as LearnTopicsIndexRouteImport } from './routes/learn.topics.index'
+import { Route as LearnTopicsTopicIdRouteImport } from './routes/learn.topics.$topicId'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AboutRoute = AboutRouteImport.update({
-  id: "/about",
-  path: "/about",
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AchievementsRoute = AchievementsRouteImport.update({
-  id: "/achievements",
-  path: "/achievements",
+  id: '/achievements',
+  path: '/achievements',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
-  id: "/analytics",
-  path: "/analytics",
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AssessmentTestRoute = AssessmentTestRouteImport.update({
-  id: "/assessment-test",
-  path: "/assessment-test",
+  id: '/assessment-test',
+  path: '/assessment-test',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const BookmarksRoute = BookmarksRouteImport.update({
-  id: "/bookmarks",
-  path: "/bookmarks",
+  id: '/bookmarks',
+  path: '/bookmarks',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const CalendarRoute = CalendarRouteImport.update({
-  id: "/calendar",
-  path: "/calendar",
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const CertificatesRoute = CertificatesRouteImport.update({
-  id: "/certificates",
-  path: "/certificates",
+  id: '/certificates',
+  path: '/certificates',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ChallengesRoute = ChallengesRouteImport.update({
-  id: "/challenges",
-  path: "/challenges",
+  id: '/challenges',
+  path: '/challenges',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DebugLabRoute = DebugLabRouteImport.update({
-  id: "/debug-lab",
-  path: "/debug-lab",
+  id: '/debug-lab',
+  path: '/debug-lab',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DocsRoute = DocsRouteImport.update({
-  id: "/docs",
-  path: "/docs",
+  id: '/docs',
+  path: '/docs',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const FlashcardsRoute = FlashcardsRouteImport.update({
-  id: "/flashcards",
-  path: "/flashcards",
+  id: '/flashcards',
+  path: '/flashcards',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const InterviewRoute = InterviewRouteImport.update({
-  id: "/interview",
-  path: "/interview",
+  id: '/interview',
+  path: '/interview',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const JournalRoute = JournalRouteImport.update({
-  id: "/journal",
-  path: "/journal",
+  id: '/journal',
+  path: '/journal',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LearnRoute = LearnRouteImport.update({
-  id: "/learn",
-  path: "/learn",
+  id: '/learn',
+  path: '/learn',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const MasteryRoute = MasteryRouteImport.update({
-  id: "/mastery",
-  path: "/mastery",
+  id: '/mastery',
+  path: '/mastery',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const MentorRoute = MentorRouteImport.update({
-  id: "/mentor",
-  path: "/mentor",
+  id: '/mentor',
+  path: '/mentor',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PlaygroundRoute = PlaygroundRouteImport.update({
-  id: "/playground",
-  path: "/playground",
+  id: '/playground',
+  path: '/playground',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PracticeRoute = PracticeRouteImport.update({
-  id: "/practice",
-  path: "/practice",
+  id: '/practice',
+  path: '/practice',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ProgressRoute = ProgressRouteImport.update({
-  id: "/progress",
-  path: "/progress",
+  id: '/progress',
+  path: '/progress',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ProjectsRoute = ProjectsRouteImport.update({
-  id: "/projects",
-  path: "/projects",
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const QuizzesRoute = QuizzesRouteImport.update({
-  id: "/quizzes",
-  path: "/quizzes",
+  id: '/quizzes',
+  path: '/quizzes',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ResourcesRoute = ResourcesRouteImport.update({
-  id: "/resources",
-  path: "/resources",
+  id: '/resources',
+  path: '/resources',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
-  id: "/settings",
-  path: "/settings",
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const StatisticsRoute = StatisticsRouteImport.update({
-  id: "/statistics",
-  path: "/statistics",
+  id: '/statistics',
+  path: '/statistics',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const WhiteboardRoute = WhiteboardRouteImport.update({
-  id: "/whiteboard",
-  path: "/whiteboard",
+  id: '/whiteboard',
+  path: '/whiteboard',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AssessmentPathIdRoute = AssessmentPathIdRouteImport.update({
-  id: "/assessment/$pathId",
-  path: "/assessment/$pathId",
+  id: '/assessment/$pathId',
+  path: '/assessment/$pathId',
   getParentRoute: () => rootRouteImport,
-} as any);
-const CertificateCertificateIdRoute = CertificateCertificateIdRouteImport.update({
-  id: "/certificate/$certificateId",
-  path: "/certificate/$certificateId",
-  getParentRoute: () => rootRouteImport,
-} as any);
-const DebugLabBugIdRoute = DebugLabBugIdRouteImport.update({
-  id: "/$bugId",
-  path: "/$bugId",
+} as any)
+const CertificateCertificateIdRoute =
+  CertificateCertificateIdRouteImport.update({
+    id: '/certificate/$certificateId',
+    path: '/certificate/$certificateId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DebugLabIndexRoute = DebugLabIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => DebugLabRoute,
-} as any);
+} as any)
+const DebugLabBugIdRoute = DebugLabBugIdRouteImport.update({
+  id: '/$bugId',
+  path: '/$bugId',
+  getParentRoute: () => DebugLabRoute,
+} as any)
 const InterviewSessionRoute = InterviewSessionRouteImport.update({
-  id: "/session",
-  path: "/session",
+  id: '/session',
+  path: '/session',
   getParentRoute: () => InterviewRoute,
-} as any);
+} as any)
 const LearnIndexRoute = LearnIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => LearnRoute,
-} as any);
+} as any)
 const LearnLessonsRoute = LearnLessonsRouteImport.update({
-  id: "/lessons",
-  path: "/lessons",
+  id: '/lessons',
+  path: '/lessons',
   getParentRoute: () => LearnRoute,
-} as any);
-const LearnModulesRoute = LearnModulesRouteImport.update({
-  id: "/modules",
-  path: "/modules",
-  getParentRoute: () => LearnRoute,
-} as any);
+} as any)
 const LearnPathsRoute = LearnPathsRouteImport.update({
-  id: "/paths",
-  path: "/paths",
+  id: '/paths',
+  path: '/paths',
   getParentRoute: () => LearnRoute,
-} as any);
-const LearnTopicsRoute = LearnTopicsRouteImport.update({
-  id: "/topics",
-  path: "/topics",
-  getParentRoute: () => LearnRoute,
-} as any);
+} as any)
 const LessonLessonIdRoute = LessonLessonIdRouteImport.update({
-  id: "/lesson/$lessonId",
-  path: "/lesson/$lessonId",
+  id: '/lesson/$lessonId',
+  path: '/lesson/$lessonId',
   getParentRoute: () => rootRouteImport,
-} as any);
-const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
-  id: "/$projectId",
-  path: "/$projectId",
+} as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => ProjectsRoute,
-} as any);
-const QuizzesQuizIdRoute = QuizzesQuizIdRouteImport.update({
-  id: "/$quizId",
-  path: "/$quizId",
+} as any)
+const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => ProjectsRoute,
+} as any)
+const QuizzesIndexRoute = QuizzesIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => QuizzesRoute,
-} as any);
+} as any)
+const QuizzesQuizIdRoute = QuizzesQuizIdRouteImport.update({
+  id: '/$quizId',
+  path: '/$quizId',
+  getParentRoute: () => QuizzesRoute,
+} as any)
+const LearnModulesIndexRoute = LearnModulesIndexRouteImport.update({
+  id: '/modules/',
+  path: '/modules/',
+  getParentRoute: () => LearnRoute,
+} as any)
 const LearnModulesModuleIdRoute = LearnModulesModuleIdRouteImport.update({
-  id: "/$moduleId",
-  path: "/$moduleId",
-  getParentRoute: () => LearnModulesRoute,
-} as any);
+  id: '/modules/$moduleId',
+  path: '/modules/$moduleId',
+  getParentRoute: () => LearnRoute,
+} as any)
+const LearnTopicsIndexRoute = LearnTopicsIndexRouteImport.update({
+  id: '/topics/',
+  path: '/topics/',
+  getParentRoute: () => LearnRoute,
+} as any)
 const LearnTopicsTopicIdRoute = LearnTopicsTopicIdRouteImport.update({
-  id: "/$topicId",
-  path: "/$topicId",
-  getParentRoute: () => LearnTopicsRoute,
-} as any);
+  id: '/topics/$topicId',
+  path: '/topics/$topicId',
+  getParentRoute: () => LearnRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/about": typeof AboutRoute;
-  "/achievements": typeof AchievementsRoute;
-  "/analytics": typeof AnalyticsRoute;
-  "/assessment-test": typeof AssessmentTestRoute;
-  "/bookmarks": typeof BookmarksRoute;
-  "/calendar": typeof CalendarRoute;
-  "/certificates": typeof CertificatesRoute;
-  "/challenges": typeof ChallengesRoute;
-  "/debug-lab": typeof DebugLabRouteWithChildren;
-  "/docs": typeof DocsRoute;
-  "/flashcards": typeof FlashcardsRoute;
-  "/interview": typeof InterviewRouteWithChildren;
-  "/journal": typeof JournalRoute;
-  "/learn": typeof LearnRouteWithChildren;
-  "/mastery": typeof MasteryRoute;
-  "/mentor": typeof MentorRoute;
-  "/playground": typeof PlaygroundRoute;
-  "/practice": typeof PracticeRoute;
-  "/progress": typeof ProgressRoute;
-  "/projects": typeof ProjectsRouteWithChildren;
-  "/quizzes": typeof QuizzesRouteWithChildren;
-  "/resources": typeof ResourcesRoute;
-  "/settings": typeof SettingsRoute;
-  "/statistics": typeof StatisticsRoute;
-  "/whiteboard": typeof WhiteboardRoute;
-  "/assessment/$pathId": typeof AssessmentPathIdRoute;
-  "/certificate/$certificateId": typeof CertificateCertificateIdRoute;
-  "/debug-lab/$bugId": typeof DebugLabBugIdRoute;
-  "/interview/session": typeof InterviewSessionRoute;
-  "/learn/lessons": typeof LearnLessonsRoute;
-  "/learn/modules": typeof LearnModulesRouteWithChildren;
-  "/learn/paths": typeof LearnPathsRoute;
-  "/learn/topics": typeof LearnTopicsRouteWithChildren;
-  "/lesson/$lessonId": typeof LessonLessonIdRoute;
-  "/projects/$projectId": typeof ProjectsProjectIdRoute;
-  "/quizzes/$quizId": typeof QuizzesQuizIdRoute;
-  "/learn/": typeof LearnIndexRoute;
-  "/learn/modules/$moduleId": typeof LearnModulesModuleIdRoute;
-  "/learn/topics/$topicId": typeof LearnTopicsTopicIdRoute;
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/achievements': typeof AchievementsRoute
+  '/analytics': typeof AnalyticsRoute
+  '/assessment-test': typeof AssessmentTestRoute
+  '/bookmarks': typeof BookmarksRoute
+  '/calendar': typeof CalendarRoute
+  '/certificates': typeof CertificatesRoute
+  '/challenges': typeof ChallengesRoute
+  '/debug-lab': typeof DebugLabRouteWithChildren
+  '/docs': typeof DocsRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/interview': typeof InterviewRouteWithChildren
+  '/journal': typeof JournalRoute
+  '/learn': typeof LearnRouteWithChildren
+  '/mastery': typeof MasteryRoute
+  '/mentor': typeof MentorRoute
+  '/playground': typeof PlaygroundRoute
+  '/practice': typeof PracticeRoute
+  '/progress': typeof ProgressRoute
+  '/projects': typeof ProjectsRouteWithChildren
+  '/quizzes': typeof QuizzesRouteWithChildren
+  '/resources': typeof ResourcesRoute
+  '/settings': typeof SettingsRoute
+  '/statistics': typeof StatisticsRoute
+  '/whiteboard': typeof WhiteboardRoute
+  '/assessment/$pathId': typeof AssessmentPathIdRoute
+  '/certificate/$certificateId': typeof CertificateCertificateIdRoute
+  '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/interview/session': typeof InterviewSessionRoute
+  '/learn/lessons': typeof LearnLessonsRoute
+  '/learn/paths': typeof LearnPathsRoute
+  '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/quizzes/$quizId': typeof QuizzesQuizIdRoute
+  '/debug-lab/': typeof DebugLabIndexRoute
+  '/learn/': typeof LearnIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
+  '/quizzes/': typeof QuizzesIndexRoute
+  '/learn/modules/$moduleId': typeof LearnModulesModuleIdRoute
+  '/learn/topics/$topicId': typeof LearnTopicsTopicIdRoute
+  '/learn/modules/': typeof LearnModulesIndexRoute
+  '/learn/topics/': typeof LearnTopicsIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/about": typeof AboutRoute;
-  "/achievements": typeof AchievementsRoute;
-  "/analytics": typeof AnalyticsRoute;
-  "/assessment-test": typeof AssessmentTestRoute;
-  "/bookmarks": typeof BookmarksRoute;
-  "/calendar": typeof CalendarRoute;
-  "/certificates": typeof CertificatesRoute;
-  "/challenges": typeof ChallengesRoute;
-  "/debug-lab": typeof DebugLabRouteWithChildren;
-  "/docs": typeof DocsRoute;
-  "/flashcards": typeof FlashcardsRoute;
-  "/interview": typeof InterviewRouteWithChildren;
-  "/journal": typeof JournalRoute;
-  "/mastery": typeof MasteryRoute;
-  "/mentor": typeof MentorRoute;
-  "/playground": typeof PlaygroundRoute;
-  "/practice": typeof PracticeRoute;
-  "/progress": typeof ProgressRoute;
-  "/projects": typeof ProjectsRouteWithChildren;
-  "/quizzes": typeof QuizzesRouteWithChildren;
-  "/resources": typeof ResourcesRoute;
-  "/settings": typeof SettingsRoute;
-  "/statistics": typeof StatisticsRoute;
-  "/whiteboard": typeof WhiteboardRoute;
-  "/assessment/$pathId": typeof AssessmentPathIdRoute;
-  "/certificate/$certificateId": typeof CertificateCertificateIdRoute;
-  "/debug-lab/$bugId": typeof DebugLabBugIdRoute;
-  "/interview/session": typeof InterviewSessionRoute;
-  "/learn/lessons": typeof LearnLessonsRoute;
-  "/learn/modules": typeof LearnModulesRouteWithChildren;
-  "/learn/paths": typeof LearnPathsRoute;
-  "/learn/topics": typeof LearnTopicsRouteWithChildren;
-  "/lesson/$lessonId": typeof LessonLessonIdRoute;
-  "/projects/$projectId": typeof ProjectsProjectIdRoute;
-  "/quizzes/$quizId": typeof QuizzesQuizIdRoute;
-  "/learn": typeof LearnIndexRoute;
-  "/learn/modules/$moduleId": typeof LearnModulesModuleIdRoute;
-  "/learn/topics/$topicId": typeof LearnTopicsTopicIdRoute;
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/achievements': typeof AchievementsRoute
+  '/analytics': typeof AnalyticsRoute
+  '/assessment-test': typeof AssessmentTestRoute
+  '/bookmarks': typeof BookmarksRoute
+  '/calendar': typeof CalendarRoute
+  '/certificates': typeof CertificatesRoute
+  '/challenges': typeof ChallengesRoute
+  '/docs': typeof DocsRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/interview': typeof InterviewRouteWithChildren
+  '/journal': typeof JournalRoute
+  '/mastery': typeof MasteryRoute
+  '/mentor': typeof MentorRoute
+  '/playground': typeof PlaygroundRoute
+  '/practice': typeof PracticeRoute
+  '/progress': typeof ProgressRoute
+  '/resources': typeof ResourcesRoute
+  '/settings': typeof SettingsRoute
+  '/statistics': typeof StatisticsRoute
+  '/whiteboard': typeof WhiteboardRoute
+  '/assessment/$pathId': typeof AssessmentPathIdRoute
+  '/certificate/$certificateId': typeof CertificateCertificateIdRoute
+  '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/interview/session': typeof InterviewSessionRoute
+  '/learn/lessons': typeof LearnLessonsRoute
+  '/learn/paths': typeof LearnPathsRoute
+  '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/quizzes/$quizId': typeof QuizzesQuizIdRoute
+  '/debug-lab': typeof DebugLabIndexRoute
+  '/learn': typeof LearnIndexRoute
+  '/projects': typeof ProjectsIndexRoute
+  '/quizzes': typeof QuizzesIndexRoute
+  '/learn/modules/$moduleId': typeof LearnModulesModuleIdRoute
+  '/learn/topics/$topicId': typeof LearnTopicsTopicIdRoute
+  '/learn/modules': typeof LearnModulesIndexRoute
+  '/learn/topics': typeof LearnTopicsIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/about": typeof AboutRoute;
-  "/achievements": typeof AchievementsRoute;
-  "/analytics": typeof AnalyticsRoute;
-  "/assessment-test": typeof AssessmentTestRoute;
-  "/bookmarks": typeof BookmarksRoute;
-  "/calendar": typeof CalendarRoute;
-  "/certificates": typeof CertificatesRoute;
-  "/challenges": typeof ChallengesRoute;
-  "/debug-lab": typeof DebugLabRouteWithChildren;
-  "/docs": typeof DocsRoute;
-  "/flashcards": typeof FlashcardsRoute;
-  "/interview": typeof InterviewRouteWithChildren;
-  "/journal": typeof JournalRoute;
-  "/learn": typeof LearnRouteWithChildren;
-  "/mastery": typeof MasteryRoute;
-  "/mentor": typeof MentorRoute;
-  "/playground": typeof PlaygroundRoute;
-  "/practice": typeof PracticeRoute;
-  "/progress": typeof ProgressRoute;
-  "/projects": typeof ProjectsRouteWithChildren;
-  "/quizzes": typeof QuizzesRouteWithChildren;
-  "/resources": typeof ResourcesRoute;
-  "/settings": typeof SettingsRoute;
-  "/statistics": typeof StatisticsRoute;
-  "/whiteboard": typeof WhiteboardRoute;
-  "/assessment/$pathId": typeof AssessmentPathIdRoute;
-  "/certificate/$certificateId": typeof CertificateCertificateIdRoute;
-  "/debug-lab/$bugId": typeof DebugLabBugIdRoute;
-  "/interview/session": typeof InterviewSessionRoute;
-  "/learn/lessons": typeof LearnLessonsRoute;
-  "/learn/modules": typeof LearnModulesRouteWithChildren;
-  "/learn/paths": typeof LearnPathsRoute;
-  "/learn/topics": typeof LearnTopicsRouteWithChildren;
-  "/lesson/$lessonId": typeof LessonLessonIdRoute;
-  "/projects/$projectId": typeof ProjectsProjectIdRoute;
-  "/quizzes/$quizId": typeof QuizzesQuizIdRoute;
-  "/learn/": typeof LearnIndexRoute;
-  "/learn/modules/$moduleId": typeof LearnModulesModuleIdRoute;
-  "/learn/topics/$topicId": typeof LearnTopicsTopicIdRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/achievements': typeof AchievementsRoute
+  '/analytics': typeof AnalyticsRoute
+  '/assessment-test': typeof AssessmentTestRoute
+  '/bookmarks': typeof BookmarksRoute
+  '/calendar': typeof CalendarRoute
+  '/certificates': typeof CertificatesRoute
+  '/challenges': typeof ChallengesRoute
+  '/debug-lab': typeof DebugLabRouteWithChildren
+  '/docs': typeof DocsRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/interview': typeof InterviewRouteWithChildren
+  '/journal': typeof JournalRoute
+  '/learn': typeof LearnRouteWithChildren
+  '/mastery': typeof MasteryRoute
+  '/mentor': typeof MentorRoute
+  '/playground': typeof PlaygroundRoute
+  '/practice': typeof PracticeRoute
+  '/progress': typeof ProgressRoute
+  '/projects': typeof ProjectsRouteWithChildren
+  '/quizzes': typeof QuizzesRouteWithChildren
+  '/resources': typeof ResourcesRoute
+  '/settings': typeof SettingsRoute
+  '/statistics': typeof StatisticsRoute
+  '/whiteboard': typeof WhiteboardRoute
+  '/assessment/$pathId': typeof AssessmentPathIdRoute
+  '/certificate/$certificateId': typeof CertificateCertificateIdRoute
+  '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/interview/session': typeof InterviewSessionRoute
+  '/learn/lessons': typeof LearnLessonsRoute
+  '/learn/paths': typeof LearnPathsRoute
+  '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/quizzes/$quizId': typeof QuizzesQuizIdRoute
+  '/debug-lab/': typeof DebugLabIndexRoute
+  '/learn/': typeof LearnIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
+  '/quizzes/': typeof QuizzesIndexRoute
+  '/learn/modules/$moduleId': typeof LearnModulesModuleIdRoute
+  '/learn/topics/$topicId': typeof LearnTopicsTopicIdRoute
+  '/learn/modules/': typeof LearnModulesIndexRoute
+  '/learn/topics/': typeof LearnTopicsIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/about"
-    | "/achievements"
-    | "/analytics"
-    | "/assessment-test"
-    | "/bookmarks"
-    | "/calendar"
-    | "/certificates"
-    | "/challenges"
-    | "/debug-lab"
-    | "/docs"
-    | "/flashcards"
-    | "/interview"
-    | "/journal"
-    | "/learn"
-    | "/mastery"
-    | "/mentor"
-    | "/playground"
-    | "/practice"
-    | "/progress"
-    | "/projects"
-    | "/quizzes"
-    | "/resources"
-    | "/settings"
-    | "/statistics"
-    | "/whiteboard"
-    | "/assessment/$pathId"
-    | "/certificate/$certificateId"
-    | "/debug-lab/$bugId"
-    | "/interview/session"
-    | "/learn/lessons"
-    | "/learn/modules"
-    | "/learn/paths"
-    | "/learn/topics"
-    | "/lesson/$lessonId"
-    | "/projects/$projectId"
-    | "/quizzes/$quizId"
-    | "/learn/"
-    | "/learn/modules/$moduleId"
-    | "/learn/topics/$topicId";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/about'
+    | '/achievements'
+    | '/analytics'
+    | '/assessment-test'
+    | '/bookmarks'
+    | '/calendar'
+    | '/certificates'
+    | '/challenges'
+    | '/debug-lab'
+    | '/docs'
+    | '/flashcards'
+    | '/interview'
+    | '/journal'
+    | '/learn'
+    | '/mastery'
+    | '/mentor'
+    | '/playground'
+    | '/practice'
+    | '/progress'
+    | '/projects'
+    | '/quizzes'
+    | '/resources'
+    | '/settings'
+    | '/statistics'
+    | '/whiteboard'
+    | '/assessment/$pathId'
+    | '/certificate/$certificateId'
+    | '/debug-lab/$bugId'
+    | '/interview/session'
+    | '/learn/lessons'
+    | '/learn/paths'
+    | '/lesson/$lessonId'
+    | '/projects/$projectId'
+    | '/quizzes/$quizId'
+    | '/debug-lab/'
+    | '/learn/'
+    | '/projects/'
+    | '/quizzes/'
+    | '/learn/modules/$moduleId'
+    | '/learn/topics/$topicId'
+    | '/learn/modules/'
+    | '/learn/topics/'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/about"
-    | "/achievements"
-    | "/analytics"
-    | "/assessment-test"
-    | "/bookmarks"
-    | "/calendar"
-    | "/certificates"
-    | "/challenges"
-    | "/debug-lab"
-    | "/docs"
-    | "/flashcards"
-    | "/interview"
-    | "/journal"
-    | "/mastery"
-    | "/mentor"
-    | "/playground"
-    | "/practice"
-    | "/progress"
-    | "/projects"
-    | "/quizzes"
-    | "/resources"
-    | "/settings"
-    | "/statistics"
-    | "/whiteboard"
-    | "/assessment/$pathId"
-    | "/certificate/$certificateId"
-    | "/debug-lab/$bugId"
-    | "/interview/session"
-    | "/learn/lessons"
-    | "/learn/modules"
-    | "/learn/paths"
-    | "/learn/topics"
-    | "/lesson/$lessonId"
-    | "/projects/$projectId"
-    | "/quizzes/$quizId"
-    | "/learn"
-    | "/learn/modules/$moduleId"
-    | "/learn/topics/$topicId";
+    | '/'
+    | '/about'
+    | '/achievements'
+    | '/analytics'
+    | '/assessment-test'
+    | '/bookmarks'
+    | '/calendar'
+    | '/certificates'
+    | '/challenges'
+    | '/docs'
+    | '/flashcards'
+    | '/interview'
+    | '/journal'
+    | '/mastery'
+    | '/mentor'
+    | '/playground'
+    | '/practice'
+    | '/progress'
+    | '/resources'
+    | '/settings'
+    | '/statistics'
+    | '/whiteboard'
+    | '/assessment/$pathId'
+    | '/certificate/$certificateId'
+    | '/debug-lab/$bugId'
+    | '/interview/session'
+    | '/learn/lessons'
+    | '/learn/paths'
+    | '/lesson/$lessonId'
+    | '/projects/$projectId'
+    | '/quizzes/$quizId'
+    | '/debug-lab'
+    | '/learn'
+    | '/projects'
+    | '/quizzes'
+    | '/learn/modules/$moduleId'
+    | '/learn/topics/$topicId'
+    | '/learn/modules'
+    | '/learn/topics'
   id:
-    | "__root__"
-    | "/"
-    | "/about"
-    | "/achievements"
-    | "/analytics"
-    | "/assessment-test"
-    | "/bookmarks"
-    | "/calendar"
-    | "/certificates"
-    | "/challenges"
-    | "/debug-lab"
-    | "/docs"
-    | "/flashcards"
-    | "/interview"
-    | "/journal"
-    | "/learn"
-    | "/mastery"
-    | "/mentor"
-    | "/playground"
-    | "/practice"
-    | "/progress"
-    | "/projects"
-    | "/quizzes"
-    | "/resources"
-    | "/settings"
-    | "/statistics"
-    | "/whiteboard"
-    | "/assessment/$pathId"
-    | "/certificate/$certificateId"
-    | "/debug-lab/$bugId"
-    | "/interview/session"
-    | "/learn/lessons"
-    | "/learn/modules"
-    | "/learn/paths"
-    | "/learn/topics"
-    | "/lesson/$lessonId"
-    | "/projects/$projectId"
-    | "/quizzes/$quizId"
-    | "/learn/"
-    | "/learn/modules/$moduleId"
-    | "/learn/topics/$topicId";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/achievements'
+    | '/analytics'
+    | '/assessment-test'
+    | '/bookmarks'
+    | '/calendar'
+    | '/certificates'
+    | '/challenges'
+    | '/debug-lab'
+    | '/docs'
+    | '/flashcards'
+    | '/interview'
+    | '/journal'
+    | '/learn'
+    | '/mastery'
+    | '/mentor'
+    | '/playground'
+    | '/practice'
+    | '/progress'
+    | '/projects'
+    | '/quizzes'
+    | '/resources'
+    | '/settings'
+    | '/statistics'
+    | '/whiteboard'
+    | '/assessment/$pathId'
+    | '/certificate/$certificateId'
+    | '/debug-lab/$bugId'
+    | '/interview/session'
+    | '/learn/lessons'
+    | '/learn/paths'
+    | '/lesson/$lessonId'
+    | '/projects/$projectId'
+    | '/quizzes/$quizId'
+    | '/debug-lab/'
+    | '/learn/'
+    | '/projects/'
+    | '/quizzes/'
+    | '/learn/modules/$moduleId'
+    | '/learn/topics/$topicId'
+    | '/learn/modules/'
+    | '/learn/topics/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AboutRoute: typeof AboutRoute;
-  AchievementsRoute: typeof AchievementsRoute;
-  AnalyticsRoute: typeof AnalyticsRoute;
-  AssessmentTestRoute: typeof AssessmentTestRoute;
-  BookmarksRoute: typeof BookmarksRoute;
-  CalendarRoute: typeof CalendarRoute;
-  CertificatesRoute: typeof CertificatesRoute;
-  ChallengesRoute: typeof ChallengesRoute;
-  DebugLabRoute: typeof DebugLabRouteWithChildren;
-  DocsRoute: typeof DocsRoute;
-  FlashcardsRoute: typeof FlashcardsRoute;
-  InterviewRoute: typeof InterviewRouteWithChildren;
-  JournalRoute: typeof JournalRoute;
-  LearnRoute: typeof LearnRouteWithChildren;
-  MasteryRoute: typeof MasteryRoute;
-  MentorRoute: typeof MentorRoute;
-  PlaygroundRoute: typeof PlaygroundRoute;
-  PracticeRoute: typeof PracticeRoute;
-  ProgressRoute: typeof ProgressRoute;
-  ProjectsRoute: typeof ProjectsRouteWithChildren;
-  QuizzesRoute: typeof QuizzesRouteWithChildren;
-  ResourcesRoute: typeof ResourcesRoute;
-  SettingsRoute: typeof SettingsRoute;
-  StatisticsRoute: typeof StatisticsRoute;
-  WhiteboardRoute: typeof WhiteboardRoute;
-  AssessmentPathIdRoute: typeof AssessmentPathIdRoute;
-  CertificateCertificateIdRoute: typeof CertificateCertificateIdRoute;
-  LessonLessonIdRoute: typeof LessonLessonIdRoute;
+  IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AchievementsRoute: typeof AchievementsRoute
+  AnalyticsRoute: typeof AnalyticsRoute
+  AssessmentTestRoute: typeof AssessmentTestRoute
+  BookmarksRoute: typeof BookmarksRoute
+  CalendarRoute: typeof CalendarRoute
+  CertificatesRoute: typeof CertificatesRoute
+  ChallengesRoute: typeof ChallengesRoute
+  DebugLabRoute: typeof DebugLabRouteWithChildren
+  DocsRoute: typeof DocsRoute
+  FlashcardsRoute: typeof FlashcardsRoute
+  InterviewRoute: typeof InterviewRouteWithChildren
+  JournalRoute: typeof JournalRoute
+  LearnRoute: typeof LearnRouteWithChildren
+  MasteryRoute: typeof MasteryRoute
+  MentorRoute: typeof MentorRoute
+  PlaygroundRoute: typeof PlaygroundRoute
+  PracticeRoute: typeof PracticeRoute
+  ProgressRoute: typeof ProgressRoute
+  ProjectsRoute: typeof ProjectsRouteWithChildren
+  QuizzesRoute: typeof QuizzesRouteWithChildren
+  ResourcesRoute: typeof ResourcesRoute
+  SettingsRoute: typeof SettingsRoute
+  StatisticsRoute: typeof StatisticsRoute
+  WhiteboardRoute: typeof WhiteboardRoute
+  AssessmentPathIdRoute: typeof AssessmentPathIdRoute
+  CertificateCertificateIdRoute: typeof CertificateCertificateIdRoute
+  LessonLessonIdRoute: typeof LessonLessonIdRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/about": {
-      id: "/about";
-      path: "/about";
-      fullPath: "/about";
-      preLoaderRoute: typeof AboutRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/achievements": {
-      id: "/achievements";
-      path: "/achievements";
-      fullPath: "/achievements";
-      preLoaderRoute: typeof AchievementsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/analytics": {
-      id: "/analytics";
-      path: "/analytics";
-      fullPath: "/analytics";
-      preLoaderRoute: typeof AnalyticsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/assessment-test": {
-      id: "/assessment-test";
-      path: "/assessment-test";
-      fullPath: "/assessment-test";
-      preLoaderRoute: typeof AssessmentTestRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/bookmarks": {
-      id: "/bookmarks";
-      path: "/bookmarks";
-      fullPath: "/bookmarks";
-      preLoaderRoute: typeof BookmarksRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/calendar": {
-      id: "/calendar";
-      path: "/calendar";
-      fullPath: "/calendar";
-      preLoaderRoute: typeof CalendarRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/certificates": {
-      id: "/certificates";
-      path: "/certificates";
-      fullPath: "/certificates";
-      preLoaderRoute: typeof CertificatesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/challenges": {
-      id: "/challenges";
-      path: "/challenges";
-      fullPath: "/challenges";
-      preLoaderRoute: typeof ChallengesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/debug-lab": {
-      id: "/debug-lab";
-      path: "/debug-lab";
-      fullPath: "/debug-lab";
-      preLoaderRoute: typeof DebugLabRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/docs": {
-      id: "/docs";
-      path: "/docs";
-      fullPath: "/docs";
-      preLoaderRoute: typeof DocsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/flashcards": {
-      id: "/flashcards";
-      path: "/flashcards";
-      fullPath: "/flashcards";
-      preLoaderRoute: typeof FlashcardsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/interview": {
-      id: "/interview";
-      path: "/interview";
-      fullPath: "/interview";
-      preLoaderRoute: typeof InterviewRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/journal": {
-      id: "/journal";
-      path: "/journal";
-      fullPath: "/journal";
-      preLoaderRoute: typeof JournalRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/learn": {
-      id: "/learn";
-      path: "/learn";
-      fullPath: "/learn";
-      preLoaderRoute: typeof LearnRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/mastery": {
-      id: "/mastery";
-      path: "/mastery";
-      fullPath: "/mastery";
-      preLoaderRoute: typeof MasteryRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/mentor": {
-      id: "/mentor";
-      path: "/mentor";
-      fullPath: "/mentor";
-      preLoaderRoute: typeof MentorRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/playground": {
-      id: "/playground";
-      path: "/playground";
-      fullPath: "/playground";
-      preLoaderRoute: typeof PlaygroundRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/practice": {
-      id: "/practice";
-      path: "/practice";
-      fullPath: "/practice";
-      preLoaderRoute: typeof PracticeRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/progress": {
-      id: "/progress";
-      path: "/progress";
-      fullPath: "/progress";
-      preLoaderRoute: typeof ProgressRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/projects": {
-      id: "/projects";
-      path: "/projects";
-      fullPath: "/projects";
-      preLoaderRoute: typeof ProjectsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/quizzes": {
-      id: "/quizzes";
-      path: "/quizzes";
-      fullPath: "/quizzes";
-      preLoaderRoute: typeof QuizzesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/resources": {
-      id: "/resources";
-      path: "/resources";
-      fullPath: "/resources";
-      preLoaderRoute: typeof ResourcesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/settings": {
-      id: "/settings";
-      path: "/settings";
-      fullPath: "/settings";
-      preLoaderRoute: typeof SettingsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/statistics": {
-      id: "/statistics";
-      path: "/statistics";
-      fullPath: "/statistics";
-      preLoaderRoute: typeof StatisticsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/whiteboard": {
-      id: "/whiteboard";
-      path: "/whiteboard";
-      fullPath: "/whiteboard";
-      preLoaderRoute: typeof WhiteboardRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/assessment/$pathId": {
-      id: "/assessment/$pathId";
-      path: "/assessment/$pathId";
-      fullPath: "/assessment/$pathId";
-      preLoaderRoute: typeof AssessmentPathIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/certificate/$certificateId": {
-      id: "/certificate/$certificateId";
-      path: "/certificate/$certificateId";
-      fullPath: "/certificate/$certificateId";
-      preLoaderRoute: typeof CertificateCertificateIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/debug-lab/$bugId": {
-      id: "/debug-lab/$bugId";
-      path: "/$bugId";
-      fullPath: "/debug-lab/$bugId";
-      preLoaderRoute: typeof DebugLabBugIdRouteImport;
-      parentRoute: typeof DebugLabRoute;
-    };
-    "/interview/session": {
-      id: "/interview/session";
-      path: "/session";
-      fullPath: "/interview/session";
-      preLoaderRoute: typeof InterviewSessionRouteImport;
-      parentRoute: typeof InterviewRoute;
-    };
-    "/learn/": {
-      id: "/learn/";
-      path: "/";
-      fullPath: "/learn/";
-      preLoaderRoute: typeof LearnIndexRouteImport;
-      parentRoute: typeof LearnRoute;
-    };
-    "/learn/lessons": {
-      id: "/learn/lessons";
-      path: "/lessons";
-      fullPath: "/learn/lessons";
-      preLoaderRoute: typeof LearnLessonsRouteImport;
-      parentRoute: typeof LearnRoute;
-    };
-    "/learn/modules": {
-      id: "/learn/modules";
-      path: "/modules";
-      fullPath: "/learn/modules";
-      preLoaderRoute: typeof LearnModulesRouteImport;
-      parentRoute: typeof LearnRoute;
-    };
-    "/learn/paths": {
-      id: "/learn/paths";
-      path: "/paths";
-      fullPath: "/learn/paths";
-      preLoaderRoute: typeof LearnPathsRouteImport;
-      parentRoute: typeof LearnRoute;
-    };
-    "/learn/topics": {
-      id: "/learn/topics";
-      path: "/topics";
-      fullPath: "/learn/topics";
-      preLoaderRoute: typeof LearnTopicsRouteImport;
-      parentRoute: typeof LearnRoute;
-    };
-    "/lesson/$lessonId": {
-      id: "/lesson/$lessonId";
-      path: "/lesson/$lessonId";
-      fullPath: "/lesson/$lessonId";
-      preLoaderRoute: typeof LessonLessonIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/projects/$projectId": {
-      id: "/projects/$projectId";
-      path: "/$projectId";
-      fullPath: "/projects/$projectId";
-      preLoaderRoute: typeof ProjectsProjectIdRouteImport;
-      parentRoute: typeof ProjectsRoute;
-    };
-    "/quizzes/$quizId": {
-      id: "/quizzes/$quizId";
-      path: "/$quizId";
-      fullPath: "/quizzes/$quizId";
-      preLoaderRoute: typeof QuizzesQuizIdRouteImport;
-      parentRoute: typeof QuizzesRoute;
-    };
-    "/learn/modules/$moduleId": {
-      id: "/learn/modules/$moduleId";
-      path: "/$moduleId";
-      fullPath: "/learn/modules/$moduleId";
-      preLoaderRoute: typeof LearnModulesModuleIdRouteImport;
-      parentRoute: typeof LearnModulesRoute;
-    };
-    "/learn/topics/$topicId": {
-      id: "/learn/topics/$topicId";
-      path: "/$topicId";
-      fullPath: "/learn/topics/$topicId";
-      preLoaderRoute: typeof LearnTopicsTopicIdRouteImport;
-      parentRoute: typeof LearnTopicsRoute;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/achievements': {
+      id: '/achievements'
+      path: '/achievements'
+      fullPath: '/achievements'
+      preLoaderRoute: typeof AchievementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assessment-test': {
+      id: '/assessment-test'
+      path: '/assessment-test'
+      fullPath: '/assessment-test'
+      preLoaderRoute: typeof AssessmentTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookmarks': {
+      id: '/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/bookmarks'
+      preLoaderRoute: typeof BookmarksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/certificates': {
+      id: '/certificates'
+      path: '/certificates'
+      fullPath: '/certificates'
+      preLoaderRoute: typeof CertificatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenges': {
+      id: '/challenges'
+      path: '/challenges'
+      fullPath: '/challenges'
+      preLoaderRoute: typeof ChallengesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/debug-lab': {
+      id: '/debug-lab'
+      path: '/debug-lab'
+      fullPath: '/debug-lab'
+      preLoaderRoute: typeof DebugLabRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flashcards': {
+      id: '/flashcards'
+      path: '/flashcards'
+      fullPath: '/flashcards'
+      preLoaderRoute: typeof FlashcardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interview': {
+      id: '/interview'
+      path: '/interview'
+      fullPath: '/interview'
+      preLoaderRoute: typeof InterviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mastery': {
+      id: '/mastery'
+      path: '/mastery'
+      fullPath: '/mastery'
+      preLoaderRoute: typeof MasteryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentor': {
+      id: '/mentor'
+      path: '/mentor'
+      fullPath: '/mentor'
+      preLoaderRoute: typeof MentorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/playground': {
+      id: '/playground'
+      path: '/playground'
+      fullPath: '/playground'
+      preLoaderRoute: typeof PlaygroundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/practice': {
+      id: '/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof PracticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress': {
+      id: '/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quizzes': {
+      id: '/quizzes'
+      path: '/quizzes'
+      fullPath: '/quizzes'
+      preLoaderRoute: typeof QuizzesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/statistics': {
+      id: '/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof StatisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/whiteboard': {
+      id: '/whiteboard'
+      path: '/whiteboard'
+      fullPath: '/whiteboard'
+      preLoaderRoute: typeof WhiteboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assessment/$pathId': {
+      id: '/assessment/$pathId'
+      path: '/assessment/$pathId'
+      fullPath: '/assessment/$pathId'
+      preLoaderRoute: typeof AssessmentPathIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/certificate/$certificateId': {
+      id: '/certificate/$certificateId'
+      path: '/certificate/$certificateId'
+      fullPath: '/certificate/$certificateId'
+      preLoaderRoute: typeof CertificateCertificateIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/debug-lab/': {
+      id: '/debug-lab/'
+      path: '/'
+      fullPath: '/debug-lab/'
+      preLoaderRoute: typeof DebugLabIndexRouteImport
+      parentRoute: typeof DebugLabRoute
+    }
+    '/debug-lab/$bugId': {
+      id: '/debug-lab/$bugId'
+      path: '/$bugId'
+      fullPath: '/debug-lab/$bugId'
+      preLoaderRoute: typeof DebugLabBugIdRouteImport
+      parentRoute: typeof DebugLabRoute
+    }
+    '/interview/session': {
+      id: '/interview/session'
+      path: '/session'
+      fullPath: '/interview/session'
+      preLoaderRoute: typeof InterviewSessionRouteImport
+      parentRoute: typeof InterviewRoute
+    }
+    '/learn/': {
+      id: '/learn/'
+      path: '/'
+      fullPath: '/learn/'
+      preLoaderRoute: typeof LearnIndexRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/lessons': {
+      id: '/learn/lessons'
+      path: '/lessons'
+      fullPath: '/learn/lessons'
+      preLoaderRoute: typeof LearnLessonsRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/paths': {
+      id: '/learn/paths'
+      path: '/paths'
+      fullPath: '/learn/paths'
+      preLoaderRoute: typeof LearnPathsRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/lesson/$lessonId': {
+      id: '/lesson/$lessonId'
+      path: '/lesson/$lessonId'
+      fullPath: '/lesson/$lessonId'
+      preLoaderRoute: typeof LessonLessonIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof ProjectsRoute
+    }
+    '/projects/$projectId': {
+      id: '/projects/$projectId'
+      path: '/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof ProjectsProjectIdRouteImport
+      parentRoute: typeof ProjectsRoute
+    }
+    '/quizzes/': {
+      id: '/quizzes/'
+      path: '/'
+      fullPath: '/quizzes/'
+      preLoaderRoute: typeof QuizzesIndexRouteImport
+      parentRoute: typeof QuizzesRoute
+    }
+    '/quizzes/$quizId': {
+      id: '/quizzes/$quizId'
+      path: '/$quizId'
+      fullPath: '/quizzes/$quizId'
+      preLoaderRoute: typeof QuizzesQuizIdRouteImport
+      parentRoute: typeof QuizzesRoute
+    }
+    '/learn/modules/': {
+      id: '/learn/modules/'
+      path: '/modules'
+      fullPath: '/learn/modules/'
+      preLoaderRoute: typeof LearnModulesIndexRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/modules/$moduleId': {
+      id: '/learn/modules/$moduleId'
+      path: '/modules/$moduleId'
+      fullPath: '/learn/modules/$moduleId'
+      preLoaderRoute: typeof LearnModulesModuleIdRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/topics/': {
+      id: '/learn/topics/'
+      path: '/topics'
+      fullPath: '/learn/topics/'
+      preLoaderRoute: typeof LearnTopicsIndexRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/topics/$topicId': {
+      id: '/learn/topics/$topicId'
+      path: '/topics/$topicId'
+      fullPath: '/learn/topics/$topicId'
+      preLoaderRoute: typeof LearnTopicsTopicIdRouteImport
+      parentRoute: typeof LearnRoute
+    }
   }
 }
 
 interface DebugLabRouteChildren {
-  DebugLabBugIdRoute: typeof DebugLabBugIdRoute;
+  DebugLabBugIdRoute: typeof DebugLabBugIdRoute
+  DebugLabIndexRoute: typeof DebugLabIndexRoute
 }
 
 const DebugLabRouteChildren: DebugLabRouteChildren = {
   DebugLabBugIdRoute: DebugLabBugIdRoute,
-};
+  DebugLabIndexRoute: DebugLabIndexRoute,
+}
 
-const DebugLabRouteWithChildren = DebugLabRoute._addFileChildren(DebugLabRouteChildren);
+const DebugLabRouteWithChildren = DebugLabRoute._addFileChildren(
+  DebugLabRouteChildren,
+)
 
 interface InterviewRouteChildren {
-  InterviewSessionRoute: typeof InterviewSessionRoute;
+  InterviewSessionRoute: typeof InterviewSessionRoute
 }
 
 const InterviewRouteChildren: InterviewRouteChildren = {
   InterviewSessionRoute: InterviewSessionRoute,
-};
-
-const InterviewRouteWithChildren = InterviewRoute._addFileChildren(InterviewRouteChildren);
-
-interface LearnModulesRouteChildren {
-  LearnModulesModuleIdRoute: typeof LearnModulesModuleIdRoute;
 }
 
-const LearnModulesRouteChildren: LearnModulesRouteChildren = {
-  LearnModulesModuleIdRoute: LearnModulesModuleIdRoute,
-};
-
-const LearnModulesRouteWithChildren = LearnModulesRoute._addFileChildren(LearnModulesRouteChildren);
-
-interface LearnTopicsRouteChildren {
-  LearnTopicsTopicIdRoute: typeof LearnTopicsTopicIdRoute;
-}
-
-const LearnTopicsRouteChildren: LearnTopicsRouteChildren = {
-  LearnTopicsTopicIdRoute: LearnTopicsTopicIdRoute,
-};
-
-const LearnTopicsRouteWithChildren = LearnTopicsRoute._addFileChildren(LearnTopicsRouteChildren);
+const InterviewRouteWithChildren = InterviewRoute._addFileChildren(
+  InterviewRouteChildren,
+)
 
 interface LearnRouteChildren {
-  LearnLessonsRoute: typeof LearnLessonsRoute;
-  LearnModulesRoute: typeof LearnModulesRouteWithChildren;
-  LearnPathsRoute: typeof LearnPathsRoute;
-  LearnTopicsRoute: typeof LearnTopicsRouteWithChildren;
-  LearnIndexRoute: typeof LearnIndexRoute;
+  LearnLessonsRoute: typeof LearnLessonsRoute
+  LearnPathsRoute: typeof LearnPathsRoute
+  LearnIndexRoute: typeof LearnIndexRoute
+  LearnModulesModuleIdRoute: typeof LearnModulesModuleIdRoute
+  LearnTopicsTopicIdRoute: typeof LearnTopicsTopicIdRoute
+  LearnModulesIndexRoute: typeof LearnModulesIndexRoute
+  LearnTopicsIndexRoute: typeof LearnTopicsIndexRoute
 }
 
 const LearnRouteChildren: LearnRouteChildren = {
   LearnLessonsRoute: LearnLessonsRoute,
-  LearnModulesRoute: LearnModulesRouteWithChildren,
   LearnPathsRoute: LearnPathsRoute,
-  LearnTopicsRoute: LearnTopicsRouteWithChildren,
   LearnIndexRoute: LearnIndexRoute,
-};
+  LearnModulesModuleIdRoute: LearnModulesModuleIdRoute,
+  LearnTopicsTopicIdRoute: LearnTopicsTopicIdRoute,
+  LearnModulesIndexRoute: LearnModulesIndexRoute,
+  LearnTopicsIndexRoute: LearnTopicsIndexRoute,
+}
 
-const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren);
+const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren)
 
 interface ProjectsRouteChildren {
-  ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute;
+  ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
 const ProjectsRouteChildren: ProjectsRouteChildren = {
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
-};
+  ProjectsIndexRoute: ProjectsIndexRoute,
+}
 
-const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(ProjectsRouteChildren);
+const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
+  ProjectsRouteChildren,
+)
 
 interface QuizzesRouteChildren {
-  QuizzesQuizIdRoute: typeof QuizzesQuizIdRoute;
+  QuizzesQuizIdRoute: typeof QuizzesQuizIdRoute
+  QuizzesIndexRoute: typeof QuizzesIndexRoute
 }
 
 const QuizzesRouteChildren: QuizzesRouteChildren = {
   QuizzesQuizIdRoute: QuizzesQuizIdRoute,
-};
+  QuizzesIndexRoute: QuizzesIndexRoute,
+}
 
-const QuizzesRouteWithChildren = QuizzesRoute._addFileChildren(QuizzesRouteChildren);
+const QuizzesRouteWithChildren =
+  QuizzesRoute._addFileChildren(QuizzesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -930,17 +979,17 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentPathIdRoute: AssessmentPathIdRoute,
   CertificateCertificateIdRoute: CertificateCertificateIdRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx";
-import type { startInstance } from "./start.ts";
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true;
-    router: Awaited<ReturnType<typeof getRouter>>;
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>;
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

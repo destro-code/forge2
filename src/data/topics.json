@@ -8,9 +8,7 @@
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
     "prerequisites": [],
-    "next": [
-      "how-the-web-works"
-    ],
+    "next": ["how-the-web-works"],
     "related": [],
     "order": 1
   },
@@ -22,12 +20,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "what-is-frontend-development"
-    ],
-    "next": [
-      "what-happens-when-you-click-a-link"
-    ],
+    "prerequisites": ["what-is-frontend-development"],
+    "next": ["what-happens-when-you-click-a-link"],
     "related": [],
     "order": 2
   },
@@ -39,12 +33,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "how-the-web-works"
-    ],
-    "next": [
-      "browser-server-and-client"
-    ],
+    "prerequisites": ["how-the-web-works"],
+    "next": ["browser-server-and-client"],
     "related": [],
     "order": 3
   },
@@ -56,12 +46,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "what-happens-when-you-click-a-link"
-    ],
-    "next": [
-      "how-forge-works"
-    ],
+    "prerequisites": ["what-happens-when-you-click-a-link"],
+    "next": ["how-forge-works"],
     "related": [],
     "order": 4
   },
@@ -73,13 +59,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "browser-server-and-client"
-    ],
-    "next": [
-      "meet-your-browser-devtools",
-      "html-the-structure-of-the-web"
-    ],
+    "prerequisites": ["browser-server-and-client"],
+    "next": ["meet-your-browser-devtools", "html-the-structure-of-the-web"],
     "related": [],
     "order": 5
   },
@@ -91,12 +72,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "how-forge-works"
-    ],
-    "next": [
-      "inspecting-html-with-elements"
-    ],
+    "prerequisites": ["how-forge-works"],
+    "next": ["inspecting-html-with-elements"],
     "related": [],
     "order": 1
   },
@@ -108,12 +85,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "meet-your-browser-devtools"
-    ],
-    "next": [
-      "understanding-the-console"
-    ],
+    "prerequisites": ["meet-your-browser-devtools"],
+    "next": ["understanding-the-console"],
     "related": [],
     "order": 2
   },
@@ -125,12 +98,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "inspecting-html-with-elements"
-    ],
-    "next": [
-      "understanding-network-requests"
-    ],
+    "prerequisites": ["inspecting-html-with-elements"],
+    "next": ["understanding-network-requests"],
     "related": [],
     "order": 3
   },
@@ -142,12 +111,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "understanding-the-console"
-    ],
-    "next": [
-      "your-first-debugging-exercise"
-    ],
+    "prerequisites": ["understanding-the-console"],
+    "next": ["your-first-debugging-exercise"],
     "related": [],
     "order": 4
   },
@@ -159,12 +124,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "understanding-network-requests"
-    ],
-    "next": [
-      "html-the-structure-of-the-web"
-    ],
+    "prerequisites": ["understanding-network-requests"],
+    "next": ["html-the-structure-of-the-web"],
     "related": [],
     "order": 5
   },
@@ -176,13 +137,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "how-forge-works",
-      "your-first-debugging-exercise"
-    ],
-    "next": [
-      "elements-tags-and-attributes"
-    ],
+    "prerequisites": ["how-forge-works", "your-first-debugging-exercise"],
+    "next": ["elements-tags-and-attributes"],
     "related": [],
     "order": 1
   },
@@ -194,12 +150,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "html-the-structure-of-the-web"
-    ],
-    "next": [
-      "headings-paragraphs-and-text"
-    ],
+    "prerequisites": ["html-the-structure-of-the-web"],
+    "next": ["headings-paragraphs-and-text"],
     "related": [],
     "order": 2
   },
@@ -211,12 +163,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "elements-tags-and-attributes"
-    ],
-    "next": [
-      "links-images-and-paths"
-    ],
+    "prerequisites": ["elements-tags-and-attributes"],
+    "next": ["links-images-and-paths"],
     "related": [],
     "order": 3
   },
@@ -228,12 +176,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "headings-paragraphs-and-text"
-    ],
-    "next": [
-      "lists-and-tables"
-    ],
+    "prerequisites": ["headings-paragraphs-and-text"],
+    "next": ["lists-and-tables"],
     "related": [],
     "order": 4
   },
@@ -245,12 +189,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "links-images-and-paths"
-    ],
-    "next": [
-      "forms-and-user-input"
-    ],
+    "prerequisites": ["links-images-and-paths"],
+    "next": ["forms-and-user-input"],
     "related": [],
     "order": 5
   },
@@ -262,12 +202,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "lists-and-tables"
-    ],
-    "next": [
-      "semantic-html"
-    ],
+    "prerequisites": ["lists-and-tables"],
+    "next": ["semantic-html"],
     "related": [],
     "order": 6
   },
@@ -279,9 +215,7 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "forms-and-user-input"
-    ],
+    "prerequisites": ["forms-and-user-input"],
     "next": [
       "html-challenge-build-a-real-page",
       "why-accessibility-matters",
@@ -298,12 +232,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "semantic-html"
-    ],
-    "next": [
-      "what-is-css"
-    ],
+    "prerequisites": ["semantic-html"],
+    "next": ["what-is-css"],
     "related": [],
     "order": 8
   },
@@ -315,12 +245,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "html-challenge-build-a-real-page"
-    ],
-    "next": [
-      "selectors-and-specificity"
-    ],
+    "prerequisites": ["html-challenge-build-a-real-page"],
+    "next": ["selectors-and-specificity"],
     "related": [],
     "order": 1
   },
@@ -332,12 +258,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "what-is-css"
-    ],
-    "next": [
-      "the-cascade-and-inheritance"
-    ],
+    "prerequisites": ["what-is-css"],
+    "next": ["the-cascade-and-inheritance"],
     "related": [],
     "order": 2
   },
@@ -349,12 +271,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "selectors-and-specificity"
-    ],
-    "next": [
-      "css-box-model"
-    ],
+    "prerequisites": ["selectors-and-specificity"],
+    "next": ["css-box-model"],
     "related": [],
     "order": 3
   },
@@ -366,12 +284,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "the-cascade-and-inheritance"
-    ],
-    "next": [
-      "spacing-sizing-and-layout"
-    ],
+    "prerequisites": ["the-cascade-and-inheritance"],
+    "next": ["spacing-sizing-and-layout"],
     "related": [],
     "order": 4
   },
@@ -383,12 +297,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "css-box-model"
-    ],
-    "next": [
-      "css-typography-and-text"
-    ],
+    "prerequisites": ["css-box-model"],
+    "next": ["css-typography-and-text"],
     "related": [],
     "order": 5
   },
@@ -400,12 +310,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "spacing-sizing-and-layout"
-    ],
-    "next": [
-      "colors-backgrounds-and-borders"
-    ],
+    "prerequisites": ["spacing-sizing-and-layout"],
+    "next": ["colors-backgrounds-and-borders"],
     "related": [],
     "order": 6
   },
@@ -417,12 +323,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "css-typography-and-text"
-    ],
-    "next": [
-      "css-display-and-normal-flow"
-    ],
+    "prerequisites": ["css-typography-and-text"],
+    "next": ["css-display-and-normal-flow"],
     "related": [],
     "order": 7
   },
@@ -434,12 +336,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "colors-backgrounds-and-borders"
-    ],
-    "next": [
-      "css-flexbox"
-    ],
+    "prerequisites": ["colors-backgrounds-and-borders"],
+    "next": ["css-flexbox"],
     "related": [],
     "order": 8
   },
@@ -451,12 +349,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "css-display-and-normal-flow"
-    ],
-    "next": [
-      "css-grid"
-    ],
+    "prerequisites": ["css-display-and-normal-flow"],
+    "next": ["css-grid"],
     "related": [],
     "order": 9
   },
@@ -468,12 +362,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "css-flexbox"
-    ],
-    "next": [
-      "responsive-design-and-media-queries"
-    ],
+    "prerequisites": ["css-flexbox"],
+    "next": ["responsive-design-and-media-queries"],
     "related": [],
     "order": 10
   },
@@ -485,12 +375,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "css-grid"
-    ],
-    "next": [
-      "css-challenge-build-a-responsive-interface"
-    ],
+    "prerequisites": ["css-grid"],
+    "next": ["css-challenge-build-a-responsive-interface"],
     "related": [],
     "order": 11
   },
@@ -502,9 +388,7 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "responsive-design-and-media-queries"
-    ],
+    "prerequisites": ["responsive-design-and-media-queries"],
     "next": [],
     "related": [],
     "order": 12
@@ -518,9 +402,7 @@
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
     "prerequisites": [],
-    "next": [
-      "variables-and-values"
-    ],
+    "next": ["variables-and-values"],
     "related": [],
     "order": 1
   },
@@ -532,12 +414,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "javascript-and-the-browser"
-    ],
-    "next": [
-      "data-types-and-operators"
-    ],
+    "prerequisites": ["javascript-and-the-browser"],
+    "next": ["data-types-and-operators"],
     "related": [],
     "order": 2
   },
@@ -549,12 +427,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "variables-and-values"
-    ],
-    "next": [
-      "conditions-and-decisions"
-    ],
+    "prerequisites": ["variables-and-values"],
+    "next": ["conditions-and-decisions"],
     "related": [],
     "order": 3
   },
@@ -566,12 +440,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "data-types-and-operators"
-    ],
-    "next": [
-      "loops-and-repetition"
-    ],
+    "prerequisites": ["data-types-and-operators"],
+    "next": ["loops-and-repetition"],
     "related": [],
     "order": 4
   },
@@ -583,13 +453,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "conditions-and-decisions"
-    ],
-    "next": [
-      "functions",
-      "arrays"
-    ],
+    "prerequisites": ["conditions-and-decisions"],
+    "next": ["functions", "arrays"],
     "related": [],
     "order": 5
   },
@@ -601,13 +466,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "loops-and-repetition"
-    ],
-    "next": [
-      "arrays",
-      "unit-tests"
-    ],
+    "prerequisites": ["loops-and-repetition"],
+    "next": ["arrays", "unit-tests"],
     "related": [],
     "order": 6
   },
@@ -619,13 +479,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "loops-and-repetition",
-      "functions"
-    ],
-    "next": [
-      "objects"
-    ],
+    "prerequisites": ["loops-and-repetition", "functions"],
+    "next": ["objects"],
     "related": [],
     "order": 7
   },
@@ -637,12 +492,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "arrays"
-    ],
-    "next": [
-      "javascript-mini-project"
-    ],
+    "prerequisites": ["arrays"],
+    "next": ["javascript-mini-project"],
     "related": [],
     "order": 8
   },
@@ -654,12 +505,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 60,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "objects"
-    ],
-    "next": [
-      "understanding-browser-rendering"
-    ],
+    "prerequisites": ["objects"],
+    "next": ["understanding-browser-rendering"],
     "related": [],
     "order": 9
   },
@@ -671,12 +518,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "javascript-mini-project"
-    ],
-    "next": [
-      "reading-javascript-errors"
-    ],
+    "prerequisites": ["javascript-mini-project"],
+    "next": ["reading-javascript-errors"],
     "related": [],
     "order": 1
   },
@@ -688,12 +531,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "understanding-browser-rendering"
-    ],
-    "next": [
-      "console-debugging"
-    ],
+    "prerequisites": ["understanding-browser-rendering"],
+    "next": ["console-debugging"],
     "related": [],
     "order": 2
   },
@@ -705,12 +544,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "reading-javascript-errors"
-    ],
-    "next": [
-      "debugging-dom-problems"
-    ],
+    "prerequisites": ["reading-javascript-errors"],
+    "next": ["debugging-dom-problems"],
     "related": [],
     "order": 3
   },
@@ -722,12 +557,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "console-debugging"
-    ],
-    "next": [
-      "debug-challenge-fix-the-broken-page"
-    ],
+    "prerequisites": ["console-debugging"],
+    "next": ["debug-challenge-fix-the-broken-page"],
     "related": [],
     "order": 4
   },
@@ -739,12 +570,8 @@
     "difficulty": "Beginner",
     "estimatedMinutes": 45,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "debugging-dom-problems"
-    ],
-    "next": [
-      "advanced-flexbox"
-    ],
+    "prerequisites": ["debugging-dom-problems"],
+    "next": ["advanced-flexbox"],
     "related": [],
     "order": 5
   },
@@ -756,12 +583,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "debug-challenge-fix-the-broken-page"
-    ],
-    "next": [
-      "advanced-css-grid"
-    ],
+    "prerequisites": ["debug-challenge-fix-the-broken-page"],
+    "next": ["advanced-css-grid"],
     "related": [],
     "order": 1
   },
@@ -773,12 +596,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "advanced-flexbox"
-    ],
-    "next": [
-      "positioning-and-layering"
-    ],
+    "prerequisites": ["advanced-flexbox"],
+    "next": ["positioning-and-layering"],
     "related": [],
     "order": 2
   },
@@ -790,12 +609,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "advanced-css-grid"
-    ],
-    "next": [
-      "transitions-and-animations"
-    ],
+    "prerequisites": ["advanced-css-grid"],
+    "next": ["transitions-and-animations"],
     "related": [],
     "order": 3
   },
@@ -807,12 +622,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "positioning-and-layering"
-    ],
-    "next": [
-      "css-architecture"
-    ],
+    "prerequisites": ["positioning-and-layering"],
+    "next": ["css-architecture"],
     "related": [],
     "order": 4
   },
@@ -824,12 +635,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "transitions-and-animations"
-    ],
-    "next": [
-      "design-tokens-and-design-systems"
-    ],
+    "prerequisites": ["transitions-and-animations"],
+    "next": ["design-tokens-and-design-systems"],
     "related": [],
     "order": 5
   },
@@ -841,12 +648,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "css-architecture"
-    ],
-    "next": [
-      "advanced-responsive-design"
-    ],
+    "prerequisites": ["css-architecture"],
+    "next": ["advanced-responsive-design"],
     "related": [],
     "order": 6
   },
@@ -858,12 +661,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "design-tokens-and-design-systems"
-    ],
-    "next": [
-      "scope-and-hoisting"
-    ],
+    "prerequisites": ["design-tokens-and-design-systems"],
+    "next": ["scope-and-hoisting"],
     "related": [],
     "order": 7
   },
@@ -875,13 +674,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "advanced-responsive-design"
-    ],
-    "next": [
-      "closures",
-      "why-typescript"
-    ],
+    "prerequisites": ["advanced-responsive-design"],
+    "next": ["closures", "why-typescript"],
     "related": [],
     "order": 1
   },
@@ -893,13 +687,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "scope-and-hoisting"
-    ],
-    "next": [
-      "the-this-keyword",
-      "use-effect"
-    ],
+    "prerequisites": ["scope-and-hoisting"],
+    "next": ["the-this-keyword", "use-effect"],
     "related": [],
     "order": 2
   },
@@ -911,12 +700,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "closures"
-    ],
-    "next": [
-      "destructuring-and-spread"
-    ],
+    "prerequisites": ["closures"],
+    "next": ["destructuring-and-spread"],
     "related": [],
     "order": 3
   },
@@ -928,12 +713,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "the-this-keyword"
-    ],
-    "next": [
-      "array-methods"
-    ],
+    "prerequisites": ["the-this-keyword"],
+    "next": ["array-methods"],
     "related": [],
     "order": 4
   },
@@ -945,12 +726,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "destructuring-and-spread"
-    ],
-    "next": [
-      "modules-and-imports"
-    ],
+    "prerequisites": ["destructuring-and-spread"],
+    "next": ["modules-and-imports"],
     "related": [],
     "order": 5
   },
@@ -962,12 +739,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "array-methods"
-    ],
-    "next": [
-      "promises"
-    ],
+    "prerequisites": ["array-methods"],
+    "next": ["promises"],
     "related": [],
     "order": 6
   },
@@ -979,13 +752,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "modules-and-imports"
-    ],
-    "next": [
-      "async-and-await",
-      "working-with-fetch"
-    ],
+    "prerequisites": ["modules-and-imports"],
+    "next": ["async-and-await", "working-with-fetch"],
     "related": [],
     "order": 7
   },
@@ -997,13 +765,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "promises"
-    ],
-    "next": [
-      "error-handling",
-      "working-with-fetch"
-    ],
+    "prerequisites": ["promises"],
+    "next": ["error-handling", "working-with-fetch"],
     "related": [],
     "order": 8
   },
@@ -1015,12 +778,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "async-and-await"
-    ],
-    "next": [
-      "modern-javascript-challenge"
-    ],
+    "prerequisites": ["async-and-await"],
+    "next": ["modern-javascript-challenge"],
     "related": [],
     "order": 9
   },
@@ -1032,12 +791,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 60,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "error-handling"
-    ],
-    "next": [
-      "why-version-control-exists"
-    ],
+    "prerequisites": ["error-handling"],
+    "next": ["why-version-control-exists"],
     "related": [],
     "order": 10
   },
@@ -1049,12 +804,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 20,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "modern-javascript-challenge"
-    ],
-    "next": [
-      "git-fundamentals"
-    ],
+    "prerequisites": ["modern-javascript-challenge"],
+    "next": ["git-fundamentals"],
     "related": [],
     "order": 1
   },
@@ -1066,12 +817,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "why-version-control-exists"
-    ],
-    "next": [
-      "branches"
-    ],
+    "prerequisites": ["why-version-control-exists"],
+    "next": ["branches"],
     "related": [],
     "order": 2
   },
@@ -1083,12 +830,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "git-fundamentals"
-    ],
-    "next": [
-      "pull-requests"
-    ],
+    "prerequisites": ["git-fundamentals"],
+    "next": ["pull-requests"],
     "related": [],
     "order": 3
   },
@@ -1100,12 +843,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "branches"
-    ],
-    "next": [
-      "merge-conflicts"
-    ],
+    "prerequisites": ["branches"],
+    "next": ["merge-conflicts"],
     "related": [],
     "order": 4
   },
@@ -1117,12 +856,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "pull-requests"
-    ],
-    "next": [
-      "professional-git-workflow"
-    ],
+    "prerequisites": ["pull-requests"],
+    "next": ["professional-git-workflow"],
     "related": [],
     "order": 5
   },
@@ -1134,12 +869,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "merge-conflicts"
-    ],
-    "next": [
-      "what-is-an-api"
-    ],
+    "prerequisites": ["merge-conflicts"],
+    "next": ["what-is-an-api"],
     "related": [],
     "order": 6
   },
@@ -1151,12 +882,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "professional-git-workflow"
-    ],
-    "next": [
-      "http-requests-and-responses"
-    ],
+    "prerequisites": ["professional-git-workflow"],
+    "next": ["http-requests-and-responses"],
     "related": [],
     "order": 1
   },
@@ -1168,12 +895,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "what-is-an-api"
-    ],
-    "next": [
-      "json"
-    ],
+    "prerequisites": ["what-is-an-api"],
+    "next": ["json"],
     "related": [],
     "order": 2
   },
@@ -1185,12 +908,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "http-requests-and-responses"
-    ],
-    "next": [
-      "http-status-codes"
-    ],
+    "prerequisites": ["http-requests-and-responses"],
+    "next": ["http-status-codes"],
     "related": [],
     "order": 3
   },
@@ -1202,12 +921,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "json"
-    ],
-    "next": [
-      "http-methods"
-    ],
+    "prerequisites": ["json"],
+    "next": ["http-methods"],
     "related": [],
     "order": 4
   },
@@ -1219,12 +934,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "http-status-codes"
-    ],
-    "next": [
-      "loading-error-empty-states"
-    ],
+    "prerequisites": ["http-status-codes"],
+    "next": ["loading-error-empty-states"],
     "related": [],
     "order": 5
   },
@@ -1236,12 +947,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "http-methods"
-    ],
-    "next": [
-      "working-with-fetch"
-    ],
+    "prerequisites": ["http-methods"],
+    "next": ["working-with-fetch"],
     "related": [],
     "order": 6
   },
@@ -1253,16 +960,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "loading-error-empty-states",
-      "promises",
-      "async-and-await"
-    ],
-    "next": [
-      "api-integration-project",
-      "integration-tests",
-      "typing-real-world-data"
-    ],
+    "prerequisites": ["loading-error-empty-states", "promises", "async-and-await"],
+    "next": ["api-integration-project", "integration-tests", "typing-real-world-data"],
     "related": [],
     "order": 7
   },
@@ -1274,12 +973,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 60,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "working-with-fetch"
-    ],
-    "next": [
-      "why-typescript"
-    ],
+    "prerequisites": ["working-with-fetch"],
+    "next": ["why-typescript"],
     "related": [],
     "order": 8
   },
@@ -1292,9 +987,7 @@
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "jsx"
-    ],
+    "next": ["jsx"],
     "related": [],
     "order": 1
   },
@@ -1306,12 +999,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "why-react"
-    ],
-    "next": [
-      "components"
-    ],
+    "prerequisites": ["why-react"],
+    "next": ["components"],
     "related": [],
     "order": 2
   },
@@ -1323,13 +1012,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "jsx"
-    ],
-    "next": [
-      "props",
-      "component-tests"
-    ],
+    "prerequisites": ["jsx"],
+    "next": ["props", "component-tests"],
     "related": [],
     "order": 3
   },
@@ -1341,12 +1025,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "components"
-    ],
-    "next": [
-      "state"
-    ],
+    "prerequisites": ["components"],
+    "next": ["state"],
     "related": [],
     "order": 4
   },
@@ -1358,12 +1038,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "props"
-    ],
-    "next": [
-      "conditional-rendering"
-    ],
+    "prerequisites": ["props"],
+    "next": ["conditional-rendering"],
     "related": [],
     "order": 5
   },
@@ -1375,12 +1051,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "state"
-    ],
-    "next": [
-      "lists-and-keys"
-    ],
+    "prerequisites": ["state"],
+    "next": ["lists-and-keys"],
     "related": [],
     "order": 6
   },
@@ -1392,12 +1064,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "conditional-rendering"
-    ],
-    "next": [
-      "react-mini-project"
-    ],
+    "prerequisites": ["conditional-rendering"],
+    "next": ["react-mini-project"],
     "related": [],
     "order": 7
   },
@@ -1409,13 +1077,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 75,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "lists-and-keys"
-    ],
-    "next": [
-      "events-in-react",
-      "thinking-in-components"
-    ],
+    "prerequisites": ["lists-and-keys"],
+    "next": ["events-in-react", "thinking-in-components"],
     "related": [],
     "order": 8
   },
@@ -1427,12 +1090,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "react-mini-project"
-    ],
-    "next": [
-      "controlled-inputs"
-    ],
+    "prerequisites": ["react-mini-project"],
+    "next": ["controlled-inputs"],
     "related": [],
     "order": 1
   },
@@ -1444,12 +1103,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "events-in-react"
-    ],
-    "next": [
-      "forms-and-validation"
-    ],
+    "prerequisites": ["events-in-react"],
+    "next": ["forms-and-validation"],
     "related": [],
     "order": 2
   },
@@ -1461,12 +1116,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "controlled-inputs"
-    ],
-    "next": [
-      "use-effect"
-    ],
+    "prerequisites": ["controlled-inputs"],
+    "next": ["use-effect"],
     "related": [],
     "order": 3
   },
@@ -1478,13 +1129,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "forms-and-validation",
-      "closures"
-    ],
-    "next": [
-      "side-effects-and-cleanup"
-    ],
+    "prerequisites": ["forms-and-validation", "closures"],
+    "next": ["side-effects-and-cleanup"],
     "related": [],
     "order": 4
   },
@@ -1496,12 +1142,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "use-effect"
-    ],
-    "next": [
-      "fetching-data-in-react"
-    ],
+    "prerequisites": ["use-effect"],
+    "next": ["fetching-data-in-react"],
     "related": [],
     "order": 5
   },
@@ -1513,12 +1155,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "side-effects-and-cleanup"
-    ],
-    "next": [
-      "react-interaction-challenge"
-    ],
+    "prerequisites": ["side-effects-and-cleanup"],
+    "next": ["react-interaction-challenge"],
     "related": [],
     "order": 6
   },
@@ -1530,12 +1168,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 60,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "fetching-data-in-react"
-    ],
-    "next": [
-      "thinking-in-components"
-    ],
+    "prerequisites": ["fetching-data-in-react"],
+    "next": ["thinking-in-components"],
     "related": [],
     "order": 7
   },
@@ -1547,13 +1181,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "react-mini-project",
-      "react-interaction-challenge"
-    ],
-    "next": [
-      "props-vs-state"
-    ],
+    "prerequisites": ["react-mini-project", "react-interaction-challenge"],
+    "next": ["props-vs-state"],
     "related": [],
     "order": 1
   },
@@ -1565,12 +1194,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "thinking-in-components"
-    ],
-    "next": [
-      "lifting-state-up"
-    ],
+    "prerequisites": ["thinking-in-components"],
+    "next": ["lifting-state-up"],
     "related": [],
     "order": 2
   },
@@ -1582,12 +1207,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "props-vs-state"
-    ],
-    "next": [
-      "composition"
-    ],
+    "prerequisites": ["props-vs-state"],
+    "next": ["composition"],
     "related": [],
     "order": 3
   },
@@ -1599,9 +1220,7 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "lifting-state-up"
-    ],
+    "prerequisites": ["lifting-state-up"],
     "next": [],
     "related": [],
     "order": 4
@@ -1641,9 +1260,7 @@
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "routes-and-navigation"
-    ],
+    "next": ["routes-and-navigation"],
     "related": [],
     "order": 1
   },
@@ -1655,12 +1272,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "why-applications-need-routing"
-    ],
-    "next": [
-      "dynamic-routes"
-    ],
+    "prerequisites": ["why-applications-need-routing"],
+    "next": ["dynamic-routes"],
     "related": [],
     "order": 2
   },
@@ -1672,12 +1285,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "routes-and-navigation"
-    ],
-    "next": [
-      "nested-routes"
-    ],
+    "prerequisites": ["routes-and-navigation"],
+    "next": ["nested-routes"],
     "related": [],
     "order": 3
   },
@@ -1689,12 +1298,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "dynamic-routes"
-    ],
-    "next": [
-      "navigation-state"
-    ],
+    "prerequisites": ["dynamic-routes"],
+    "next": ["navigation-state"],
     "related": [],
     "order": 4
   },
@@ -1706,12 +1311,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "nested-routes"
-    ],
-    "next": [
-      "build-a-multi-page-react-app"
-    ],
+    "prerequisites": ["nested-routes"],
+    "next": ["build-a-multi-page-react-app"],
     "related": [],
     "order": 5
   },
@@ -1723,9 +1324,7 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 80,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "navigation-state"
-    ],
+    "prerequisites": ["navigation-state"],
     "next": [],
     "related": [],
     "order": 6
@@ -1739,9 +1338,7 @@
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "when-global-state-is-actually-needed"
-    ],
+    "next": ["when-global-state-is-actually-needed"],
     "related": [],
     "order": 1
   },
@@ -1753,12 +1350,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "local-vs-global-state"
-    ],
-    "next": [
-      "zustand-fundamentals"
-    ],
+    "prerequisites": ["local-vs-global-state"],
+    "next": ["zustand-fundamentals"],
     "related": [],
     "order": 2
   },
@@ -1770,12 +1363,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "when-global-state-is-actually-needed"
-    ],
-    "next": [
-      "persisted-state"
-    ],
+    "prerequisites": ["when-global-state-is-actually-needed"],
+    "next": ["persisted-state"],
     "related": [],
     "order": 3
   },
@@ -1787,12 +1376,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "zustand-fundamentals"
-    ],
-    "next": [
-      "derived-state-and-selectors"
-    ],
+    "prerequisites": ["zustand-fundamentals"],
+    "next": ["derived-state-and-selectors"],
     "related": [],
     "order": 4
   },
@@ -1804,12 +1389,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "persisted-state"
-    ],
-    "next": [
-      "designing-application-state"
-    ],
+    "prerequisites": ["persisted-state"],
+    "next": ["designing-application-state"],
     "related": [],
     "order": 5
   },
@@ -1821,12 +1402,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 50,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "derived-state-and-selectors"
-    ],
-    "next": [
-      "state-management-project"
-    ],
+    "prerequisites": ["derived-state-and-selectors"],
+    "next": ["state-management-project"],
     "related": [],
     "order": 6
   },
@@ -1838,12 +1415,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 70,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "designing-application-state"
-    ],
-    "next": [
-      "client-side-data-flow"
-    ],
+    "prerequisites": ["designing-application-state"],
+    "next": ["client-side-data-flow"],
     "related": [],
     "order": 7
   },
@@ -1855,12 +1428,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "state-management-project"
-    ],
-    "next": [
-      "caching-and-synchronization"
-    ],
+    "prerequisites": ["state-management-project"],
+    "next": ["caching-and-synchronization"],
     "related": [],
     "order": 1
   },
@@ -1872,12 +1441,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "client-side-data-flow"
-    ],
-    "next": [
-      "loading-states-and-skeletons"
-    ],
+    "prerequisites": ["client-side-data-flow"],
+    "next": ["loading-states-and-skeletons"],
     "related": [],
     "order": 2
   },
@@ -1889,12 +1454,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "caching-and-synchronization"
-    ],
-    "next": [
-      "retries-and-error-states"
-    ],
+    "prerequisites": ["caching-and-synchronization"],
+    "next": ["retries-and-error-states"],
     "related": [],
     "order": 3
   },
@@ -1906,13 +1467,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "loading-states-and-skeletons"
-    ],
-    "next": [
-      "data-normalization",
-      "graceful-failure"
-    ],
+    "prerequisites": ["loading-states-and-skeletons"],
+    "next": ["data-normalization", "graceful-failure"],
     "related": [],
     "order": 4
   },
@@ -1924,12 +1480,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "retries-and-error-states"
-    ],
-    "next": [
-      "building-resilient-interfaces"
-    ],
+    "prerequisites": ["retries-and-error-states"],
+    "next": ["building-resilient-interfaces"],
     "related": [],
     "order": 5
   },
@@ -1941,12 +1493,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "data-normalization"
-    ],
-    "next": [
-      "production-data-project"
-    ],
+    "prerequisites": ["data-normalization"],
+    "next": ["production-data-project"],
     "related": [],
     "order": 6
   },
@@ -1958,9 +1506,7 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 80,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "building-resilient-interfaces"
-    ],
+    "prerequisites": ["building-resilient-interfaces"],
     "next": [],
     "related": [],
     "order": 7
@@ -1974,9 +1520,7 @@
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "unit-tests"
-    ],
+    "next": ["unit-tests"],
     "related": [],
     "order": 1
   },
@@ -1988,12 +1532,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "capstone-accessibility-audit"
-    ],
-    "next": [
-      "rendering-and-re-renders"
-    ],
+    "prerequisites": ["capstone-accessibility-audit"],
+    "next": ["rendering-and-re-renders"],
     "related": [],
     "order": 1
   },
@@ -2005,12 +1545,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "what-makes-a-web-app-slow"
-    ],
-    "next": [
-      "memoization"
-    ],
+    "prerequisites": ["what-makes-a-web-app-slow"],
+    "next": ["memoization"],
     "related": [],
     "order": 2
   },
@@ -2022,12 +1558,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "rendering-and-re-renders"
-    ],
-    "next": [
-      "code-splitting-and-lazy-loading"
-    ],
+    "prerequisites": ["rendering-and-re-renders"],
+    "next": ["code-splitting-and-lazy-loading"],
     "related": [],
     "order": 3
   },
@@ -2039,12 +1571,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "memoization"
-    ],
-    "next": [
-      "error-boundaries"
-    ],
+    "prerequisites": ["memoization"],
+    "next": ["error-boundaries"],
     "related": [],
     "order": 4
   },
@@ -2056,12 +1584,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 70,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "graceful-failure"
-    ],
-    "next": [
-      "image-and-asset-optimization"
-    ],
+    "prerequisites": ["graceful-failure"],
+    "next": ["image-and-asset-optimization"],
     "related": [],
     "order": 7
   },
@@ -2074,9 +1598,7 @@
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "scalable-folder-structures"
-    ],
+    "next": ["scalable-folder-structures"],
     "related": [],
     "order": 1
   },
@@ -2088,12 +1610,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "why-architecture-matters"
-    ],
-    "next": [
-      "feature-based-architecture"
-    ],
+    "prerequisites": ["why-architecture-matters"],
+    "next": ["feature-based-architecture"],
     "related": [],
     "order": 2
   },
@@ -2105,12 +1623,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "scalable-folder-structures"
-    ],
-    "next": [
-      "shared-logic-vs-page-logic"
-    ],
+    "prerequisites": ["scalable-folder-structures"],
+    "next": ["shared-logic-vs-page-logic"],
     "related": [],
     "order": 3
   },
@@ -2122,12 +1636,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "feature-based-architecture"
-    ],
-    "next": [
-      "designing-boundaries"
-    ],
+    "prerequisites": ["feature-based-architecture"],
+    "next": ["designing-boundaries"],
     "related": [],
     "order": 4
   },
@@ -2139,12 +1649,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "shared-logic-vs-page-logic"
-    ],
-    "next": [
-      "architecture-tradeoffs"
-    ],
+    "prerequisites": ["shared-logic-vs-page-logic"],
+    "next": ["architecture-tradeoffs"],
     "related": [],
     "order": 5
   },
@@ -2156,12 +1662,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 50,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "designing-boundaries"
-    ],
-    "next": [
-      "architecture-review-challenge"
-    ],
+    "prerequisites": ["designing-boundaries"],
+    "next": ["architecture-review-challenge"],
     "related": [],
     "order": 6
   },
@@ -2173,12 +1675,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 80,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "architecture-tradeoffs"
-    ],
-    "next": [
-      "custom-hooks"
-    ],
+    "prerequisites": ["architecture-tradeoffs"],
+    "next": ["custom-hooks"],
     "related": [],
     "order": 7
   },
@@ -2190,13 +1688,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "architecture-review-challenge"
-    ],
-    "next": [
-      "composition-patterns",
-      "capstone-pattern-workshop"
-    ],
+    "prerequisites": ["architecture-review-challenge"],
+    "next": ["composition-patterns", "capstone-pattern-workshop"],
     "related": [],
     "order": 1
   },
@@ -2208,13 +1701,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "custom-hooks"
-    ],
-    "next": [
-      "compound-components",
-      "capstone-pattern-workshop"
-    ],
+    "prerequisites": ["custom-hooks"],
+    "next": ["compound-components", "capstone-pattern-workshop"],
     "related": [],
     "order": 2
   },
@@ -2226,13 +1714,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "composition-patterns"
-    ],
-    "next": [
-      "controlled-and-uncontrolled-components",
-      "capstone-pattern-workshop"
-    ],
+    "prerequisites": ["composition-patterns"],
+    "next": ["controlled-and-uncontrolled-components", "capstone-pattern-workshop"],
     "related": [],
     "order": 3
   },
@@ -2244,13 +1727,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "compound-components"
-    ],
-    "next": [
-      "reusable-state-logic",
-      "capstone-pattern-workshop"
-    ],
+    "prerequisites": ["compound-components"],
+    "next": ["reusable-state-logic", "capstone-pattern-workshop"],
     "related": [],
     "order": 4
   },
@@ -2262,12 +1740,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "controlled-and-uncontrolled-components"
-    ],
-    "next": [
-      "capstone-pattern-workshop"
-    ],
+    "prerequisites": ["controlled-and-uncontrolled-components"],
+    "next": ["capstone-pattern-workshop"],
     "related": [],
     "order": 5
   },
@@ -2279,12 +1753,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "capstone-pattern-workshop"
-    ],
-    "next": [
-      "finding-the-real-source-of-a-bug"
-    ],
+    "prerequisites": ["capstone-pattern-workshop"],
+    "next": ["finding-the-real-source-of-a-bug"],
     "related": [],
     "order": 1
   },
@@ -2296,12 +1766,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "reading-stack-traces"
-    ],
-    "next": [
-      "debugging-async-problems"
-    ],
+    "prerequisites": ["reading-stack-traces"],
+    "next": ["debugging-async-problems"],
     "related": [],
     "order": 2
   },
@@ -2313,12 +1779,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "finding-the-real-source-of-a-bug"
-    ],
-    "next": [
-      "debugging-state-problems"
-    ],
+    "prerequisites": ["finding-the-real-source-of-a-bug"],
+    "next": ["debugging-state-problems"],
     "related": [],
     "order": 3
   },
@@ -2330,12 +1792,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "debugging-async-problems"
-    ],
-    "next": [
-      "debugging-performance-problems"
-    ],
+    "prerequisites": ["debugging-async-problems"],
+    "next": ["debugging-performance-problems"],
     "related": [],
     "order": 4
   },
@@ -2347,12 +1805,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "debugging-state-problems"
-    ],
-    "next": [
-      "the-app-is-broken-now-what"
-    ],
+    "prerequisites": ["debugging-state-problems"],
+    "next": ["the-app-is-broken-now-what"],
     "related": [],
     "order": 5
   },
@@ -2364,12 +1818,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "debugging-performance-problems"
-    ],
-    "next": [
-      "senior-debugging-challenge"
-    ],
+    "prerequisites": ["debugging-performance-problems"],
+    "next": ["senior-debugging-challenge"],
     "related": [],
     "order": 6
   },
@@ -2381,9 +1831,7 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 100,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "the-app-is-broken-now-what"
-    ],
+    "prerequisites": ["the-app-is-broken-now-what"],
     "next": [],
     "related": [],
     "order": 7
@@ -2396,12 +1844,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "how-to-explain-what-you-know"
-    ],
-    "next": [
-      "frontend-interview-fundamentals"
-    ],
+    "prerequisites": ["how-to-explain-what-you-know"],
+    "next": ["frontend-interview-fundamentals"],
     "related": [],
     "order": 2
   },
@@ -2413,12 +1857,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "explaining-technical-tradeoffs"
-    ],
-    "next": [
-      "javascript-interview-challenges"
-    ],
+    "prerequisites": ["explaining-technical-tradeoffs"],
+    "next": ["javascript-interview-challenges"],
     "related": [],
     "order": 3
   },
@@ -2430,12 +1870,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 50,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "frontend-interview-fundamentals"
-    ],
-    "next": [
-      "react-interview-challenges"
-    ],
+    "prerequisites": ["frontend-interview-fundamentals"],
+    "next": ["react-interview-challenges"],
     "related": [],
     "order": 4
   },
@@ -2447,12 +1883,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 50,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "javascript-interview-challenges"
-    ],
-    "next": [
-      "debugging-under-time-pressure"
-    ],
+    "prerequisites": ["javascript-interview-challenges"],
+    "next": ["debugging-under-time-pressure"],
     "related": [],
     "order": 5
   },
@@ -2464,12 +1896,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "react-interview-challenges"
-    ],
-    "next": [
-      "behavioral-and-star-responses"
-    ],
+    "prerequisites": ["react-interview-challenges"],
+    "next": ["behavioral-and-star-responses"],
     "related": [],
     "order": 6
   },
@@ -2481,12 +1909,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "debugging-under-time-pressure"
-    ],
-    "next": [
-      "full-mock-interview"
-    ],
+    "prerequisites": ["debugging-under-time-pressure"],
+    "next": ["full-mock-interview"],
     "related": [],
     "order": 7
   },
@@ -2498,12 +1922,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 90,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "behavioral-and-star-responses"
-    ],
-    "next": [
-      "reading-a-real-product-specification"
-    ],
+    "prerequisites": ["behavioral-and-star-responses"],
+    "next": ["reading-a-real-product-specification"],
     "related": [],
     "order": 8
   },
@@ -2515,12 +1935,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 40,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "full-mock-interview"
-    ],
-    "next": [
-      "breaking-a-product-into-features"
-    ],
+    "prerequisites": ["full-mock-interview"],
+    "next": ["breaking-a-product-into-features"],
     "related": [],
     "order": 1
   },
@@ -2532,12 +1948,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "reading-a-real-product-specification"
-    ],
-    "next": [
-      "planning-the-architecture"
-    ],
+    "prerequisites": ["reading-a-real-product-specification"],
+    "next": ["planning-the-architecture"],
     "related": [],
     "order": 2
   },
@@ -2549,12 +1961,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "breaking-a-product-into-features"
-    ],
-    "next": [
-      "building-the-interface"
-    ],
+    "prerequisites": ["breaking-a-product-into-features"],
+    "next": ["building-the-interface"],
     "related": [],
     "order": 3
   },
@@ -2566,12 +1974,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 90,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "planning-the-architecture"
-    ],
-    "next": [
-      "connecting-data-and-interactions"
-    ],
+    "prerequisites": ["planning-the-architecture"],
+    "next": ["connecting-data-and-interactions"],
     "related": [],
     "order": 4
   },
@@ -2583,12 +1987,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 75,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "building-the-interface"
-    ],
-    "next": [
-      "testing-and-debugging"
-    ],
+    "prerequisites": ["building-the-interface"],
+    "next": ["testing-and-debugging"],
     "related": [],
     "order": 5
   },
@@ -2600,12 +2000,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 60,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "connecting-data-and-interactions"
-    ],
-    "next": [
-      "performance-and-accessibility-review"
-    ],
+    "prerequisites": ["connecting-data-and-interactions"],
+    "next": ["performance-and-accessibility-review"],
     "related": [],
     "order": 6
   },
@@ -2617,12 +2013,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 60,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "testing-and-debugging"
-    ],
-    "next": [
-      "ship-it"
-    ],
+    "prerequisites": ["testing-and-debugging"],
+    "next": ["ship-it"],
     "related": [],
     "order": 7
   },
@@ -2634,12 +2026,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 45,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "performance-and-accessibility-review"
-    ],
-    "next": [
-      "present-and-defend-your-project"
-    ],
+    "prerequisites": ["performance-and-accessibility-review"],
+    "next": ["present-and-defend-your-project"],
     "related": [],
     "order": 8
   },
@@ -2651,9 +2039,7 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 60,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "ship-it"
-    ],
+    "prerequisites": ["ship-it"],
     "next": [],
     "related": [],
     "order": 9
@@ -2666,14 +2052,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "why-we-test",
-      "functions"
-    ],
-    "next": [
-      "component-tests",
-      "capstone-test-suite"
-    ],
+    "prerequisites": ["why-we-test", "functions"],
+    "next": ["component-tests", "capstone-test-suite"],
     "related": [],
     "order": 2
   },
@@ -2685,14 +2065,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "unit-tests",
-      "components"
-    ],
-    "next": [
-      "integration-tests",
-      "capstone-test-suite"
-    ],
+    "prerequisites": ["unit-tests", "components"],
+    "next": ["integration-tests", "capstone-test-suite"],
     "related": [],
     "order": 3
   },
@@ -2704,14 +2078,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "component-tests",
-      "working-with-fetch"
-    ],
-    "next": [
-      "testing-user-behaviour",
-      "capstone-test-suite"
-    ],
+    "prerequisites": ["component-tests", "working-with-fetch"],
+    "next": ["testing-user-behaviour", "capstone-test-suite"],
     "related": [],
     "order": 4
   },
@@ -2723,12 +2091,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "integration-tests"
-    ],
-    "next": [
-      "capstone-test-suite"
-    ],
+    "prerequisites": ["integration-tests"],
+    "next": ["capstone-test-suite"],
     "related": [],
     "order": 5
   },
@@ -2758,13 +2122,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "semantic-html"
-    ],
-    "next": [
-      "semantic-interfaces",
-      "capstone-accessibility-audit"
-    ],
+    "prerequisites": ["semantic-html"],
+    "next": ["semantic-interfaces", "capstone-accessibility-audit"],
     "related": [],
     "order": 1
   },
@@ -2776,10 +2135,7 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "why-accessibility-matters",
-      "semantic-html"
-    ],
+    "prerequisites": ["why-accessibility-matters", "semantic-html"],
     "next": [
       "keyboard-navigation",
       "labels-roles-accessible-names",
@@ -2796,13 +2152,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "semantic-interfaces"
-    ],
-    "next": [
-      "focus-management",
-      "capstone-accessibility-audit"
-    ],
+    "prerequisites": ["semantic-interfaces"],
+    "next": ["focus-management", "capstone-accessibility-audit"],
     "related": [],
     "order": 3
   },
@@ -2814,12 +2165,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "keyboard-navigation"
-    ],
-    "next": [
-      "capstone-accessibility-audit"
-    ],
+    "prerequisites": ["keyboard-navigation"],
+    "next": ["capstone-accessibility-audit"],
     "related": [],
     "order": 4
   },
@@ -2831,12 +2178,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "semantic-interfaces"
-    ],
-    "next": [
-      "capstone-accessibility-audit"
-    ],
+    "prerequisites": ["semantic-interfaces"],
+    "next": ["capstone-accessibility-audit"],
     "related": [],
     "order": 5
   },
@@ -2855,9 +2198,7 @@
       "focus-management",
       "labels-roles-accessible-names"
     ],
-    "next": [
-      "what-makes-a-web-app-slow"
-    ],
+    "next": ["what-makes-a-web-app-slow"],
     "related": [],
     "order": 6
   },
@@ -2876,9 +2217,7 @@
       "controlled-and-uncontrolled-components",
       "reusable-state-logic"
     ],
-    "next": [
-      "reading-stack-traces"
-    ],
+    "next": ["reading-stack-traces"],
     "related": [],
     "order": 6
   },
@@ -2891,9 +2230,7 @@
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
     "prerequisites": [],
-    "next": [
-      "explaining-technical-tradeoffs"
-    ],
+    "next": ["explaining-technical-tradeoffs"],
     "related": [],
     "order": 1
   },
@@ -2905,12 +2242,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "code-splitting-and-lazy-loading"
-    ],
-    "next": [
-      "graceful-failure"
-    ],
+    "prerequisites": ["code-splitting-and-lazy-loading"],
+    "next": ["graceful-failure"],
     "related": [],
     "order": 5
   },
@@ -2922,13 +2255,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "error-boundaries",
-      "retries-and-error-states"
-    ],
-    "next": [
-      "performance-investigation-challenge"
-    ],
+    "prerequisites": ["error-boundaries", "retries-and-error-states"],
+    "next": ["performance-investigation-challenge"],
     "related": [],
     "order": 6
   },
@@ -2940,12 +2268,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "performance-investigation-challenge"
-    ],
-    "next": [
-      "performance-measurement-and-budgets"
-    ],
+    "prerequisites": ["performance-investigation-challenge"],
+    "next": ["performance-measurement-and-budgets"],
     "related": [],
     "order": 8
   },
@@ -2957,12 +2281,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "image-and-asset-optimization"
-    ],
-    "next": [
-      "rendering-strategy-and-performance"
-    ],
+    "prerequisites": ["image-and-asset-optimization"],
+    "next": ["rendering-strategy-and-performance"],
     "related": [],
     "order": 9
   },
@@ -2974,14 +2294,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 20,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "api-integration-project",
-      "scope-and-hoisting"
-    ],
-    "next": [
-      "basic-types",
-      "capstone-convert-js-to-typescript"
-    ],
+    "prerequisites": ["api-integration-project", "scope-and-hoisting"],
+    "next": ["basic-types", "capstone-convert-js-to-typescript"],
     "related": [],
     "order": 1
   },
@@ -2993,13 +2307,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "why-typescript"
-    ],
-    "next": [
-      "interfaces-and-type-aliases",
-      "capstone-convert-js-to-typescript"
-    ],
+    "prerequisites": ["why-typescript"],
+    "next": ["interfaces-and-type-aliases", "capstone-convert-js-to-typescript"],
     "related": [],
     "order": 2
   },
@@ -3011,13 +2320,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "basic-types"
-    ],
-    "next": [
-      "typing-functions",
-      "capstone-convert-js-to-typescript"
-    ],
+    "prerequisites": ["basic-types"],
+    "next": ["typing-functions", "capstone-convert-js-to-typescript"],
     "related": [],
     "order": 3
   },
@@ -3029,13 +2333,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 25,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "interfaces-and-type-aliases"
-    ],
-    "next": [
-      "union-types-and-narrowing",
-      "capstone-convert-js-to-typescript"
-    ],
+    "prerequisites": ["interfaces-and-type-aliases"],
+    "next": ["union-types-and-narrowing", "capstone-convert-js-to-typescript"],
     "related": [],
     "order": 4
   },
@@ -3047,13 +2346,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "typing-functions"
-    ],
-    "next": [
-      "generics-fundamentals",
-      "capstone-convert-js-to-typescript"
-    ],
+    "prerequisites": ["typing-functions"],
+    "next": ["generics-fundamentals", "capstone-convert-js-to-typescript"],
     "related": [],
     "order": 5
   },
@@ -3065,13 +2359,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "union-types-and-narrowing"
-    ],
-    "next": [
-      "typing-real-world-data",
-      "capstone-convert-js-to-typescript"
-    ],
+    "prerequisites": ["union-types-and-narrowing"],
+    "next": ["typing-real-world-data", "capstone-convert-js-to-typescript"],
     "related": [],
     "order": 6
   },
@@ -3083,13 +2372,8 @@
     "difficulty": "Intermediate",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "generics-fundamentals",
-      "working-with-fetch"
-    ],
-    "next": [
-      "capstone-convert-js-to-typescript"
-    ],
+    "prerequisites": ["generics-fundamentals", "working-with-fetch"],
+    "next": ["capstone-convert-js-to-typescript"],
     "related": [],
     "order": 7
   },
@@ -3123,10 +2407,7 @@
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "xss-and-input-sanitization",
-      "capstone-security-audit"
-    ],
+    "next": ["xss-and-input-sanitization", "capstone-security-audit"],
     "related": [],
     "order": 1
   },
@@ -3138,9 +2419,7 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "why-frontend-security-matters"
-    ],
+    "prerequisites": ["why-frontend-security-matters"],
     "next": [
       "csrf-and-same-origin-policy",
       "auth-patterns-and-token-storage",
@@ -3157,14 +2436,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 25,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "xss-and-input-sanitization"
-    ],
-    "next": [
-      "cors-in-practice",
-      "auth-patterns-and-token-storage",
-      "capstone-security-audit"
-    ],
+    "prerequisites": ["xss-and-input-sanitization"],
+    "next": ["cors-in-practice", "auth-patterns-and-token-storage", "capstone-security-audit"],
     "related": [],
     "order": 3
   },
@@ -3176,12 +2449,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "csrf-and-same-origin-policy"
-    ],
-    "next": [
-      "capstone-security-audit"
-    ],
+    "prerequisites": ["csrf-and-same-origin-policy"],
+    "next": ["capstone-security-audit"],
     "related": [],
     "order": 4
   },
@@ -3193,13 +2462,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "xss-and-input-sanitization",
-      "csrf-and-same-origin-policy"
-    ],
-    "next": [
-      "capstone-security-audit"
-    ],
+    "prerequisites": ["xss-and-input-sanitization", "csrf-and-same-origin-policy"],
+    "next": ["capstone-security-audit"],
     "related": [],
     "order": 5
   },
@@ -3231,10 +2495,7 @@
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
     "prerequisites": [],
-    "next": [
-      "app-router-fundamentals",
-      "capstone-build-and-deploy-nextjs-feature"
-    ],
+    "next": ["app-router-fundamentals", "capstone-build-and-deploy-nextjs-feature"],
     "related": [],
     "order": 1
   },
@@ -3246,13 +2507,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "Medium",
-    "prerequisites": [
-      "why-meta-frameworks"
-    ],
-    "next": [
-      "server-components-vs-client-components",
-      "capstone-build-and-deploy-nextjs-feature"
-    ],
+    "prerequisites": ["why-meta-frameworks"],
+    "next": ["server-components-vs-client-components", "capstone-build-and-deploy-nextjs-feature"],
     "related": [],
     "order": 2
   },
@@ -3264,13 +2520,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "app-router-fundamentals"
-    ],
-    "next": [
-      "data-fetching-in-nextjs",
-      "capstone-build-and-deploy-nextjs-feature"
-    ],
+    "prerequisites": ["app-router-fundamentals"],
+    "next": ["data-fetching-in-nextjs", "capstone-build-and-deploy-nextjs-feature"],
     "related": [],
     "order": 3
   },
@@ -3282,13 +2533,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "server-components-vs-client-components"
-    ],
-    "next": [
-      "api-routes-and-server-actions",
-      "capstone-build-and-deploy-nextjs-feature"
-    ],
+    "prerequisites": ["server-components-vs-client-components"],
+    "next": ["api-routes-and-server-actions", "capstone-build-and-deploy-nextjs-feature"],
     "related": [],
     "order": 4
   },
@@ -3300,13 +2546,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 35,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "data-fetching-in-nextjs"
-    ],
-    "next": [
-      "rendering-strategy-and-performance",
-      "capstone-build-and-deploy-nextjs-feature"
-    ],
+    "prerequisites": ["data-fetching-in-nextjs"],
+    "next": ["rendering-strategy-and-performance", "capstone-build-and-deploy-nextjs-feature"],
     "related": [],
     "order": 5
   },
@@ -3318,14 +2559,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "High",
-    "prerequisites": [
-      "api-routes-and-server-actions",
-      "performance-measurement-and-budgets"
-    ],
-    "next": [
-      "deploying-a-nextjs-app",
-      "capstone-build-and-deploy-nextjs-feature"
-    ],
+    "prerequisites": ["api-routes-and-server-actions", "performance-measurement-and-budgets"],
+    "next": ["deploying-a-nextjs-app", "capstone-build-and-deploy-nextjs-feature"],
     "related": [],
     "order": 6
   },
@@ -3337,12 +2572,8 @@
     "difficulty": "Advanced",
     "estimatedMinutes": 30,
     "interviewFrequency": "Low",
-    "prerequisites": [
-      "rendering-strategy-and-performance"
-    ],
-    "next": [
-      "capstone-build-and-deploy-nextjs-feature"
-    ],
+    "prerequisites": ["rendering-strategy-and-performance"],
+    "next": ["capstone-build-and-deploy-nextjs-feature"],
     "related": [],
     "order": 7
   },
