@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { buildLessonSteps, getCanonicalExerciseId } from "./lesson-step-resolver";
-import type { Lesson, ExerciseValidationSpec } from "../types";
+import {
+  buildLessonSteps,
+  getCanonicalExerciseId,
+  inferExerciseMode,
+} from "./lesson-step-resolver";
+import type { Lesson, ExerciseValidationSpec, InteractiveExerciseLessonStep } from "../types";
 import lessonsData from "../../data/lessons.json";
 
 describe("buildLessonSteps - Presentation Model & Step Resolver", () => {
@@ -1222,6 +1226,187 @@ describe("buildLessonSteps - Presentation Model & Step Resolver", () => {
           expect(quizzesAfterClosing.length).toBe(0);
         }
       }
+    });
+  });
+
+  describe("Phase 6 Step 13B - Interactive Exercise Presentation Classification & Modes", () => {
+    it("1. Correctly classifies Prototype A (interactive-0-1-1: Multiple Choice)", () => {
+      const lesson = (lessonsData as Lesson[]).find((l) => l.id === "lesson-0-1-1");
+      expect(lesson).toBeDefined();
+      if (!lesson) return;
+
+      const steps = buildLessonSteps(lesson);
+      const exStep = steps.find(
+        (s) => s.type === "interactive-exercise" && s.exerciseId === "interactive-0-1-1",
+      ) as InteractiveExerciseLessonStep;
+
+      expect(exStep).toBeDefined();
+      expect(exStep.mode).toBe("multiple-choice");
+      expect(exStep.editorRequired).toBe(false);
+    });
+
+    it("2. Correctly classifies Prototype B (interactive-1-2-1: Prediction / CSS Detective)", () => {
+      const lesson = (lessonsData as Lesson[]).find((l) => l.id === "lesson-1-2-1");
+      expect(lesson).toBeDefined();
+      if (!lesson) return;
+
+      const steps = buildLessonSteps(lesson);
+      const exStep = steps.find(
+        (s) => s.type === "interactive-exercise" && s.exerciseId === "interactive-1-2-1",
+      ) as InteractiveExerciseLessonStep;
+
+      expect(exStep).toBeDefined();
+      expect(exStep.mode).toBe("prediction");
+      expect(exStep.editorRequired).toBe(false);
+    });
+
+    it("3. Correctly classifies Prototype C (interactive-2-2-8-1: Reveal / Async Lab)", () => {
+      const lesson = (lessonsData as Lesson[]).find((l) => l.id === "lesson-2-2-8");
+      expect(lesson).toBeDefined();
+      if (!lesson) return;
+
+      const steps = buildLessonSteps(lesson);
+      const exStep = steps.find(
+        (s) =>
+          s.type === "interactive-exercise" &&
+          (s.exerciseId === "interactive-2-2-8-1" ||
+            s.exerciseId === "exercise-2-2-8-1" ||
+            s.exerciseId === "2-2-8-1"),
+      ) as InteractiveExerciseLessonStep;
+
+      expect(exStep).toBeDefined();
+      expect(exStep.mode).toBe("reveal");
+      expect(exStep.editorRequired).toBe(false);
+    });
+
+    it("4. Correctly classifies Prototype D (interactive-1-1-2: Code Fix / Debugging)", () => {
+      const lesson = (lessonsData as Lesson[]).find((l) => l.id === "lesson-1-1-2");
+      expect(lesson).toBeDefined();
+      if (!lesson) return;
+
+      const steps = buildLessonSteps(lesson);
+      const exStep = steps.find(
+        (s) => s.type === "interactive-exercise" && s.exerciseId === "interactive-1-1-2",
+      ) as InteractiveExerciseLessonStep;
+
+      expect(exStep).toBeDefined();
+      expect(exStep.mode).toBe("code-fix");
+      expect(exStep.editorRequired).toBe(true);
+    });
+
+    it("5. Correctly classifies Prototype E (interactive-1-1-1-2: Code Completion / Authoring)", () => {
+      const lesson = (lessonsData as Lesson[]).find((l) => l.id === "lesson-1-1-1");
+      expect(lesson).toBeDefined();
+      if (!lesson) return;
+
+      const steps = buildLessonSteps(lesson);
+      const exStep = steps.find(
+        (s) => s.type === "interactive-exercise" && s.exerciseId === "interactive-1-1-1-2",
+      ) as InteractiveExerciseLessonStep;
+
+      expect(exStep).toBeDefined();
+      expect(exStep.mode).toBe("code-completion");
+      expect(exStep.editorRequired).toBe(true);
+    });
+
+    it("6. Correctly classifies Prototype F (exercise-0-1-5-1: Conceptual Reflection / Forge Loop)", () => {
+      const lesson = (lessonsData as Lesson[]).find((l) => l.id === "lesson-0-1-5");
+      expect(lesson).toBeDefined();
+      if (!lesson) return;
+
+      const steps = buildLessonSteps(lesson);
+      const exStep = steps.find(
+        (s) =>
+          s.type === "interactive-exercise" &&
+          (s.exerciseId === "exercise-0-1-5-1" || s.exerciseId === "0-1-5-1"),
+      ) as InteractiveExerciseLessonStep;
+
+      expect(exStep).toBeDefined();
+      expect(exStep.mode).toBe("reveal");
+      expect(exStep.editorRequired).toBe(false);
+    });
+
+    it("7. Directly validates inferExerciseMode standalone unit tests", () => {
+      const mcResult = inferExerciseMode({
+        id: "mc-1",
+        title: "Frontend Detective",
+        instructions: "Choose which role is responsible for each task.",
+        initialCode: "const scenarios = [{ task: 'Design buttons', answer: 'Design' }];",
+        source: "section",
+      });
+      expect(mcResult.mode).toBe("multiple-choice");
+      expect(mcResult.editorRequired).toBe(false);
+
+      const predResult = inferExerciseMode({
+        id: "pred-1",
+        title: "CSS Rule Detective",
+        instructions: "Before revealing the answer, predict what will happen.",
+        initialCode: "<style>#demo { color: red; }</style>",
+        source: "section",
+      });
+      expect(predResult.mode).toBe("prediction");
+      expect(predResult.editorRequired).toBe(false);
+
+      const fixResult = inferExerciseMode({
+        id: "fix-1",
+        title: "Fix the Broken Layout",
+        instructions: "Debug and repair the broken styles below.",
+        initialCode: ".box { display: flex; }",
+        source: "section",
+      });
+      expect(fixResult.mode).toBe("code-fix");
+      expect(fixResult.editorRequired).toBe(true);
+    });
+
+    it("8. Validates compact code challenge sizing and preview inference", () => {
+      // 1. Small HTML attribute fix -> compact + showPreview: true
+      const compactHtml = inferExerciseMode({
+        id: "ex-attr",
+        title: "Add Attributes",
+        instructions: "Add href and target attributes to the link.",
+        initialCode: "<a >Click here</a>",
+        language: "html",
+        source: "section",
+      });
+      expect(compactHtml.challengeSize).toBe("compact");
+      expect(compactHtml.showPreview).toBe(true);
+
+      // 2. React component -> standard
+      const reactEx = inferExerciseMode({
+        id: "ex-react",
+        title: "Build a Counter",
+        instructions: "Implement useState to update the count.",
+        initialCode:
+          "import React, { useState } from 'react';\nexport default function Counter() { return null; }",
+        language: "jsx",
+        source: "section",
+      });
+      expect(reactEx.challengeSize).toBe("standard");
+      expect(reactEx.showPreview).toBe(true);
+
+      // 3. Mini Project / Capstone -> project
+      const projEx = inferExerciseMode({
+        id: "ex-proj",
+        title: "Mini Project: Lesson Tracker",
+        instructions: "Build the complete interactive dashboard.",
+        initialCode: "function run() {}",
+        source: "section",
+      });
+      expect(projEx.challengeSize).toBe("project");
+
+      // 4. Canonical lesson-1-1-1 interactive exercise is resolved as compact
+      const lesson = (lessonsData as Lesson[]).find((l) => l.id === "lesson-1-1-1");
+      expect(lesson).toBeDefined();
+      if (!lesson) return;
+
+      const steps = buildLessonSteps(lesson);
+      const movePara = steps.find(
+        (s) => s.type === "interactive-exercise" && s.exerciseId === "interactive-1-1-1",
+      ) as InteractiveExerciseLessonStep;
+
+      expect(movePara).toBeDefined();
+      expect(movePara.challengeSize).toBe("compact");
+      expect(movePara.showPreview).toBe(true);
     });
   });
 });

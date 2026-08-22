@@ -22,6 +22,12 @@ import { LessonDiagram } from "@/components/lesson/lesson-diagram";
 import { LessonWalkthrough } from "@/components/lesson/lesson-walkthrough";
 import { LessonCollapsible } from "@/components/lesson/lesson-collapsible";
 import {
+  MultipleChoiceExerciseView,
+  PredictionExerciseView,
+  RevealExerciseView,
+  CompactCodeChallengeView,
+} from "./exercise-renderers";
+import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
@@ -304,7 +310,12 @@ export function LessonPlayer({
         data-testid="lesson-player-content"
         className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 md:p-6 scrollbar-thin focus:outline-none"
       >
-        <StepRenderer step={currentStep} lesson={lesson} headingRef={headingRef} />
+        <StepRenderer
+          step={currentStep}
+          lesson={lesson}
+          headingRef={headingRef}
+          onComplete={handleNext}
+        />
       </main>
 
       {/* Footer Navigation Controls */}
@@ -368,10 +379,12 @@ function StepRenderer({
   step,
   lesson,
   headingRef,
+  onComplete,
 }: {
   step: LessonStep;
   lesson?: Lesson;
   headingRef?: React.RefObject<HTMLHeadingElement | null>;
+  onComplete?: () => void;
 }) {
   switch (step.type) {
     case "content":
@@ -379,7 +392,14 @@ function StepRenderer({
     case "code-example":
       return <CodeExampleStepView step={step} headingRef={headingRef} />;
     case "interactive-exercise":
-      return <InteractiveExerciseStepView step={step} lesson={lesson} headingRef={headingRef} />;
+      return (
+        <InteractiveExerciseStepView
+          step={step}
+          lesson={lesson}
+          headingRef={headingRef}
+          onComplete={onComplete}
+        />
+      );
     case "quiz":
       return <QuizStepView step={step} lesson={lesson} headingRef={headingRef} />;
     case "checkpoint":
@@ -530,11 +550,41 @@ function InteractiveExerciseStepView({
   step,
   lesson,
   headingRef,
+  onComplete,
 }: {
   step: InteractiveExerciseLessonStep;
   lesson?: Lesson;
   headingRef?: React.RefObject<HTMLHeadingElement | null>;
+  onComplete?: () => void;
 }) {
+  const [forceFullIDE, setForceFullIDE] = useState(false);
+
+  // If editor is not required, route to lightweight, specialized exercise renderer
+  if (step.editorRequired === false) {
+    if (step.mode === "multiple-choice") {
+      return <MultipleChoiceExerciseView step={step} lesson={lesson} onComplete={onComplete} />;
+    }
+
+    if (step.mode === "prediction") {
+      return <PredictionExerciseView step={step} lesson={lesson} onComplete={onComplete} />;
+    }
+
+    return <RevealExerciseView step={step} lesson={lesson} onComplete={onComplete} />;
+  }
+
+  // If exercise is a focused compact code drill and user has not expanded to full IDE
+  if (step.challengeSize === "compact" && !forceFullIDE) {
+    return (
+      <CompactCodeChallengeView
+        step={step}
+        lesson={lesson}
+        onComplete={onComplete}
+        onExpandToFullPlayground={() => setForceFullIDE(true)}
+      />
+    );
+  }
+
+  // Full Code Editor Sandbox / Project / Debugger / Completion
   const formattedTitle = formatStepTitle(step.title);
 
   return (

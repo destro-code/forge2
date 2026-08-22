@@ -6,6 +6,17 @@ export type LessonStepType =
 
 export type LessonStepOrigin = "section" | "lesson-exercise" | "quiz" | "summary";
 
+export type InteractiveExerciseMode =
+  | "prediction"
+  | "multiple-choice"
+  | "reveal"
+  | "code-completion"
+  | "code-fix"
+  | "sandbox"
+  | "project";
+
+export type CodeChallengeSize = "compact" | "standard" | "project";
+
 export interface LessonStepBase {
   /** Presentation identity for this step */
   id: string;
@@ -68,6 +79,14 @@ export interface InteractiveExerciseLessonStep extends LessonStepBase {
   validation?: ExerciseValidationSpec;
   /** Absorbed lead-in context from preceding section if applicable */
   leadIn?: ExerciseLeadIn;
+  /** Presentation-level interaction classification */
+  mode?: InteractiveExerciseMode;
+  /** Whether this interaction requires loading the full code editor / Monaco */
+  editorRequired?: boolean;
+  /** Sizing of the coding challenge: compact (focused drill), standard, or project */
+  challengeSize?: CodeChallengeSize;
+  /** Whether a compact code challenge should display a live preview output */
+  showPreview?: boolean;
 }
 
 export interface QuizQuestionItem {

@@ -306,33 +306,46 @@ export function PlaygroundEditor({ onCodeChange, onFormatCode, onRunCode }: Play
         className="flex-1 relative min-h-[350px] h-full w-full overflow-hidden"
       >
         {editorError ? (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-card/80 p-6 text-center border border-border/50 rounded-lg">
-            <div className="rounded-full bg-destructive/10 p-3 text-destructive">
-              <AlertTriangle className="h-6 w-6" />
+          <div className="flex h-full w-full flex-col bg-card border border-border/50 rounded-lg overflow-hidden">
+            <div className="flex items-center justify-between gap-2 border-b border-border/60 bg-amber-500/10 px-3 py-2 text-xs">
+              <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-medium">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span>
+                  Monaco timed out — switched to lightweight code editor. You can still edit, run,
+                  and validate your code.
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6 text-[11px] px-2 gap-1 bg-background hover:bg-muted shrink-0"
+                onClick={() => {
+                  editorRef.current = null;
+                  setEditorError(false);
+                  setEditorLoaded(false);
+                  setRetryKey((prev) => prev + 1);
+                }}
+              >
+                <RotateCcw className="h-3 w-3" />
+                Retry Monaco
+              </Button>
             </div>
-            <div className="space-y-1 max-w-sm">
-              <h3 className="font-semibold text-sm text-foreground">
-                Editor failed to load — reload the page
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                The code editor could not initialize. This may be due to restricted iframe
-                environment or network timeout.
-              </p>
+            <div className="flex-1 p-2 bg-background min-h-0">
+              <textarea
+                value={activeFile?.code || ""}
+                onChange={(e) => {
+                  const newCode = e.target.value;
+                  lastSyncedCodeRef.current = newCode;
+                  if (activeFile) {
+                    updateFileContent(activeFile.id, newCode);
+                  }
+                  if (onCodeChange) onCodeChange(newCode);
+                }}
+                className="w-full h-full p-3 font-mono text-xs sm:text-sm bg-muted/20 text-foreground border border-border/40 rounded-md resize-none focus:outline-none focus:border-primary leading-relaxed"
+                spellCheck={false}
+                placeholder="Type your code here..."
+              />
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 text-xs"
-              onClick={() => {
-                editorRef.current = null;
-                setEditorError(false);
-                setEditorLoaded(false);
-                setRetryKey((prev) => prev + 1);
-              }}
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              Reload Editor
-            </Button>
           </div>
         ) : mounted ? (
           <Suspense

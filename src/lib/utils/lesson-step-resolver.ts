@@ -6,6 +6,8 @@ import type {
   ContentLessonStep,
   CodeExampleLessonStep,
   InteractiveExerciseLessonStep,
+  InteractiveExerciseMode,
+  CodeChallengeSize,
   QuizLessonStep,
   CheckpointLessonStep,
   ExerciseLeadIn,
@@ -70,6 +72,241 @@ export function isExerciseLeadIn(group: LessonSection[]): boolean {
   }
 
   return false;
+}
+
+export interface InferExerciseModeParams {
+  id?: string;
+  title?: string;
+  instructions?: string;
+  initialCode?: string;
+  language?: string;
+  hasValidation?: boolean;
+  validation?: any;
+  source: "section" | "lesson-exercise";
+}
+
+export interface InferredExerciseModeResult {
+  mode: InteractiveExerciseMode;
+  editorRequired: boolean;
+  challengeSize?: CodeChallengeSize;
+  showPreview?: boolean;
+}
+
+/**
+ * Derives sizing classification (compact vs standard vs project) and preview visibility
+ * for code exercises based on starter code size, language, complexity, and explicit tasks.
+ */
+export function inferChallengeSizeAndPreview(
+  params: InferExerciseModeParams,
+  mode: InteractiveExerciseMode,
+  editorRequired: boolean,
+): { challengeSize: CodeChallengeSize; showPreview: boolean } {
+  if (!editorRequired) {
+    return { challengeSize: "compact", showPreview: false };
+  }
+
+  if (mode === "project") {
+    return { challengeSize: "project", showPreview: true };
+  }
+
+  const code = (params.initialCode || "").trim();
+  const lang = (params.language || "").toLowerCase();
+  const title = (params.title || "").toLowerCase();
+  const inst = (params.instructions || "").toLowerCase();
+
+  // 1. React / JSX / complex imports are standard or project
+  const isReact =
+    lang === "jsx" ||
+    lang === "tsx" ||
+    code.includes("import React") ||
+    code.includes("useState(") ||
+    code.includes("useEffect(") ||
+    code.includes("export default function");
+
+  if (isReact) {
+    return { challengeSize: "standard", showPreview: true };
+  }
+
+  // 2. Capstone or full project titles
+  if (
+    title.includes("mini project") ||
+    title.includes("capstone") ||
+    inst.includes("mini project") ||
+    inst.includes("capstone")
+  ) {
+    return { challengeSize: "project", showPreview: true };
+  }
+
+  // 3. Check code size & complexity
+  const lineCount = code.split("\n").length;
+  const isSmallCode = code.length <= 480 && lineCount <= 16;
+
+  // Focused drills: targeted 1-file edits, attribute additions, tag fixes, small rules
+  const isFocusedTask =
+    /^(add|fix|repair|change|write a|write your|create a|turn the|connect|replace|move|select|structure)/i.test(
+      title,
+    ) ||
+    /\b(add a|add an|fix the|closing tag|attribute|single rule|change the|href|src|alt|color|font-size|margin|padding|h1|h2|p>)\b/i.test(
+      inst,
+    );
+
+  // Exclude multi-step/complex debugger exercises
+  const isComplexDebugger =
+    title.includes("promise chain debugger") ||
+    title.includes("missing await debugger") ||
+    title.includes("promise error path") ||
+    title.includes("event loop visualizer") ||
+    inst.includes("debugger panel");
+
+  const isCompact = isSmallCode && !isComplexDebugger && (isFocusedTask || code.length < 250);
+
+  // Check if live preview is applicable (HTML/CSS)
+  const isHtmlCss =
+    lang === "html" ||
+    lang === "css" ||
+    code.includes("<html") ||
+    code.includes("<div") ||
+    code.includes("<p") ||
+    code.includes("<h1") ||
+    code.includes("<style>") ||
+    code.includes("<body");
+
+  return {
+    challengeSize: isCompact ? "compact" : "standard",
+    showPreview: isHtmlCss,
+  };
+}
+
+/**
+ * Deterministically infers the appropriate presentation mode and whether a code editor is required
+ * for an interactive exercise based on instructional language, structural metadata, and starter code.
+ */
+export function inferExerciseMode(params: InferExerciseModeParams): InferredExerciseModeResult {
+  const title = (params.title || "").trim();
+  const instructions = (params.instructions || "").trim();
+  const code = (params.initialCode || "").trim();
+  const lowerTitle = title.toLowerCase();
+
+  const isHtmlScenarioWidget =
+    code.includes("scenarios =") ||
+    (code.includes("<script>") && code.includes("addEventListener") && code.includes("answer-box"));
+
+  let mode: InteractiveExerciseMode = "code-completion";
+  let editorRequired = true;
+
+  // 1. Multiple Choice / Matching / Scenario Selection
+  if (
+    isHtmlScenarioWidget ||
+    /^(request or response|frontend detective|client or server|http method matcher|match the|which role|choose the right|choose the input type)/i.test(
+      title,
+    ) ||
+    /\b(choose which role|decide whether it describes|select the correct option|match each role|read each scenario and choose|read each scenario and decide)\b/i.test(
+      instructions,
+    )
+  ) {
+    mode = "multiple-choice";
+    editorRequired = false;
+  }
+  // 2. Prediction
+  else if (
+    /^(css rule detective|selector matching lab|specificity showdown|follow the values|predict the chain|predict the interaction|what does this do|guess the output)/i.test(
+      title,
+    ) ||
+    lowerTitle.startsWith("predict") ||
+    /\b(before revealing the answer, explain|predict what will happen|predict the result before|predict where each path resolves)\b/i.test(
+      instructions,
+    )
+  ) {
+    const requiresCodeEditing =
+      /\b(modify the code below|change the selector and write|edit the style rule to fix)\b/i.test(
+        instructions,
+      );
+    mode = "prediction";
+    editorRequired = requiresCodeEditing;
+  }
+  // 3. Reveal / Interactive Lab / Conceptual Reflection
+  else if (
+    /^(async \/ await live lab|error handling live lab|event loop visualizer|promise state playground|rebuild the web journey|build the right habit|explain the forge loop|trace the conversation|trace a link|split a feature)/i.test(
+      title,
+    ) ||
+    lowerTitle.startsWith("reveal") ||
+    lowerTitle.startsWith("explain ") ||
+    lowerTitle.startsWith("describe ") ||
+    lowerTitle.startsWith("trace ") ||
+    /\b(toggle await in a live example|observe the difference|observe how|reveal the answer|explain learn \/ practice \/ grow|explain in your own words)\b/i.test(
+      instructions,
+    )
+  ) {
+    mode = "reveal";
+    editorRequired = false;
+  }
+  // If from lesson.exercises and code is empty and instructions ask to explain/reflect/describe:
+  else if (params.source === "lesson-exercise" && (!code || code.length === 0)) {
+    if (
+      /\b(explain|describe|trace|in your own words|identify what|reproduce the|separate the|reflect)\b/i.test(
+        instructions,
+      ) ||
+      /^(explain|trace|describe|split|read|understand|compare)/i.test(title)
+    ) {
+      mode = "reveal";
+      editorRequired = false;
+    } else {
+      mode = "reveal";
+      editorRequired = false;
+    }
+  }
+  // 4. Project / Capstone
+  else if (
+    /^(capstone|mini project|full project|final build|react mini project|javascript mini project|project stage)/i.test(
+      title,
+    ) ||
+    /\b(capstone project|mini project|complete the full lesson tracker)\b/i.test(instructions)
+  ) {
+    mode = "project";
+    editorRequired = true;
+  }
+  // 5. Code Fix / Debugging
+  else if (
+    /^(fix|debug|repair|diagnose|find the bug|cascade debug challenge|specificity bug|inheritance detective|promise chain debugger|promise error path|debug the broken paths)/i.test(
+      title,
+    ) ||
+    /\b(fix the|find and fix|debug the|repair the|broken|diagnose the|correct the bug|fix a deliberately broken|diagnose and fix|close in the wrong order)\b/i.test(
+      instructions,
+    )
+  ) {
+    mode = "code-fix";
+    editorRequired = true;
+  }
+  // 6. Code Completion / Active Authoring
+  else if (
+    /^(write|create|implement|build|add|make|style|convert|transform|format|render|turn the outline|structure the|connect the|replace the|center the|grade the|lesson status router)/i.test(
+      title,
+    ) ||
+    /\b(write a|create a|implement a|build a|add a|change the|style the|update the|convert|mark up|construct|define a|write your)\b/i.test(
+      instructions,
+    ) ||
+    (params.source === "section" && code.length > 0)
+  ) {
+    mode = "code-completion";
+    editorRequired = true;
+  }
+  // Fallback for remaining exercises
+  else if (code.length > 0 || params.hasValidation) {
+    mode = "code-completion";
+    editorRequired = true;
+  } else {
+    mode = "reveal";
+    editorRequired = false;
+  }
+
+  const { challengeSize, showPreview } = inferChallengeSizeAndPreview(params, mode, editorRequired);
+
+  return {
+    mode,
+    editorRequired,
+    challengeSize,
+    showPreview,
+  };
 }
 
 /**
@@ -145,7 +382,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           : codeSec.type === "javascript"
             ? "javascript"
             : "typescript");
-      const codeTitle = codeSec.title || stepTitle || "Code Example";
+      const codeTitle = codeSec.title || currentHeadingTitle || "Code Example";
 
       steps.push({
         id: `${lesson.id}-step-${stepCounter++}-code`,
@@ -298,6 +535,17 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
         const stepTitle =
           sandboxSection.title || leadIn?.title || adoptedTitle || "Interactive Exercise";
 
+        const { mode, editorRequired, challengeSize, showPreview } = inferExerciseMode({
+          id: exerciseId,
+          title: stepTitle,
+          instructions: sandboxSection.instructions,
+          initialCode: sandboxSection.initialCode,
+          language: sandboxSection.language,
+          hasValidation: Boolean(sandboxSection.validation),
+          validation: sandboxSection.validation,
+          source: "section",
+        });
+
         steps.push({
           id: `${lesson.id}-step-${stepCounter++}-interactive-${exerciseId}`,
           type: "interactive-exercise",
@@ -317,6 +565,10 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
             (leadIn.title || leadIn.text || (leadIn.sections && leadIn.sections.length > 0))
               ? leadIn
               : undefined,
+          mode,
+          editorRequired,
+          challengeSize,
+          showPreview,
         });
         break;
       }
@@ -402,6 +654,17 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           if (canonValId) resolvedExerciseIds.add(canonValId);
         }
 
+        const { mode, editorRequired, challengeSize, showPreview } = inferExerciseMode({
+          id: ex.id,
+          title: ex.title,
+          instructions: ex.brief || ex.instructions,
+          initialCode: ex.playgroundCode || ex.initialCode,
+          language: ex.playgroundLanguage || ex.language,
+          hasValidation: Boolean(ex.validation),
+          validation: ex.validation,
+          source: "lesson-exercise",
+        });
+
         const interactiveStep: InteractiveExerciseLessonStep = {
           id: `${lesson.id}-step-${stepCounter++}-exercise-${ex.id}`,
           type: "interactive-exercise",
@@ -415,6 +678,10 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           language: ex.playgroundLanguage || "javascript",
           hasValidation: Boolean(ex.validation),
           validation: ex.validation,
+          mode,
+          editorRequired,
+          challengeSize,
+          showPreview,
         };
 
         steps.push(interactiveStep);
