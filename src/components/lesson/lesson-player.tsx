@@ -548,6 +548,56 @@ function InteractiveExerciseStepView({
           {formattedTitle}
         </h2>
       )}
+
+      {step.leadIn && (
+        <div className="mb-3 sm:mb-4 space-y-2 text-foreground/90 text-sm md:text-base leading-relaxed bg-accent/30 dark:bg-accent/20 border border-border/50 rounded-lg p-3.5 sm:p-4 shrink-0">
+          {step.leadIn.sections ? (
+            step.leadIn.sections.map((sec, idx) => {
+              if (sec.type === "heading") {
+                const hTitle = formatStepTitle(sec.text);
+                if (hTitle === formattedTitle) return null;
+                return (
+                  <div
+                    key={idx}
+                    className="font-semibold text-foreground text-sm sm:text-base pt-1 first:pt-0"
+                  >
+                    {sec.text}
+                  </div>
+                );
+              }
+              if (sec.type === "paragraph") {
+                return (
+                  <p key={idx} className="text-foreground/90 text-xs sm:text-sm leading-relaxed">
+                    {sec.text}
+                  </p>
+                );
+              }
+              if (sec.type === "callout") {
+                return (
+                  <Callout key={idx} variant={sec.variant || "info"}>
+                    {sec.text}
+                  </Callout>
+                );
+              }
+              return null;
+            })
+          ) : (
+            <>
+              {step.leadIn.title && formatStepTitle(step.leadIn.title) !== formattedTitle && (
+                <div className="font-semibold text-foreground text-sm">
+                  {formatStepTitle(step.leadIn.title)}
+                </div>
+              )}
+              {step.leadIn.text && (
+                <p className="text-foreground/90 text-xs sm:text-sm leading-relaxed">
+                  {step.leadIn.text}
+                </p>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
       <EmbeddedPlayground
         exerciseStep={step}
         lesson={lesson}

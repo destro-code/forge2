@@ -8,6 +8,7 @@ import type {
   InteractiveExerciseLessonStep,
   QuizLessonStep,
   CheckpointLessonStep,
+  ExerciseLeadIn,
 } from "../types";
 
 /**
@@ -17,6 +18,58 @@ import type {
 export function getCanonicalExerciseId(rawId: string | undefined): string {
   if (!rawId) return "";
   return rawId.trim().replace(/^(interactive|exercise)-/, "");
+}
+
+/**
+ * Evaluates whether a preceding content section group is a small lead-in
+ * that should be absorbed into an immediately following interactive exercise step.
+ */
+export function isExerciseLeadIn(group: LessonSection[]): boolean {
+  if (!group || group.length === 0) return false;
+
+  const hasHeavySection = group.some((s) =>
+    ["code", "jsx", "javascript", "diagram", "walkthrough", "collapsible"].includes(s.type),
+  );
+  if (hasHeavySection) return false;
+
+  const headings = group.filter((s) => s.type === "heading");
+  const nonHeadings = group.filter((s) => s.type !== "heading");
+
+  if (nonHeadings.length > 2) return false;
+
+  const headingText = headings.length > 0 && "text" in headings[0] ? headings[0].text || "" : "";
+  const firstNonHeadingText =
+    nonHeadings.length > 0 && "text" in nonHeadings[0] ? (nonHeadings[0] as any).text || "" : "";
+
+  const LEAD_IN_KEYWORD_REGEX =
+    /\b(exercise|practice|drill|try\s+it|try\s+this|interact|challenge|predict|before\s+you\s+code|your\s+turn|lab)\b/i;
+
+  const LEAD_IN_PREFIX_REGEX =
+    /^(try|practice|read|inspect|predict|write|in this exercise|your task|before touching|take the)\b/i;
+
+  const hasStrongTitle = LEAD_IN_KEYWORD_REGEX.test(headingText);
+  const hasStrongPrefix = LEAD_IN_PREFIX_REGEX.test(firstNonHeadingText.trim());
+
+  const totalText = nonHeadings.map((s) => ("text" in s ? s.text || "" : "")).join(" ");
+  const totalWords = totalText.trim().split(/\s+/).filter(Boolean).length;
+
+  if (nonHeadings.length === 0) {
+    return true;
+  }
+
+  if (nonHeadings.length === 1) {
+    if (totalWords <= 65 || totalText.length <= 420) return true;
+    if ((hasStrongTitle || hasStrongPrefix) && totalWords <= 95) return true;
+    return false;
+  }
+
+  if (nonHeadings.length === 2) {
+    if ((hasStrongTitle || hasStrongPrefix) && totalWords <= 75) return true;
+    if (totalWords <= 45) return true;
+    return false;
+  }
+
+  return false;
 }
 
 /**
@@ -100,6 +153,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
         title: codeTitle,
         lessonId: lesson.id,
         sectionId: ("id" in codeSec && codeSec.id) || sectionId,
+        origin: "section",
         section: codeSec,
         code: codeSec.code || "",
         language: codeLang,
@@ -112,6 +166,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
         title: stepTitle,
         lessonId: lesson.id,
         sectionId,
+        origin: "section",
         section: currentGroup.length === 1 ? currentGroup[0] : undefined,
         sections: [...currentGroup],
       });
@@ -179,6 +234,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
             title: codeTitle,
             lessonId: lesson.id,
             sectionId: ("id" in s && s.id ? s.id : undefined) || currentSectionId,
+            origin: "section",
             section: codeSec,
             code: codeSec.code || "",
             language: codeLang,
@@ -189,7 +245,31 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
       }
 
       case "interactive-sandbox": {
-        const adoptedTitle = flushGroup(s.type);
+        let leadIn: ExerciseLeadIn | undefined = undefined;
+        let adoptedTitle: string | undefined = undefined;
+
+        if (isExerciseLeadIn(currentGroup)) {
+          const headingSec = currentGroup.find((sec) => sec.type === "heading");
+          const headingText = headingSec && "text" in headingSec ? headingSec.text : undefined;
+
+          const nonHeadingSecs = currentGroup.filter((sec) => sec.type !== "heading");
+          const leadInText = nonHeadingSecs
+            .map((sec) => ("text" in sec ? sec.text || "" : ""))
+            .filter(Boolean)
+            .join("\n\n");
+
+          leadIn = {
+            title: headingText,
+            text: leadInText || undefined,
+            sections: [...currentGroup],
+          };
+
+          currentGroup = [];
+          currentSectionId = undefined;
+        } else {
+          adoptedTitle = flushGroup(s.type);
+        }
+
         const sandboxSection = s as LessonSection & {
           type: "interactive-sandbox";
           id?: string;
@@ -215,19 +295,28 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           if (canonValId) resolvedExerciseIds.add(canonValId);
         }
 
+        const stepTitle =
+          sandboxSection.title || leadIn?.title || adoptedTitle || "Interactive Exercise";
+
         steps.push({
           id: `${lesson.id}-step-${stepCounter++}-interactive-${exerciseId}`,
           type: "interactive-exercise",
-          title: sandboxSection.title || adoptedTitle || "Interactive Exercise",
+          title: stepTitle,
           lessonId: lesson.id,
           exerciseId,
           sectionId,
+          origin: "section",
           section: sandboxSection,
           initialCode: sandboxSection.initialCode,
           instructions: sandboxSection.instructions,
           language: sandboxSection.language || "javascript",
           hasValidation: Boolean(sandboxSection.validation),
           validation: sandboxSection.validation,
+          leadIn:
+            leadIn &&
+            (leadIn.title || leadIn.text || (leadIn.sections && leadIn.sections.length > 0))
+              ? leadIn
+              : undefined,
         });
         break;
       }
@@ -249,6 +338,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           lessonId: lesson.id,
           checkpointId: checkpointSection.id,
           sectionId: checkpointSection.id,
+          origin: "section",
           section: checkpointSection,
           label: checkpointSection.label,
           hint: checkpointSection.hint,
@@ -272,6 +362,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           lessonId: lesson.id,
           quizId: inlineQuizSection.quizId,
           sectionId,
+          origin: "section",
           section: inlineQuizSection,
           questions: [],
         });
@@ -317,6 +408,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           title: ex.title || "Exercise",
           lessonId: lesson.id,
           exerciseId: ex.id,
+          origin: "lesson-exercise",
           exercise: ex,
           initialCode: ex.playgroundCode,
           instructions: ex.brief,
@@ -344,6 +436,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
         title: "Check Your Understanding",
         lessonId: lesson.id,
         quizId,
+        origin: "quiz",
         questions: lesson.quiz,
       };
 
@@ -370,11 +463,102 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
       type: "content",
       title: "Key Takeaway & Summary",
       lessonId: lesson.id,
+      origin: "summary",
       sections: summarySections,
     };
 
     steps.push(summaryStep);
   }
 
-  return steps;
+  return reorderPedagogicalSteps(steps);
+}
+
+/**
+ * Evaluates whether a lesson step represents an interview or reflection section.
+ */
+export function isInterviewOrReflectionStep(step: LessonStep): boolean {
+  if (step.type !== "content") return false;
+  const title = (step.title || "").trim();
+  return /^(interview(\s+mode|\s+prep|\s+preparation|\s+practice)?|reflection|reflect|module\s+reflection|project\s+reflection|root-cause\s+reflection|what\s+would\s+you\s+say\??|explain\s+it\s+yourself)$/i.test(
+    title,
+  );
+}
+
+/**
+ * Evaluates whether a lesson step represents a final takeaway, summary, or conclusion section.
+ */
+export function isTakeawayOrSummaryStep(step: LessonStep): boolean {
+  if (step.type !== "content") return false;
+  if (step.origin === "summary") return true;
+  const title = (step.title || "").trim();
+  return /^(key\s+takeaway(\s*&\s*summary)?|key\s+takeaways|what\s+you\s+should\s+take\s+away|lesson\s+summary|summary|conclusion|wrap\s+up|recap|final\s+thoughts)$/i.test(
+    title,
+  );
+}
+
+/**
+ * Evaluates whether a lesson step is part of an end-of-lesson closing sequence
+ * (interview, reflection, takeaway, summary, conclusion).
+ */
+export function isConclusionSequenceStep(step: LessonStep): boolean {
+  return isInterviewOrReflectionStep(step) || isTakeawayOrSummaryStep(step);
+}
+
+/**
+ * Reorders resolved lesson steps so that exercises and quizzes appear before
+ * closing interview, reflection, takeaway, and summary sections.
+ *
+ * This enforces the pedagogical progression:
+ * Concept -> Examples -> Practice/Exercises -> Checkpoints -> Quiz -> Interview/Reflection -> Final Summary
+ * without modifying the underlying canonical lesson curriculum data.
+ */
+export function reorderPedagogicalSteps(steps: LessonStep[]): LessonStep[] {
+  if (!steps || steps.length === 0) return [];
+
+  const firstClosingIdx = steps.findIndex((s) => isConclusionSequenceStep(s));
+  if (firstClosingIdx === -1) return steps;
+
+  const tail = steps.slice(firstClosingIdx);
+  const hasExerciseAfter = tail.some((s) => s.type === "interactive-exercise");
+  const hasQuizAfter = tail.some((s) => s.type === "quiz");
+
+  if (!hasExerciseAfter && !hasQuizAfter) {
+    return steps;
+  }
+
+  const head = steps.slice(0, firstClosingIdx);
+
+  const exercises: LessonStep[] = [];
+  const quizzes: LessonStep[] = [];
+  const checkpoints: LessonStep[] = [];
+  const interviewReflection: LessonStep[] = [];
+  const takeaways: LessonStep[] = [];
+  const otherContent: LessonStep[] = [];
+
+  for (const s of tail) {
+    if (s.type === "interactive-exercise") {
+      exercises.push(s);
+    } else if (s.type === "quiz") {
+      quizzes.push(s);
+    } else if (s.type === "checkpoint") {
+      checkpoints.push(s);
+    } else if (isInterviewOrReflectionStep(s)) {
+      interviewReflection.push(s);
+    } else if (isTakeawayOrSummaryStep(s)) {
+      takeaways.push(s);
+    } else {
+      otherContent.push(s);
+    }
+  }
+
+  const reorderedTail = [
+    ...otherContent,
+    ...checkpoints,
+    ...exercises,
+    ...quizzes,
+    ...interviewReflection,
+    ...takeaways,
+  ];
+
+  return [...head, ...reorderedTail];
 }

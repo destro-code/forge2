@@ -565,7 +565,19 @@ describe("buildLessonSteps - Presentation Model & Step Resolver", () => {
         estimatedMinutes: 5,
         mastery: "Learning",
         sections: [
-          { type: "paragraph", text: "Intro paragraph" },
+          { type: "heading", text: "Conceptual Overview of State Management" },
+          {
+            type: "paragraph",
+            text: "This is a detailed conceptual explanation of React state lifecycle methods, render loops, dependency arrays, and pure functions in functional components. Understanding these principles helps prevent unexpected re-renders, infinite loops, and state synchronization bugs across large scale software architectures.",
+          },
+          {
+            type: "paragraph",
+            text: "When managing state in complex forms or deeply nested component trees, prefer lifted state or context providers over prop drilling.",
+          },
+          {
+            type: "paragraph",
+            text: "Review the rules of hooks carefully before proceeding to the code exercise.",
+          },
           {
             type: "interactive-sandbox",
             id: "interactive-505",
@@ -664,6 +676,552 @@ describe("buildLessonSteps - Presentation Model & Step Resolver", () => {
       const steps = buildLessonSteps(mockLesson);
       expect(steps.length).toBe(1);
       expect((steps[0] as any).exerciseId).toBe("interactive-707");
+    });
+  });
+
+  describe("Absorb Tiny Exercise Lead-In Steps (Step 12)", () => {
+    it("1. Absorbs heading + short paragraph preceding an interactive exercise", () => {
+      const mockLesson: Lesson = {
+        id: "leadin-test-1",
+        topicId: "t1",
+        title: "Lead-In Test",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 5,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Practice: Write Your First CSS Rule" },
+          { type: "paragraph", text: "Try writing a CSS rule before opening the exercise." },
+          {
+            type: "interactive-sandbox",
+            id: "interactive-css-1",
+            title: "Write a CSS Rule",
+            initialCode: "p {}",
+          },
+        ],
+        exercises: [],
+        quiz: [],
+        summary: "",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+      expect(steps.length).toBe(1);
+      expect(steps[0].type).toBe("interactive-exercise");
+      if (steps[0].type === "interactive-exercise") {
+        expect(steps[0].leadIn).toBeDefined();
+        expect(steps[0].leadIn?.title).toBe("Practice: Write Your First CSS Rule");
+        expect(steps[0].leadIn?.text).toBe("Try writing a CSS rule before opening the exercise.");
+      }
+    });
+
+    it("2. Absorbs heading-only preceding an interactive exercise", () => {
+      const mockLesson: Lesson = {
+        id: "leadin-test-2",
+        topicId: "t1",
+        title: "Heading Only Lead-In",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 5,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Practice Drill 1: Which Elements Match?" },
+          {
+            type: "interactive-sandbox",
+            id: "interactive-selector-lab",
+            title: "Selector Matching Lab",
+            initialCode: "p {}",
+          },
+        ],
+        exercises: [],
+        quiz: [],
+        summary: "",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+      expect(steps.length).toBe(1);
+      expect(steps[0].type).toBe("interactive-exercise");
+      if (steps[0].type === "interactive-exercise") {
+        expect(steps[0].leadIn).toBeDefined();
+        expect(steps[0].leadIn?.title).toBe("Practice Drill 1: Which Elements Match?");
+      }
+    });
+
+    it("3. Absorbs single short paragraph preceding an interactive exercise", () => {
+      const mockLesson: Lesson = {
+        id: "leadin-test-3",
+        topicId: "t1",
+        title: "Paragraph Only Lead-In",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 5,
+        mastery: "Learning",
+        sections: [
+          { type: "paragraph", text: "Try writing a CSS rule before opening the exercise." },
+          {
+            type: "interactive-sandbox",
+            id: "interactive-css-2",
+            title: "Write a CSS Rule",
+            initialCode: "p {}",
+          },
+        ],
+        exercises: [],
+        quiz: [],
+        summary: "",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+      expect(steps.length).toBe(1);
+      expect(steps[0].type).toBe("interactive-exercise");
+      if (steps[0].type === "interactive-exercise") {
+        expect(steps[0].leadIn).toBeDefined();
+        expect(steps[0].leadIn?.text).toBe("Try writing a CSS rule before opening the exercise.");
+      }
+    });
+
+    it("4. Does NOT absorb substantial conceptual content section before an exercise", () => {
+      const longText =
+        "Specificity is the set of rules browsers use to determine which CSS property values are most relevant to an element and, therefore, will be applied. Specificity is calculated based on the matching rules which are composed of different types of CSS selectors. Understanding specificity is crucial for writing clean, predictable CSS and debugging selector conflicts in large codebases.";
+      const mockLesson: Lesson = {
+        id: "leadin-test-4",
+        topicId: "t1",
+        title: "Substantial Concept",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 5,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Understanding Specificity Rules" },
+          { type: "paragraph", text: longText },
+          {
+            type: "paragraph",
+            text: "Paragraph two explaining more details about inline styles vs ID selectors vs classes.",
+          },
+          {
+            type: "paragraph",
+            text: "Paragraph three detailing universal selectors and inheritance rules in depth.",
+          },
+          {
+            type: "interactive-sandbox",
+            id: "interactive-css-3",
+            title: "Specificity Challenge",
+            initialCode: "p {}",
+          },
+        ],
+        exercises: [],
+        quiz: [],
+        summary: "",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+      expect(steps.length).toBe(2);
+      expect(steps[0].type).toBe("content");
+      expect(steps[1].type).toBe("interactive-exercise");
+      if (steps[1].type === "interactive-exercise") {
+        expect(steps[1].leadIn).toBeUndefined();
+      }
+    });
+
+    it("5. Does NOT absorb content containing code or heavy elements before an exercise", () => {
+      const mockLesson: Lesson = {
+        id: "leadin-test-5",
+        topicId: "t1",
+        title: "Heavy Lead-In",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 5,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Look at this example first" },
+          { type: "code", language: "html", code: "<div class='card'>Test</div>" },
+          {
+            type: "interactive-sandbox",
+            id: "interactive-css-4",
+            title: "Style the Card",
+            initialCode: ".card {}",
+          },
+        ],
+        exercises: [],
+        quiz: [],
+        summary: "",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+      expect(steps.length).toBe(2);
+      expect(steps[0].type).toBe("code-example");
+      expect(steps[1].type).toBe("interactive-exercise");
+    });
+  });
+
+  describe("Step 13: Pedagogical Step Ordering", () => {
+    it("1. Moves appended exercises and quizzes before interview and reflection sections", () => {
+      const mockLesson: Lesson = {
+        id: "ordering-test-1",
+        topicId: "t1",
+        title: "Ordering Test",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 10,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Core Concept", id: "sec-1" },
+          { type: "paragraph", text: "Here is the main concept explanation." },
+          { type: "heading", text: "Interview Mode", id: "sec-2" },
+          { type: "paragraph", text: "How would you explain this in an interview?" },
+          { type: "heading", text: "Reflect", id: "sec-3" },
+          { type: "paragraph", text: "Think about how you would apply this." },
+        ],
+        exercises: [
+          {
+            id: "ex-1",
+            title: "Build the Feature",
+            brief: "Complete the practice exercise.",
+            playgroundCode: "const a = 1;",
+          },
+        ],
+        quiz: [
+          {
+            id: "q-1",
+            question: "What is the answer?",
+            options: ["A", "B"],
+            correctIndex: 0,
+          },
+        ],
+        summary: "This is the final summary of what you learned.",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+
+      // Expected progression:
+      // 0: Core Concept (content)
+      // 1: Build the Feature (interactive-exercise)
+      // 2: Check Your Understanding (quiz)
+      // 3: Interview Mode (content)
+      // 4: Reflect (content)
+      // 5: Key Takeaway & Summary (content)
+      expect(steps.map((s) => ({ type: s.type, title: s.title }))).toEqual([
+        { type: "content", title: "Core Concept" },
+        { type: "interactive-exercise", title: "Build the Feature" },
+        { type: "quiz", title: "Check Your Understanding" },
+        { type: "content", title: "Interview Mode" },
+        { type: "content", title: "Reflect" },
+        { type: "content", title: "Key Takeaway & Summary" },
+      ]);
+    });
+
+    it("2. Preserves inline exercises right beside their corresponding concepts", () => {
+      const mockLesson: Lesson = {
+        id: "ordering-test-2",
+        topicId: "t1",
+        title: "Inline Exercises Ordering",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 10,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Concept One" },
+          {
+            type: "paragraph",
+            text: "Concept one is a comprehensive structural foundation that describes the primary architectural system in full detail across multiple sentences to establish deep understanding of the domain and its operational principles.",
+          },
+          {
+            type: "paragraph",
+            text: "This section explores the core mechanics and behavioral lifecycles in depth, demonstrating how each part interacts with surrounding modules.",
+          },
+          {
+            type: "paragraph",
+            text: "Understanding these boundaries allows engineers to construct reliable, scalable architectures that resist common degradation patterns over time.",
+          },
+          {
+            type: "interactive-sandbox",
+            id: "sandbox-1",
+            title: "Exercise One",
+            initialCode: "// one",
+          },
+          { type: "heading", text: "Concept Two" },
+          {
+            type: "paragraph",
+            text: "Concept two is an advanced conceptual layer that builds directly upon the previous foundation, introducing specialized behaviors, operational patterns, and detailed mechanisms needed for complete mastery.",
+          },
+          {
+            type: "paragraph",
+            text: "Engineers should pay careful attention to the data flow patterns between upstream providers and downstream consumers.",
+          },
+          {
+            type: "paragraph",
+            text: "Applying these principles ensures high predictability and minimizes runtime side effects across complex applications.",
+          },
+          {
+            type: "interactive-sandbox",
+            id: "sandbox-2",
+            title: "Exercise Two",
+            initialCode: "// two",
+          },
+          { type: "heading", text: "Interview Prep" },
+          { type: "paragraph", text: "Interview questions." },
+          { type: "heading", text: "Wrap Up" },
+          { type: "paragraph", text: "Summary points." },
+        ],
+        exercises: [],
+        quiz: [
+          {
+            id: "q-1",
+            question: "Check understanding?",
+            options: ["Yes", "No"],
+            correctIndex: 0,
+          },
+        ],
+        summary: "",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+
+      // Expected progression:
+      // 0: Concept One
+      // 1: Exercise One (inline)
+      // 2: Concept Two
+      // 3: Exercise Two (inline)
+      // 4: Check Your Understanding (quiz moved before interview/wrap-up)
+      // 5: Interview Prep
+      // 6: Wrap Up
+      expect(steps.map((s) => ({ type: s.type, title: s.title }))).toEqual([
+        { type: "content", title: "Concept One" },
+        { type: "interactive-exercise", title: "Exercise One" },
+        { type: "content", title: "Concept Two" },
+        { type: "interactive-exercise", title: "Exercise Two" },
+        { type: "quiz", title: "Check Your Understanding" },
+        { type: "content", title: "Interview Prep" },
+        { type: "content", title: "Wrap Up" },
+      ]);
+    });
+
+    it("3. Leaves lessons that are already in correct pedagogical order unchanged", () => {
+      const mockLesson: Lesson = {
+        id: "ordering-test-3",
+        topicId: "t1",
+        title: "Already Ordered Lesson",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 10,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Intro Concept" },
+          {
+            type: "paragraph",
+            text: "Introductory concepts provide learners with the necessary mental model, domain glossary, and conceptual framework required to solve subsequent technical challenges effectively.",
+          },
+          {
+            type: "paragraph",
+            text: "Take time to study the anatomy of the structures presented before proceeding to active coding exercises.",
+          },
+          {
+            type: "paragraph",
+            text: "Each concept directly translates to patterns encountered in modern frontend software development workflows.",
+          },
+          {
+            type: "interactive-sandbox",
+            id: "sandbox-1",
+            title: "Hands-on Practice",
+            initialCode: "// practice",
+          },
+          {
+            type: "checkpoint",
+            id: "cp-1",
+            label: "Can you do this?",
+          },
+          { type: "heading", text: "Interview Mode" },
+          { type: "paragraph", text: "Interview question." },
+          { type: "heading", text: "Lesson Summary" },
+          { type: "paragraph", text: "Final summary notes." },
+        ],
+        exercises: [],
+        quiz: [],
+        summary: "",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+
+      expect(steps.map((s) => ({ type: s.type, title: s.title }))).toEqual([
+        { type: "content", title: "Intro Concept" },
+        { type: "interactive-exercise", title: "Hands-on Practice" },
+        { type: "checkpoint", title: "Can you do this?" },
+        { type: "content", title: "Interview Mode" },
+        { type: "content", title: "Lesson Summary" },
+      ]);
+    });
+
+    it("4. Conservative matching: does not treat non-conclusion headings as conclusions", () => {
+      const mockLesson: Lesson = {
+        id: "ordering-test-4",
+        topicId: "t1",
+        title: "Important Notes Lesson",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 10,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Important Architectural Details" },
+          { type: "paragraph", text: "Remember to consider state management." },
+          { type: "heading", text: "Think About Performance" },
+          { type: "paragraph", text: "Performance is critical." },
+        ],
+        exercises: [
+          {
+            id: "ex-bench",
+            title: "Benchmark Exercise",
+            brief: "Benchmark the algorithm.",
+            playgroundCode: "// bench",
+          },
+        ],
+        quiz: [],
+        summary: "",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+
+      // Since none of the sections are conclusion sections, the appended exercise simply comes at the end
+      expect(steps.map((s) => ({ type: s.type, title: s.title }))).toEqual([
+        { type: "content", title: "Important Architectural Details" },
+        { type: "content", title: "Think About Performance" },
+        { type: "interactive-exercise", title: "Benchmark Exercise" },
+      ]);
+    });
+
+    it("5. Multiple appended exercises maintain their original sequential order", () => {
+      const mockLesson: Lesson = {
+        id: "ordering-test-5",
+        topicId: "t1",
+        title: "Multi Exercise Lesson",
+        description: "d",
+        difficulty: "Beginner",
+        estimatedMinutes: 10,
+        mastery: "Learning",
+        sections: [
+          { type: "heading", text: "Theory" },
+          { type: "paragraph", text: "Explanation." },
+          { type: "heading", text: "Explain It Yourself" },
+          { type: "paragraph", text: "Self explanation." },
+          { type: "heading", text: "Key Takeaways" },
+          { type: "paragraph", text: "Takeaways." },
+        ],
+        exercises: [
+          { id: "ex-a", title: "Exercise Alpha", brief: "Alpha", playgroundCode: "a;" },
+          { id: "ex-b", title: "Exercise Beta", brief: "Beta", playgroundCode: "b;" },
+          { id: "ex-c", title: "Exercise Gamma", brief: "Gamma", playgroundCode: "c;" },
+        ],
+        quiz: [{ id: "q1", question: "Quiz?", options: ["1", "2"] }],
+        summary: "Summary text",
+        resources: [],
+        interviewQuestions: [],
+      };
+
+      const steps = buildLessonSteps(mockLesson);
+
+      expect(steps.map((s) => ({ type: s.type, title: s.title }))).toEqual([
+        { type: "content", title: "Theory" },
+        { type: "interactive-exercise", title: "Exercise Alpha" },
+        { type: "interactive-exercise", title: "Exercise Beta" },
+        { type: "interactive-exercise", title: "Exercise Gamma" },
+        { type: "quiz", title: "Check Your Understanding" },
+        { type: "content", title: "Explain It Yourself" },
+        { type: "content", title: "Key Takeaways" },
+        { type: "content", title: "Key Takeaway & Summary" },
+      ]);
+    });
+
+    it("6. Real production curriculum audit: lesson-1-2-1 follows complete pedagogical progression", () => {
+      const lesson121 = (lessonsData as Lesson[]).find((l) => l.id === "lesson-1-2-1");
+      expect(lesson121).toBeDefined();
+      if (!lesson121) return;
+
+      const steps = buildLessonSteps(lesson121);
+      const types = steps.map((s) => s.type);
+
+      // Verify the final steps are Quiz -> Interview -> Reflection -> Takeaways -> Summary
+      const lastFive = steps.slice(-5);
+      expect(lastFive.map((s) => ({ type: s.type, title: s.title }))).toEqual([
+        { type: "quiz", title: "Check Your Understanding" },
+        { type: "content", title: "Interview Mode" },
+        { type: "content", title: "Reflect" },
+        { type: "content", title: "What You Should Take Away" },
+        { type: "content", title: "Key Takeaway & Summary" },
+      ]);
+
+      // Verify that no interactive exercises appear after the quiz or interview
+      const quizIdx = steps.findIndex((s) => s.type === "quiz");
+      const exercisesAfterQuiz = steps
+        .slice(quizIdx + 1)
+        .filter((s) => s.type === "interactive-exercise");
+      expect(exercisesAfterQuiz.length).toBe(0);
+    });
+
+    it("7. Real production curriculum audit: lesson-3-1-8 (Capstones and multi-exercise lessons)", () => {
+      const lesson318 = (lessonsData as Lesson[]).find((l) => l.id === "lesson-3-1-8");
+      expect(lesson318).toBeDefined();
+      if (!lesson318) return;
+
+      const steps = buildLessonSteps(lesson318);
+
+      // The last 6 steps should be Quiz -> Root-Cause Reflection -> Interview Mode -> Reflect -> What You Should Take Away -> Key Takeaway & Summary
+      const lastSix = steps.slice(-6);
+      expect(lastSix.map((s) => ({ type: s.type, title: s.title }))).toEqual([
+        { type: "quiz", title: "Check Your Understanding" },
+        { type: "content", title: "Root-Cause Reflection" },
+        { type: "content", title: "Interview Mode" },
+        { type: "content", title: "Reflect" },
+        { type: "content", title: "What You Should Take Away" },
+        { type: "content", title: "Key Takeaway & Summary" },
+      ]);
+
+      // All 3 capstone build exercises should precede the quiz
+      const quizIdx = steps.findIndex((s) => s.type === "quiz");
+      const precedingExercises = steps
+        .slice(0, quizIdx)
+        .filter((s) => s.type === "interactive-exercise");
+      expect(precedingExercises.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it("8. Curriculum-wide consistency: no lesson has interactive exercises or quizzes after closing sections", () => {
+      for (const lesson of lessonsData as Lesson[]) {
+        const steps = buildLessonSteps(lesson);
+        const firstClosingIdx = steps.findIndex(
+          (s) =>
+            s.type === "content" &&
+            (/^(interview|reflection|reflect|module\s+reflection|project\s+reflection|root-cause\s+reflection|what\s+would\s+you\s+say|explain\s+it\s+yourself)/i.test(
+              s.title || "",
+            ) ||
+              s.origin === "summary" ||
+              /^(key\s+takeaway|what\s+you\s+should\s+take\s+away|lesson\s+summary|summary|conclusion|wrap\s+up|recap|final\s+thoughts)/i.test(
+                s.title || "",
+              )),
+        );
+
+        if (firstClosingIdx !== -1) {
+          const tail = steps.slice(firstClosingIdx);
+          const exercisesAfterClosing = tail.filter((s) => s.type === "interactive-exercise");
+          const quizzesAfterClosing = tail.filter((s) => s.type === "quiz");
+
+          expect(exercisesAfterClosing.length).toBe(0);
+          expect(quizzesAfterClosing.length).toBe(0);
+        }
+      }
     });
   });
 });

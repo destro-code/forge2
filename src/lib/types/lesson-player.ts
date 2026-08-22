@@ -4,6 +4,8 @@ import type { ExerciseValidationSpec } from "./validation";
 export type LessonStepType =
   "content" | "code-example" | "interactive-exercise" | "quiz" | "checkpoint";
 
+export type LessonStepOrigin = "section" | "lesson-exercise" | "quiz" | "summary";
+
 export interface LessonStepBase {
   /** Presentation identity for this step */
   id: string;
@@ -13,6 +15,8 @@ export interface LessonStepBase {
   title?: string;
   /** Parent lesson ID */
   lessonId: string;
+  /** Structural origin of the presentation step */
+  origin?: LessonStepOrigin;
 }
 
 export interface ContentLessonStep extends LessonStepBase {
@@ -36,6 +40,12 @@ export interface CodeExampleLessonStep extends LessonStepBase {
   codeTitle?: string;
 }
 
+export interface ExerciseLeadIn {
+  title?: string;
+  text?: string;
+  sections?: LessonSection[];
+}
+
 export interface InteractiveExerciseLessonStep extends LessonStepBase {
   type: "interactive-exercise";
   /** Canonical exercise ID */
@@ -56,6 +66,8 @@ export interface InteractiveExerciseLessonStep extends LessonStepBase {
   hasValidation: boolean;
   /** Validation spec if attached */
   validation?: ExerciseValidationSpec;
+  /** Absorbed lead-in context from preceding section if applicable */
+  leadIn?: ExerciseLeadIn;
 }
 
 export interface QuizQuestionItem {
