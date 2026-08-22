@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Loader2,
   CheckCircle,
+  ArrowRight,
 } from "lucide-react";
 import { ExerciseCard } from "./exercise-card";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
@@ -24,7 +25,7 @@ import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
 import { MonacoEditor } from "@/components/shared/monaco-editor";
 import { compilePlaygroundProject } from "@/lib/playground-compiler";
-import { requestPlaygroundValidation, waitForIframeReady } from "@/lib/compiler/validation-client";
+import { requestPlaygroundValidation } from "@/lib/compiler/validation-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { InteractiveExerciseLessonStep, Lesson } from "@/lib/types";
@@ -85,6 +86,7 @@ export function CompactCodeChallengeView({
   const [monacoFailed, setMonacoFailed] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationReport, setValidationReport] = useState<ValidationReport | null>(null);
+  const [executionError, setExecutionError] = useState<string | null>(null);
   const [logs, setLogs] = useState<ConsoleLogItem[]>([]);
   const [previewHtml, setPreviewHtml] = useState<string>("");
   const [previewError, setPreviewError] = useState<string | null>(null);
@@ -113,6 +115,17 @@ export function CompactCodeChallengeView({
   }, [step.previewType, isHtmlCss]);
 
   const [activeTab, setActiveTab] = useState<"code" | "preview" | "console">("code");
+
+  // Synchronize when step changes
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? localStorage.getItem(storageKey) : null;
+    setCode(saved !== null ? saved : step.initialCode || "");
+    setLogs([]);
+    setValidationReport(null);
+    setExecutionError(null);
+    setPreviewError(null);
+    setActiveTab("code");
+  }, [step.exerciseId, step.initialCode, storageKey]);
 
   // Determine file entry name
   const entryFileName = useMemo(() => {
@@ -217,6 +230,8 @@ export function CompactCodeChallengeView({
     }
     setLogs([]);
     setValidationReport(null);
+    setExecutionError(null);
+    setActiveTab("code");
     toast.info("Code reset to starter code.");
   };
 
@@ -228,6 +243,8 @@ export function CompactCodeChallengeView({
   // Handle Validation and Execution
   const handleRunAndValidate = async () => {
     setLogs([]);
+    setExecutionError(null);
+
     if (!step.validation) {
       // Direct completion for non-asserted exercises
       completePlaygroundExercise(targetExerciseId);
@@ -251,17 +268,23 @@ export function CompactCodeChallengeView({
       if (report.status === "passed") {
         completePlaygroundExercise(targetExerciseId);
         if (!isAlreadyCompleted) {
-          toast.success("🎉 Challenge Passed! +50 XP awarded");
+          toast.success("Challenge completed! +50 XP");
         } else {
-          toast.success("✨ All checks satisfied!");
+          toast.success("All requirements satisfied!");
         }
-        if (onComplete) onComplete();
-      } else {
-        toast.error(`Validation incomplete: ${report.passedCount}/${report.totalRequired} passed`);
+      } else if (report.status === "failed") {
+        toast.error(
+          `One or more requirements aren't satisfied (${report.passedCount}/${report.totalRequired} passed)`,
+        );
+      } else if (report.status === "error") {
+        setExecutionError(report.executionError || "Your code couldn't run.");
+        toast.error("Your code couldn't run. Check for syntax or runtime errors.");
       }
     } catch (err) {
-      console.warn("Validation execution via client fallback:", err);
-      toast.error("Validation failed to complete. Check code syntax.");
+      console.warn("Validation execution fallback error:", err);
+      const errMsg = err instanceof Error ? err.message : "Your code couldn't run.";
+      setExecutionError(errMsg);
+      toast.error("Your code couldn't run. Check syntax.");
     } finally {
       setIsValidating(false);
     }
@@ -278,29 +301,29 @@ export function CompactCodeChallengeView({
       isCompleted={isSuccess}
       className={className}
     >
-      <div className="flex flex-col gap-4 max-w-4xl mx-auto py-1">
+      <div className="flex flex-col gap-4 max-w-4xl mx-auto py-1 w-full">
         {/* Editor & Output Container */}
-        <div className="flex flex-col rounded-xl border border-border/80 bg-card overflow-hidden shadow-sm">
+        <div className="flex flex-col rounded-xl border border-border/80 bg-card overflow-hidden shadow-xs">
           {/* Editor Header */}
-          <div className="flex items-center justify-between border-b border-border/70 bg-muted/40 px-3.5 py-2 text-xs gap-2">
+          <div className="flex items-center justify-between border-b border-border/70 bg-muted/40 px-3 sm:px-3.5 py-2 text-xs gap-2 flex-wrap sm:flex-nowrap">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-semibold text-foreground flex items-center gap-1.5">
+              <span className="font-mono text-xs font-semibold text-foreground flex items-center gap-1.5 whitespace-nowrap">
                 <Code2 className="h-3.5 w-3.5 text-primary" />
                 {entryFileName}
               </span>
-              <Badge variant="outline" className="text-[10px] font-mono uppercase">
+              <Badge variant="outline" className="text-[10px] font-mono uppercase px-1.5 py-0">
                 {step.language || "javascript"}
               </Badge>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 ml-auto">
               {effectivePreviewType === "browser" && (
                 <div className="flex items-center bg-muted/70 rounded-md p-0.5 border border-border/50 mr-1">
                   <button
                     type="button"
                     onClick={() => setActiveTab("code")}
                     className={cn(
-                      "px-2 py-0.5 text-[11px] font-medium rounded transition-colors",
+                      "px-2.5 py-0.5 text-[11px] font-medium rounded transition-colors whitespace-nowrap",
                       activeTab === "code"
                         ? "bg-background text-foreground shadow-xs font-semibold"
                         : "text-muted-foreground hover:text-foreground",
@@ -312,7 +335,7 @@ export function CompactCodeChallengeView({
                     type="button"
                     onClick={() => setActiveTab("preview")}
                     className={cn(
-                      "px-2 py-0.5 text-[11px] font-medium rounded transition-colors flex items-center gap-1",
+                      "px-2.5 py-0.5 text-[11px] font-medium rounded transition-colors flex items-center gap-1 whitespace-nowrap",
                       activeTab === "preview"
                         ? "bg-background text-foreground shadow-xs font-semibold"
                         : "text-muted-foreground hover:text-foreground",
@@ -330,7 +353,7 @@ export function CompactCodeChallengeView({
                     type="button"
                     onClick={() => setActiveTab("code")}
                     className={cn(
-                      "px-2 py-0.5 text-[11px] font-medium rounded transition-colors",
+                      "px-2.5 py-0.5 text-[11px] font-medium rounded transition-colors whitespace-nowrap",
                       activeTab === "code"
                         ? "bg-background text-foreground shadow-xs font-semibold"
                         : "text-muted-foreground hover:text-foreground",
@@ -342,7 +365,7 @@ export function CompactCodeChallengeView({
                     type="button"
                     onClick={() => setActiveTab("console")}
                     className={cn(
-                      "px-2 py-0.5 text-[11px] font-medium rounded transition-colors flex items-center gap-1",
+                      "px-2.5 py-0.5 text-[11px] font-medium rounded transition-colors flex items-center gap-1 whitespace-nowrap",
                       activeTab === "console"
                         ? "bg-background text-foreground shadow-xs font-semibold"
                         : "text-muted-foreground hover:text-foreground",
@@ -351,7 +374,7 @@ export function CompactCodeChallengeView({
                     <Terminal className="h-3 w-3" />
                     Console
                     {logs.length > 0 && (
-                      <span className="ml-0.5 px-1 py-0.2 rounded-full text-[9px] bg-primary/20 text-primary font-mono">
+                      <span className="ml-0.5 px-1 py-0.2 rounded-full text-[9px] bg-primary/20 text-primary font-mono font-semibold">
                         {logs.length}
                       </span>
                     )}
@@ -371,7 +394,7 @@ export function CompactCodeChallengeView({
                 ) : (
                   <Copy className="h-3 w-3" />
                 )}
-                {copied ? "Copied" : "Copy"}
+                <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
               </Button>
 
               <Button
@@ -382,7 +405,7 @@ export function CompactCodeChallengeView({
                 title="Reset starter code"
               >
                 <RotateCcw className="h-3 w-3" />
-                Reset
+                <span className="hidden sm:inline">Reset</span>
               </Button>
 
               {onExpandToFullPlayground && (
@@ -390,7 +413,7 @@ export function CompactCodeChallengeView({
                   variant="ghost"
                   size="sm"
                   onClick={onExpandToFullPlayground}
-                  className="h-6 px-2 text-[11px] text-muted-foreground hover:text-foreground gap-1 hidden sm:flex"
+                  className="h-6 px-2 text-[11px] text-muted-foreground hover:text-foreground gap-1 hidden md:flex"
                   title="Expand into full playground IDE"
                 >
                   <Maximize2 className="h-3 w-3" />
@@ -401,12 +424,12 @@ export function CompactCodeChallengeView({
           </div>
 
           {/* Active View Body */}
-          <div className="relative min-h-[160px] max-h-[320px]">
+          <div className="relative min-h-[170px] h-[200px] sm:h-[220px] md:h-[250px] w-full overflow-hidden">
             {activeTab === "code" ? (
               !monacoFailed ? (
-                <div className="h-[200px] w-full">
+                <div className="h-full w-full">
                   <MonacoEditor
-                    height="200px"
+                    height="100%"
                     language={step.language || "javascript"}
                     value={code}
                     theme={appTheme === "dark" ? "vs-dark" : "light"}
@@ -425,6 +448,7 @@ export function CompactCodeChallengeView({
                       scrollbar: { vertical: "auto", horizontal: "auto" },
                       padding: { top: 8, bottom: 8 },
                       tabSize: 2,
+                      wordWrap: "off",
                     }}
                   />
                 </div>
@@ -433,14 +457,16 @@ export function CompactCodeChallengeView({
                 <textarea
                   value={code}
                   onChange={(e) => handleCodeChange(e.target.value)}
-                  className="w-full h-[200px] p-3.5 font-mono text-xs leading-relaxed bg-background text-foreground border-0 resize-none focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full h-full p-3.5 font-mono text-xs sm:text-[13px] leading-relaxed bg-background text-foreground border-0 resize-none focus:outline-none focus:ring-1 focus:ring-primary whitespace-pre overflow-x-auto"
                   placeholder="Enter your code solution here..."
                   spellCheck={false}
+                  autoCapitalize="off"
+                  autoCorrect="off"
                 />
               )
             ) : activeTab === "preview" ? (
               /* Live Browser Preview Frame */
-              <div className="w-full h-[200px] bg-white text-slate-900 overflow-auto">
+              <div className="w-full h-full bg-white text-slate-900 overflow-auto">
                 {previewError ? (
                   <div className="p-4 text-xs text-rose-500 font-mono flex items-center gap-1.5">
                     <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -458,9 +484,9 @@ export function CompactCodeChallengeView({
               </div>
             ) : (
               /* Console Output Panel */
-              <div className="w-full h-[200px] bg-zinc-950 text-zinc-100 flex flex-col overflow-hidden font-mono text-xs">
+              <div className="w-full h-full bg-zinc-950 text-zinc-100 flex flex-col overflow-hidden font-mono text-xs">
                 <div className="flex items-center justify-between px-3 py-1.5 bg-zinc-900 border-b border-zinc-800 text-[11px] text-zinc-400">
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-1.5 font-medium">
                     <Terminal className="h-3 w-3 text-primary" />
                     Output Console
                   </span>
@@ -468,8 +494,8 @@ export function CompactCodeChallengeView({
                     <button
                       type="button"
                       onClick={handleClearLogs}
-                      className="hover:text-zinc-200 flex items-center gap-1 transition-colors"
-                      title="Clear console"
+                      className="hover:text-zinc-200 flex items-center gap-1 transition-colors px-1 py-0.5 rounded"
+                      title="Clear console output"
                     >
                       <Trash2 className="h-3 w-3" />
                       Clear
@@ -479,8 +505,8 @@ export function CompactCodeChallengeView({
                 <div className="flex-1 p-3 overflow-auto space-y-1.5">
                   {logs.length === 0 ? (
                     <div className="h-full flex items-center justify-center text-zinc-500 italic text-[11px]">
-                      No console output yet. Click &quot;Run &amp; Check Answer&quot; to execute
-                      your code.
+                      No console output. Use console.log() to print values, then click &quot;Run
+                      &amp; Check Answer&quot;.
                     </div>
                   ) : (
                     logs.map((log) => (
@@ -527,37 +553,63 @@ export function CompactCodeChallengeView({
           )}
         </div>
 
-        {/* Validation Feedback Banner (if executed) */}
-        {validationReport && (
+        {/* Validation Feedback Banner (Hierarchy: Checking -> Passed / Failed / Error) */}
+        {(validationReport || executionError) && (
           <div
             className={cn(
               "rounded-xl border p-3.5 sm:p-4 text-xs space-y-2.5 animate-in fade-in slide-in-from-top-1 duration-150",
-              validationReport.status === "passed"
+              validationReport?.status === "passed"
                 ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-950 dark:text-emerald-200"
-                : "border-amber-500/40 bg-amber-500/5 text-amber-950 dark:text-amber-200",
+                : executionError || validationReport?.status === "error"
+                  ? "border-rose-500/40 bg-rose-500/5 text-rose-950 dark:text-rose-200"
+                  : "border-amber-500/40 bg-amber-500/5 text-amber-950 dark:text-amber-200",
             )}
           >
-            <div className="flex items-center justify-between font-semibold">
-              <div className="flex items-center gap-1.5">
-                {validationReport.status === "passed" ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            <div className="flex items-center justify-between font-semibold flex-wrap gap-1.5">
+              <div className="flex items-center gap-2">
+                {validationReport?.status === "passed" ? (
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                ) : executionError || validationReport?.status === "error" ? (
+                  <XCircle className="h-4 w-4 text-rose-500 shrink-0" />
                 ) : (
-                  <XCircle className="h-4 w-4 text-amber-500" />
+                  <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
                 )}
                 <span>
-                  {validationReport.status === "passed"
-                    ? "All checks passed! Great job!"
-                    : `Checks: ${validationReport.passedCount}/${validationReport.totalRequired} passed`}
+                  {validationReport?.status === "passed"
+                    ? "✓ Challenge completed"
+                    : executionError || validationReport?.status === "error"
+                      ? "Your code couldn't run."
+                      : "Your code runs, but one or more requirements aren't satisfied."}
                 </span>
               </div>
-              <span className="font-mono text-[10px] text-muted-foreground">
-                {validationReport.durationMs}ms
-              </span>
+
+              <div className="flex items-center gap-2">
+                {validationReport?.status === "passed" && (
+                  <Badge
+                    variant="outline"
+                    className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[10px] font-mono"
+                  >
+                    +50 XP
+                  </Badge>
+                )}
+                {validationReport?.durationMs !== undefined && (
+                  <span className="font-mono text-[10px] text-muted-foreground">
+                    {validationReport.durationMs}ms
+                  </span>
+                )}
+              </div>
             </div>
 
+            {/* Execution error message if any */}
+            {executionError && (
+              <p className="text-[11px] font-mono text-rose-500 pt-1 border-t border-rose-500/20">
+                {executionError}
+              </p>
+            )}
+
             {/* Individual Assertion Results */}
-            {validationReport.results && validationReport.results.length > 0 && (
-              <div className="space-y-1.5 pt-1 border-t border-border/40">
+            {validationReport?.results && validationReport.results.length > 0 && (
+              <div className="space-y-1.5 pt-1.5 border-t border-border/40">
                 {validationReport.results.map((res, i) => (
                   <div key={i} className="flex items-start gap-2 text-xs">
                     {res.status === "passed" ? (
@@ -582,29 +634,42 @@ export function CompactCodeChallengeView({
 
         {/* Footer Actions */}
         <div className="flex items-center justify-between pt-1 border-t border-border/50 gap-2 flex-wrap">
-          <div className="text-xs text-muted-foreground">
-            {step.validation
-              ? `${step.validation.assertions.length} validation check${step.validation.assertions.length === 1 ? "" : "s"}`
-              : "Focused authoring drill"}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {isSuccess ? (
+              <Badge
+                variant="outline"
+                className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[11px] gap-1 font-medium py-0.5"
+              >
+                <Check className="h-3 w-3" />
+                Completed
+              </Badge>
+            ) : step.validation ? (
+              <span>
+                {step.validation.assertions.length} validation check
+                {step.validation.assertions.length === 1 ? "" : "s"}
+              </span>
+            ) : (
+              <span>Focused authoring drill</span>
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-auto">
             <Button
               variant="default"
               size="sm"
               disabled={isValidating}
               onClick={handleRunAndValidate}
-              className="text-xs font-medium gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs"
+              className="text-xs font-medium gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs min-h-[36px] px-3.5"
             >
               {isValidating ? (
                 <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  Validating...
+                  <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+                  <span>Checking your code…</span>
                 </>
               ) : (
                 <>
-                  <Play className="h-3.5 w-3.5 fill-current" />
-                  Run & Check Answer
+                  <Play className="h-3.5 w-3.5 fill-current shrink-0" />
+                  <span>Run &amp; Check Answer</span>
                 </>
               )}
             </Button>
@@ -614,10 +679,10 @@ export function CompactCodeChallengeView({
                 variant="default"
                 size="sm"
                 onClick={onComplete}
-                className="text-xs font-medium gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                className="text-xs font-medium gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs min-h-[36px] px-3.5 animate-in fade-in duration-200"
               >
-                <Sparkles className="h-3.5 w-3.5" />
-                Continue
+                <span>Continue</span>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0" />
               </Button>
             )}
           </div>
