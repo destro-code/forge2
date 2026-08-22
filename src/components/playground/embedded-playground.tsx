@@ -596,8 +596,10 @@ export function EmbeddedPlayground({
           >
             <PanelLeft className="h-3.5 w-3.5" />
           </Button>
-          <span className="font-semibold text-foreground text-xs truncate max-w-[180px] sm:max-w-none">
-            {exerciseStep.title || "Interactive Practice Task"}
+          <span className="font-medium text-muted-foreground text-xs truncate max-w-[180px] sm:max-w-none">
+            {exerciseStep.title
+              ? exerciseStep.title.replace(/^(Interact|Exercise|Checkpoint):\s*/i, "").trim()
+              : "Interactive Practice Task"}
           </span>
           {executionStatus === "success" && executionTime !== null && (
             <Badge

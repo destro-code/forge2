@@ -96,11 +96,39 @@ const PHASES = [
 function LessonView() {
   const { lessonId } = Route.useParams();
   const search = Route.useSearch();
+  const lesson = useLesson(lessonId);
+  const { setLastActiveLesson, lastActiveLessonId } = useProgress();
+
+  if (!lesson) throw notFound();
+
+  useEffect(() => {
+    if (lesson?.id && lastActiveLessonId !== lesson.id) {
+      setLastActiveLesson(lesson.id);
+    }
+  }, [lesson?.id, lastActiveLessonId, setLastActiveLesson]);
+
+  if (!search.classic) {
+    return (
+      <div className="flex flex-col h-[calc(100dvh-7rem)] sm:h-[calc(100dvh-7.5rem)] min-h-[500px] w-full overflow-hidden">
+        <LessonPlayer lesson={lesson} className="flex-1 min-h-0" />
+      </div>
+    );
+  }
+
+  return <ClassicLessonView lesson={lesson} search={search} />;
+}
+
+function ClassicLessonView({
+  lesson,
+  search,
+}: {
+  lesson: Lesson;
+  search: Record<string, unknown>;
+}) {
   const currentMode: "curriculum" | "module" =
     search.mode === "curriculum" ? "curriculum" : "module";
   const isCurriculumMode = currentMode === "curriculum";
 
-  const lesson = useLesson(lessonId);
   const allModules = useModules();
   const allTopics = useTopics();
   const topic = useTopic(lesson?.topicId);
@@ -112,16 +140,8 @@ function LessonView() {
 
   const matchingQuiz = quizzes.find((q) => q.topicId === lesson?.topicId) || quizzes[0];
   const matchingBug = bugs.find((b) => b.topicId === lesson?.topicId);
-  const {
-    bookmarks,
-    toggleBookmark,
-    saveNote,
-    notes,
-    completeLesson,
-    lessonsCompleted,
-    setLastActiveLesson,
-    lastActiveLessonId,
-  } = useProgress();
+  const { bookmarks, toggleBookmark, saveNote, notes, completeLesson, lessonsCompleted } =
+    useProgress();
 
   const [selectedQuizAnswers, setSelectedQuizAnswers] = useState<Record<string, number>>({});
   const [activeSectionId, setActiveSectionId] = useState<string>("");
@@ -157,9 +177,6 @@ function LessonView() {
     return getOrderedCurriculumLessons(allModules, allTopics, allLessons);
   }, [allModules, allTopics, allLessons]);
 
-  // If lesson is not found
-  if (!lesson) throw notFound();
-
   const isBookmarked = bookmarks.includes(lesson.id);
   const isCompleted = lessonsCompleted.includes(lesson.id);
 
@@ -186,12 +203,6 @@ function LessonView() {
   ).length;
   const isModuleFullyCompleted =
     moduleLessons.length > 0 && completedModuleLessonsCount === moduleLessons.length;
-
-  useEffect(() => {
-    if (lesson?.id && lastActiveLessonId !== lesson.id) {
-      setLastActiveLesson(lesson.id);
-    }
-  }, [lesson?.id, lastActiveLessonId, setLastActiveLesson]);
 
   // Dynamic active phase scroll observer
   useEffect(() => {
@@ -263,14 +274,6 @@ function LessonView() {
   };
 
   const currentPhaseIndex = PHASES.findIndex((p) => p.id === activePhase);
-
-  if (!search.classic) {
-    return (
-      <div className="flex flex-col h-[calc(100dvh-7rem)] sm:h-[calc(100dvh-7.5rem)] min-h-[500px] w-full overflow-hidden">
-        <LessonPlayer lesson={lesson} className="flex-1 min-h-0" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">

@@ -3,6 +3,7 @@ import { buildLessonSteps } from "@/lib/utils/lesson-step-resolver";
 import type { Lesson } from "@/lib/types";
 import lessonsData from "@/data/lessons.json";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
+import { formatStepTitle } from "./lesson-player";
 
 describe("LessonPlayer Shell Architecture & State Unit Tests", () => {
   const mockLesson: Lesson = {
@@ -399,5 +400,12 @@ describe("LessonPlayer Shell Architecture & State Unit Tests", () => {
     });
 
     expect(firstUncompletedIndex).toBe(1);
+  });
+
+  it("22. formatStepTitle strips redundant prefixes and enforces clean title hierarchy", () => {
+    expect(formatStepTitle("Interact: Spot the Frontend")).toBe("Spot the Frontend");
+    expect(formatStepTitle("Exercise: Build a Button")).toBe("Build a Button");
+    expect(formatStepTitle("Checkpoint: Quick Review")).toBe("Quick Review");
+    expect(formatStepTitle("What is Frontend?")).toBe("What is Frontend?");
   });
 });

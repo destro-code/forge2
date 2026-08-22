@@ -113,46 +113,16 @@ export function LessonPlayer({
       }
     }
 
-    // If lesson is already completed, start at 0 for review
-    if (lessonsCompleted.includes(lesson.id)) {
-      return 0;
-    }
-
-    // Scan steps to find the first uncompleted interactive exercise or checkpoint
-    const firstUncompletedIndex = steps.findIndex((st) => {
-      if (st.type === "interactive-exercise") {
-        const exId = st.validation?.exerciseId || st.exerciseId || `${lesson.id}:${st.id}`;
-        const isDone = playgroundCompletions.some(
-          (c) => c.templateId === exId || c.templateId === `${lesson.id}:${st.id}`,
-        );
-        return !isDone;
-      }
-      if (st.type === "checkpoint") {
-        const cpKey = `${lesson.id}:${st.id}`;
-        const cpVal = lessonCheckpoints[cpKey] ?? lessonCheckpoints[st.id];
-        const isDone = Boolean(
-          typeof cpVal === "object" && cpVal !== null ? cpVal.status === "completed" : cpVal,
-        );
-        return !isDone;
-      }
-      return false;
-    });
-
-    if (firstUncompletedIndex > 0) {
-      return firstUncompletedIndex;
-    }
-
+    // Always start at step 0 for new lessons or lessons without a saved session
     return 0;
-  }, [
-    initialStepIndex,
-    steps,
-    lesson.id,
-    lessonsCompleted,
-    playgroundCompletions,
-    lessonCheckpoints,
-  ]);
+  }, [initialStepIndex, steps.length, lesson.id]);
 
   const [currentStepIndex, setCurrentStepIndex] = useState(derivedInitialIndex);
+
+  // Sync step index when lesson changes
+  useEffect(() => {
+    setCurrentStepIndex(derivedInitialIndex);
+  }, [derivedInitialIndex]);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -325,17 +295,6 @@ export function LessonPlayer({
             )}
           </div>
         </div>
-
-        {/* Step Title */}
-        {currentStep.title && (
-          <h2
-            ref={headingRef}
-            tabIndex={-1}
-            className="mt-1 text-base md:text-lg font-bold tracking-tight text-foreground focus:outline-none"
-          >
-            {currentStep.title}
-          </h2>
-        )}
       </header>
 
       {/* Internal Content Scroll Region */}
@@ -345,7 +304,7 @@ export function LessonPlayer({
         data-testid="lesson-player-content"
         className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 md:p-6 scrollbar-thin focus:outline-none"
       >
-        <StepRenderer step={currentStep} lesson={lesson} />
+        <StepRenderer step={currentStep} lesson={lesson} headingRef={headingRef} />
       </main>
 
       {/* Footer Navigation Controls */}
@@ -399,40 +358,78 @@ export function LessonPlayer({
   );
 }
 
+export function formatStepTitle(title: string): string {
+  if (!title) return "";
+  return title.replace(/^(Interact|Exercise|Checkpoint):\s*/i, "").trim();
+}
+
 /** Modular Step Dispatcher */
-function StepRenderer({ step, lesson }: { step: LessonStep; lesson?: Lesson }) {
+function StepRenderer({
+  step,
+  lesson,
+  headingRef,
+}: {
+  step: LessonStep;
+  lesson?: Lesson;
+  headingRef?: React.RefObject<HTMLHeadingElement | null>;
+}) {
   switch (step.type) {
     case "content":
-      return <ContentStepView step={step} />;
+      return <ContentStepView step={step} headingRef={headingRef} />;
     case "code-example":
-      return <CodeExampleStepView step={step} />;
+      return <CodeExampleStepView step={step} headingRef={headingRef} />;
     case "interactive-exercise":
-      return <InteractiveExerciseStepView step={step} lesson={lesson} />;
+      return <InteractiveExerciseStepView step={step} lesson={lesson} headingRef={headingRef} />;
     case "quiz":
-      return <QuizStepView step={step} lesson={lesson} />;
+      return <QuizStepView step={step} lesson={lesson} headingRef={headingRef} />;
     case "checkpoint":
-      return <CheckpointStepView step={step} lesson={lesson} />;
+      return <CheckpointStepView step={step} lesson={lesson} headingRef={headingRef} />;
     default:
       return <div className="text-muted-foreground">Unknown step type.</div>;
   }
 }
 
 /** 1. Content Step Renderer */
-function ContentStepView({ step }: { step: ContentLessonStep }) {
+function ContentStepView({
+  step,
+  headingRef,
+}: {
+  step: ContentLessonStep;
+  headingRef?: React.RefObject<HTMLHeadingElement | null>;
+}) {
+  const formattedTitle = formatStepTitle(step.title);
+
   return (
-    <div className="space-y-5 max-w-3xl mx-auto py-2">
+    <div className="space-y-4 md:space-y-5 max-w-3xl mx-auto py-1 sm:py-2">
+      {formattedTitle && (
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground/95 pb-2 border-b border-border/30 focus:outline-none"
+        >
+          {formattedTitle}
+        </h2>
+      )}
       {step.sections.map((section, idx) => {
         switch (section.type) {
-          case "heading":
+          case "heading": {
+            const isDuplicateHeading =
+              section.text === step.title || formatStepTitle(section.text) === formattedTitle;
+
+            if (isDuplicateHeading) {
+              return null;
+            }
+
             return (
               <h3
                 key={section.id || idx}
                 id={section.id}
-                className="text-lg md:text-xl font-bold tracking-tight text-foreground/95 pt-3 first:pt-0 pb-1.5 border-b border-border/30"
+                className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-foreground/95 pt-2 first:pt-0 pb-1 border-b border-border/30"
               >
                 {section.text}
               </h3>
             );
+          }
           case "paragraph":
             return (
               <p
@@ -467,10 +464,28 @@ function ContentStepView({ step }: { step: ContentLessonStep }) {
 }
 
 /** 2. Code Example Step Renderer */
-function CodeExampleStepView({ step }: { step: CodeExampleLessonStep }) {
+function CodeExampleStepView({
+  step,
+  headingRef,
+}: {
+  step: CodeExampleLessonStep;
+  headingRef?: React.RefObject<HTMLHeadingElement | null>;
+}) {
+  const formattedTitle = formatStepTitle(step.title);
+  const showCodeTitle = step.codeTitle && formatStepTitle(step.codeTitle) !== formattedTitle;
+
   return (
-    <div className="space-y-4 max-w-3xl mx-auto py-2">
-      {step.codeTitle && (
+    <div className="space-y-3 sm:space-y-4 max-w-3xl mx-auto py-1 sm:py-2">
+      {formattedTitle && (
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground/95 pb-2 border-b border-border/30 focus:outline-none"
+        >
+          {formattedTitle}
+        </h2>
+      )}
+      {showCodeTitle && (
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400">
           <Code2 className="h-4 w-4 shrink-0" />
           <span>{step.codeTitle}</span>
@@ -485,12 +500,25 @@ function CodeExampleStepView({ step }: { step: CodeExampleLessonStep }) {
 function InteractiveExerciseStepView({
   step,
   lesson,
+  headingRef,
 }: {
   step: InteractiveExerciseLessonStep;
   lesson?: Lesson;
+  headingRef?: React.RefObject<HTMLHeadingElement | null>;
 }) {
+  const formattedTitle = formatStepTitle(step.title);
+
   return (
     <div className="w-full max-w-7xl mx-auto flex flex-col h-full min-h-[440px]">
+      {formattedTitle && (
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground/95 pb-2 border-b border-border/30 mb-2 sm:mb-3 shrink-0 focus:outline-none"
+        >
+          {formattedTitle}
+        </h2>
+      )}
       <EmbeddedPlayground
         exerciseStep={step}
         lesson={lesson}
@@ -502,10 +530,19 @@ function InteractiveExerciseStepView({
 }
 
 /** 4. Quiz Step Renderer */
-function QuizStepView({ step, lesson }: { step: QuizLessonStep; lesson?: Lesson }) {
+function QuizStepView({
+  step,
+  lesson,
+  headingRef,
+}: {
+  step: QuizLessonStep;
+  lesson?: Lesson;
+  headingRef?: React.RefObject<HTMLHeadingElement | null>;
+}) {
   const { saveQuizResult } = useProgress();
   const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
   const [checkedState, setCheckedState] = useState<Record<string, boolean>>({});
+  const formattedTitle = formatStepTitle(step.title);
 
   const handleSelectOption = (qId: string, optIdx: number) => {
     setUserAnswers((prev) => ({ ...prev, [qId]: optIdx }));
@@ -538,12 +575,22 @@ function QuizStepView({ step, lesson }: { step: QuizLessonStep; lesson?: Lesson 
   };
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto py-2">
+    <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto py-1 sm:py-2">
+      {formattedTitle && (
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground/95 pb-2 border-b border-border/30 focus:outline-none"
+        >
+          {formattedTitle}
+        </h2>
+      )}
       <div className="flex items-center justify-between pb-2 border-b border-border/40">
-        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-foreground">
           <HelpCircle className="h-4 w-4 text-amber-500 shrink-0" />
           <span>
-            Knowledge Check ({step.questions.length} Question{step.questions.length > 1 ? "s" : ""})
+            Question Progress ({step.questions.length} Question
+            {step.questions.length > 1 ? "s" : ""})
           </span>
         </div>
         <Badge
@@ -662,7 +709,15 @@ function QuizStepView({ step, lesson }: { step: QuizLessonStep; lesson?: Lesson 
 }
 
 /** 5. Checkpoint Step Renderer */
-function CheckpointStepView({ step, lesson }: { step: CheckpointLessonStep; lesson?: Lesson }) {
+function CheckpointStepView({
+  step,
+  lesson,
+  headingRef,
+}: {
+  step: CheckpointLessonStep;
+  lesson?: Lesson;
+  headingRef?: React.RefObject<HTMLHeadingElement | null>;
+}) {
   const { toggleCheckpoint } = useProgress();
   const rawLessonCheckpoints = useProgressStore((state) => state.lessonCheckpoints);
   const lessonCheckpoints = rawLessonCheckpoints ?? EMPTY_OBJECT;
@@ -677,6 +732,7 @@ function CheckpointStepView({ step, lesson }: { step: CheckpointLessonStep; less
   const [checked, setChecked] = useState(false);
 
   const assessment = step.assessment;
+  const formattedTitle = formatStepTitle(step.title || step.label || "Checkpoint");
 
   const handleToggleAcknowledge = () => {
     const nextState = !acknowledged;
@@ -695,13 +751,22 @@ function CheckpointStepView({ step, lesson }: { step: CheckpointLessonStep; less
   };
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto py-2">
+    <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto py-1 sm:py-2">
+      {formattedTitle && (
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground/95 pb-2 border-b border-border/30 focus:outline-none"
+        >
+          {formattedTitle}
+        </h2>
+      )}
       <Card className="border-indigo-500/30 bg-indigo-500/5 dark:bg-indigo-950/10 shadow-xs">
         <CardHeader className="pb-3">
           <CardTitle className="text-base md:text-lg flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <CheckSquare className="h-5 w-5 text-indigo-500 shrink-0" />
-              <span>{step.label || "Understanding Checkpoint"}</span>
+              <span>Checkpoint Assessment</span>
             </div>
             {(acknowledged || isAlreadyCompleted) && (
               <Badge
