@@ -49,13 +49,12 @@ describe("LessonPlayer Shell Architecture & State Unit Tests", () => {
 
   it("1. Resolves lesson into steps correctly for player consumption", () => {
     const steps = buildLessonSteps(mockLesson);
-    expect(steps.length).toBeGreaterThan(0);
+    expect(steps.length).toBe(5);
     expect(steps[0].type).toBe("content");
-    expect(steps[1].type).toBe("code-example");
-    expect(steps[2].type).toBe("interactive-exercise");
-    expect(steps[3].type).toBe("checkpoint");
-    expect(steps[4].type).toBe("quiz");
-    expect(steps[5].type).toBe("content"); // summary
+    expect(steps[1].type).toBe("interactive-exercise");
+    expect(steps[2].type).toBe("checkpoint");
+    expect(steps[3].type).toBe("quiz");
+    expect(steps[4].type).toBe("content"); // summary
   });
 
   it("2. Initial state reflects first step (step 0)", () => {
@@ -78,19 +77,19 @@ describe("LessonPlayer Shell Architecture & State Unit Tests", () => {
     }
 
     expect(currentIdx).toBe(1);
-    expect(steps[currentIdx].type).toBe("code-example");
+    expect(steps[currentIdx].type).toBe("interactive-exercise");
   });
 
   it("4. Back moves exactly one step backward in state machine", () => {
     const steps = buildLessonSteps(mockLesson);
-    let currentIdx = 3; // at checkpoint
+    let currentIdx = 2; // at checkpoint
 
     // Back
     if (currentIdx > 0) {
       currentIdx -= 1;
     }
 
-    expect(currentIdx).toBe(2);
+    expect(currentIdx).toBe(1);
     expect(steps[currentIdx].type).toBe("interactive-exercise");
   });
 

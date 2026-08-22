@@ -11,6 +11,15 @@ import type {
 } from "../types";
 
 /**
+ * Normalizes an exercise identifier to its canonical string form
+ * by stripping leading "interactive-" or "exercise-" prefixes.
+ */
+export function getCanonicalExerciseId(rawId: string | undefined): string {
+  if (!rawId) return "";
+  return rawId.trim().replace(/^(interactive|exercise)-/, "");
+}
+
+/**
  * Resolves a canonical Lesson object into an ordered array of presentation-layer LessonStep items.
  *
  * This resolver maps existing LessonSection[], Lesson.exercises[], and Lesson.quiz[]
@@ -25,40 +34,92 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
 
   const steps: LessonStep[] = [];
   let stepCounter = 0;
+  const resolvedExerciseIds = new Set<string>();
 
-  let pendingContentSections: LessonSection[] = [];
+  let currentGroup: LessonSection[] = [];
   let currentHeadingTitle: string | undefined = undefined;
   let currentSectionId: string | undefined = undefined;
 
-  const flushPendingContent = () => {
-    if (pendingContentSections.length === 0) return;
+  const flushGroup = (nextType?: string): string | undefined => {
+    if (currentGroup.length === 0) return undefined;
 
-    const firstSection = pendingContentSections[0];
+    const nonHeading = currentGroup.filter((s) => s.type !== "heading");
+
+    // Prevent creating an isolated, empty heading step right before interactive/assessment boundaries
+    if (
+      nonHeading.length === 0 &&
+      nextType &&
+      ["interactive-sandbox", "checkpoint", "inline-quiz", "code", "jsx", "javascript"].includes(
+        nextType,
+      )
+    ) {
+      const headingSec = currentGroup.find((s) => s.type === "heading");
+      const headingText = headingSec && "text" in headingSec ? headingSec.text : undefined;
+      currentGroup = [];
+      return headingText;
+    }
+
+    const firstSection = currentGroup[0];
+    const headingSection = currentGroup.find((s) => s.type === "heading");
+
     const sectionId =
-      currentSectionId || ("id" in firstSection && firstSection.id ? firstSection.id : undefined);
+      currentSectionId ||
+      ("id" in firstSection && firstSection.id ? firstSection.id : undefined) ||
+      (headingSection && "id" in headingSection ? headingSection.id : undefined);
 
-    const headingSection = pendingContentSections.find((s) => s.type === "heading");
     const stepTitle =
       headingSection && "text" in headingSection && headingSection.text
         ? headingSection.text
         : currentHeadingTitle || lesson.title;
 
-    const stepId = `${lesson.id}-step-${stepCounter++}-content`;
+    const hasCode = nonHeading.some((s) => ["code", "jsx", "javascript"].includes(s.type));
+    const hasExplanatory = nonHeading.some((s) =>
+      ["paragraph", "callout", "diagram", "walkthrough", "collapsible"].includes(s.type),
+    );
 
-    const contentStep: ContentLessonStep = {
-      id: stepId,
-      type: "content",
-      title: stepTitle,
-      lessonId: lesson.id,
-      sectionId,
-      section: pendingContentSections.length === 1 ? pendingContentSections[0] : undefined,
-      sections: [...pendingContentSections],
-    };
+    // Standalone code example without surrounding explanatory content
+    if (hasCode && !hasExplanatory && nonHeading.length === 1) {
+      const codeSec = nonHeading[0] as LessonSection & {
+        type: "code" | "jsx" | "javascript";
+        code: string;
+        title?: string;
+        language?: string;
+      };
+      const codeLang =
+        codeSec.language ||
+        (codeSec.type === "jsx"
+          ? "jsx"
+          : codeSec.type === "javascript"
+            ? "javascript"
+            : "typescript");
+      const codeTitle = codeSec.title || stepTitle || "Code Example";
 
-    steps.push(contentStep);
+      steps.push({
+        id: `${lesson.id}-step-${stepCounter++}-code`,
+        type: "code-example",
+        title: codeTitle,
+        lessonId: lesson.id,
+        sectionId: ("id" in codeSec && codeSec.id) || sectionId,
+        section: codeSec,
+        code: codeSec.code || "",
+        language: codeLang,
+        codeTitle: codeSec.title,
+      });
+    } else {
+      steps.push({
+        id: `${lesson.id}-step-${stepCounter++}-content`,
+        type: "content",
+        title: stepTitle,
+        lessonId: lesson.id,
+        sectionId,
+        section: currentGroup.length === 1 ? currentGroup[0] : undefined,
+        sections: [...currentGroup],
+      });
+    }
 
-    pendingContentSections = [];
+    currentGroup = [];
     currentSectionId = undefined;
+    return undefined;
   };
 
   const sections = lesson.sections || [];
@@ -68,8 +129,8 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
 
     switch (s.type) {
       case "heading": {
-        flushPendingContent();
-        pendingContentSections.push(s);
+        flushGroup(s.type);
+        currentGroup.push(s);
         currentHeadingTitle = s.text;
         currentSectionId = s.id;
         break;
@@ -80,7 +141,7 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
       case "diagram":
       case "walkthrough":
       case "collapsible": {
-        pendingContentSections.push(s);
+        currentGroup.push(s);
         if (!currentSectionId && "id" in s && s.id) {
           currentSectionId = s.id;
         }
@@ -90,37 +151,45 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
       case "code":
       case "jsx":
       case "javascript": {
-        flushPendingContent();
-        const codeSection = s as LessonSection & {
-          type: "code" | "jsx" | "javascript";
-          code: string;
-          title?: string;
-          language?: string;
-        };
-        const sectionId = "id" in s && s.id ? s.id : undefined;
-        const codeLang =
-          codeSection.language ||
-          (s.type === "jsx" ? "jsx" : s.type === "javascript" ? "javascript" : "typescript");
-        const codeTitle = codeSection.title || "Code Example";
+        const hasExplanatory = currentGroup.some((sec) =>
+          ["paragraph", "callout", "diagram", "walkthrough", "collapsible"].includes(sec.type),
+        );
 
-        const codeStep: CodeExampleLessonStep = {
-          id: `${lesson.id}-step-${stepCounter++}-code`,
-          type: "code-example",
-          title: codeTitle,
-          lessonId: lesson.id,
-          sectionId,
-          section: codeSection,
-          code: codeSection.code || "",
-          language: codeLang,
-          codeTitle: codeSection.title,
-        };
+        if (hasExplanatory) {
+          currentGroup.push(s);
+          if (!currentSectionId && "id" in s && s.id) {
+            currentSectionId = s.id;
+          }
+        } else {
+          const adoptedTitle = flushGroup(s.type);
+          const codeSec = s as LessonSection & {
+            type: "code" | "jsx" | "javascript";
+            code: string;
+            title?: string;
+            language?: string;
+          };
+          const codeLang =
+            codeSec.language ||
+            (s.type === "jsx" ? "jsx" : s.type === "javascript" ? "javascript" : "typescript");
+          const codeTitle = codeSec.title || adoptedTitle || currentHeadingTitle || "Code Example";
 
-        steps.push(codeStep);
+          steps.push({
+            id: `${lesson.id}-step-${stepCounter++}-code`,
+            type: "code-example",
+            title: codeTitle,
+            lessonId: lesson.id,
+            sectionId: ("id" in s && s.id ? s.id : undefined) || currentSectionId,
+            section: codeSec,
+            code: codeSec.code || "",
+            language: codeLang,
+            codeTitle: codeSec.title,
+          });
+        }
         break;
       }
 
       case "interactive-sandbox": {
-        flushPendingContent();
+        const adoptedTitle = flushGroup(s.type);
         const sandboxSection = s as LessonSection & {
           type: "interactive-sandbox";
           id?: string;
@@ -135,10 +204,21 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           sandboxSection.id || sandboxSection.validation?.exerciseId || `${lesson.id}-sandbox-${i}`;
         const sectionId = sandboxSection.id;
 
-        const interactiveStep: InteractiveExerciseLessonStep = {
+        if (exerciseId) {
+          resolvedExerciseIds.add(exerciseId);
+          const canonId = getCanonicalExerciseId(exerciseId);
+          if (canonId) resolvedExerciseIds.add(canonId);
+        }
+        if (sandboxSection.validation?.exerciseId) {
+          resolvedExerciseIds.add(sandboxSection.validation.exerciseId);
+          const canonValId = getCanonicalExerciseId(sandboxSection.validation.exerciseId);
+          if (canonValId) resolvedExerciseIds.add(canonValId);
+        }
+
+        steps.push({
           id: `${lesson.id}-step-${stepCounter++}-interactive-${exerciseId}`,
           type: "interactive-exercise",
-          title: sandboxSection.title || "Interactive Exercise",
+          title: sandboxSection.title || adoptedTitle || "Interactive Exercise",
           lessonId: lesson.id,
           exerciseId,
           sectionId,
@@ -148,14 +228,12 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           language: sandboxSection.language || "javascript",
           hasValidation: Boolean(sandboxSection.validation),
           validation: sandboxSection.validation,
-        };
-
-        steps.push(interactiveStep);
+        });
         break;
       }
 
       case "checkpoint": {
-        flushPendingContent();
+        const adoptedTitle = flushGroup(s.type);
         const checkpointSection = s as LessonSection & {
           type: "checkpoint";
           id: string;
@@ -164,10 +242,10 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           assessment?: any;
         };
 
-        const checkpointStep: CheckpointLessonStep = {
+        steps.push({
           id: `${lesson.id}-step-${stepCounter++}-checkpoint-${checkpointSection.id}`,
           type: "checkpoint",
-          title: checkpointSection.label || "Checkpoint",
+          title: adoptedTitle || checkpointSection.label || "Checkpoint",
           lessonId: lesson.id,
           checkpointId: checkpointSection.id,
           sectionId: checkpointSection.id,
@@ -175,52 +253,64 @@ export function buildLessonSteps(lesson: Lesson): LessonStep[] {
           label: checkpointSection.label,
           hint: checkpointSection.hint,
           assessment: checkpointSection.assessment,
-        };
-
-        steps.push(checkpointStep);
+        });
         break;
       }
 
       case "inline-quiz": {
-        flushPendingContent();
+        const adoptedTitle = flushGroup(s.type);
         const inlineQuizSection = s as LessonSection & {
           type: "inline-quiz";
           quizId: string;
         };
         const sectionId = "id" in s && s.id ? s.id : undefined;
 
-        const quizStep: QuizLessonStep = {
+        steps.push({
           id: `${lesson.id}-step-${stepCounter++}-quiz-${inlineQuizSection.quizId}`,
           type: "quiz",
-          title: "Inline Quiz",
+          title: adoptedTitle || "Inline Quiz",
           lessonId: lesson.id,
           quizId: inlineQuizSection.quizId,
           sectionId,
           section: inlineQuizSection,
           questions: [],
-        };
-
-        steps.push(quizStep);
+        });
         break;
       }
 
       default: {
-        pendingContentSections.push(s);
+        currentGroup.push(s);
         break;
       }
     }
   }
 
-  flushPendingContent();
+  flushGroup();
 
   // Process lesson-level exercises (from lesson.exercises[])
   if (lesson.exercises && lesson.exercises.length > 0) {
     for (const ex of lesson.exercises) {
-      const alreadyIncluded = steps.some(
-        (st) => st.type === "interactive-exercise" && st.exerciseId === ex.id,
-      );
+      const rawId = ex.id;
+      const canonId = getCanonicalExerciseId(rawId);
+      const valId = ex.validation?.exerciseId;
+      const canonValId = getCanonicalExerciseId(valId);
+
+      const alreadyIncluded =
+        (Boolean(rawId) && resolvedExerciseIds.has(rawId)) ||
+        (Boolean(canonId) && resolvedExerciseIds.has(canonId)) ||
+        (Boolean(valId) && resolvedExerciseIds.has(valId)) ||
+        (Boolean(canonValId) && resolvedExerciseIds.has(canonValId));
 
       if (!alreadyIncluded) {
+        if (rawId) {
+          resolvedExerciseIds.add(rawId);
+          if (canonId) resolvedExerciseIds.add(canonId);
+        }
+        if (valId) {
+          resolvedExerciseIds.add(valId);
+          if (canonValId) resolvedExerciseIds.add(canonValId);
+        }
+
         const interactiveStep: InteractiveExerciseLessonStep = {
           id: `${lesson.id}-step-${stepCounter++}-exercise-${ex.id}`,
           type: "interactive-exercise",

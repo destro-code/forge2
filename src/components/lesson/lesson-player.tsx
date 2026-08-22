@@ -455,6 +455,35 @@ function ContentStepView({
             return section.title && section.content ? (
               <LessonCollapsible key={idx} title={section.title} content={section.content} />
             ) : null;
+          case "code":
+          case "jsx":
+          case "javascript": {
+            const codeSec = section as LessonSection & {
+              type: "code" | "jsx" | "javascript";
+              code: string;
+              title?: string;
+              language?: string;
+            };
+            const codeLang =
+              codeSec.language ||
+              (section.type === "jsx"
+                ? "jsx"
+                : section.type === "javascript"
+                  ? "javascript"
+                  : "typescript");
+
+            return (
+              <div key={idx} className="space-y-2 my-3">
+                {codeSec.title && (
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                    <Code2 className="h-4 w-4 shrink-0" />
+                    <span>{codeSec.title}</span>
+                  </div>
+                )}
+                <CodeBlock code={codeSec.code || ""} language={codeLang} />
+              </div>
+            );
+          }
           default:
             return null;
         }
