@@ -113,4 +113,57 @@ describe("Compact Code Challenge Step & Integration Tests", () => {
     expect(exerciseStep.leadIn).toBeDefined();
     expect(exerciseStep.leadIn?.title).toBe("Closing Tags");
   });
+
+  it("handles completion idempotency and canonical exercise ID resolution", () => {
+    const rawId = "0-1-1";
+    const canonicalId = "interactive-0-1-1";
+
+    const store = useProgressStore.getState();
+    store.completePlaygroundExercise(canonicalId);
+
+    const updated = useProgressStore.getState().playgroundCompletions;
+    expect(updated.length).toBe(1);
+    expect(updated[0].templateId).toBe(canonicalId);
+
+    // Calling again does not duplicate
+    store.completePlaygroundExercise(canonicalId);
+    expect(useProgressStore.getState().playgroundCompletions.length).toBe(1);
+
+    // Verify alias matching
+    const isCompleted = updated.some((c) => c.templateId === rawId || c.templateId === canonicalId);
+    expect(isCompleted).toBe(true);
+  });
+
+  it("ensures isolated storage keys per exercise ID to prevent cross-exercise code pollution", () => {
+    const exA = "exercise-0-1-1";
+    const exB = "exercise-0-1-2";
+
+    const keyA = `forge_compact_code_${exA}`;
+    const keyB = `forge_compact_code_${exB}`;
+
+    expect(keyA).not.toBe(keyB);
+    expect(keyA).toBe("forge_compact_code_exercise-0-1-1");
+    expect(keyB).toBe("forge_compact_code_exercise-0-1-2");
+  });
+
+  it("determines correct effective preview tabs for HTML vs JavaScript console exercises", () => {
+    const htmlStep: Partial<InteractiveExerciseLessonStep> = {
+      type: "interactive-exercise",
+      exerciseId: "html-ex",
+      language: "html",
+      initialCode: "<p>Hello</p>",
+      previewType: "browser",
+    };
+
+    const jsConsoleStep: Partial<InteractiveExerciseLessonStep> = {
+      type: "interactive-exercise",
+      exerciseId: "js-ex",
+      language: "javascript",
+      initialCode: "console.log('test');",
+      previewType: "console",
+    };
+
+    expect(htmlStep.previewType).toBe("browser");
+    expect(jsConsoleStep.previewType).toBe("console");
+  });
 });

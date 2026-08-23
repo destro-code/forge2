@@ -918,3 +918,89 @@ export function reorderPedagogicalSteps(steps: LessonStep[]): LessonStep[] {
 
   return [...head, ...reorderedTail];
 }
+
+/**
+ * Evaluates whether a lesson step is a satisfied interactive exercise.
+ * Non-exercise steps and non-gated exercises are always considered satisfied.
+ */
+export function isStepGatedExerciseCompleted(
+  step: LessonStep | null | undefined,
+  playgroundCompletions: Array<{ templateId: string }> = [],
+  validationReport?: { exerciseId?: string; status?: string } | null,
+): boolean {
+  if (!step || step.type !== "interactive-exercise") return true;
+
+  const exerciseStep = step as InteractiveExerciseLessonStep;
+  if (!exerciseStep.hasValidation || !exerciseStep.validation?.exerciseId) {
+    return true; // Non-validated/legacy exercise
+  }
+
+  const exerciseId = exerciseStep.validation.exerciseId;
+  const canonValId = exerciseId ? getCanonicalExerciseId(exerciseId) : undefined;
+  const canonStepId = exerciseStep.exerciseId
+    ? getCanonicalExerciseId(exerciseStep.exerciseId)
+    : undefined;
+
+  const isCompletedInStore = (playgroundCompletions || []).some((c) => {
+    if (!c.templateId) return false;
+    if (c.templateId === exerciseId || c.templateId === exerciseStep.exerciseId) return true;
+    const canonCompId = getCanonicalExerciseId(c.templateId);
+    return (
+      (canonValId &&
+        (c.templateId === canonValId ||
+          canonCompId === canonValId ||
+          canonCompId === exerciseId)) ||
+      (canonStepId &&
+        (c.templateId === canonStepId ||
+          canonCompId === canonStepId ||
+          canonCompId === exerciseStep.exerciseId))
+    );
+  });
+
+  const repId = validationReport?.exerciseId;
+  const canonRepId = repId ? getCanonicalExerciseId(repId) : undefined;
+  const isPassedInReport =
+    validationReport?.status === "passed" &&
+    (repId === exerciseId ||
+      repId === exerciseStep.exerciseId ||
+      (canonValId &&
+        (repId === canonValId || canonRepId === canonValId || canonRepId === exerciseId)) ||
+      (canonStepId &&
+        (repId === canonStepId ||
+          canonRepId === canonStepId ||
+          canonRepId === exerciseStep.exerciseId)));
+
+  return isCompletedInStore || Boolean(isPassedInReport);
+}
+
+/**
+ * Determines whether targetIndex in a lesson's step array is accessible from currentStepIndex.
+ * Backward navigation (targetIndex <= currentStepIndex) is always allowed.
+ * Forward navigation is permitted only if every preceding step (0 to targetIndex - 1)
+ * that contains a gated interactive exercise has been satisfied.
+ */
+export function isStepAccessible(
+  targetIndex: number,
+  currentStepIndex: number,
+  steps: LessonStep[],
+  playgroundCompletions: Array<{ templateId: string }> = [],
+  validationReport?: { exerciseId?: string; status?: string } | null,
+): boolean {
+  if (targetIndex <= currentStepIndex) return true;
+  if (targetIndex < 0 || targetIndex >= steps.length) return false;
+
+  for (let i = 0; i < targetIndex; i++) {
+    const step = steps[i];
+    const isCurrent = i === currentStepIndex;
+    const isCompleted = isStepGatedExerciseCompleted(
+      step,
+      playgroundCompletions,
+      isCurrent ? validationReport : null,
+    );
+    if (!isCompleted) {
+      return false;
+    }
+  }
+
+  return true;
+}

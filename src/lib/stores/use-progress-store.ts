@@ -325,7 +325,15 @@ export const useProgressStore = create<ProgressStore>()(
       completePlaygroundExercise: (templateId) => {
         set((state) => {
           const currentCompletions = state.playgroundCompletions || [];
-          const isAlreadyCompleted = currentCompletions.some((c) => c.templateId === templateId);
+          const canonId = templateId
+            ? templateId.trim().replace(/^(interactive|exercise)-/, "")
+            : "";
+          const isAlreadyCompleted = currentCompletions.some(
+            (c) =>
+              c.templateId === templateId ||
+              (canonId.length > 0 &&
+                c.templateId.trim().replace(/^(interactive|exercise)-/, "") === canonId),
+          );
 
           if (isAlreadyCompleted) {
             return state;

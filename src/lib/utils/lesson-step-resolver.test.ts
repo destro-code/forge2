@@ -1408,5 +1408,35 @@ describe("buildLessonSteps - Presentation Model & Step Resolver", () => {
       expect(movePara.challengeSize).toBe("compact");
       expect(movePara.showPreview).toBe(true);
     });
+
+    it("9. Step 13L: Canonical exercise ID uniqueness and non-empty validation across entire curriculum", () => {
+      const lessons = lessonsData as Lesson[];
+      let totalInteractiveCount = 0;
+
+      for (const lesson of lessons) {
+        const steps = buildLessonSteps(lesson);
+        const interactiveSteps = steps.filter(
+          (s): s is InteractiveExerciseLessonStep => s.type === "interactive-exercise",
+        );
+
+        const seenInLesson = new Set<string>();
+
+        for (const step of interactiveSteps) {
+          totalInteractiveCount++;
+          expect(step.exerciseId).toBeDefined();
+          expect(step.exerciseId.trim().length).toBeGreaterThan(0);
+
+          const canonId = getCanonicalExerciseId(step.exerciseId);
+          expect(canonId).toBeDefined();
+          expect(canonId.length).toBeGreaterThan(0);
+
+          // No two distinct steps within the same lesson should collide into identical canonical IDs
+          expect(seenInLesson.has(canonId)).toBe(false);
+          seenInLesson.add(canonId);
+        }
+      }
+
+      expect(totalInteractiveCount).toBeGreaterThan(0);
+    });
   });
 });

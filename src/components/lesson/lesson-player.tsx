@@ -8,7 +8,12 @@ import type {
   QuizLessonStep,
   CheckpointLessonStep,
 } from "@/lib/types";
-import { buildLessonSteps, getCanonicalExerciseId } from "@/lib/utils/lesson-step-resolver";
+import {
+  buildLessonSteps,
+  getCanonicalExerciseId,
+  isStepGatedExerciseCompleted,
+  isStepAccessible,
+} from "@/lib/utils/lesson-step-resolver";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
@@ -101,12 +106,22 @@ export function LessonPlayer({
   const validationReport = usePlaygroundStore((state) => state.validationReport);
   const { completeLesson } = useProgress();
 
-  // Derive initial step index safely using resume logic
+  // Derive initial step index safely using resume logic and sequential accessibility
   const derivedInitialIndex = useMemo(() => {
+    // Find highest accessible step based on completed exercises
+    let maxAccessible = 0;
+    for (let i = 0; i < steps.length; i++) {
+      if (isStepAccessible(i, 0, steps, playgroundCompletions)) {
+        maxAccessible = i;
+      } else {
+        break;
+      }
+    }
+
     if (typeof initialStepIndex === "number") {
       if (initialStepIndex < 0) return 0;
-      if (initialStepIndex >= steps.length) return Math.max(0, steps.length - 1);
-      return initialStepIndex;
+      const target = Math.min(initialStepIndex, steps.length - 1);
+      return Math.min(target, maxAccessible);
     }
 
     // Try session storage first for active session persistence
@@ -115,14 +130,14 @@ export function LessonPlayer({
       if (saved !== null) {
         const parsed = parseInt(saved, 10);
         if (!isNaN(parsed) && parsed >= 0 && parsed < steps.length) {
-          return parsed;
+          return Math.min(parsed, maxAccessible);
         }
       }
     }
 
     // Always start at step 0 for new lessons or lessons without a saved session
     return 0;
-  }, [initialStepIndex, steps.length, lesson.id]);
+  }, [initialStepIndex, steps, lesson.id, playgroundCompletions]);
 
   const [currentStepIndex, setCurrentStepIndex] = useState(derivedInitialIndex);
 
@@ -148,33 +163,8 @@ export function LessonPlayer({
 
   // Determine if Next button should be gated/disabled for interactive exercise
   const isNextDisabled = useMemo(() => {
-    if (!currentStep || currentStep.type !== "interactive-exercise") return false;
-
-    const exerciseStep = currentStep as InteractiveExerciseLessonStep;
-    if (!exerciseStep.hasValidation || !exerciseStep.validation?.exerciseId) {
-      return false; // Legacy exercise or no validation spec attached
-    }
-
-    const exerciseId = exerciseStep.validation.exerciseId;
-    const canonValId = exerciseId ? getCanonicalExerciseId(exerciseId) : undefined;
-    const canonStepId = exerciseStep.exerciseId
-      ? getCanonicalExerciseId(exerciseStep.exerciseId)
-      : undefined;
-
-    const isCompletedInStore = playgroundCompletions.some(
-      (c) =>
-        c.templateId === exerciseId ||
-        c.templateId === exerciseStep.exerciseId ||
-        (canonValId && c.templateId === canonValId) ||
-        (canonStepId && c.templateId === canonStepId),
-    );
-    const isPassedInReport =
-      validationReport?.status === "passed" &&
-      (validationReport?.exerciseId === exerciseId ||
-        (canonValId && validationReport?.exerciseId === canonValId) ||
-        (canonStepId && validationReport?.exerciseId === canonStepId));
-
-    return !isCompletedInStore && !isPassedInReport;
+    if (!currentStep) return false;
+    return !isStepGatedExerciseCompleted(currentStep, playgroundCompletions, validationReport);
   }, [currentStep, playgroundCompletions, validationReport]);
 
   // Cancel any in-flight validation requests when step changes or unmounts
@@ -212,7 +202,14 @@ export function LessonPlayer({
 
   const handleStepSelect = (index: number) => {
     if (index >= 0 && index < totalSteps) {
-      if (index > currentStepIndex && isNextDisabled) {
+      const isAllowed = isStepAccessible(
+        index,
+        currentStepIndex,
+        steps,
+        playgroundCompletions,
+        validationReport,
+      );
+      if (!isAllowed) {
         return;
       }
       setCurrentStepIndex(index);
@@ -278,7 +275,14 @@ export function LessonPlayer({
               >
                 {steps.map((st, idx) => {
                   const isCurrent = idx === currentStepIndex;
-                  const isStepGated = idx > currentStepIndex && isNextDisabled;
+                  const isAccessible = isStepAccessible(
+                    idx,
+                    currentStepIndex,
+                    steps,
+                    playgroundCompletions,
+                    validationReport,
+                  );
+                  const isStepGated = !isAccessible;
                   const isPassed = idx < currentStepIndex;
 
                   return (
@@ -287,9 +291,10 @@ export function LessonPlayer({
                       type="button"
                       role="tab"
                       aria-selected={isCurrent}
+                      aria-disabled={isStepGated}
                       disabled={isStepGated}
                       onClick={() => handleStepSelect(idx)}
-                      title={`Step ${idx + 1}: ${st.title || st.type}${isStepGated ? " (Locked until exercise complete)" : ""}`}
+                      title={`Step ${idx + 1}: ${st.title || st.type}${isStepGated ? " (Locked until previous challenges are complete)" : ""}`}
                       className={cn(
                         "h-2 rounded-full transition-all shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
                         isCurrent
@@ -300,7 +305,7 @@ export function LessonPlayer({
                               ? "w-2 bg-muted/40 cursor-not-allowed opacity-50"
                               : "w-2 bg-muted hover:bg-muted-foreground/40 cursor-pointer",
                       )}
-                      aria-label={`Go to step ${idx + 1}: ${st.title || st.type}`}
+                      aria-label={`Go to step ${idx + 1}: ${st.title || st.type}${isStepGated ? " (Locked)" : ""}`}
                     />
                   );
                 })}

@@ -1,6 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
-import { buildLessonSteps } from "@/lib/utils/lesson-step-resolver";
-import type { Lesson } from "@/lib/types";
+import {
+  buildLessonSteps,
+  getCanonicalExerciseId,
+  isStepGatedExerciseCompleted,
+  isStepAccessible,
+} from "@/lib/utils/lesson-step-resolver";
+import type { Lesson, LessonStep } from "@/lib/types";
 import lessonsData from "@/data/lessons.json";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
 import { formatStepTitle } from "./lesson-player";
@@ -497,5 +502,324 @@ describe("LessonPlayer Shell Architecture & State Unit Tests", () => {
     expect(exerciseSteps[0].id).not.toBe(exerciseSteps[1].id);
     expect(exerciseSteps[0].exerciseId).toBe("drill-1");
     expect(exerciseSteps[1].exerciseId).toBe("drill-2");
+  });
+
+  it("25. Step 13L: completePlaygroundExercise is strictly idempotent across raw and canonical aliases", () => {
+    const rawId = "0-1-1";
+    const canonicalId = "interactive-0-1-1";
+
+    const store = useProgressStore.getState();
+    const initialXP = store.xp;
+    const initialCompletionsCount = store.playgroundCompletions.length;
+
+    // Complete using canonical ID
+    store.completePlaygroundExercise(canonicalId);
+    expect(useProgressStore.getState().xp).toBe(initialXP + 50);
+    expect(useProgressStore.getState().playgroundCompletions.length).toBe(
+      initialCompletionsCount + 1,
+    );
+
+    // Call again using raw ID alias -> must NOT award duplicate XP or append duplicate record
+    store.completePlaygroundExercise(rawId);
+    expect(useProgressStore.getState().xp).toBe(initialXP + 50);
+    expect(useProgressStore.getState().playgroundCompletions.length).toBe(
+      initialCompletionsCount + 1,
+    );
+
+    // Call again using canonical ID -> must NOT award duplicate XP
+    store.completePlaygroundExercise(canonicalId);
+    expect(useProgressStore.getState().xp).toBe(initialXP + 50);
+    expect(useProgressStore.getState().playgroundCompletions.length).toBe(
+      initialCompletionsCount + 1,
+    );
+  });
+
+  it("26. Step 13L: Unrelated exercise IDs never match or bypass navigation gating", () => {
+    const targetExerciseId = "1-2-1";
+    const unrelatedCompletedId = "1-2-2";
+
+    const step: any = {
+      type: "interactive-exercise",
+      exerciseId: targetExerciseId,
+      hasValidation: true,
+      validation: {
+        exerciseId: targetExerciseId,
+      },
+    };
+
+    const completions = [{ templateId: unrelatedCompletedId, completedAt: "now" }];
+    const canonTarget = getCanonicalExerciseId(targetExerciseId);
+    const canonStep = getCanonicalExerciseId(step.exerciseId);
+
+    const isMatch = completions.some(
+      (c) =>
+        c.templateId === step.validation.exerciseId ||
+        c.templateId === step.exerciseId ||
+        (canonTarget && c.templateId === canonTarget) ||
+        (canonStep && c.templateId === canonStep),
+    );
+
+    expect(isMatch).toBe(false);
+  });
+
+  it("27. Step 14A: Content -> gated exercise -> content blocks future step until completed", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Concept 1", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Exercise 1",
+        exerciseId: "interactive-1-1",
+        language: "html",
+        initialCode: "<h1>Test</h1>",
+        hasValidation: true,
+        validation: { exerciseId: "interactive-1-1" },
+      },
+      { id: "s3", type: "content", title: "Concept 2", sections: [] },
+    ];
+
+    // On Step 0 (Concept 1), with no completions:
+    // Step 0 is accessible
+    expect(isStepAccessible(0, 0, steps, [])).toBe(true);
+    // Step 1 (Exercise 1) is accessible to attempt
+    expect(isStepAccessible(1, 0, steps, [])).toBe(true);
+    // Step 2 (Concept 2) is BLOCKED because Step 1 exercise is incomplete
+    expect(isStepAccessible(2, 0, steps, [])).toBe(false);
+  });
+
+  it("28. Step 14A: Content -> gated exercise -> content becomes accessible after exercise completion", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Concept 1", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Exercise 1",
+        exerciseId: "interactive-1-1",
+        language: "html",
+        initialCode: "<h1>Test</h1>",
+        hasValidation: true,
+        validation: { exerciseId: "interactive-1-1" },
+      },
+      { id: "s3", type: "content", title: "Concept 2", sections: [] },
+    ];
+
+    const completions = [{ templateId: "interactive-1-1", completedAt: "2026-08-23" }];
+
+    // From Step 0, Step 2 is now accessible
+    expect(isStepAccessible(2, 0, steps, completions)).toBe(true);
+    // From Step 1, Step 2 is also accessible
+    expect(isStepAccessible(2, 1, steps, completions)).toBe(true);
+  });
+
+  it("29. Step 14A: Multiple gated exercises: incomplete earlier exercise blocks all later steps", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Concept 1", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Exercise A",
+        exerciseId: "ex-a",
+        language: "javascript",
+        initialCode: "",
+        hasValidation: true,
+        validation: { exerciseId: "ex-a" },
+      },
+      { id: "s3", type: "content", title: "Concept 2", sections: [] },
+      {
+        id: "s4",
+        type: "interactive-exercise",
+        title: "Exercise B",
+        exerciseId: "ex-b",
+        language: "javascript",
+        initialCode: "",
+        hasValidation: true,
+        validation: { exerciseId: "ex-b" },
+      },
+      { id: "s5", type: "content", title: "Conclusion", sections: [] },
+    ];
+
+    // Ex A is completed, but Ex B is incomplete
+    const completions = [{ templateId: "ex-a", completedAt: "2026-08-23" }];
+
+    // From Step 0:
+    expect(isStepAccessible(1, 0, steps, completions)).toBe(true); // Ex A
+    expect(isStepAccessible(2, 0, steps, completions)).toBe(true); // Concept 2
+    expect(isStepAccessible(3, 0, steps, completions)).toBe(true); // Ex B
+    expect(isStepAccessible(4, 0, steps, completions)).toBe(false); // Conclusion blocked by Ex B
+  });
+
+  it("30. Step 14A: Completed prerequisite under canonical ID recognizes completion", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Intro", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Challenge",
+        exerciseId: "interactive-css-grid",
+        language: "css",
+        initialCode: "",
+        hasValidation: true,
+        validation: { exerciseId: "interactive-css-grid" },
+      },
+      { id: "s3", type: "content", title: "Outro", sections: [] },
+    ];
+
+    // Stored with canonical ID "css-grid"
+    const completions = [{ templateId: "css-grid", completedAt: "2026-08-23" }];
+
+    expect(isStepAccessible(2, 0, steps, completions)).toBe(true);
+  });
+
+  it("31. Step 14A: Completed prerequisite under raw/aliased ID recognizes completion", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Intro", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Challenge",
+        exerciseId: "0-1-1",
+        language: "html",
+        initialCode: "",
+        hasValidation: true,
+        validation: { exerciseId: "0-1-1" },
+      },
+      { id: "s3", type: "content", title: "Outro", sections: [] },
+    ];
+
+    // Stored with raw alias "interactive-0-1-1"
+    const completions = [{ templateId: "interactive-0-1-1", completedAt: "2026-08-23" }];
+
+    expect(isStepAccessible(2, 0, steps, completions)).toBe(true);
+  });
+
+  it("32. Step 14A: Backward navigation: previous steps remain accessible even when current exercise is incomplete", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Concept 1", sections: [] },
+      { id: "s2", type: "content", title: "Concept 2", sections: [] },
+      {
+        id: "s3",
+        type: "interactive-exercise",
+        title: "Challenge",
+        exerciseId: "ex-hard",
+        language: "javascript",
+        initialCode: "",
+        hasValidation: true,
+        validation: { exerciseId: "ex-hard" },
+      },
+      { id: "s4", type: "content", title: "Review", sections: [] },
+    ];
+
+    // Current step is Step 2 (the incomplete challenge)
+    const currentStepIndex = 2;
+    const completions: any[] = [];
+
+    // Backward navigation to Step 0 and Step 1 is allowed
+    expect(isStepAccessible(0, currentStepIndex, steps, completions)).toBe(true);
+    expect(isStepAccessible(1, currentStepIndex, steps, completions)).toBe(true);
+    expect(isStepAccessible(2, currentStepIndex, steps, completions)).toBe(true);
+    // Forward navigation to Step 3 is blocked
+    expect(isStepAccessible(3, currentStepIndex, steps, completions)).toBe(false);
+  });
+
+  it("33. Step 14A: Unrelated completion does not unlock the gated step", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Intro", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Challenge A",
+        exerciseId: "exercise-alpha",
+        language: "html",
+        initialCode: "",
+        hasValidation: true,
+        validation: { exerciseId: "exercise-alpha" },
+      },
+      { id: "s3", type: "content", title: "Next Chapter", sections: [] },
+    ];
+
+    // Completed unrelated exercise beta
+    const completions = [{ templateId: "exercise-beta", completedAt: "2026-08-23" }];
+
+    expect(isStepAccessible(2, 0, steps, completions)).toBe(false);
+  });
+
+  it("34. Step 14A: Session resume: an inaccessible saved step index resolves to nearest accessible step", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Intro", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Challenge 1",
+        exerciseId: "ex-1",
+        language: "html",
+        initialCode: "",
+        hasValidation: true,
+        validation: { exerciseId: "ex-1" },
+      },
+      { id: "s3", type: "content", title: "Midpoint", sections: [] },
+      { id: "s4", type: "content", title: "Conclusion", sections: [] },
+    ];
+
+    // Stored session wants step index 3 (Conclusion), but ex-1 is incomplete
+    const completions: any[] = [];
+    let maxAccessible = 0;
+    for (let i = 0; i < steps.length; i++) {
+      if (isStepAccessible(i, 0, steps, completions)) {
+        maxAccessible = i;
+      } else {
+        break;
+      }
+    }
+
+    const savedIndex = 3;
+    const resolvedIndex = Math.min(savedIndex, maxAccessible);
+
+    // Max accessible step is index 1 (Challenge 1)
+    expect(maxAccessible).toBe(1);
+    expect(resolvedIndex).toBe(1);
+  });
+
+  it("35. Step 14A: Non-validated interactive exercises do not introduce gating", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Intro", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Free Play Sandbox",
+        exerciseId: "free-play",
+        language: "html",
+        initialCode: "<p>Try anything</p>",
+        hasValidation: false,
+      },
+      { id: "s3", type: "content", title: "Next Concept", sections: [] },
+    ];
+
+    // No completions
+    expect(isStepAccessible(2, 0, steps, [])).toBe(true);
+    expect(isStepGatedExerciseCompleted(steps[1], [])).toBe(true);
+  });
+
+  it("36. Step 14A: Last-step completion behavior remains intact", () => {
+    const steps: LessonStep[] = [
+      { id: "s1", type: "content", title: "Intro", sections: [] },
+      {
+        id: "s2",
+        type: "interactive-exercise",
+        title: "Final Challenge",
+        exerciseId: "final-ex",
+        language: "javascript",
+        initialCode: "",
+        hasValidation: true,
+        validation: { exerciseId: "final-ex" },
+      },
+    ];
+
+    // While on step 1 (final step) and incomplete:
+    expect(isStepGatedExerciseCompleted(steps[1], [], null)).toBe(false);
+
+    // Once passed in live report:
+    expect(
+      isStepGatedExerciseCompleted(steps[1], [], { exerciseId: "final-ex", status: "passed" }),
+    ).toBe(true);
   });
 });
