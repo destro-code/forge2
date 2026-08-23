@@ -25,7 +25,10 @@ import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
 import { MonacoEditor } from "@/components/shared/monaco-editor";
 import { compilePlaygroundProject } from "@/lib/playground-compiler";
-import { requestPlaygroundValidation } from "@/lib/compiler/validation-client";
+import {
+  requestPlaygroundValidation,
+  cancelPendingValidationRequests,
+} from "@/lib/compiler/validation-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { InteractiveExerciseLessonStep, Lesson } from "@/lib/types";
@@ -116,6 +119,7 @@ export function CompactCodeChallengeView({
 
   // Synchronize when step changes
   useEffect(() => {
+    cancelPendingValidationRequests();
     const saved = typeof window !== "undefined" ? localStorage.getItem(storageKey) : null;
     setCode(saved !== null ? saved : step.initialCode || "");
     setLogs([]);
@@ -124,6 +128,13 @@ export function CompactCodeChallengeView({
     setPreviewError(null);
     setActiveTab("code");
   }, [step.exerciseId, step.initialCode, storageKey]);
+
+  // Clean up pending requests on unmount
+  useEffect(() => {
+    return () => {
+      cancelPendingValidationRequests();
+    };
+  }, []);
 
   // Determine file entry name
   const entryFileName = useMemo(() => {
@@ -138,16 +149,24 @@ export function CompactCodeChallengeView({
   // Listen for console logs emitted from the execution sandbox
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (
-        event.data &&
-        (event.data.type === "PLAYGROUND_CONSOLE" || event.data.type === "SANDBOX_LOG")
-      ) {
-        const msg = event.data.message || event.data.msg || "";
-        const level = event.data.level || "log";
+      if (!event.data || typeof event.data !== "object") return;
+
+      // Isolation & security check: only accept events from this component's active iframe
+      if (iframeRef.current?.contentWindow && event.source !== iframeRef.current.contentWindow) {
+        return;
+      }
+
+      if (event.data.type === "PLAYGROUND_CONSOLE" || event.data.type === "SANDBOX_LOG") {
+        const msg = event.data.message !== undefined ? event.data.message : event.data.msg;
+        if (msg === undefined || msg === null) return;
+        const rawLevel = event.data.level;
+        const level: "log" | "info" | "warn" | "error" =
+          rawLevel === "error" || rawLevel === "warn" || rawLevel === "info" ? rawLevel : "log";
+
         setLogs((prev) => [
           ...prev.slice(-49),
           {
-            id: Math.random().toString(36).substring(2, 9),
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
             level,
             message: String(msg),
             timestamp: new Date().toLocaleTimeString([], {
@@ -224,6 +243,7 @@ export function CompactCodeChallengeView({
 
   // Handle Reset to Initial Code
   const handleReset = () => {
+    cancelPendingValidationRequests();
     const original = step.initialCode || "";
     setCode(original);
     if (typeof window !== "undefined") {
@@ -426,8 +446,8 @@ export function CompactCodeChallengeView({
 
           {/* Active View Body */}
           <div className="relative min-h-[170px] h-[200px] sm:h-[220px] md:h-[250px] w-full overflow-hidden">
-            {activeTab === "code" ? (
-              !monacoFailed ? (
+            {activeTab === "code" &&
+              (!monacoFailed ? (
                 <div className="h-full w-full">
                   <MonacoEditor
                     height="100%"
@@ -464,27 +484,9 @@ export function CompactCodeChallengeView({
                   autoCapitalize="off"
                   autoCorrect="off"
                 />
-              )
-            ) : activeTab === "preview" ? (
-              /* Live Browser Preview Frame */
-              <div className="w-full h-full bg-white text-slate-900 overflow-auto">
-                {previewError ? (
-                  <div className="p-4 text-xs text-rose-500 font-mono flex items-center gap-1.5">
-                    <AlertTriangle className="h-4 w-4 shrink-0" />
-                    <span>{previewError}</span>
-                  </div>
-                ) : (
-                  <iframe
-                    ref={iframeRef}
-                    title="Compact Drill Preview"
-                    srcDoc={previewHtml}
-                    sandbox="allow-scripts allow-same-origin"
-                    className="w-full h-full border-0"
-                  />
-                )}
-              </div>
-            ) : (
-              /* Console Output Panel */
+              ))}
+            {/* Console Output Panel */}
+            {activeTab === "console" && (
               <div className="w-full h-full bg-zinc-950 text-zinc-100 flex flex-col overflow-hidden font-mono text-xs">
                 <div className="flex items-center justify-between px-3 py-1.5 bg-zinc-900 border-b border-zinc-800 text-[11px] text-zinc-400">
                   <span className="flex items-center gap-1.5 font-medium">
@@ -539,19 +541,33 @@ export function CompactCodeChallengeView({
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Hidden Background Iframe for Validation & Execution Runtime */}
-          {activeTab === "code" && previewHtml && (
-            <iframe
-              title="Forge Validation Barrier"
-              srcDoc={previewHtml}
-              sandbox="allow-scripts allow-same-origin"
-              className="hidden w-0 h-0 pointer-events-none"
-              tabIndex={-1}
-              aria-hidden="true"
-            />
-          )}
+            {/* Authoritative Live Preview / Execution Runtime Frame */}
+            <div
+              className={cn(
+                "w-full h-full bg-white text-slate-900 overflow-auto",
+                activeTab === "preview"
+                  ? "block"
+                  : "absolute -top-[9999px] -left-[9999px] w-[1px] h-[1px] opacity-0 pointer-events-none",
+              )}
+              aria-hidden={activeTab !== "preview"}
+            >
+              {previewError ? (
+                <div className="p-4 text-xs text-rose-500 font-mono flex items-center gap-1.5">
+                  <AlertTriangle className="h-4 w-4 shrink-0" />
+                  <span>{previewError}</span>
+                </div>
+              ) : previewHtml ? (
+                <iframe
+                  ref={iframeRef}
+                  title="Forge Playground Live Preview"
+                  srcDoc={previewHtml}
+                  sandbox="allow-scripts allow-same-origin"
+                  className="w-full h-full border-0"
+                />
+              ) : null}
+            </div>
+          </div>
         </div>
 
         {/* Validation Feedback Banner (Hierarchy: Checking -> Passed / Failed / Error) */}
