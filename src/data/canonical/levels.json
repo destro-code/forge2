@@ -1,0 +1,44 @@
+[
+  {
+    "id": "level-0",
+    "title": "Level 0: Web Orientation & Developer Environment",
+    "description": "Foundational orientation to frontend development, browser runtimes, client-server mechanics, and DevTools workflows.",
+    "order": 1,
+    "moduleIds": ["module-0-1", "module-0-2"]
+  },
+  {
+    "id": "level-1",
+    "title": "Level 1: Core Web Standards & Styling Architecture",
+    "description": "Semantic HTML, document structure, modern CSS layouts (Flexbox, Grid), box model, cascade, and responsive web design.",
+    "order": 2,
+    "moduleIds": ["module-1-1", "module-1-2", "module-1-3", "module-1-4"]
+  },
+  {
+    "id": "level-2",
+    "title": "Level 2: JavaScript & TypeScript Language Mastery",
+    "description": "JavaScript execution engine, DOM manipulation, asynchronous programming, closures, prototypes, and TypeScript type systems.",
+    "order": 3,
+    "moduleIds": ["module-2-1", "module-2-2", "module-2-3", "module-2-4", "module-2-5"]
+  },
+  {
+    "id": "level-3",
+    "title": "Level 3: Framework & UI Engineering (React)",
+    "description": "Component architecture, JSX, hooks lifecycle, declarative state modeling, event handling, forms, and composition patterns.",
+    "order": 4,
+    "moduleIds": ["module-3-1", "module-3-2", "module-3-3", "module-3-4"]
+  },
+  {
+    "id": "level-4",
+    "title": "Level 4: Quality, State Management & Testing",
+    "description": "Global state architectures, client-side routing, unit and integration testing with Vitest/Playwright, accessibility, and security.",
+    "order": 5,
+    "moduleIds": ["module-4-1", "module-4-2", "module-4-3", "module-4-4", "module-4-5", "module-4-6"]
+  },
+  {
+    "id": "level-5",
+    "title": "Level 5: Frontend Architecture & High-Scale Systems",
+    "description": "Next.js / SSR, Core Web Vitals optimization, bundle budgets, micro-frontends, design systems, and staff-level engineering.",
+    "order": 6,
+    "moduleIds": ["module-5-1", "module-5-2", "module-5-3", "module-5-4", "module-5-5", "module-5-6"]
+  }
+]

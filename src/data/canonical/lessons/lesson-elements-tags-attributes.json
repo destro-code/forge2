@@ -1,0 +1,145 @@
+{
+  "id": "lesson-1-1-2",
+  "schemaVersion": "1.0.0",
+  "topicId": "elements-tags-attributes",
+  "title": "Elements, Tags & Attributes",
+  "description": "Learn the anatomy of HTML elements, opening and closing tags, void elements, and how attributes configure behavior and metadata.",
+  "lessonType": "instruction",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 25,
+  "conceptIds": ["concept-html-elements"],
+  "skillIds": ["skill-write-valid-html-markup"],
+  "objectives": [
+    {
+      "id": "obj-element-anatomy",
+      "statement": "Identify the anatomy of an HTML element including opening tag, attributes, content, and closing tag.",
+      "conceptIds": ["concept-html-elements"],
+      "skillIds": ["skill-write-valid-html-markup"],
+      "priority": "primary"
+    },
+    {
+      "id": "obj-void-elements",
+      "statement": "Distinguish between container elements and void (self-closing) elements.",
+      "conceptIds": ["concept-html-elements"],
+      "skillIds": ["skill-write-valid-html-markup"],
+      "priority": "secondary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": ["lesson-0-1-1"],
+    "conceptIds": ["concept-web-platform-trio"],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-112-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": ["obj-element-anatomy"],
+      "content": {
+        "title": "The Building Blocks of the Web",
+        "hook": "Every button, image, paragraph, and form on the web is represented as an HTML element.",
+        "context": "HTML syntax is based on elements configured with tags and attributes that instruct browsers how to construct the Document Object Model (DOM).",
+        "goals": [
+          "Break down the anatomy of standard and void HTML elements.",
+          "Write properly formatted attribute key-value pairs."
+        ]
+      }
+    },
+    {
+      "id": "act-112-exp-anatomy",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": ["obj-element-anatomy"],
+      "content": {
+        "title": "Anatomy of an HTML Element",
+        "text": "An HTML element typically consists of an opening tag with optional attributes, text or nested child nodes, and a closing tag denoted by a forward slash (e.g. </p>).",
+        "callout": {
+          "variant": "info",
+          "text": "Void elements (such as <img>, <input>, <br>, and <hr>) do not contain text content or child elements, and therefore never have closing tags in HTML5."
+        },
+        "keyTakeaway": "Attributes supply element metadata in name=\"value\" pairs inside the opening tag."
+      }
+    },
+    {
+      "id": "act-112-code-example",
+      "type": "code-example",
+      "intent": "understanding",
+      "objectiveIds": ["obj-element-anatomy", "obj-void-elements"],
+      "content": {
+        "title": "Comparing Container and Void Elements",
+        "description": "Notice how the link <a> has a closing tag wrapping text, while the image <img> is a void element.",
+        "language": "html",
+        "code": "<!-- Container element with attributes and closing tag -->\n<a href=\"https://example.com\" target=\"_blank\" class=\"external-link\">\n  Visit Example\n</a>\n\n<!-- Void element with attributes and no closing tag -->\n<img src=\"logo.png\" alt=\"Company Logo\" width=\"120\" height=\"40\">"
+      }
+    },
+    {
+      "id": "act-112-fill-blank",
+      "type": "fill-blank",
+      "intent": "retrieval",
+      "objectiveIds": ["obj-element-anatomy"],
+      "content": {
+        "prompt": "Fill in the missing parts to create a valid hyperlink element that points to /about.",
+        "template": "<a ___=\"/about\">About Us</___>",
+        "blanks": [
+          { "id": "blank-attr", "placeholder": "attribute name", "hint": "The attribute used for hyperlinks" },
+          { "id": "blank-tag", "placeholder": "closing tag name", "hint": "The element name matching the opening tag" }
+        ],
+        "explanation": "The 'href' attribute specifies the destination URL and 'a' is the element tag name."
+      },
+      "validation": {
+        "type": "multi-match",
+        "expected": ["href", "a"]
+      },
+      "feedback": {
+        "correct": "Excellent! <a href=\"/about\">About Us</a> is valid HTML.",
+        "incorrect": "Check your attribute and tag names. Remember href stands for Hypertext Reference."
+      }
+    },
+    {
+      "id": "act-112-multi-select",
+      "type": "multi-select",
+      "intent": "assessment",
+      "objectiveIds": ["obj-void-elements"],
+      "content": {
+        "question": "Which of the following are valid void (self-closing) elements in HTML5 that do NOT require a closing tag?",
+        "options": [
+          { "id": "opt-img", "text": "<img>", "hint": "Embeds an image" },
+          { "id": "opt-p", "text": "<p>", "hint": "Paragraph container" },
+          { "id": "opt-input", "text": "<input>", "hint": "Form input element" },
+          { "id": "opt-div", "text": "<div>", "hint": "Generic container division" },
+          { "id": "opt-br", "text": "<br>", "hint": "Line break element" }
+        ],
+        "minSelections": 3,
+        "maxSelections": 3,
+        "explanation": "<img>, <input>, and <br> are void elements in HTML5."
+      },
+      "validation": {
+        "type": "multi-match",
+        "expected": ["opt-img", "opt-input", "opt-br"]
+      },
+      "feedback": {
+        "correct": "Correct! <img>, <input>, and <br> are all void elements that cannot contain children.",
+        "incorrect": "Review which elements hold children/text vs which are standalone void elements."
+      }
+    },
+    {
+      "id": "act-112-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": ["obj-element-anatomy", "obj-void-elements"],
+      "content": {
+        "title": "Summary & Next Steps",
+        "takeaways": [
+          "HTML elements are defined by opening tags, attributes, content, and closing tags.",
+          "Void elements cannot hold child elements and do not use closing tags.",
+          "Attributes configure element behaviors, URLs, accessibility labels, and classes."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": ["act-112-fill-blank", "act-112-multi-select"],
+    "minimumScore": 100
+  }
+}

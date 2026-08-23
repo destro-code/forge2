@@ -150,16 +150,20 @@ export function LessonPlayer({
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   const totalSteps = steps.length;
-  const isFirstStep = currentStepIndex === 0;
-  const isLastStep = currentStepIndex === totalSteps - 1;
-  const currentStep = steps[currentStepIndex] || null;
+  const safeStepIndex =
+    totalSteps > 0 ? Math.min(Math.max(0, currentStepIndex), totalSteps - 1) : 0;
+  const isFirstStep = safeStepIndex === 0;
+  const isLastStep = safeStepIndex === totalSteps - 1;
+  const currentStep = steps[safeStepIndex] || null;
 
   // Sync active step to sessionStorage for safe session resume
   useEffect(() => {
-    if (typeof window !== "undefined" && window.sessionStorage && lesson?.id) {
-      window.sessionStorage.setItem(`forge:lesson_step:${lesson.id}`, String(currentStepIndex));
+    if (typeof window !== "undefined" && window.sessionStorage && lesson?.id && totalSteps > 0) {
+      if (currentStepIndex >= 0 && currentStepIndex < totalSteps) {
+        window.sessionStorage.setItem(`forge:lesson_step:${lesson.id}`, String(currentStepIndex));
+      }
     }
-  }, [lesson.id, currentStepIndex]);
+  }, [lesson.id, currentStepIndex, totalSteps]);
 
   // Determine if Next button should be gated/disabled for interactive exercise
   const isNextDisabled = useMemo(() => {

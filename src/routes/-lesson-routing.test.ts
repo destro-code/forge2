@@ -91,4 +91,38 @@ describe("Lesson Route Default Experience & Fallback Unit Tests", () => {
     expect(nextLesson).toBeDefined();
     expect(nextLesson.id).toBe("lesson-0-1-2");
   });
+
+  it("9. HTML Fundamentals module sequence resolves correctly: lesson-1-1-1 -> lesson-1-1-2 -> lesson-1-1-3 (Headings, Paragraphs, and Text)", () => {
+    const htmlTopics = topics
+      .filter((t) => t.moduleId === "module-1-1")
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+    const htmlTopicIds = htmlTopics.map((t) => t.id);
+
+    const htmlLessons = lessons
+      .filter((l) => (l.topicId && htmlTopicIds.includes(l.topicId)) || l.moduleId === "module-1-1")
+      .sort((a, b) => {
+        const topicA = htmlTopics.find((t) => t.id === a.topicId);
+        const topicB = htmlTopics.find((t) => t.id === b.topicId);
+        const topicOrderA = topicA?.order ?? 0;
+        const topicOrderB = topicB?.order ?? 0;
+        if (topicOrderA !== topicOrderB) return topicOrderA - topicOrderB;
+        return (a.order || 0) - (b.order || 0);
+      });
+
+    expect(htmlLessons.length).toBeGreaterThanOrEqual(3);
+    expect(htmlLessons[0].id).toBe("lesson-1-1-1");
+    expect(htmlLessons[1].id).toBe("lesson-1-1-2");
+    expect(htmlLessons[2].id).toBe("lesson-1-1-3");
+    expect(htmlLessons[2].title).toBe("Headings, Paragraphs, and Text");
+  });
+
+  it("10. lesson-1-1-3 builds steps successfully and is valid for LessonPlayer rendering", async () => {
+    const { buildLessonSteps } = await import("@/lib/utils/lesson-step-resolver");
+    const lesson113 = lessons.find((l) => l.id === "lesson-1-1-3");
+    expect(lesson113).toBeDefined();
+    const steps = buildLessonSteps(lesson113!);
+    expect(steps.length).toBeGreaterThan(0);
+    expect(steps[0].type).toBe("content");
+    expect(steps[0].title).toBeTruthy();
+  });
 });

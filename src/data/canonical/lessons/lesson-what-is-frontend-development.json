@@ -1,0 +1,140 @@
+{
+  "id": "lesson-0-1-1",
+  "schemaVersion": "1.0.0",
+  "topicId": "what-is-frontend-development",
+  "title": "What Is Frontend Development?",
+  "description": "Understand what frontend engineers actually build, how frontend differs from design and backend work, and why HTML, CSS, and JavaScript form the platform foundation.",
+  "lessonType": "instruction",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 20,
+  "conceptIds": ["concept-frontend-definition", "concept-web-platform-trio"],
+  "skillIds": ["skill-distinguish-web-responsibilities"],
+  "objectives": [
+    {
+      "id": "obj-frontend-def",
+      "statement": "Explain in plain language what frontend development encompasses.",
+      "conceptIds": ["concept-frontend-definition"],
+      "skillIds": ["skill-distinguish-web-responsibilities"],
+      "priority": "primary"
+    },
+    {
+      "id": "obj-trio-roles",
+      "statement": "Identify the distinct roles of HTML, CSS, and JavaScript in a client application.",
+      "conceptIds": ["concept-web-platform-trio"],
+      "skillIds": ["skill-distinguish-web-responsibilities"],
+      "priority": "primary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": [],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-011-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": ["obj-frontend-def"],
+      "content": {
+        "title": "Welcome to Frontend Engineering",
+        "hook": "Every website or web application you use runs on a client runtime inside your browser. But what does a frontend engineer actually build?",
+        "context": "Frontend engineering connects user experience designs to real browser APIs, data pipelines, and responsive rendering engines.",
+        "goals": [
+          "Differentiate frontend development from visual design and backend databases.",
+          "Understand how HTML, CSS, and JavaScript collaborate to form user interfaces."
+        ]
+      }
+    },
+    {
+      "id": "act-011-exp-roles",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": ["obj-frontend-def"],
+      "content": {
+        "title": "Frontend Is More Than Aesthetics",
+        "text": "Frontend development is the practice of building everything users see and interact with in a web browser. This includes document hierarchy, layout algorithms, accessibility trees, client state management, network caching, and interactive input handling.",
+        "callout": {
+          "variant": "mistake",
+          "text": "Common misconception: 'Frontend is just making things look pretty.' While aesthetics matter, frontend engineering involves complex state machines, data synchronization, security, and performance optimizations."
+        },
+        "keyTakeaway": "Frontend engineers build reliable, responsive, and accessible client-side software systems."
+      }
+    },
+    {
+      "id": "act-011-visual-trio",
+      "type": "visual",
+      "intent": "recognition",
+      "objectiveIds": ["obj-trio-roles"],
+      "content": {
+        "title": "The Web Platform Trio",
+        "visualType": "comparison",
+        "description": "HTML provides structure and meaning. CSS controls styling and layout. JavaScript drives dynamic behavior and runtime state.",
+        "visualData": {
+          "layers": [
+            { "name": "HTML", "role": "Structure & Semantic Meaning", "analogy": "The Frame and Walls" },
+            { "name": "CSS", "role": "Presentation, Layout & Aesthetics", "analogy": "Paint, Lighting & Interior Design" },
+            { "name": "JavaScript", "role": "Behavior, State & API Logic", "analogy": "Electricity, Plumbing & Smart Automation" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "act-011-code-trio",
+      "type": "code-example",
+      "intent": "understanding",
+      "objectiveIds": ["obj-trio-roles"],
+      "content": {
+        "title": "A Minimal Interactive Button in Three Layers",
+        "description": "Notice how HTML declares the element, CSS styles its state, and JavaScript attaches a click listener.",
+        "language": "html",
+        "code": "<!-- 1. HTML: Semantic Element -->\n<button id=\"counter-btn\" class=\"primary-btn\">Clicks: 0</button>\n\n<!-- 2. CSS: Visual Presentation -->\n<style>\n  .primary-btn {\n    background-color: #2563eb;\n    color: white;\n    padding: 10px 20px;\n    border: none;\n    border-radius: 6px;\n    cursor: pointer;\n  }\n</style>\n\n<!-- 3. JavaScript: Runtime Behavior -->\n<script>\n  let count = 0;\n  const btn = document.getElementById('counter-btn');\n  btn.addEventListener('click', () => {\n    count += 1;\n    btn.textContent = `Clicks: ${count}`;\n  });\n</script>"
+      }
+    },
+    {
+      "id": "act-011-quiz-boundary",
+      "type": "multiple-choice",
+      "intent": "assessment",
+      "objectiveIds": ["obj-frontend-def"],
+      "content": {
+        "question": "Which of the following tasks is primarily the responsibility of a frontend engineer?",
+        "options": [
+          { "id": "opt-a", "text": "Writing SQL database migrations for user account tables", "hint": "Database tables and migrations are backend persistence concerns." },
+          { "id": "opt-b", "text": "Implementing a responsive dropdown menu with keyboard accessibility (WCAG)", "hint": "Think about what runs in the user's browser." },
+          { "id": "opt-c", "text": "Configuring load balancers and physical server clusters", "hint": "Infrastructure and DevOps manage server clusters." },
+          { "id": "opt-d", "text": "Creating high-fidelity vector illustrations in design software", "hint": "Visual designers produce illustration assets." }
+        ],
+        "explanation": "Frontend engineers implement interactive, accessible, and responsive components in browser environments."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "opt-b"
+      },
+      "feedback": {
+        "correct": "Correct! Building accessible, responsive interactive UI components is a core frontend responsibility.",
+        "incorrect": "Not quite. Remember that frontend engineers focus on client-side behavior, accessibility, and browser rendering."
+      }
+    },
+    {
+      "id": "act-011-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": ["obj-frontend-def", "obj-trio-roles"],
+      "content": {
+        "title": "Key Takeaways",
+        "takeaways": [
+          "Frontend development focuses on client-side applications running in user agents (browsers).",
+          "HTML declares structure, CSS controls presentation, and JavaScript powers dynamic behavior.",
+          "Frontend is an engineering discipline requiring attention to accessibility, responsiveness, and state management."
+        ],
+        "nextSteps": [
+          "Explore how browsers parse and execute HTML documents in the next lesson."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": ["act-011-quiz-boundary"],
+    "minimumScore": 100
+  }
+}

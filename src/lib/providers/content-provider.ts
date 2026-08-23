@@ -135,3 +135,5 @@ export const localContentProvider: ContentProvider = {
 };
 
 export const contentProvider: ContentProvider = localContentProvider;
+
+export { canonicalProvider } from "../curriculum/canonical-provider";

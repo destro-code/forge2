@@ -1,0 +1,143 @@
+{
+  "id": "lesson-2-1-3",
+  "schemaVersion": "1.0.0",
+  "topicId": "javascript-functions",
+  "title": "JavaScript Functions & Execution Scope",
+  "description": "Master first-class functions in JavaScript: declarations vs expressions, arrow functions, parameters, return statements, and local scope boundaries.",
+  "lessonType": "instruction",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 30,
+  "conceptIds": ["concept-js-functions"],
+  "skillIds": ["skill-author-javascript-functions"],
+  "objectives": [
+    {
+      "id": "obj-func-declaration",
+      "statement": "Declare and invoke named and arrow functions with arguments and return values.",
+      "conceptIds": ["concept-js-functions"],
+      "skillIds": ["skill-author-javascript-functions"],
+      "priority": "primary"
+    },
+    {
+      "id": "obj-func-scope",
+      "statement": "Explain how function execution creates a local variable scope.",
+      "conceptIds": ["concept-js-functions"],
+      "skillIds": ["skill-author-javascript-functions"],
+      "priority": "secondary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": ["lesson-0-1-1"],
+    "conceptIds": ["concept-web-platform-trio"],
+    "skillIds": ["skill-distinguish-web-responsibilities"]
+  },
+  "activities": [
+    {
+      "id": "act-213-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": ["obj-func-declaration"],
+      "content": {
+        "title": "Functions: The Verbs of JavaScript",
+        "hook": "Functions are reusable blocks of logic that turn raw data inputs into meaningful outputs and side-effects.",
+        "context": "In JavaScript, functions are first-class values that can be stored in variables, passed to other functions as callbacks, and returned dynamically.",
+        "goals": [
+          "Write clean function declarations and arrow functions.",
+          "Distinguish returning a value from logging to the console."
+        ]
+      }
+    },
+    {
+      "id": "act-213-exp-scope",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": ["obj-func-scope"],
+      "content": {
+        "title": "Parameters, Return Values, and Scope",
+        "text": "When a function is called, JavaScript allocates a local execution context. Variables declared inside with let or const are inaccessible from outside (block/function scope). To send computation results back to the caller, use the return keyword.",
+        "callout": {
+          "variant": "mistake",
+          "text": "Do not confuse console.log(val) with return val. console.log prints to developer tools, while return hands the value back to the caller."
+        },
+        "keyTakeaway": "Functions encapsulate computation and create isolated variable environments."
+      }
+    },
+    {
+      "id": "act-213-code-forms",
+      "type": "code-example",
+      "intent": "understanding",
+      "objectiveIds": ["obj-func-declaration"],
+      "content": {
+        "title": "Three Syntaxes for Writing Functions",
+        "description": "Notice the subtle differences between function declaration, function expression, and arrow function syntax.",
+        "language": "javascript",
+        "code": "// 1. Function Declaration (hoisted)\nfunction calculateTotal(price, taxRate = 0.08) {\n  return price + (price * taxRate);\n}\n\n// 2. Function Expression\nconst formatCurrency = function(amount) {\n  return `$${amount.toFixed(2)}`;\n};\n\n// 3. Arrow Function (concise body)\nconst add = (a, b) => a + b;\n\nconsole.log(formatCurrency(calculateTotal(100))); // \"$108.00\""
+      }
+    },
+    {
+      "id": "act-213-predict-output",
+      "type": "output-prediction",
+      "intent": "prediction",
+      "objectiveIds": ["obj-func-declaration", "obj-func-scope"],
+      "content": {
+        "language": "javascript",
+        "code": "function createMultiplier(multiplier) {\n  return (value) => value * multiplier;\n}\n\nconst triple = createMultiplier(3);\nconsole.log(triple(5));",
+        "prompt": "What will be printed to the console when this script runs?",
+        "options": [
+          "15",
+          "undefined",
+          "Function: triple",
+          "8"
+        ],
+        "explanation": "createMultiplier returns an inner arrow function that multiplies its argument by 3. triple(5) calculates 5 * 3 = 15."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "15"
+      },
+      "feedback": {
+        "correct": "Correct! 5 multiplied by 3 produces 15.",
+        "incorrect": "Trace the execution: createMultiplier(3) returns (value) => value * 3. Then triple(5) evaluates 5 * 3."
+      }
+    },
+    {
+      "id": "act-213-interactive-code",
+      "type": "interactive-code",
+      "intent": "application",
+      "objectiveIds": ["obj-func-declaration"],
+      "content": {
+        "title": "Write a Temperature Converter",
+        "prompt": "Implement the function celsiusToFahrenheit(celsius) that returns the Fahrenheit equivalent using the formula: (celsius * 9 / 5) + 32.",
+        "language": "javascript",
+        "starterCode": "function celsiusToFahrenheit(celsius) {\n  // Write your return statement here\n}\n\n// Test invocation:\nconsole.log(celsiusToFahrenheit(0));   // Should log 32\nconsole.log(celsiusToFahrenheit(100)); // Should log 212",
+        "solutionCode": "function celsiusToFahrenheit(celsius) {\n  return (celsius * 9 / 5) + 32;\n}\n\nconsole.log(celsiusToFahrenheit(0));\nconsole.log(celsiusToFahrenheit(100));"
+      },
+      "validation": {
+        "type": "code-output",
+        "expectedOutput": "32",
+        "matchType": "contains"
+      },
+      "feedback": {
+        "correct": "Excellent! celsiusToFahrenheit correctly calculates temperature conversions.",
+        "incorrect": "Ensure you return the formula (celsius * 9 / 5) + 32."
+      }
+    },
+    {
+      "id": "act-213-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": ["obj-func-declaration", "obj-func-scope"],
+      "content": {
+        "title": "Module Summary",
+        "takeaways": [
+          "Functions can be declared with standard function keywords or concise arrow syntax.",
+          "Parameters allow passing dynamic inputs; default parameters prevent undefined errors.",
+          "return transmits computed output back to the caller; console.log is for logging only."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": ["act-213-predict-output", "act-213-interactive-code"],
+    "minimumScore": 100
+  }
+}

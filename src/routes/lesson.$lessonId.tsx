@@ -8,6 +8,7 @@ import { Callout } from "@/components/shared/callout";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import {
   useLesson,
+  useCanonicalLesson,
   useLessons,
   useTopic,
   useTopics,
@@ -58,6 +59,7 @@ import { LessonInlineSandbox } from "@/components/lesson/lesson-inline-sandbox";
 import { LessonTextHighlighter } from "@/components/lesson/lesson-text-highlighter";
 import { LessonNotesWidget } from "@/components/lesson/lesson-notes-widget";
 import { LessonPlayer } from "@/components/lesson/lesson-player";
+import { CanonicalLessonPlayer } from "@/components/lesson/canonical";
 import { getApplyActivityCta } from "@/lib/utils/apply-action";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
@@ -98,6 +100,7 @@ function LessonView() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const lesson = useLesson(lessonId);
+  const canonicalLesson = useCanonicalLesson(lessonId);
   const { setLastActiveLesson, lastActiveLessonId } = useProgress();
 
   const allModules = useModules();
@@ -179,11 +182,21 @@ function LessonView() {
   if (!search.classic) {
     return (
       <div className="flex flex-col h-[calc(100dvh-7rem)] sm:h-[calc(100dvh-7.5rem)] min-h-[500px] w-full overflow-hidden">
-        <LessonPlayer
-          lesson={lesson}
-          onComplete={handleLessonPlayerComplete}
-          className="flex-1 min-h-0"
-        />
+        {canonicalLesson ? (
+          <CanonicalLessonPlayer
+            key={canonicalLesson.id}
+            lesson={canonicalLesson}
+            onComplete={handleLessonPlayerComplete}
+            className="flex-1 min-h-0"
+          />
+        ) : (
+          <LessonPlayer
+            key={lesson.id}
+            lesson={lesson}
+            onComplete={handleLessonPlayerComplete}
+            className="flex-1 min-h-0"
+          />
+        )}
       </div>
     );
   }

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "what-is-frontend-development",
+    "moduleId": "module-0-1",
+    "title": "What Is Frontend Development?",
+    "description": "Orientation to what frontend engineers build, separation of concerns, and web runtime foundations.",
+    "order": 1,
+    "conceptIds": ["concept-frontend-definition", "concept-web-platform-trio"],
+    "skillIds": ["skill-distinguish-web-responsibilities"],
+    "lessonIds": ["lesson-0-1-1"]
+  },
+  {
+    "id": "elements-tags-attributes",
+    "moduleId": "module-1-1",
+    "title": "HTML Elements, Tags & Attributes",
+    "description": "Core syntax of HTML: opening tags, attributes, void elements, text nodes, and nesting hierarchy.",
+    "order": 2,
+    "conceptIds": ["concept-html-elements"],
+    "skillIds": ["skill-write-valid-html-markup"],
+    "lessonIds": ["lesson-1-1-2"]
+  },
+  {
+    "id": "flexbox-layout",
+    "moduleId": "module-1-2",
+    "title": "Flexbox Layout Mechanics",
+    "description": "One-dimensional flexible layout: main vs cross axis, justify-content, align-items, flex-wrap, and responsive flow.",
+    "order": 3,
+    "conceptIds": ["concept-css-flexbox-layout", "concept-css-box-model"],
+    "skillIds": ["skill-implement-flexbox-alignments"],
+    "lessonIds": ["lesson-1-2-7"]
+  },
+  {
+    "id": "javascript-functions",
+    "moduleId": "module-2-1",
+    "title": "JavaScript Functions & Execution Scope",
+    "description": "Functions as first-class citizens, parameters, default arguments, return statements, and local variable scope.",
+    "order": 4,
+    "conceptIds": ["concept-js-functions"],
+    "skillIds": ["skill-author-javascript-functions"],
+    "lessonIds": ["lesson-2-1-3"]
+  },
+  {
+    "id": "debugging-strategies",
+    "moduleId": "module-0-2",
+    "title": "Systematic Frontend Debugging",
+    "description": "Diagnostic workflow, DevTools Elements/Console inspection, and isolating frontend defects.",
+    "order": 5,
+    "conceptIds": ["concept-debugging-workflow", "concept-html-elements", "concept-js-functions"],
+    "skillIds": ["skill-diagnose-frontend-bugs"],
+    "lessonIds": ["lesson-0-2-5"]
+  }
+]

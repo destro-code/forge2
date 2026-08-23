@@ -1,0 +1,65 @@
+[
+  {
+    "id": "concept-frontend-definition",
+    "title": "Frontend vs Backend Boundaries",
+    "definition": "Frontend development encompasses all presentation, interaction, accessibility, and client-side logic executing inside user agents (browsers), distinct from server-side storage and business processing.",
+    "topicId": "what-is-frontend-development",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": ["concept-web-platform-trio"],
+    "misconceptionIds": ["misc-frontend-is-just-ui-styling"]
+  },
+  {
+    "id": "concept-web-platform-trio",
+    "title": "Web Platform Foundations (HTML, CSS, JS)",
+    "definition": "The separation of concerns between structure/meaning (HTML), visual styling/layout (CSS), and client runtime behavior (JavaScript).",
+    "topicId": "what-is-frontend-development",
+    "prerequisiteConceptIds": ["concept-frontend-definition"],
+    "relatedConceptIds": ["concept-html-elements", "concept-css-box-model"],
+    "misconceptionIds": ["misc-js-replaces-html"]
+  },
+  {
+    "id": "concept-html-elements",
+    "title": "HTML Elements, Tags & Attributes",
+    "definition": "HTML elements represent distinct document nodes consisting of an opening tag, optional attributes providing metadata, content, and a closing tag.",
+    "topicId": "elements-tags-attributes",
+    "prerequisiteConceptIds": ["concept-web-platform-trio"],
+    "relatedConceptIds": ["concept-semantic-html"],
+    "misconceptionIds": ["misc-all-tags-need-closing-tags"]
+  },
+  {
+    "id": "concept-css-box-model",
+    "title": "CSS Box Model",
+    "definition": "The rectangular box geometry encompassing every rendered DOM element, consisting of content, padding, border, and margin areas.",
+    "topicId": "box-model",
+    "prerequisiteConceptIds": ["concept-web-platform-trio"],
+    "relatedConceptIds": ["concept-css-flexbox-layout"],
+    "misconceptionIds": ["misc-padding-vs-margin"]
+  },
+  {
+    "id": "concept-css-flexbox-layout",
+    "title": "CSS Flexible Box Layout (Flexbox)",
+    "definition": "A 1-dimensional layout model providing directional alignment, distribution of space, and flexible item sizing along main and cross axes.",
+    "topicId": "flexbox-layout",
+    "prerequisiteConceptIds": ["concept-css-box-model"],
+    "relatedConceptIds": ["concept-css-grid-layout"],
+    "misconceptionIds": ["misc-justify-vs-align-items"]
+  },
+  {
+    "id": "concept-js-functions",
+    "title": "JavaScript Functions & Execution Scope",
+    "definition": "First-class callable objects in JavaScript that encapsulate reusable computation, create local variable scope, and can be passed as values or returned from other functions.",
+    "topicId": "javascript-functions",
+    "prerequisiteConceptIds": ["concept-web-platform-trio"],
+    "relatedConceptIds": ["concept-js-closures"],
+    "misconceptionIds": ["misc-return-vs-console-log"]
+  },
+  {
+    "id": "concept-debugging-workflow",
+    "title": "Systematic Frontend Debugging",
+    "definition": "A disciplined, hypothesis-driven workflow for diagnosing defects using browser DevTools, console logs, breakpoint inspection, and DOM state verification.",
+    "topicId": "debugging-strategies",
+    "prerequisiteConceptIds": ["concept-web-platform-trio", "concept-html-elements"],
+    "relatedConceptIds": ["concept-js-functions"],
+    "misconceptionIds": ["misc-random-code-tweaking"]
+  }
+]

@@ -1,0 +1,76 @@
+[
+  {
+    "id": "misc-frontend-is-just-ui-styling",
+    "title": "Frontend is Only Visual Styling",
+    "description": "Believing frontend engineering only entails styling mockups rather than handling network state, performance budgets, accessibility, client caching, and complex data logic.",
+    "conceptId": "concept-frontend-definition",
+    "indicators": [
+      "Assuming frontend engineers do not write algorithms or business logic",
+      "Treating frontend solely as CSS aesthetics"
+    ],
+    "correction": "Frontend engineering encompasses client architecture, asynchronous state, web platform APIs, security, accessibility, and high-performance UI rendering."
+  },
+  {
+    "id": "misc-js-replaces-html",
+    "title": "JavaScript Replaces Semantic HTML",
+    "description": "Believing modern single page applications can replace semantic HTML structure with generic <div> tags and JavaScript event listeners.",
+    "conceptId": "concept-web-platform-trio",
+    "indicators": [
+      "Using <div onClick=...> instead of <button>",
+      "Ignoring native form elements and accessibility trees"
+    ],
+    "correction": "Semantic HTML provides built-in accessibility, keyboard navigation, SEO, and browser platform optimizations that JavaScript cannot replace."
+  },
+  {
+    "id": "misc-all-tags-need-closing-tags",
+    "title": "All HTML Elements Require Closing Tags",
+    "description": "Believing void elements such as <img>, <input>, and <br> require closing tags like </img> in HTML5.",
+    "conceptId": "concept-html-elements",
+    "indicators": [
+      "Writing <img>...</img> in HTML documents",
+      "Confusing XML/XHTML strict rules with standard HTML5 void element parsing"
+    ],
+    "correction": "In HTML5, void elements (e.g. <img>, <input>, <hr>, <br>) cannot have children and do not require or permit closing tags."
+  },
+  {
+    "id": "misc-padding-vs-margin",
+    "title": "Confusing Padding and Margin",
+    "description": "Treating padding and margin interchangeably without understanding their relationship to background colors, borders, and click target hitboxes.",
+    "conceptId": "concept-css-box-model",
+    "indicators": [
+      "Using margin to increase click target area of a button",
+      "Expecting element background color to fill margin space"
+    ],
+    "correction": "Padding is space inside the border (included in element click area and backgrounds), while margin is external clearance outside the border."
+  },
+  {
+    "id": "misc-justify-vs-align-items",
+    "title": "Confusing justify-content and align-items Axes",
+    "description": "Assuming justify-content is always horizontal and align-items is always vertical regardless of flex-direction.",
+    "conceptId": "concept-css-flexbox-layout",
+    "indicators": [
+      "Expecting justify-content to remain horizontal when flex-direction is column"
+    ],
+    "correction": "justify-content aligns along the MAIN axis, and align-items aligns along the CROSS axis. When flex-direction is column, the main axis is vertical."
+  },
+  {
+    "id": "misc-return-vs-console-log",
+    "title": "Equating console.log with Function Return Values",
+    "description": "Believing printing a value to the browser console returns that value to the caller.",
+    "conceptId": "concept-js-functions",
+    "indicators": [
+      "Using console.log() and expecting the outer expression to receive the logged value instead of undefined"
+    ],
+    "correction": "console.log() is an output side-effect for developer inspection. Only the 'return' keyword passes data back to the function caller."
+  },
+  {
+    "id": "misc-random-code-tweaking",
+    "title": "Shotgun Debugging",
+    "description": "Randomly modifying lines of code without forming a diagnostic hypothesis or checking console error outputs.",
+    "conceptId": "concept-debugging-workflow",
+    "indicators": [
+      "Making multiple speculative changes at once without testing each individually"
+    ],
+    "correction": "Systematic debugging isolates failure reproduction, inspects call stacks and error messages, and tests isolated hypotheses one by one."
+  }
+]

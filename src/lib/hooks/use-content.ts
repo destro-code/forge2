@@ -61,3 +61,53 @@ export function useInterviewQuestions() {
 export function useResources() {
   return useMemo(() => contentProvider.resources(), []);
 }
+
+// ---------------------------------------------------------------------------
+// Canonical Learning Architecture Hooks
+// ---------------------------------------------------------------------------
+
+import { canonicalProvider } from "@/lib/curriculum/canonical-provider";
+
+export function useAcademy() {
+  return useMemo(() => canonicalProvider.getAcademy(), []);
+}
+
+export function useLevels() {
+  return useMemo(() => canonicalProvider.getLevels(), []);
+}
+
+export function useLevel(id: string | undefined) {
+  return useMemo(() => (id ? canonicalProvider.getLevel(id) : undefined), [id]);
+}
+
+export function useCanonicalLesson(id: string | undefined) {
+  return useMemo(() => (id ? canonicalProvider.getLesson(id) : undefined), [id]);
+}
+
+export function useGoldenLessons() {
+  return useMemo(() => canonicalProvider.getGoldenLessons(), []);
+}
+
+export function useConcepts() {
+  return useMemo(() => canonicalProvider.getConcepts(), []);
+}
+
+export function useConcept(id: string | undefined) {
+  return useMemo(() => (id ? canonicalProvider.getConcept(id) : undefined), [id]);
+}
+
+export function useSkills() {
+  return useMemo(() => canonicalProvider.getSkills(), []);
+}
+
+export function useSkill(id: string | undefined) {
+  return useMemo(() => (id ? canonicalProvider.getSkill(id) : undefined), [id]);
+}
+
+export function useMisconceptions() {
+  return useMemo(() => canonicalProvider.getMisconceptions(), []);
+}
+
+export function useMisconception(id: string | undefined) {
+  return useMemo(() => (id ? canonicalProvider.getMisconception(id) : undefined), [id]);
+}

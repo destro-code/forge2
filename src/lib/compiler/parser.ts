@@ -32,7 +32,7 @@ export function parseProject(input: CompilerInput, options: CompilerOptions = {}
     return {
       id: f.id,
       name: f.name,
-      code: f.code,
+      code: f.code ?? (f as any).content ?? "",
       language: f.language,
       extension: ext,
       isEntry: false,

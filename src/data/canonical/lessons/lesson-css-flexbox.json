@@ -1,0 +1,157 @@
+{
+  "id": "lesson-1-2-7",
+  "schemaVersion": "1.0.0",
+  "topicId": "flexbox-layout",
+  "title": "Flexbox Layout Mechanics",
+  "description": "Master 1-dimensional CSS layouts: main and cross axis alignment, justify-content, align-items, flex-direction, and flexible wrapping.",
+  "lessonType": "practice",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 30,
+  "conceptIds": ["concept-css-flexbox-layout", "concept-css-box-model"],
+  "skillIds": ["skill-implement-flexbox-alignments"],
+  "objectives": [
+    {
+      "id": "obj-flex-axes",
+      "statement": "Identify how flex-direction establishes main vs cross axes.",
+      "conceptIds": ["concept-css-flexbox-layout"],
+      "skillIds": ["skill-implement-flexbox-alignments"],
+      "priority": "primary"
+    },
+    {
+      "id": "obj-flex-alignment",
+      "statement": "Apply justify-content and align-items to center and distribute child elements.",
+      "conceptIds": ["concept-css-flexbox-layout"],
+      "skillIds": ["skill-implement-flexbox-alignments"],
+      "priority": "primary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": ["lesson-1-1-2"],
+    "conceptIds": ["concept-css-box-model"],
+    "skillIds": ["skill-write-valid-html-markup"]
+  },
+  "activities": [
+    {
+      "id": "act-127-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": ["obj-flex-axes"],
+      "content": {
+        "title": "Mastering Flexible Box Layout",
+        "hook": "Centering an element vertically and horizontally used to require hacky CSS. Flexbox solved this once and for all with two directional axes.",
+        "context": "Flexbox provides dynamic space distribution and alignment across screens of any size.",
+        "goals": [
+          "Understand how the main axis changes when flex-direction is row vs column.",
+          "Write CSS rules to center and space items in navigation bars and cards."
+        ]
+      }
+    },
+    {
+      "id": "act-127-exp-axes",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": ["obj-flex-axes"],
+      "content": {
+        "title": "The Two Axes of Flexbox",
+        "text": "When you apply display: flex to a container, it creates a flex formatting context. The main axis is determined by flex-direction (row by default). justify-content always controls alignment along the main axis. align-items always controls alignment along the perpendicular cross axis.",
+        "callout": {
+          "variant": "warning",
+          "text": "If flex-direction is set to 'column', justify-content controls vertical alignment and align-items controls horizontal alignment!"
+        },
+        "keyTakeaway": "justify-content aligns along the main axis; align-items aligns along the cross axis."
+      }
+    },
+    {
+      "id": "act-127-interactive-code",
+      "type": "interactive-code",
+      "intent": "application",
+      "objectiveIds": ["obj-flex-alignment"],
+      "content": {
+        "title": "Build a Centered Hero Card",
+        "prompt": "Update the .container class to use Flexbox, center all children horizontally and vertically, and add a 16px gap between items.",
+        "language": "html",
+        "starterCode": "<style>\n  .container {\n    /* Add your flexbox rules here */\n    min-height: 200px;\n    background: #f1f5f9;\n    padding: 20px;\n    border-radius: 8px;\n  }\n  .box {\n    background: #3b82f6;\n    color: white;\n    padding: 12px 24px;\n    border-radius: 6px;\n    font-family: sans-serif;\n  }\n</style>\n\n<div class=\"container\">\n  <div class=\"box\">Item 1</div>\n  <div class=\"box\">Item 2</div>\n</div>",
+        "solutionCode": "<style>\n  .container {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    gap: 16px;\n    min-height: 200px;\n    background: #f1f5f9;\n    padding: 20px;\n    border-radius: 8px;\n  }\n  .box {\n    background: #3b82f6;\n    color: white;\n    padding: 12px 24px;\n    border-radius: 6px;\n    font-family: sans-serif;\n  }\n</style>\n\n<div class=\"container\">\n  <div class=\"box\">Item 1</div>\n  <div class=\"box\">Item 2</div>\n</div>"
+      },
+      "validation": {
+        "type": "code-output",
+        "expectedOutput": "Item 1",
+        "matchType": "contains"
+      },
+      "feedback": {
+        "correct": "Great job! display: flex with justify-content: center and align-items: center perfectly centers children.",
+        "incorrect": "Make sure you include display: flex, justify-content: center, align-items: center, and gap: 16px in the .container selector."
+      }
+    },
+    {
+      "id": "act-127-ordering",
+      "type": "ordering",
+      "intent": "retrieval",
+      "objectiveIds": ["obj-flex-axes"],
+      "content": {
+        "prompt": "Order the steps of the browser layout engine when resolving Flexbox rules for a container.",
+        "items": [
+          { "id": "step-1", "text": "1. Establish flex formatting context on parent (display: flex)" },
+          { "id": "step-2", "text": "2. Determine main axis direction from flex-direction (row/column)" },
+          { "id": "step-3", "text": "3. Calculate item hypothetical sizes (flex-basis, min-content)" },
+          { "id": "step-4", "text": "4. Distribute available free space along main axis (justify-content)" },
+          { "id": "step-5", "text": "5. Align items across cross axis (align-items)" }
+        ],
+        "explanation": "Flex container formatting establishes direction first, calculates sizes, distributes space, and finally aligns across the cross axis."
+      },
+      "validation": {
+        "type": "ordering",
+        "correctSequence": ["step-1", "step-2", "step-3", "step-4", "step-5"]
+      },
+      "feedback": {
+        "correct": "Spot on! That accurately mirrors browser layout flow.",
+        "incorrect": "Review the order: formatting context -> direction -> size calculation -> space distribution -> cross alignment."
+      }
+    },
+    {
+      "id": "act-127-predict",
+      "type": "output-prediction",
+      "intent": "prediction",
+      "objectiveIds": ["obj-flex-axes", "obj-flex-alignment"],
+      "content": {
+        "language": "css",
+        "code": ".nav-bar {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  height: 300px;\n}",
+        "prompt": "Where will items inside .nav-bar be distributed along the page?",
+        "options": [
+          "Horizontally across the top of the container",
+          "Vertically from top to bottom with equal space between them",
+          "Centered both horizontally and vertically",
+          "Stacked on top of each other at the top edge with no space"
+        ],
+        "explanation": "Because flex-direction is column, the main axis is vertical (height: 300px). justify-content: space-between distributes items vertically from top to bottom."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "Vertically from top to bottom with equal space between them"
+      },
+      "feedback": {
+        "correct": "Correct! Column direction turns the vertical axis into the main axis.",
+        "incorrect": "Remember: flex-direction: column makes the vertical axis the main axis governed by justify-content."
+      }
+    },
+    {
+      "id": "act-127-reflection",
+      "type": "reflection",
+      "intent": "reflection",
+      "objectiveIds": ["obj-flex-axes"],
+      "content": {
+        "prompt": "Explain why knowing the difference between the main axis and cross axis prevents layout confusion when using flex-direction: column.",
+        "guidelines": [
+          "Mention justify-content vs align-items.",
+          "Describe how container height affects column distribution."
+        ],
+        "sampleResponse": "When flex-direction changes to column, justify-content operates vertically along container height, and align-items operates horizontally across container width.",
+        "minCharacters": 40
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": ["act-127-interactive-code", "act-127-ordering", "act-127-predict"],
+    "minimumScore": 100
+  }
+}

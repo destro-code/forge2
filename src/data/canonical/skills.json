@@ -1,0 +1,47 @@
+[
+  {
+    "id": "skill-distinguish-web-responsibilities",
+    "title": "Distinguish Frontend vs Backend Responsibilities",
+    "description": "Accurately categorize software requirements into client-side UI/state versus server-side database/API layers.",
+    "topicId": "what-is-frontend-development",
+    "conceptIds": ["concept-frontend-definition", "concept-web-platform-trio"],
+    "difficulty": "Beginner",
+    "prerequisiteSkillIds": []
+  },
+  {
+    "id": "skill-write-valid-html-markup",
+    "title": "Author Valid & Semantic HTML Elements",
+    "description": "Construct valid HTML elements with accurate tag syntax, appropriate attributes, self-closing handling, and hierarchy.",
+    "topicId": "elements-tags-attributes",
+    "conceptIds": ["concept-html-elements"],
+    "difficulty": "Beginner",
+    "prerequisiteSkillIds": ["skill-distinguish-web-responsibilities"]
+  },
+  {
+    "id": "skill-implement-flexbox-alignments",
+    "title": "Build Flexible Layouts with CSS Flexbox",
+    "description": "Utilize display: flex along with justify-content, align-items, and flex-direction to achieve multi-device responsive alignments.",
+    "topicId": "flexbox-layout",
+    "conceptIds": ["concept-css-flexbox-layout", "concept-css-box-model"],
+    "difficulty": "Beginner",
+    "prerequisiteSkillIds": ["skill-write-valid-html-markup"]
+  },
+  {
+    "id": "skill-author-javascript-functions",
+    "title": "Declare and Invoke JavaScript Functions",
+    "description": "Write function declarations, arrow functions, manage parameters and default values, and return computed results.",
+    "topicId": "javascript-functions",
+    "conceptIds": ["concept-js-functions"],
+    "difficulty": "Beginner",
+    "prerequisiteSkillIds": ["skill-distinguish-web-responsibilities"]
+  },
+  {
+    "id": "skill-diagnose-frontend-bugs",
+    "title": "Diagnose and Fix Browser Rendering & Runtime Defects",
+    "description": "Locate syntax errors, CSS layout collisions, and runtime JavaScript exceptions using DevTools inspection and systematic debugging.",
+    "topicId": "debugging-strategies",
+    "conceptIds": ["concept-debugging-workflow", "concept-html-elements", "concept-js-functions"],
+    "difficulty": "Beginner",
+    "prerequisiteSkillIds": ["skill-write-valid-html-markup", "skill-author-javascript-functions"]
+  }
+]

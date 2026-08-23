@@ -1,0 +1,155 @@
+{
+  "id": "lesson-0-2-5",
+  "schemaVersion": "1.0.0",
+  "topicId": "debugging-strategies",
+  "title": "Fix the Broken Landing Page",
+  "description": "Put your diagnostic skills to the test in a real-world debugging challenge. Locate and fix markup syntax errors, broken layout styles, and a crashing JavaScript button handler.",
+  "lessonType": "challenge",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 35,
+  "conceptIds": ["concept-debugging-workflow", "concept-html-elements", "concept-js-functions"],
+  "skillIds": ["skill-diagnose-frontend-bugs"],
+  "objectives": [
+    {
+      "id": "obj-diagnose-bugs",
+      "statement": "Identify the cause of rendering and script failures using systematic inspection.",
+      "conceptIds": ["concept-debugging-workflow"],
+      "skillIds": ["skill-diagnose-frontend-bugs"],
+      "priority": "primary"
+    },
+    {
+      "id": "obj-repair-defects",
+      "statement": "Correct DOM hierarchy, CSS properties, and JavaScript references to restore page functionality.",
+      "conceptIds": ["concept-html-elements", "concept-js-functions"],
+      "skillIds": ["skill-diagnose-frontend-bugs"],
+      "priority": "primary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": ["lesson-0-1-1", "lesson-1-1-2"],
+    "conceptIds": ["concept-web-platform-trio", "concept-html-elements"],
+    "skillIds": ["skill-write-valid-html-markup"]
+  },
+  "activities": [
+    {
+      "id": "act-025-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": ["obj-diagnose-bugs"],
+      "content": {
+        "title": "Mission: Repair the Launch Page",
+        "hook": "A teammate pushed code right before the product launch, but the page layout is broken and the subscribe button throws errors.",
+        "context": "Your task is to diagnose three distinct defects (HTML nesting, CSS display collision, and a JavaScript null reference) and fix them.",
+        "goals": [
+          "Find and fix broken closing tags in HTML.",
+          "Resolve conflicting CSS layout rules.",
+          "Fix a runtime JavaScript error in an event listener."
+        ]
+      }
+    },
+    {
+      "id": "act-025-debug-html",
+      "type": "debug",
+      "intent": "debugging",
+      "objectiveIds": ["obj-diagnose-bugs", "obj-repair-defects"],
+      "content": {
+        "title": "Bug 1: Malformed Form Markup",
+        "prompt": "Inspect the buggy HTML form below. Fix the broken tag nesting and invalid void element closing tag.",
+        "language": "html",
+        "bugDescription": "The input element has an invalid closing tag and the submit button is unclosed.",
+        "buggyCode": "<form class=\"newsletter-form\">\n  <label for=\"email-input\">Your Email:</label>\n  <input id=\"email-input\" type=\"email\" placeholder=\"engineer@example.com\"></input>\n  <button type=\"submit\">Subscribe\n</form>",
+        "hints": [
+          "<input> is a void element and must not have a closing </input> tag.",
+          "The <button> tag needs a closing </button> tag before </form>."
+        ]
+      },
+      "validation": {
+        "type": "code-output",
+        "expectedOutput": "Subscribe</button>",
+        "matchType": "contains"
+      },
+      "feedback": {
+        "correct": "Bug resolved! <input> has no closing tag, and <button> is properly closed.",
+        "incorrect": "Review void elements and tag matching: remove </input> and ensure </button> is present."
+      }
+    },
+    {
+      "id": "act-025-quiz-css",
+      "type": "multiple-choice",
+      "intent": "assessment",
+      "objectiveIds": ["obj-diagnose-bugs"],
+      "content": {
+        "question": "The hero banner is invisible despite having content. The CSS contains: .hero { opacity: 0; display: block; }. What is the immediate fix to make it visible?",
+        "options": [
+          { "id": "opt-1", "text": "Change opacity: 0 to opacity: 1", "hint": "Opacity 0 renders an element completely transparent." },
+          { "id": "opt-2", "text": "Change display: block to display: none", "hint": "display: none hides elements completely." },
+          { "id": "opt-3", "text": "Add z-index: -9999", "hint": "Negative z-index puts elements behind other layers." },
+          { "id": "opt-4", "text": "Change position to static", "hint": "Position static does not alter opacity." }
+        ],
+        "explanation": "opacity: 0 makes the element 100% transparent. Changing it to opacity: 1 makes it fully visible."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "opt-1"
+      },
+      "feedback": {
+        "correct": "Correct! Restoring opacity to 1 makes the banner visible.",
+        "incorrect": "Think about why an element with display: block might still be invisible: check opacity."
+      }
+    },
+    {
+      "id": "act-025-interactive-fix",
+      "type": "interactive-code",
+      "intent": "debugging",
+      "objectiveIds": ["obj-repair-defects"],
+      "content": {
+        "title": "Bug 3: JavaScript Null Reference",
+        "prompt": "The script below fails with 'TypeError: Cannot read properties of null (reading addEventListener)'. Fix the selector so it attaches to the existing button with id='submit-btn'.",
+        "language": "html",
+        "starterCode": "<button id=\"submit-btn\">Launch App</button>\n<p id=\"status\"></p>\n\n<script>\n  // Fix the querySelector ID below\n  const button = document.getElementById('wrong-button-id');\n  if (button) {\n    button.addEventListener('click', () => {\n      document.getElementById('status').textContent = 'App Launched Successfully!';\n    });\n  }\n</script>",
+        "solutionCode": "<button id=\"submit-btn\">Launch App</button>\n<p id=\"status\"></p>\n\n<script>\n  const button = document.getElementById('submit-btn');\n  if (button) {\n    button.addEventListener('click', () => {\n      document.getElementById('status').textContent = 'App Launched Successfully!';\n    });\n  }\n</script>"
+      },
+      "validation": {
+        "type": "code-output",
+        "expectedOutput": "Launch App",
+        "matchType": "contains"
+      },
+      "feedback": {
+        "correct": "Great catch! Matching getElementById('submit-btn') connects the handler cleanly.",
+        "incorrect": "Update document.getElementById('wrong-button-id') to document.getElementById('submit-btn')."
+      }
+    },
+    {
+      "id": "act-025-reflection",
+      "type": "reflection",
+      "intent": "reflection",
+      "objectiveIds": ["obj-diagnose-bugs"],
+      "content": {
+        "prompt": "Describe the 3-step checklist you would use in DevTools when a user reports that clicking a button does nothing.",
+        "guidelines": [
+          "Mention Console tab for error inspection.",
+          "Mention Elements tab for event listeners and DOM presence.",
+          "Mention Network tab or state checks."
+        ],
+        "sampleResponse": "1. Check Console tab for uncaught exceptions. 2. Inspect the element in DevTools to ensure it exists and has listeners attached. 3. Verify event handler logic.",
+        "minCharacters": 50
+      }
+    },
+    {
+      "id": "act-025-completion",
+      "type": "completion",
+      "intent": "assessment",
+      "objectiveIds": ["obj-diagnose-bugs", "obj-repair-defects"],
+      "content": {
+        "title": "Challenge Complete!",
+        "message": "You successfully diagnosed and repaired all frontend defects across HTML structure, CSS transparency, and JavaScript event delegation.",
+        "badgeId": "badge-first-debug-challenge",
+        "congratulations": "Congratulations on completing your first full-stack frontend debugging challenge!"
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": ["act-025-debug-html", "act-025-quiz-css", "act-025-interactive-fix"],
+    "minimumScore": 100
+  }
+}
