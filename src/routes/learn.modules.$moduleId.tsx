@@ -74,9 +74,11 @@ function ModuleHubRoute() {
   // 2. Build structured chapters with ordered lessons
   const chapters = useMemo(() => {
     if (!moduleItem) return [];
-    return moduleTopics.map((topic, index) => {
+    const topicIds = new Set(moduleTopics.map((t) => t.id));
+
+    const standardChapters = moduleTopics.map((topic, index) => {
       const topicLessons = allLessons
-        .filter((l) => l.topicId === topic.id || (l.moduleId === moduleItem.id && !l.topicId))
+        .filter((l) => l.topicId === topic.id)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
       const completedTopicLessons = topicLessons.filter((l) => lessonsCompleted.includes(l.id));
@@ -90,6 +92,35 @@ function ModuleHubRoute() {
           topicLessons.length > 0 && completedTopicLessons.length === topicLessons.length,
       };
     });
+
+    // Capture any remaining lessons belonging to this module whose topicId is not in moduleTopics
+    const orphanLessons = allLessons
+      .filter((l) => l.moduleId === moduleItem.id && (!l.topicId || !topicIds.has(l.topicId)))
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    if (orphanLessons.length > 0) {
+      const extraChapter = {
+        topic: {
+          id: `${moduleItem.id}-core-lessons`,
+          moduleId: moduleItem.id,
+          title: `${moduleItem.title} - Core Lessons`,
+          description: "Essential curriculum lessons for this module.",
+          difficulty: moduleItem.difficulty,
+          estimatedMinutes: orphanLessons.reduce((acc, l) => acc + (l.estimatedMinutes || 20), 0),
+          interviewFrequency: "Standard",
+          order: standardChapters.length + 1,
+          prerequisites: [],
+          tags: [],
+        },
+        chapterNumber: standardChapters.length + 1,
+        lessons: orphanLessons,
+        completedCount: orphanLessons.filter((l) => lessonsCompleted.includes(l.id)).length,
+        isCompleted: orphanLessons.every((l) => lessonsCompleted.includes(l.id)),
+      };
+      return [...standardChapters.filter((c) => c.lessons.length > 0), extraChapter];
+    }
+
+    return standardChapters;
   }, [moduleTopics, allLessons, moduleItem, lessonsCompleted]);
 
   // 3. Flat sequential list of all module lessons in deterministic curriculum order

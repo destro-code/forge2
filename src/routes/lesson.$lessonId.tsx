@@ -96,8 +96,55 @@ const PHASES = [
 function LessonView() {
   const { lessonId } = Route.useParams();
   const search = Route.useSearch();
+  const navigate = Route.useNavigate();
   const lesson = useLesson(lessonId);
   const { setLastActiveLesson, lastActiveLessonId } = useProgress();
+
+  const allModules = useModules();
+  const allTopics = useTopics();
+  const allLessons = useLessons();
+  const topic = useTopic(lesson?.topicId);
+  const currentModuleId = lesson?.moduleId || topic?.moduleId;
+
+  const currentMode: "curriculum" | "module" =
+    search.mode === "curriculum" ? "curriculum" : "module";
+
+  // Module-scoped ordered topic and lesson queue
+  const moduleTopics = useMemo(() => {
+    if (!currentModuleId) return [];
+    return allTopics
+      .filter((t) => t.moduleId === currentModuleId)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+  }, [allTopics, currentModuleId]);
+
+  const moduleLessons = useMemo(() => {
+    if (!currentModuleId) return allLessons;
+    const topicIds = moduleTopics.map((t) => t.id);
+    return allLessons
+      .filter((l) => (l.topicId && topicIds.includes(l.topicId)) || l.moduleId === currentModuleId)
+      .sort((a, b) => {
+        const topicA = moduleTopics.find((t) => t.id === a.topicId);
+        const topicB = moduleTopics.find((t) => t.id === b.topicId);
+        const topicOrderA = topicA?.order ?? 0;
+        const topicOrderB = topicB?.order ?? 0;
+        if (topicOrderA !== topicOrderB) return topicOrderA - topicOrderB;
+        return (a.order || 0) - (b.order || 0);
+      });
+  }, [allLessons, currentModuleId, moduleTopics]);
+
+  // Full global curriculum ordered lesson queue
+  const curriculumLessons = useMemo(() => {
+    return getOrderedCurriculumLessons(allModules, allTopics, allLessons);
+  }, [allModules, allTopics, allLessons]);
+
+  const activeLessons = currentMode === "curriculum" ? curriculumLessons : moduleLessons;
+  const currentIndex = lesson ? activeLessons.findIndex((l) => l.id === lesson.id) : -1;
+  const nextLesson =
+    currentIndex >= 0 && currentIndex < activeLessons.length - 1
+      ? activeLessons[currentIndex + 1]
+      : lesson?.nextLessonId
+        ? allLessons.find((l) => l.id === lesson.nextLessonId) || null
+        : null;
 
   if (!lesson) throw notFound();
 
@@ -107,10 +154,36 @@ function LessonView() {
     }
   }, [lesson?.id, lastActiveLessonId, setLastActiveLesson]);
 
+  const handleLessonPlayerComplete = () => {
+    if (nextLesson) {
+      toast.success(`Lesson completed! Moving to ${nextLesson.title}`);
+      navigate({
+        to: "/lesson/$lessonId",
+        params: { lessonId: nextLesson.id },
+        search: { mode: currentMode },
+      });
+    } else if (currentModuleId) {
+      toast.success("Module completed! Returning to module overview.");
+      navigate({
+        to: "/learn/modules/$moduleId",
+        params: { moduleId: currentModuleId },
+      });
+    } else {
+      toast.success("Curriculum completed! Returning to curriculum overview.");
+      navigate({
+        to: "/learn",
+      });
+    }
+  };
+
   if (!search.classic) {
     return (
       <div className="flex flex-col h-[calc(100dvh-7rem)] sm:h-[calc(100dvh-7.5rem)] min-h-[500px] w-full overflow-hidden">
-        <LessonPlayer lesson={lesson} className="flex-1 min-h-0" />
+        <LessonPlayer
+          lesson={lesson}
+          onComplete={handleLessonPlayerComplete}
+          className="flex-1 min-h-0"
+        />
       </div>
     );
   }

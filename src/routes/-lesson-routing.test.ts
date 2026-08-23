@@ -1,10 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { Route } from "./lesson.$lessonId";
 import lessonsData from "@/data/lessons.json";
-import { Lesson } from "@/lib/types";
+import modulesData from "@/data/modules.json";
+import topicsData from "@/data/topics.json";
+import { Lesson, Module, Topic } from "@/lib/types";
+import { getOrderedCurriculumLessons } from "@/lib/utils/curriculum-order";
 
 describe("Lesson Route Default Experience & Fallback Unit Tests", () => {
   const lessons = lessonsData as Lesson[];
+  const modules = modulesData as Module[];
+  const topics = topicsData as Topic[];
 
   it("1. validateSearch defaults search flags safely without query parameters", () => {
     const validated = Route.options.validateSearch({});
@@ -55,5 +60,35 @@ describe("Lesson Route Default Experience & Fallback Unit Tests", () => {
     const foundLesson = lessons.find((l) => l.id === invalidLessonId);
 
     expect(foundLesson).toBeUndefined();
+  });
+
+  it("7. JavaScript module (module-1-3) starts with the first lesson lesson-1-3-1", () => {
+    const jsTopics = topics
+      .filter((t) => t.moduleId === "module-1-3")
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
+    const jsTopicIds = jsTopics.map((t) => t.id);
+
+    const jsLessons = lessons
+      .filter((l) => (l.topicId && jsTopicIds.includes(l.topicId)) || l.moduleId === "module-1-3")
+      .sort((a, b) => {
+        const topicA = jsTopics.find((t) => t.id === a.topicId);
+        const topicB = jsTopics.find((t) => t.id === b.topicId);
+        const topicOrderA = topicA?.order ?? 0;
+        const topicOrderB = topicB?.order ?? 0;
+        if (topicOrderA !== topicOrderB) return topicOrderA - topicOrderB;
+        return (a.order || 0) - (b.order || 0);
+      });
+
+    expect(jsLessons.length).toBeGreaterThan(0);
+    expect(jsLessons[0].id).toBe("lesson-1-3-1");
+  });
+
+  it("8. Curriculum sequence order navigates from lesson-0-1-1 to lesson-0-1-2", () => {
+    const curriculum = getOrderedCurriculumLessons(modules, topics, lessons);
+    const firstLessonIdx = curriculum.findIndex((l) => l.id === "lesson-0-1-1");
+    expect(firstLessonIdx).toBe(0);
+    const nextLesson = curriculum[firstLessonIdx + 1];
+    expect(nextLesson).toBeDefined();
+    expect(nextLesson.id).toBe("lesson-0-1-2");
   });
 });
