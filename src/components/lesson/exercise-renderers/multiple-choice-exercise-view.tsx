@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { ExerciseCard } from "./exercise-card";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
-import { getCanonicalExerciseId } from "@/lib/utils/lesson-step-resolver";
+import { isExerciseCompleted } from "@/lib/utils/lesson-step-resolver";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { InteractiveExerciseLessonStep, Lesson } from "@/lib/types";
@@ -61,10 +61,7 @@ export function MultipleChoiceExerciseView({
   const playgroundCompletions = useProgressStore((s) => s.playgroundCompletions);
   const completePlaygroundExercise = useProgressStore((s) => s.completePlaygroundExercise);
 
-  const canonStepId = step.exerciseId ? getCanonicalExerciseId(step.exerciseId) : undefined;
-  const isAlreadyCompleted = (playgroundCompletions || []).some(
-    (c) => c.templateId === step.exerciseId || (canonStepId && c.templateId === canonStepId),
-  );
+  const isAlreadyCompleted = isExerciseCompleted(step.exerciseId, playgroundCompletions);
 
   const scenarios: ScenarioItem[] = useMemo(() => {
     const parsed = parseScenariosFromCode(step.initialCode);

@@ -920,6 +920,31 @@ export function reorderPedagogicalSteps(steps: LessonStep[]): LessonStep[] {
 }
 
 /**
+ * Evaluates whether an exercise ID is present in playgroundCompletions,
+ * matching bidirectionally across raw (e.g. interactive-0-1-1, exercise-0-1-1)
+ * and canonical (e.g. 0-1-1) ID formats.
+ */
+export function isExerciseCompleted(
+  exerciseId: string | undefined,
+  playgroundCompletions: Array<{ templateId: string }> = [],
+): boolean {
+  if (!exerciseId || !exerciseId.trim()) return false;
+  const targetRaw = exerciseId.trim();
+  const targetCanon = getCanonicalExerciseId(targetRaw);
+
+  return (playgroundCompletions || []).some((c) => {
+    if (!c.templateId || !c.templateId.trim()) return false;
+    const compRaw = c.templateId.trim();
+    if (compRaw === targetRaw) return true;
+    if (Boolean(targetCanon) && compRaw === targetCanon) return true;
+    const compCanon = getCanonicalExerciseId(compRaw);
+    if (Boolean(compCanon) && Boolean(targetCanon) && compCanon === targetCanon) return true;
+    if (Boolean(compCanon) && compCanon === targetRaw) return true;
+    return false;
+  });
+}
+
+/**
  * Evaluates whether a lesson step is a satisfied interactive exercise.
  * Non-exercise steps and non-gated exercises are always considered satisfied.
  */
@@ -935,42 +960,34 @@ export function isStepGatedExerciseCompleted(
     return true; // Non-validated/legacy exercise
   }
 
-  const exerciseId = exerciseStep.validation.exerciseId;
-  const canonValId = exerciseId ? getCanonicalExerciseId(exerciseId) : undefined;
-  const canonStepId = exerciseStep.exerciseId
-    ? getCanonicalExerciseId(exerciseStep.exerciseId)
-    : undefined;
+  const valExId = exerciseStep.validation.exerciseId;
+  const stepExId = exerciseStep.exerciseId;
 
-  const isCompletedInStore = (playgroundCompletions || []).some((c) => {
-    if (!c.templateId) return false;
-    if (c.templateId === exerciseId || c.templateId === exerciseStep.exerciseId) return true;
-    const canonCompId = getCanonicalExerciseId(c.templateId);
-    return (
-      (canonValId &&
-        (c.templateId === canonValId ||
-          canonCompId === canonValId ||
-          canonCompId === exerciseId)) ||
-      (canonStepId &&
-        (c.templateId === canonStepId ||
-          canonCompId === canonStepId ||
-          canonCompId === exerciseStep.exerciseId))
-    );
-  });
+  const isCompletedInStore =
+    isExerciseCompleted(valExId, playgroundCompletions) ||
+    isExerciseCompleted(stepExId, playgroundCompletions);
 
-  const repId = validationReport?.exerciseId;
-  const canonRepId = repId ? getCanonicalExerciseId(repId) : undefined;
-  const isPassedInReport =
-    validationReport?.status === "passed" &&
-    (repId === exerciseId ||
-      repId === exerciseStep.exerciseId ||
-      (canonValId &&
-        (repId === canonValId || canonRepId === canonValId || canonRepId === exerciseId)) ||
-      (canonStepId &&
-        (repId === canonStepId ||
-          canonRepId === canonStepId ||
-          canonRepId === exerciseStep.exerciseId)));
+  let isPassedInReport = false;
+  if (validationReport?.status === "passed" && validationReport.exerciseId) {
+    const repRaw = validationReport.exerciseId.trim();
+    const repCanon = getCanonicalExerciseId(repRaw);
+    const valCanon = valExId ? getCanonicalExerciseId(valExId) : "";
+    const stepCanon = stepExId ? getCanonicalExerciseId(stepExId) : "";
 
-  return isCompletedInStore || Boolean(isPassedInReport);
+    const isValMatch =
+      Boolean(valCanon) &&
+      (repRaw === valCanon || (Boolean(repCanon) && repCanon === valCanon) || repCanon === valExId);
+
+    const isStepMatch =
+      Boolean(stepCanon) &&
+      (repRaw === stepCanon ||
+        (Boolean(repCanon) && repCanon === stepCanon) ||
+        repCanon === stepExId);
+
+    isPassedInReport = repRaw === valExId || repRaw === stepExId || isValMatch || isStepMatch;
+  }
+
+  return isCompletedInStore || isPassedInReport;
 }
 
 /**

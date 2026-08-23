@@ -33,7 +33,7 @@ import {
   cancelPendingValidationRequests,
   waitForIframeReady,
 } from "@/lib/compiler/validation-client";
-import { getCanonicalExerciseId } from "@/lib/utils/lesson-step-resolver";
+import { getCanonicalExerciseId, isExerciseCompleted } from "@/lib/utils/lesson-step-resolver";
 
 import type { Lesson, InteractiveExerciseLessonStep } from "@/lib/types";
 import type { PlaygroundFile, PlaygroundProjectManifest } from "@/lib/types/playground";
@@ -112,17 +112,9 @@ export function EmbeddedPlayground({
     "editor" | "validation" | "preview" | "console" | "hints" | "files"
   >("editor");
 
-  const canonExerciseId = exerciseId ? getCanonicalExerciseId(exerciseId) : undefined;
-  const canonValId = validationSpec?.exerciseId
-    ? getCanonicalExerciseId(validationSpec.exerciseId)
-    : undefined;
-  const isCompletedInStore = (playgroundCompletions || []).some(
-    (c) =>
-      c.templateId === exerciseId ||
-      (validationSpec?.exerciseId && c.templateId === validationSpec.exerciseId) ||
-      (canonExerciseId && c.templateId === canonExerciseId) ||
-      (canonValId && c.templateId === canonValId),
-  );
+  const isCompletedInStore =
+    isExerciseCompleted(exerciseId, playgroundCompletions) ||
+    isExerciseCompleted(validationSpec?.exerciseId, playgroundCompletions);
 
   // Initialize workspace when exerciseStep or session changes
   useEffect(() => {

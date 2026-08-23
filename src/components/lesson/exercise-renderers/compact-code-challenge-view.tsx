@@ -25,7 +25,7 @@ import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
 import { MonacoEditor } from "@/components/shared/monaco-editor";
 import { compilePlaygroundProject } from "@/lib/playground-compiler";
-import { getCanonicalExerciseId } from "@/lib/utils/lesson-step-resolver";
+import { getCanonicalExerciseId, isExerciseCompleted } from "@/lib/utils/lesson-step-resolver";
 import {
   requestPlaygroundValidation,
   cancelPendingValidationRequests,
@@ -63,15 +63,9 @@ export function CompactCodeChallengeView({
   const completePlaygroundExercise = useProgressStore((s) => s.completePlaygroundExercise);
 
   const targetExerciseId = step.validation?.exerciseId || step.exerciseId;
-  const canonTargetId = targetExerciseId ? getCanonicalExerciseId(targetExerciseId) : undefined;
-  const canonStepId = step.exerciseId ? getCanonicalExerciseId(step.exerciseId) : undefined;
-  const isAlreadyCompleted = (playgroundCompletions || []).some(
-    (c) =>
-      c.templateId === targetExerciseId ||
-      c.templateId === step.exerciseId ||
-      (canonTargetId && c.templateId === canonTargetId) ||
-      (canonStepId && c.templateId === canonStepId),
-  );
+  const isAlreadyCompleted =
+    isExerciseCompleted(targetExerciseId, playgroundCompletions) ||
+    isExerciseCompleted(step.exerciseId, playgroundCompletions);
 
   const storageKey = `forge_compact_code_${step.exerciseId}`;
 

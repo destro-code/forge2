@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
-import { getCanonicalExerciseId } from "@/lib/utils/lesson-step-resolver";
+import { isExerciseCompleted } from "@/lib/utils/lesson-step-resolver";
 import type {
   ExerciseValidationSpec,
   ValidationAssertion,
@@ -38,13 +38,8 @@ export function ValidationResultsPanel({
   const { validationReport, isValidating } = usePlaygroundStore();
 
   const exerciseId = validationSpec?.exerciseId;
-  const canonId = exerciseId ? getCanonicalExerciseId(exerciseId) : undefined;
   const isExerciseCompletedInStore = useProgressStore((state) =>
-    exerciseId
-      ? (state.playgroundCompletions || []).some(
-          (c) => c.templateId === exerciseId || (canonId && c.templateId === canonId),
-        )
-      : false,
+    exerciseId ? isExerciseCompleted(exerciseId, state.playgroundCompletions) : false,
   );
 
   const assertions = useMemo(() => validationSpec?.assertions || [], [validationSpec]);

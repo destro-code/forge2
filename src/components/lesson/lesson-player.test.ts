@@ -4,6 +4,7 @@ import {
   getCanonicalExerciseId,
   isStepGatedExerciseCompleted,
   isStepAccessible,
+  isExerciseCompleted,
 } from "@/lib/utils/lesson-step-resolver";
 import type { Lesson, LessonStep } from "@/lib/types";
 import lessonsData from "@/data/lessons.json";
@@ -821,5 +822,132 @@ describe("LessonPlayer Shell Architecture & State Unit Tests", () => {
     expect(
       isStepGatedExerciseCompleted(steps[1], [], { exerciseId: "final-ex", status: "passed" }),
     ).toBe(true);
+  });
+
+  it("37. Step 14B: isExerciseCompleted matches symmetrically across raw and canonical aliases", () => {
+    // 1. Raw query, canonical in store
+    expect(isExerciseCompleted("interactive-0-1-1", [{ templateId: "0-1-1" }])).toBe(true);
+
+    // 2. Canonical query, raw in store
+    expect(isExerciseCompleted("0-1-1", [{ templateId: "interactive-0-1-1" }])).toBe(true);
+
+    // 3. "exercise-" prefix in store, "interactive-" prefix in query
+    expect(isExerciseCompleted("interactive-0-1-1", [{ templateId: "exercise-0-1-1" }])).toBe(true);
+
+    // 4. "exercise-" prefix query, canonical in store
+    expect(isExerciseCompleted("exercise-0-1-1", [{ templateId: "0-1-1" }])).toBe(true);
+
+    // 5. Unrelated exercise does not match
+    expect(isExerciseCompleted("0-1-1", [{ templateId: "0-1-2" }])).toBe(false);
+
+    // 6. Empty / whitespace inputs do not match
+    expect(isExerciseCompleted("", [{ templateId: "0-1-1" }])).toBe(false);
+    expect(isExerciseCompleted(undefined, [{ templateId: "0-1-1" }])).toBe(false);
+    expect(isExerciseCompleted("0-1-1", [{ templateId: "" }])).toBe(false);
+  });
+
+  it("38. Step 14B: Cross-renderer completion truth across step.validation.exerciseId vs step.exerciseId", () => {
+    const compactStep: LessonStep = {
+      id: "step-compact",
+      type: "interactive-exercise",
+      title: "Compact Code Challenge",
+      exerciseId: "0-1-1",
+      language: "html",
+      initialCode: "",
+      hasValidation: true,
+      validation: { exerciseId: "interactive-0-1-1" },
+    };
+
+    // Stored under canonical "0-1-1"
+    expect(isStepGatedExerciseCompleted(compactStep, [{ templateId: "0-1-1" }])).toBe(true);
+
+    // Stored under raw "interactive-0-1-1"
+    expect(isStepGatedExerciseCompleted(compactStep, [{ templateId: "interactive-0-1-1" }])).toBe(
+      true,
+    );
+
+    // Stored under alternative alias "exercise-0-1-1"
+    expect(isStepGatedExerciseCompleted(compactStep, [{ templateId: "exercise-0-1-1" }])).toBe(
+      true,
+    );
+
+    // Incomplete
+    expect(isStepGatedExerciseCompleted(compactStep, [])).toBe(false);
+  });
+
+  it("39. Step 14B: Live validation report with canonical or raw ID satisfies gating immediately", () => {
+    const step: LessonStep = {
+      id: "step-1",
+      type: "interactive-exercise",
+      title: "Validation Test",
+      exerciseId: "exercise-3-1-2",
+      language: "javascript",
+      initialCode: "",
+      hasValidation: true,
+      validation: { exerciseId: "interactive-3-1-2" },
+    };
+
+    // Live report passed with canonical ID
+    expect(isStepGatedExerciseCompleted(step, [], { exerciseId: "3-1-2", status: "passed" })).toBe(
+      true,
+    );
+
+    // Live report passed with raw validation ID
+    expect(
+      isStepGatedExerciseCompleted(step, [], { exerciseId: "interactive-3-1-2", status: "passed" }),
+    ).toBe(true);
+
+    // Live report passed with step exerciseId
+    expect(
+      isStepGatedExerciseCompleted(step, [], { exerciseId: "exercise-3-1-2", status: "passed" }),
+    ).toBe(true);
+
+    // Live report failed -> not completed
+    expect(isStepGatedExerciseCompleted(step, [], { exerciseId: "3-1-2", status: "failed" })).toBe(
+      false,
+    );
+
+    // Live report for different exercise -> not completed
+    expect(isStepGatedExerciseCompleted(step, [], { exerciseId: "3-1-3", status: "passed" })).toBe(
+      false,
+    );
+  });
+
+  it("40. Step 14B: Next button and gating behavior for all step types", () => {
+    const contentStep: LessonStep = {
+      id: "s-content",
+      type: "content",
+      title: "Reading Step",
+      sections: [{ type: "paragraph", text: "Read this." }],
+    };
+    const codeStep: LessonStep = {
+      id: "s-code",
+      type: "code-example",
+      title: "Code Example",
+      code: "console.log('code');",
+      language: "javascript",
+    };
+    const quizStep: LessonStep = {
+      id: "s-quiz",
+      type: "quiz",
+      title: "Knowledge Quiz",
+      questions: [],
+    };
+    const cpStep: LessonStep = {
+      id: "s-cp",
+      type: "checkpoint",
+      title: "Checkpoint",
+      assessment: {
+        prompt: "Question?",
+        options: [{ id: "opt1", label: "Option 1" }],
+        correctAnswer: "opt1",
+      },
+    };
+
+    // Content, Code Example, Quiz, and Checkpoint steps are never blocked by interactive exercise gating
+    expect(isStepGatedExerciseCompleted(contentStep, [])).toBe(true);
+    expect(isStepGatedExerciseCompleted(codeStep, [])).toBe(true);
+    expect(isStepGatedExerciseCompleted(quizStep, [])).toBe(true);
+    expect(isStepGatedExerciseCompleted(cpStep, [])).toBe(true);
   });
 });
