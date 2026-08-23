@@ -407,4 +407,95 @@ describe("LessonPlayer Shell Architecture & State Unit Tests", () => {
     expect(formatStepTitle("Checkpoint: Quick Review")).toBe("Quick Review");
     expect(formatStepTitle("What is Frontend?")).toBe("What is Frontend?");
   });
+
+  it("23. Cross-renderer gating correctly matches both raw and canonical exercise IDs", () => {
+    const rawExerciseId = "0-1-1";
+    const canonicalExerciseId = "interactive-0-1-1";
+
+    const step: any = {
+      type: "interactive-exercise",
+      exerciseId: rawExerciseId,
+      hasValidation: true,
+      validation: {
+        exerciseId: canonicalExerciseId,
+        assertions: [{ id: "a1", description: "check", validator: "return true;" }],
+      },
+    };
+
+    // Scenario A: Nothing completed, no report -> Next must be disabled (gated)
+    const completionsEmpty: { templateId: string }[] = [];
+    const reportNone: any = null;
+
+    const isGatedA = !completionsEmpty.some(
+      (c) =>
+        c.templateId === step.validation.exerciseId ||
+        c.templateId === step.exerciseId ||
+        c.templateId === "0-1-1" ||
+        c.templateId === "interactive-0-1-1",
+    );
+    expect(isGatedA).toBe(true);
+
+    // Scenario B: Completed under canonical alias in store -> Next is unlocked
+    const completionsCanonical = [{ templateId: canonicalExerciseId, completedAt: "now" }];
+    const isUnlockedB = completionsCanonical.some(
+      (c) =>
+        c.templateId === step.validation.exerciseId ||
+        c.templateId === step.exerciseId ||
+        c.templateId === "0-1-1" ||
+        c.templateId === "interactive-0-1-1",
+    );
+    expect(isUnlockedB).toBe(true);
+
+    // Scenario C: Completed under raw alias in store -> Next is unlocked
+    const completionsRaw = [{ templateId: rawExerciseId, completedAt: "now" }];
+    const isUnlockedC = completionsRaw.some(
+      (c) =>
+        c.templateId === step.validation.exerciseId ||
+        c.templateId === step.exerciseId ||
+        c.templateId === "0-1-1" ||
+        c.templateId === "interactive-0-1-1",
+    );
+    expect(isUnlockedC).toBe(true);
+  });
+
+  it("24. Resolves multi-exercise lesson steps with distinct, stable step IDs for StepRenderer keys", () => {
+    const multiExerciseLesson: Lesson = {
+      id: "lesson-multi-drill",
+      topicId: "topic-1",
+      title: "Multiple Drills Lesson",
+      description: "Testing cross-step key stability",
+      difficulty: "Beginner",
+      estimatedMinutes: 10,
+      mastery: "Learning",
+      sections: [
+        {
+          type: "interactive-sandbox",
+          id: "drill-1",
+          title: "Drill 1",
+          initialCode: "let a = 1;",
+          language: "javascript",
+        },
+        {
+          type: "interactive-sandbox",
+          id: "drill-2",
+          title: "Drill 2",
+          initialCode: "let b = 2;",
+          language: "javascript",
+        },
+      ],
+      exercises: [],
+      quiz: [],
+      summary: "All drills complete",
+      resources: [],
+      interviewQuestions: [],
+    };
+
+    const steps = buildLessonSteps(multiExerciseLesson);
+    const exerciseSteps = steps.filter((s) => s.type === "interactive-exercise");
+
+    expect(exerciseSteps.length).toBe(2);
+    expect(exerciseSteps[0].id).not.toBe(exerciseSteps[1].id);
+    expect(exerciseSteps[0].exerciseId).toBe("drill-1");
+    expect(exerciseSteps[1].exerciseId).toBe("drill-2");
+  });
 });

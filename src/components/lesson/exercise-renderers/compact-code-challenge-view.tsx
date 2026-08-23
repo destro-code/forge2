@@ -25,6 +25,7 @@ import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { useTheme } from "@/lib/hooks/use-theme";
 import { MonacoEditor } from "@/components/shared/monaco-editor";
 import { compilePlaygroundProject } from "@/lib/playground-compiler";
+import { getCanonicalExerciseId } from "@/lib/utils/lesson-step-resolver";
 import {
   requestPlaygroundValidation,
   cancelPendingValidationRequests,
@@ -62,8 +63,14 @@ export function CompactCodeChallengeView({
   const completePlaygroundExercise = useProgressStore((s) => s.completePlaygroundExercise);
 
   const targetExerciseId = step.validation?.exerciseId || step.exerciseId;
+  const canonTargetId = targetExerciseId ? getCanonicalExerciseId(targetExerciseId) : undefined;
+  const canonStepId = step.exerciseId ? getCanonicalExerciseId(step.exerciseId) : undefined;
   const isAlreadyCompleted = (playgroundCompletions || []).some(
-    (c) => c.templateId === targetExerciseId || c.templateId === step.exerciseId,
+    (c) =>
+      c.templateId === targetExerciseId ||
+      c.templateId === step.exerciseId ||
+      (canonTargetId && c.templateId === canonTargetId) ||
+      (canonStepId && c.templateId === canonStepId),
   );
 
   const storageKey = `forge_compact_code_${step.exerciseId}`;
@@ -244,6 +251,7 @@ export function CompactCodeChallengeView({
   // Handle Reset to Initial Code
   const handleReset = () => {
     cancelPendingValidationRequests();
+    setIsValidating(false);
     const original = step.initialCode || "";
     setCode(original);
     if (typeof window !== "undefined") {
@@ -263,6 +271,8 @@ export function CompactCodeChallengeView({
 
   // Handle Validation and Execution
   const handleRunAndValidate = async () => {
+    if (isValidating) return;
+
     setLogs([]);
     setExecutionError(null);
 
@@ -339,9 +349,15 @@ export function CompactCodeChallengeView({
 
             <div className="flex items-center gap-1.5 ml-auto">
               {effectivePreviewType === "browser" && (
-                <div className="flex items-center bg-muted/70 rounded-md p-0.5 border border-border/50 mr-1">
+                <div
+                  role="tablist"
+                  aria-label="Editor and Preview Views"
+                  className="flex items-center bg-muted/70 rounded-md p-0.5 border border-border/50 mr-1"
+                >
                   <button
                     type="button"
+                    role="tab"
+                    aria-selected={activeTab === "code"}
                     onClick={() => setActiveTab("code")}
                     className={cn(
                       "px-2.5 py-0.5 text-[11px] font-medium rounded transition-colors whitespace-nowrap",
@@ -354,6 +370,8 @@ export function CompactCodeChallengeView({
                   </button>
                   <button
                     type="button"
+                    role="tab"
+                    aria-selected={activeTab === "preview"}
                     onClick={() => setActiveTab("preview")}
                     className={cn(
                       "px-2.5 py-0.5 text-[11px] font-medium rounded transition-colors flex items-center gap-1 whitespace-nowrap",
@@ -369,9 +387,15 @@ export function CompactCodeChallengeView({
               )}
 
               {effectivePreviewType === "console" && (
-                <div className="flex items-center bg-muted/70 rounded-md p-0.5 border border-border/50 mr-1">
+                <div
+                  role="tablist"
+                  aria-label="Editor and Console Views"
+                  className="flex items-center bg-muted/70 rounded-md p-0.5 border border-border/50 mr-1"
+                >
                   <button
                     type="button"
+                    role="tab"
+                    aria-selected={activeTab === "code"}
                     onClick={() => setActiveTab("code")}
                     className={cn(
                       "px-2.5 py-0.5 text-[11px] font-medium rounded transition-colors whitespace-nowrap",
@@ -384,6 +408,8 @@ export function CompactCodeChallengeView({
                   </button>
                   <button
                     type="button"
+                    role="tab"
+                    aria-selected={activeTab === "console"}
                     onClick={() => setActiveTab("console")}
                     className={cn(
                       "px-2.5 py-0.5 text-[11px] font-medium rounded transition-colors flex items-center gap-1 whitespace-nowrap",

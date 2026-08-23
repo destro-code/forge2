@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { ExerciseCard } from "./exercise-card";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
+import { getCanonicalExerciseId } from "@/lib/utils/lesson-step-resolver";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { InteractiveExerciseLessonStep, Lesson } from "@/lib/types";
@@ -30,8 +31,9 @@ export function RevealExerciseView({ step, onComplete, className }: RevealExerci
   const playgroundCompletions = useProgressStore((s) => s.playgroundCompletions);
   const completePlaygroundExercise = useProgressStore((s) => s.completePlaygroundExercise);
 
+  const canonStepId = step.exerciseId ? getCanonicalExerciseId(step.exerciseId) : undefined;
   const isAlreadyCompleted = (playgroundCompletions || []).some(
-    (c) => c.templateId === step.exerciseId,
+    (c) => c.templateId === step.exerciseId || (canonStepId && c.templateId === canonStepId),
   );
 
   const [isRevealed, setIsRevealed] = useState(false);

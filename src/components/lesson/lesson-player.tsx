@@ -8,11 +8,12 @@ import type {
   QuizLessonStep,
   CheckpointLessonStep,
 } from "@/lib/types";
-import { buildLessonSteps } from "@/lib/utils/lesson-step-resolver";
+import { buildLessonSteps, getCanonicalExerciseId } from "@/lib/utils/lesson-step-resolver";
 import { useProgressStore } from "@/lib/stores/use-progress-store";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { usePlaygroundStore } from "@/lib/stores/use-playground-store";
 import { EmbeddedPlayground } from "@/components/playground/embedded-playground";
+import { cancelPendingValidationRequests } from "@/lib/compiler/validation-client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -155,14 +156,31 @@ export function LessonPlayer({
     }
 
     const exerciseId = exerciseStep.validation.exerciseId;
+    const canonValId = exerciseId ? getCanonicalExerciseId(exerciseId) : undefined;
+    const canonStepId = exerciseStep.exerciseId
+      ? getCanonicalExerciseId(exerciseStep.exerciseId)
+      : undefined;
+
     const isCompletedInStore = playgroundCompletions.some(
-      (c) => c.templateId === exerciseId || c.templateId === exerciseStep.exerciseId,
+      (c) =>
+        c.templateId === exerciseId ||
+        c.templateId === exerciseStep.exerciseId ||
+        (canonValId && c.templateId === canonValId) ||
+        (canonStepId && c.templateId === canonStepId),
     );
     const isPassedInReport =
-      validationReport?.status === "passed" && validationReport?.exerciseId === exerciseId;
+      validationReport?.status === "passed" &&
+      (validationReport?.exerciseId === exerciseId ||
+        (canonValId && validationReport?.exerciseId === canonValId) ||
+        (canonStepId && validationReport?.exerciseId === canonStepId));
 
     return !isCompletedInStore && !isPassedInReport;
   }, [currentStep, playgroundCompletions, validationReport]);
+
+  // Cancel any in-flight validation requests when step changes or unmounts
+  useEffect(() => {
+    cancelPendingValidationRequests();
+  }, [currentStepIndex]);
 
   // Reset internal content scroll position and manage focus on step change
   useEffect(() => {
@@ -311,6 +329,7 @@ export function LessonPlayer({
         className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 md:p-6 scrollbar-thin focus:outline-none"
       >
         <StepRenderer
+          key={currentStep.id || `step-${currentStepIndex}`}
           step={currentStep}
           lesson={lesson}
           headingRef={headingRef}
