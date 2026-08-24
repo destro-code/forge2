@@ -22,7 +22,8 @@ export type ActivityType =
   | "debug"
   | "reflection"
   | "summary"
-  | "completion";
+  | "completion"
+  | "judgment";
 
 export type ActivityIntent =
   | "orientation"
@@ -443,6 +444,36 @@ export interface CompletionActivity {
   optional?: boolean;
 }
 
+export interface JudgmentActivityContent {
+  title?: string;
+  prompt: string;
+  context?: string;
+  responsePlaceholder?: string;
+  modelAnswer: {
+    summary: string;
+    detailedAnalysis: string;
+    keyTradeoffs: string[];
+  };
+  evaluationRubric: Array<{
+    id: string;
+    label: string;
+    description: string;
+  }>;
+  takeaways?: string[];
+}
+
+export interface JudgmentActivity {
+  id: string;
+  type: "judgment";
+  intent?: ActivityIntent;
+  objectiveIds?: string[];
+  content: JudgmentActivityContent;
+  validation?: ActivityValidationConfig;
+  feedback?: ActivityFeedback;
+  evidence?: ActivityEvidenceConfig;
+  optional?: boolean;
+}
+
 export type CanonicalActivity =
   | IntroActivity
   | ExplanationActivity
@@ -457,7 +488,8 @@ export type CanonicalActivity =
   | DebugActivity
   | ReflectionActivity
   | SummaryActivity
-  | CompletionActivity;
+  | CompletionActivity
+  | JudgmentActivity;
 
 // ---------------------------------------------------------------------------
 // Lesson & Entities

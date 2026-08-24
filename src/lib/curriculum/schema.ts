@@ -50,6 +50,7 @@ export const activityTypeSchema = z.enum([
   "reflection",
   "summary",
   "completion",
+  "judgment",
 ]);
 
 export const activityIntentSchema = z.enum([
@@ -409,6 +410,32 @@ export const completionActivitySchema = z.object({
   }),
 });
 
+export const judgmentActivitySchema = z.object({
+  ...baseActivitySchema,
+  type: z.literal("judgment"),
+  content: z.object({
+    title: z.string().optional(),
+    prompt: z.string().min(1),
+    context: z.string().optional(),
+    responsePlaceholder: z.string().optional(),
+    modelAnswer: z.object({
+      summary: z.string().min(1),
+      detailedAnalysis: z.string().min(1),
+      keyTradeoffs: z.array(z.string()),
+    }),
+    evaluationRubric: z
+      .array(
+        z.object({
+          id: z.string().min(1),
+          label: z.string().min(1),
+          description: z.string().min(1),
+        }),
+      )
+      .min(1),
+    takeaways: z.array(z.string()).optional(),
+  }),
+});
+
 export const activitySchema = z.discriminatedUnion("type", [
   introActivitySchema,
   explanationActivitySchema,
@@ -424,6 +451,7 @@ export const activitySchema = z.discriminatedUnion("type", [
   reflectionActivitySchema,
   summaryActivitySchema,
   completionActivitySchema,
+  judgmentActivitySchema,
 ]);
 
 // ---------------------------------------------------------------------------

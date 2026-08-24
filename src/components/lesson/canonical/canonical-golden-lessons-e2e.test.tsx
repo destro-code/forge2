@@ -545,7 +545,9 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       advanceActivity(player.container);
 
       // Activity 1: Explanation -> Continue
-      expect(player.container.textContent).toContain("console.log() vs return: What Actually Happens");
+      expect(player.container.textContent).toContain(
+        "console.log() vs return: What Actually Happens",
+      );
       advanceActivity(player.container);
 
       // Activity 2: Output Prediction (act-131-output-prediction)
@@ -591,7 +593,9 @@ function isAdult(age) {
       advanceActivity(player.container);
 
       // Activity 4: Reflection (act-131-reflection)
-      expect(player.container.textContent).toContain("explain the fundamental difference between console.log() and return");
+      expect(player.container.textContent).toContain(
+        "explain the fundamental difference between console.log() and return",
+      );
       const textarea = player.container.querySelector("textarea");
       expect(textarea).not.toBeNull();
       if (textarea) {

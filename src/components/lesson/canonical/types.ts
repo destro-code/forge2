@@ -56,3 +56,27 @@ export type ActivityComponent<
   TActivity extends CanonicalActivity,
   TResponse = any,
 > = React.ComponentType<ActivityRendererProps<TActivity, TResponse>>;
+
+export interface JudgmentCriteria {
+  id: string;
+  label: string;
+  description: string;
+}
+
+export interface JudgmentStep {
+  id: string;
+  type: "judgment";
+  title?: string;
+  prompt: string;
+  context?: string;
+  responsePlaceholder?: string;
+  modelAnswer: {
+    summary: string;
+    detailedAnalysis: string;
+    keyTradeoffs: string[];
+  };
+  evaluationRubric: JudgmentCriteria[];
+  takeaways: string[];
+}
+
+export type CanonicalStep = CanonicalActivity | JudgmentStep;

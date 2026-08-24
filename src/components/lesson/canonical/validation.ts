@@ -60,7 +60,52 @@ export type ActivityResponse<T extends CanonicalActivity["type"]> = T extends "m
               ? string | boolean[] | { passed: boolean }
               : T extends "reflection"
                 ? string
-                : undefined;
+                : T extends "judgment"
+                  ? string | { response: string; checkedCriteria?: string[] }
+                  : undefined;
+
+/**
+ * Validates the schema requirements of a judgment step, ensuring modelAnswer
+ * and evaluationRubric exist and meet structural contracts.
+ */
+export function validateJudgmentStep(step: unknown): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  if (!step || typeof step !== "object") {
+    errors.push("Step is undefined or invalid.");
+    return { isValid: false, errors };
+  }
+
+  const stepObj = step as Record<string, any>;
+  const content = stepObj.content || stepObj;
+
+  if (!content.modelAnswer) {
+    errors.push("Missing required 'modelAnswer' field in judgment step.");
+  } else {
+    if (!content.modelAnswer.summary || typeof content.modelAnswer.summary !== "string") {
+      errors.push("Missing or invalid 'modelAnswer.summary' in judgment step.");
+    }
+    if (
+      !content.modelAnswer.detailedAnalysis ||
+      typeof content.modelAnswer.detailedAnalysis !== "string"
+    ) {
+      errors.push("Missing or invalid 'modelAnswer.detailedAnalysis' in judgment step.");
+    }
+    if (!Array.isArray(content.modelAnswer.keyTradeoffs)) {
+      errors.push("'modelAnswer.keyTradeoffs' must be an array in judgment step.");
+    }
+  }
+
+  if (!Array.isArray(content.evaluationRubric)) {
+    errors.push("Missing or invalid 'evaluationRubric' array in judgment step.");
+  } else if (content.evaluationRubric.length === 0) {
+    errors.push("'evaluationRubric' array must contain at least one criterion.");
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
 
 export function evaluateActivityValidation<T extends CanonicalActivity>(
   activity: T,
@@ -82,6 +127,35 @@ export function evaluateActivityValidation<T extends CanonicalActivity>(
             `Please write at least ${minChars} characters to capture your reflection. (${text.length}/${minChars})`,
       };
     }
+  }
+
+  if (activity.type === "judgment") {
+    const stepValidation = validateJudgmentStep(activity);
+    if (!stepValidation.isValid) {
+      return {
+        isValid: false,
+        feedbackMessage: `Invalid judgment step structure: ${stepValidation.errors.join(" ")}`,
+      };
+    }
+
+    const responseText =
+      typeof response === "string"
+        ? response
+        : response && typeof response === "object" && "response" in response
+          ? (response as any).response
+          : "";
+
+    const minChars = 50;
+    const text = typeof responseText === "string" ? responseText.trim() : "";
+    const isSufficient = text.length >= minChars;
+
+    return {
+      isValid: isSufficient,
+      feedbackMessage: isSufficient
+        ? feedback?.correct || "Judgment drill committed and self-assessed successfully."
+        : feedback?.incorrect ||
+          `Please articulate your architectural judgment with at least ${minChars} characters (${text.length}/${minChars}).`,
+    };
   }
 
   // Activities without validation (intro, explanation, summary, completion, etc.) auto-pass

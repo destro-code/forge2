@@ -1,5 +1,5 @@
 import type { CanonicalActivity } from "@/lib/curriculum/types";
-import type { ActivityComponent, ActivityRendererProps } from "./types";
+import type { ActivityRendererProps, JudgmentStep, CanonicalStep } from "./types";
 import { ActivityContainer } from "./primitives/activity-container";
 import { ActivityHeader } from "./primitives/activity-header";
 import { ActivityActions } from "./primitives/activity-actions";
@@ -20,6 +20,28 @@ import { DebugRenderer } from "./renderers/debug-renderer";
 import { ReflectionRenderer } from "./renderers/reflection-renderer";
 import { SummaryRenderer } from "./renderers/summary-renderer";
 import { CompletionRenderer } from "./renderers/completion-renderer";
+import { JudgmentRenderer } from "./renderers/judgment-renderer";
+
+/**
+ * Registry map of all activity renderers by activity type key.
+ */
+export const ACTIVITY_RENDERER_MAP = {
+  intro: IntroRenderer,
+  explanation: ExplanationRenderer,
+  "code-example": CodeExampleRenderer,
+  visual: VisualRenderer,
+  "multiple-choice": MultipleChoiceRenderer,
+  "multi-select": MultiSelectRenderer,
+  "fill-blank": FillBlankRenderer,
+  ordering: OrderingRenderer,
+  "output-prediction": OutputPredictionRenderer,
+  "interactive-code": InteractiveCodeRenderer,
+  debug: DebugRenderer,
+  reflection: ReflectionRenderer,
+  summary: SummaryRenderer,
+  completion: CompletionRenderer,
+  judgment: JudgmentRenderer,
+} as const;
 
 /**
  * Fallback renderer for unsupported or unknown activity types.
@@ -61,7 +83,10 @@ export type BaseRendererProps = Omit<ActivityRendererProps<CanonicalActivity, an
  *
  * Uses a discriminated union switch to guarantee type safety without `any` escapes.
  */
-export function renderActivity(activity: CanonicalActivity, props: BaseRendererProps): JSX.Element {
+export function renderActivity(
+  activity: CanonicalActivity | JudgmentStep | CanonicalStep,
+  props: BaseRendererProps,
+): JSX.Element {
   switch (activity.type) {
     case "intro":
       return <IntroRenderer activity={activity} {...props} />;
@@ -91,7 +116,54 @@ export function renderActivity(activity: CanonicalActivity, props: BaseRendererP
       return <SummaryRenderer activity={activity} {...props} />;
     case "completion":
       return <CompletionRenderer activity={activity} {...props} />;
+    case "judgment": {
+      const step: JudgmentStep =
+        "prompt" in activity && "modelAnswer" in activity
+          ? (activity as JudgmentStep)
+          : {
+              id: activity.id,
+              type: "judgment",
+              title: (activity as any).title || (activity as any).content?.title,
+              prompt: (activity as any).prompt || (activity as any).content?.prompt || "",
+              context: (activity as any).context || (activity as any).content?.context,
+              responsePlaceholder:
+                (activity as any).responsePlaceholder ||
+                (activity as any).content?.responsePlaceholder,
+              modelAnswer: (activity as any).modelAnswer ||
+                (activity as any).content?.modelAnswer || {
+                  summary: "",
+                  detailedAnalysis: "",
+                  keyTradeoffs: [],
+                },
+              evaluationRubric:
+                (activity as any).evaluationRubric ||
+                (activity as any).content?.evaluationRubric ||
+                [],
+              takeaways: (activity as any).takeaways || (activity as any).content?.takeaways || [],
+            };
+
+      return (
+        <JudgmentRenderer
+          step={step}
+          onComplete={(evidence) => {
+            if (props.onResponse) {
+              props.onResponse(evidence);
+            }
+            if (props.onSubmit) {
+              props.onSubmit();
+            } else if (props.onContinue) {
+              props.onContinue();
+            }
+          }}
+          isCompleted={
+            props.state?.status === "completed" ||
+            props.state?.status === "correct" ||
+            props.state?.status === "submitted"
+          }
+        />
+      );
+    }
     default:
-      return <FallbackActivityRenderer activity={activity} {...props} />;
+      return <FallbackActivityRenderer activity={activity as CanonicalActivity} {...props} />;
   }
 }
