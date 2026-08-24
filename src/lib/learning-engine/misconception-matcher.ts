@@ -216,9 +216,9 @@ export function matchMisconception(
 
     for (const indicator of misc.indicators) {
       const normalizedIndicator = normalizeText(indicator);
-      const indicatorKeywords = normalizedIndicator
-        .split(/[^a-z0-9_-]+/)
-        .filter((w) => w.length > 4);
+      const indicatorKeywords = Array.from(
+        new Set(normalizedIndicator.split(/[^a-z0-9_-]+/).filter((w) => w.length > 4)),
+      );
 
       let matchedKeywordsCount = 0;
       for (const kw of indicatorKeywords) {

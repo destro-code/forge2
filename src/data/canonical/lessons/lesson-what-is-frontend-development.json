@@ -3,25 +3,47 @@
   "schemaVersion": "1.0.0",
   "topicId": "what-is-frontend-development",
   "title": "What Is Frontend Development?",
-  "description": "Understand what frontend engineers actually build, how frontend differs from design and backend work, and why HTML, CSS, and JavaScript form the platform foundation.",
+  "description": "Understand what frontend engineers actually build, how client browsers process HTML, CSS, and JavaScript, and where the frontend boundary ends and backend systems begin.",
   "lessonType": "instruction",
   "difficulty": "Beginner",
   "estimatedMinutes": 20,
-  "conceptIds": ["concept-frontend-definition", "concept-web-platform-trio"],
-  "skillIds": ["skill-distinguish-web-responsibilities"],
+  "conceptIds": [
+    "concept-web-architecture",
+    "concept-client-server-split",
+    "concept-triad-roles",
+    "concept-frontend-definition",
+    "concept-web-platform-trio"
+  ],
+  "skillIds": [
+    "skill-classify-stack-responsibilities",
+    "skill-differentiate-triad-roles",
+    "skill-explain-client-execution",
+    "skill-distinguish-web-responsibilities"
+  ],
   "objectives": [
     {
-      "id": "obj-frontend-def",
-      "statement": "Explain in plain language what frontend development encompasses.",
-      "conceptIds": ["concept-frontend-definition"],
-      "skillIds": ["skill-distinguish-web-responsibilities"],
+      "id": "OBJ-FE-101",
+      "statement": "Map the three core web languages (HTML, CSS, JS) to their exact architectural roles with 100% accuracy.",
+      "conceptIds": ["concept-triad-roles", "concept-web-platform-trio"],
+      "skillIds": ["skill-differentiate-triad-roles"],
       "priority": "primary"
     },
     {
-      "id": "obj-trio-roles",
-      "statement": "Identify the distinct roles of HTML, CSS, and JavaScript in a client application.",
-      "conceptIds": ["concept-web-platform-trio"],
-      "skillIds": ["skill-distinguish-web-responsibilities"],
+      "id": "OBJ-FE-102",
+      "statement": "Identify whether a given computational action executes on the client browser or the remote server.",
+      "conceptIds": ["concept-client-server-split", "concept-web-architecture"],
+      "skillIds": ["skill-classify-stack-responsibilities"],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-FE-103",
+      "statement": "Articulate in a short written synthesis how the browser runtime interprets the three layers to produce a live web application.",
+      "conceptIds": [
+        "concept-web-architecture",
+        "concept-client-server-split",
+        "concept-triad-roles"
+      ],
+      "skillIds": ["skill-explain-client-execution"],
       "priority": "primary"
     }
   ],
@@ -35,132 +57,296 @@
       "id": "act-011-intro",
       "type": "intro",
       "intent": "orientation",
-      "objectiveIds": ["obj-frontend-def"],
+      "objectiveIds": ["OBJ-FE-101", "OBJ-FE-102"],
       "content": {
         "title": "Welcome to Frontend Engineering",
-        "hook": "Every website or web application you use runs on a client runtime inside your browser. But what does a frontend engineer actually build?",
-        "context": "Frontend engineering connects user experience designs to real browser APIs, data pipelines, and responsive rendering engines.",
+        "hook": "Every website you visit runs code right inside your web browser. But what does a frontend engineer actually build?",
+        "context": "Think of a web application like a dining experience at a restaurant:\n\n• The Dining Room & Table is your web browser — where the customer sits, browses the menu, places orders, and enjoys the food.\n• The Kitchen is the backend server — preparing dishes, processing secret recipes, and managing inventory.\n• The Pantry is the database — securely storing ingredients and records behind locked doors.\n\nFrontend development is the engineering of everything that happens in the dining room. When you type a URL, your browser sends a request across the internet to a server. The server responds with three foundational files: HTML, CSS, and JavaScript. Your browser reads and executes these files to construct the visual, interactive interface you experience on screen.",
         "goals": [
-          "Differentiate frontend development from visual design and backend databases.",
-          "Understand how HTML, CSS, and JavaScript collaborate to form user interfaces."
+          "Map the distinct roles of HTML, CSS, and JavaScript in constructing web pages.",
+          "Recognize what runs locally on the client browser versus what runs remotely on the server.",
+          "Synthesize how the browser executes these three layers together into a live application."
         ]
       }
     },
     {
-      "id": "act-011-exp-roles",
+      "id": "act-011-explanation",
       "type": "explanation",
       "intent": "understanding",
-      "objectiveIds": ["obj-frontend-def"],
+      "objectiveIds": ["OBJ-FE-101"],
       "content": {
-        "title": "Frontend Is More Than Aesthetics",
-        "text": "Frontend development is the practice of building everything users see and interact with in a web browser. This includes document hierarchy, layout algorithms, accessibility trees, client state management, network caching, and interactive input handling.",
+        "title": "The Frontend Triad: Structure, Presentation, and Behavior",
+        "text": "Every modern web application is constructed from three distinct, cooperating technologies known as the Frontend Triad:\n\n1. HTML (HyperText Markup Language) — Structure & Meaning\nHTML provides the skeletal foundation. It defines headings, paragraphs, buttons, forms, and images. Without HTML, there is no content for the browser to render.\nExample: <button>Submit Order</button>\n\n2. CSS (Cascading Style Sheets) — Presentation & Layout\nCSS controls how HTML elements visually appear. It specifies colors, typography, spacing, dimensions, flexbox grids, and responsive layouts across phones, tablets, and desktop screens.\nExample: button { background-color: #2563eb; color: white; border-radius: 6px; }\n\n3. JavaScript (JS) — Behavior & Runtime Logic\nJavaScript brings the document to life. It handles user clicks, validates form inputs before submission, fetches live data from servers, and updates the screen without reloading the page.\nExample: button.addEventListener('click', () => processOrder());",
         "callout": {
           "variant": "mistake",
-          "text": "Common misconception: 'Frontend is just making things look pretty.' While aesthetics matter, frontend engineering involves complex state machines, data synchronization, security, and performance optimizations."
+          "text": "Common Misconception: HTML, CSS, and JavaScript are interchangeable or one can completely replace the others. In reality, each technology has a specialized, non-overlapping responsibility. Professional web engineering requires mastering how all three cooperate cleanly."
         },
-        "keyTakeaway": "Frontend engineers build reliable, responsive, and accessible client-side software systems."
+        "keyTakeaway": "HTML defines the content and document structure. CSS dictates visual styling and layout. JavaScript powers dynamic behavior and client-side logic."
       }
     },
     {
-      "id": "act-011-visual-trio",
+      "id": "act-011-visual",
       "type": "visual",
       "intent": "recognition",
-      "objectiveIds": ["obj-trio-roles"],
+      "objectiveIds": ["OBJ-FE-102"],
       "content": {
-        "title": "The Web Platform Trio",
+        "title": "The Client-Server Boundary and Browser Rendering Pipeline",
         "visualType": "comparison",
-        "description": "HTML provides structure and meaning. CSS controls styling and layout. JavaScript drives dynamic behavior and runtime state.",
+        "description": "Understand the structural boundary between the Client (the user's browser) and the Server (remote backend). User Action -> Browser Request -> Remote Server -> HTTP Response -> HTML + CSS + JS -> DOM & CSSOM Parsing -> Interactive Rendered Page.",
         "visualData": {
           "layers": [
             {
-              "name": "HTML",
-              "role": "Structure & Semantic Meaning",
-              "analogy": "The Frame and Walls"
+              "name": "Client (Browser Runtime)",
+              "role": "Runs HTML parsing, CSS rendering, UI animations, local input validation, and user interaction handling directly on the user's device.",
+              "analogy": "The Restaurant Dining Table: where the customer interacts with menus, dishes, and servers."
             },
             {
-              "name": "CSS",
-              "role": "Presentation, Layout & Aesthetics",
-              "analogy": "Paint, Lighting & Interior Design"
+              "name": "Network & HTTP Protocol",
+              "role": "Transmits requests from the client to the server and delivers HTML, CSS, JavaScript assets and JSON data responses back to the browser.",
+              "analogy": "The Waitstaff: carrying customer orders to the kitchen and bringing finished meals back."
             },
             {
-              "name": "JavaScript",
-              "role": "Behavior, State & API Logic",
-              "analogy": "Electricity, Plumbing & Smart Automation"
+              "name": "Server & Database (Backend)",
+              "role": "Processes business rules, authenticates credentials, connects to persistent databases (e.g., PostgreSQL), and keeps private API keys secure.",
+              "analogy": "The Kitchen & Storage Vault: where secret recipes are executed and ingredients are securely stored."
             }
           ]
         }
       }
     },
     {
-      "id": "act-011-code-trio",
-      "type": "code-example",
-      "intent": "understanding",
-      "objectiveIds": ["obj-trio-roles"],
-      "content": {
-        "title": "A Minimal Interactive Button in Three Layers",
-        "description": "Notice how HTML declares the element, CSS styles its state, and JavaScript attaches a click listener.",
-        "language": "html",
-        "code": "<!-- 1. HTML: Semantic Element -->\n<button id=\"counter-btn\" class=\"primary-btn\">Clicks: 0</button>\n\n<!-- 2. CSS: Visual Presentation -->\n<style>\n  .primary-btn {\n    background-color: #2563eb;\n    color: white;\n    padding: 10px 20px;\n    border: none;\n    border-radius: 6px;\n    cursor: pointer;\n  }\n</style>\n\n<!-- 3. JavaScript: Runtime Behavior -->\n<script>\n  let count = 0;\n  const btn = document.getElementById('counter-btn');\n  btn.addEventListener('click', () => {\n    count += 1;\n    btn.textContent = `Clicks: ${count}`;\n  });\n</script>"
-      }
-    },
-    {
-      "id": "act-011-quiz-boundary",
+      "id": "act-011-mc-roles",
       "type": "multiple-choice",
-      "intent": "assessment",
-      "objectiveIds": ["obj-frontend-def"],
+      "intent": "retrieval",
+      "objectiveIds": ["OBJ-FE-101"],
       "content": {
-        "question": "Which of the following tasks is primarily the responsibility of a frontend engineer?",
+        "question": "A developer needs to change a button from gray to deep blue when a user hovers their mouse over it. Which technology is primarily responsible for defining this visual appearance?",
         "options": [
           {
             "id": "opt-a",
-            "text": "Writing SQL database migrations for user account tables",
-            "hint": "Database tables and migrations are backend persistence concerns."
+            "text": "HTML",
+            "hint": "HTML provides structural elements like <button>, but does not define visual styling rules."
           },
           {
             "id": "opt-b",
-            "text": "Implementing a responsive dropdown menu with keyboard accessibility (WCAG)",
-            "hint": "Think about what runs in the user's browser."
+            "text": "CSS",
+            "hint": "Colors, hover pseudo-classes (:hover), and transitions are visual presentation concerns."
           },
           {
             "id": "opt-c",
-            "text": "Configuring load balancers and physical server clusters",
-            "hint": "Infrastructure and DevOps manage server clusters."
+            "text": "JavaScript",
+            "hint": "JavaScript can attach event listeners, but visual styling like hover colors is declaratively handled by CSS."
           },
           {
             "id": "opt-d",
-            "text": "Creating high-fidelity vector illustrations in design software",
-            "hint": "Visual designers produce illustration assets."
+            "text": "SQL",
+            "hint": "SQL is a database query language that runs on backend database servers."
           }
         ],
-        "explanation": "Frontend engineers implement interactive, accessible, and responsive components in browser environments."
+        "explanation": "CSS governs visual presentation, including colors, dimensions, borders, and hover states using pseudo-classes like :hover."
       },
       "validation": {
         "type": "exact-match",
         "expected": "opt-b"
       },
       "feedback": {
-        "correct": "Correct! Building accessible, responsive interactive UI components is a core frontend responsibility.",
-        "incorrect": "Not quite. Remember that frontend engineers focus on client-side behavior, accessibility, and browser rendering."
+        "correct": "Spot on! CSS governs visual presentation, including colors, dimensions, and hover states.",
+        "incorrect": "HTML provides structure, JavaScript can manipulate styles dynamically, but CSS is the primary declarative presentation layer for colors and hover states.",
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "Think about the three roles: structure, presentation, and behavior."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "Colors and hover transitions are visual styling concerns."
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "Which technology uses rules like background-color and :hover?"
+          }
+        ]
+      },
+      "evidence": {
+        "conceptIds": ["concept-triad-roles"],
+        "skillIds": ["skill-differentiate-triad-roles"],
+        "objectiveIds": ["OBJ-FE-101"],
+        "demonstratedLevel": "competent"
+      }
+    },
+    {
+      "id": "act-011-ms-boundaries",
+      "type": "multi-select",
+      "intent": "recognition",
+      "objectiveIds": ["OBJ-FE-102"],
+      "content": {
+        "question": "Select ALL tasks that run directly on the client inside the user's web browser.",
+        "options": [
+          {
+            "id": "opt-1",
+            "text": "Checking if a password field is empty before submitting the form",
+            "hint": "Client JavaScript can instantly check form inputs before sending network requests."
+          },
+          {
+            "id": "opt-2",
+            "text": "Animating a mobile dropdown navigation menu",
+            "hint": "UI animations and menu transitions execute locally in the browser rendering engine."
+          },
+          {
+            "id": "opt-3",
+            "text": "Storing millions of user profiles securely in a PostgreSQL database",
+            "hint": "Database storage requires secure backend server infrastructure and access credentials."
+          },
+          {
+            "id": "opt-4",
+            "text": "Recalculating the subtotal on a shopping cart screen when item quantity changes",
+            "hint": "Instant cart calculations execute in client JavaScript to provide immediate visual feedback."
+          },
+          {
+            "id": "opt-5",
+            "text": "Sending a password-reset email via a secure mail server",
+            "hint": "Sending authenticated emails requires secure server credentials and mail server connections."
+          }
+        ],
+        "minSelections": 1,
+        "maxSelections": 5,
+        "explanation": "Client-side form checks, UI animations, and instant cart total updates run locally inside the browser. Persistent database storage and secure email dispatch require server infrastructure."
+      },
+      "validation": {
+        "type": "multi-match",
+        "expected": ["opt-1", "opt-2", "opt-4"],
+        "ignoreOrder": true
+      },
+      "feedback": {
+        "correct": "Client-side form checks, UI animations, and instant cart total updates run locally inside the browser. Persistent database storage and secure email dispatch require server infrastructure.",
+        "incorrect": "Remember: client-side actions happen inside the browser. Persistent database storage and private server operations belong to backend infrastructure.",
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "Ask yourself whether this can happen immediately inside the browser."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "Which tasks require access to private server infrastructure?"
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "Databases and mail servers are not directly exposed to ordinary browser JavaScript."
+          }
+        ]
+      },
+      "evidence": {
+        "conceptIds": ["concept-client-server-split", "concept-web-architecture"],
+        "skillIds": ["skill-classify-stack-responsibilities"],
+        "objectiveIds": ["OBJ-FE-102"],
+        "demonstratedLevel": "competent"
+      }
+    },
+    {
+      "id": "act-011-reflect-runtime",
+      "type": "reflection",
+      "intent": "reflection",
+      "objectiveIds": ["OBJ-FE-103"],
+      "content": {
+        "prompt": "Imagine you open a modern news website with JavaScript disabled in your browser.\n\nWhat would still work, and what would likely stop working?\nExplain how HTML, CSS, and JavaScript each contribute to the experience.",
+        "minCharacters": 30,
+        "guidelines": [
+          "Mention what HTML provides (text content, headlines, images, document structure).",
+          "Mention what CSS provides (styling, colors, typography, multi-column layout).",
+          "Explain what JavaScript provides and what breaks without it (interactive comments, live search, drop-down menus, modal dialogs, real-time updates)."
+        ],
+        "sampleResponse": "With JavaScript disabled, the HTML structure still loads all article text, headings, paragraphs, and images. CSS will still format the layout, typography, colors, and responsive grid so the article is readable. However, dynamic features like interactive comment sections, search auto-complete, animated photo carousels, and live breaking-news notifications would stop working because JavaScript provides runtime interactivity."
+      },
+      "feedback": {
+        "correct": "Great synthesis! Without JavaScript, the HTML structure and CSS styling can still provide the page's content and appearance, while many dynamic interactions and client-side behaviors will no longer function.",
+        "incorrect": "Please provide a more detailed explanation (at least 30 characters) describing how HTML, CSS, and JavaScript function.",
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "Think about which of the three technologies is missing."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "HTML provides structure and content. CSS provides presentation. What does JavaScript provide?"
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "Focus on interactive and dynamic behavior."
+          }
+        ]
+      },
+      "evidence": {
+        "conceptIds": [
+          "concept-web-architecture",
+          "concept-client-server-split",
+          "concept-triad-roles"
+        ],
+        "skillIds": ["skill-explain-client-execution"],
+        "objectiveIds": ["OBJ-FE-103"],
+        "demonstratedLevel": "competent"
       }
     },
     {
       "id": "act-011-summary",
       "type": "summary",
       "intent": "reflection",
-      "objectiveIds": ["obj-frontend-def", "obj-trio-roles"],
+      "objectiveIds": ["OBJ-FE-101", "OBJ-FE-102", "OBJ-FE-103"],
       "content": {
-        "title": "Key Takeaways",
+        "title": "Lesson Summary & Core Takeaways",
         "takeaways": [
-          "Frontend development focuses on client-side applications running in user agents (browsers).",
-          "HTML declares structure, CSS controls presentation, and JavaScript powers dynamic behavior.",
-          "Frontend is an engineering discipline requiring attention to accessibility, responsiveness, and state management."
+          "HTML → Structure and semantic meaning (headings, paragraphs, buttons, inputs, links).",
+          "CSS → Presentation, styling, dimensions, and responsive layouts across all device screen sizes.",
+          "JavaScript → Dynamic behavior, client-side logic, user event handling, and asynchronous data fetching.",
+          "Browser (Client) → The runtime environment executing on the user's device that parses code and renders the UI.",
+          "Server (Backend) → Remote infrastructure handling secure database persistence, secret API credentials, and email dispatch."
         ],
-        "nextSteps": ["Explore how browsers parse and execute HTML documents in the next lesson."]
+        "reviewQuestions": [
+          "Can a website function with only HTML and CSS? What is missing if JavaScript is excluded?",
+          "Why is storing database passwords in client-side frontend code a major security flaw?",
+          "Which of the three triad languages is responsible for changing a button's background color on hover?"
+        ],
+        "nextSteps": [
+          "Proceed to Lesson 2: HTML Elements, Tags & Attributes to start writing real markup syntax."
+        ]
       }
     }
   ],
   "completion": {
-    "requiredActivityIds": ["act-011-quiz-boundary"],
-    "minimumScore": 100
+    "requiredActivityIds": [
+      "act-011-intro",
+      "act-011-explanation",
+      "act-011-visual",
+      "act-011-mc-roles",
+      "act-011-ms-boundaries",
+      "act-011-reflect-runtime",
+      "act-011-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-FE-101",
+        "activityIds": ["act-011-mc-roles"],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-FE-102",
+        "activityIds": ["act-011-ms-boundaries"],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-FE-103",
+        "activityIds": ["act-011-reflect-runtime"],
+        "requirement": "complete"
+      }
+    ]
   }
 }

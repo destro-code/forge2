@@ -467,7 +467,7 @@ describe("Phase 2B.3: React Integration, Session Resume & Canonical Player Wirin
   });
 
   it("19. Preserves interactive code response buffer across session reloads", () => {
-    const jsLesson = canonicalProvider.getLesson("lesson-2-1-3") || sampleLesson;
+    const jsLesson = canonicalProvider.getLesson("lesson-1-3-1") || sampleLesson;
     const codeActivity =
       jsLesson.activities.find((a) => a.type === "interactive-code" || a.type === "debug") ||
       jsLesson.activities[0];

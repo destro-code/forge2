@@ -222,7 +222,7 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
       "lesson-0-1-1",
       "lesson-1-1-2",
       "lesson-1-2-7",
-      "lesson-2-1-3",
+      "lesson-1-3-1",
       "lesson-0-2-5",
     ];
 

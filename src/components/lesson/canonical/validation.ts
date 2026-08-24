@@ -1,6 +1,49 @@
 import type { CanonicalActivity, ActivityValidationConfig } from "@/lib/curriculum/types";
 import type { ActivityValidationResult } from "./types";
 
+export function parseCssRules(cssText: string): Record<string, Record<string, string>> {
+  const result: Record<string, Record<string, string>> = {};
+  if (!cssText || typeof cssText !== "string") return result;
+
+  // Remove comments
+  const clean = cssText.replace(/\/\*[\s\S]*?\*\//g, "");
+
+  // Match each selector block: selector { declarations }
+  const ruleRegex = /([^{]+)\{([^}]*)\}/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = ruleRegex.exec(clean)) !== null) {
+    const rawSelector = match[1].trim();
+    const declBlock = match[2].trim();
+    if (!rawSelector) continue;
+
+    const selectors = rawSelector.split(",").map((s) => s.trim());
+
+    for (const selector of selectors) {
+      if (!selector) continue;
+      const decls: Record<string, string> = result[selector] || {};
+      const statements = declBlock.split(";");
+
+      for (const stmt of statements) {
+        const colonIdx = stmt.indexOf(":");
+        if (colonIdx !== -1) {
+          const prop = stmt.slice(0, colonIdx).trim().toLowerCase();
+          const val = stmt
+            .slice(colonIdx + 1)
+            .trim()
+            .toLowerCase();
+          if (prop && val) {
+            decls[prop] = val;
+          }
+        }
+      }
+      result[selector] = decls;
+    }
+  }
+
+  return result;
+}
+
 export type ActivityResponse<T extends CanonicalActivity["type"]> = T extends "multiple-choice"
   ? string
   : T extends "multi-select"
@@ -25,6 +68,21 @@ export function evaluateActivityValidation<T extends CanonicalActivity>(
 ): ActivityValidationResult {
   const config = activity.validation;
   const feedback = activity.feedback;
+
+  if (activity.type === "reflection") {
+    const minChars = (activity.content as { minCharacters?: number }).minCharacters || 0;
+    if (minChars > 0) {
+      const text = typeof response === "string" ? response.trim() : "";
+      const isSufficient = text.length >= minChars;
+      return {
+        isValid: isSufficient,
+        feedbackMessage: isSufficient
+          ? feedback?.correct || "Thank you for sharing your thoughtful reflection."
+          : feedback?.incorrect ||
+            `Please write at least ${minChars} characters to capture your reflection. (${text.length}/${minChars})`,
+      };
+    }
+  }
 
   // Activities without validation (intro, explanation, summary, completion, etc.) auto-pass
   if (!config) {
@@ -182,6 +240,75 @@ export function evaluateActivityValidation<T extends CanonicalActivity>(
             ? feedback?.correct || "All test cases passed!"
             : feedback?.incorrect || "Test assertion failed.",
         };
+      }
+      if (
+        typeof response === "string" &&
+        (activity.type === "interactive-code" || activity.type === "debug")
+      ) {
+        const content = activity.content as {
+          language?: string;
+          testCases?: Array<{ id?: string; description: string; assertion?: string }>;
+        };
+        const testCases = (config as any)?.testCases || content?.testCases;
+        if (testCases && testCases.length > 0) {
+          const lang = content.language;
+          try {
+            if (lang === "html") {
+              if (typeof DOMParser !== "undefined") {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(response, "text/html");
+                const allPassed = testCases.every((t) => {
+                  if (!t.assertion) return true;
+                  const testFn = new Function(
+                    "doc",
+                    "document",
+                    "code",
+                    `return (${t.assertion});`,
+                  );
+                  return Boolean(testFn(doc, doc, response));
+                });
+                return {
+                  isValid: allPassed,
+                  feedbackMessage: allPassed
+                    ? feedback?.correct || "All HTML assertions passed!"
+                    : feedback?.incorrect || "Some HTML structure requirements were not met.",
+                };
+              }
+            } else if (lang === "javascript" || lang === "typescript") {
+              const allPassed = testCases.every((t) => {
+                if (!t.assertion) return true;
+                const testFn = new Function("console", `${response}\nreturn (${t.assertion});`);
+                return Boolean(
+                  testFn({ log: () => {}, error: () => {}, warn: () => {}, info: () => {} }),
+                );
+              });
+              return {
+                isValid: allPassed,
+                feedbackMessage: allPassed
+                  ? feedback?.correct || "All test cases passed successfully!"
+                  : feedback?.incorrect || "Some test cases failed. Inspect your code logic.",
+              };
+            } else if (lang === "css") {
+              const rules = parseCssRules(response);
+              const allPassed = testCases.every((t) => {
+                if (!t.assertion) return true;
+                const testFn = new Function("rules", "code", `return (${t.assertion});`);
+                return Boolean(testFn(rules, response));
+              });
+              return {
+                isValid: allPassed,
+                feedbackMessage: allPassed
+                  ? feedback?.correct || "All CSS assertions passed!"
+                  : feedback?.incorrect || "Some CSS requirements were not met.",
+              };
+            }
+          } catch {
+            return {
+              isValid: false,
+              feedbackMessage: feedback?.incorrect || "Evaluation failed due to code error.",
+            };
+          }
+        }
       }
       return {
         isValid: true,

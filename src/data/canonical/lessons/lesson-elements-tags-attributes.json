@@ -2,152 +2,383 @@
   "id": "lesson-1-1-2",
   "schemaVersion": "1.0.0",
   "topicId": "elements-tags-attributes",
-  "title": "Elements, Tags & Attributes",
-  "description": "Learn the anatomy of HTML elements, opening and closing tags, void elements, and how attributes configure behavior and metadata.",
+  "title": "Elements, Tags, and Attributes",
+  "description": "Understand the syntax anatomy of HTML elements, opening vs closing tags, void elements, key-value attributes, and hierarchical DOM nesting rules.",
   "lessonType": "instruction",
   "difficulty": "Beginner",
   "estimatedMinutes": 25,
-  "conceptIds": ["concept-html-elements"],
-  "skillIds": ["skill-write-valid-html-markup"],
+  "conceptIds": [
+    "concept-html-element-anatomy",
+    "concept-opening-closing-tags",
+    "concept-attributes-key-value",
+    "concept-nesting-hierarchy",
+    "concept-html-elements"
+  ],
+  "skillIds": [
+    "skill-parse-element-syntax",
+    "skill-construct-element-attributes",
+    "skill-nest-elements-validly",
+    "skill-write-valid-html-markup"
+  ],
   "objectives": [
     {
-      "id": "obj-element-anatomy",
-      "statement": "Identify the anatomy of an HTML element including opening tag, attributes, content, and closing tag.",
-      "conceptIds": ["concept-html-elements"],
-      "skillIds": ["skill-write-valid-html-markup"],
+      "id": "OBJ-HTML-201",
+      "statement": "Differentiate between opening tags, closing tags, elements, and void elements with 100% accuracy.",
+      "conceptIds": ["concept-html-element-anatomy", "concept-opening-closing-tags"],
+      "skillIds": ["skill-parse-element-syntax"],
       "priority": "primary"
     },
     {
-      "id": "obj-void-elements",
-      "statement": "Distinguish between container elements and void (self-closing) elements.",
-      "conceptIds": ["concept-html-elements"],
-      "skillIds": ["skill-write-valid-html-markup"],
-      "priority": "secondary"
+      "id": "OBJ-HTML-202",
+      "statement": "Construct syntactically valid HTML elements with correctly formatted attribute name-value pairs.",
+      "conceptIds": ["concept-attributes-key-value", "concept-html-element-anatomy"],
+      "skillIds": ["skill-construct-element-attributes", "skill-write-valid-html-markup"],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-203",
+      "statement": "Construct clean, validly nested hierarchical DOM element structures without overlapping boundaries.",
+      "conceptIds": ["concept-nesting-hierarchy", "concept-opening-closing-tags"],
+      "skillIds": ["skill-nest-elements-validly"],
+      "priority": "primary"
     }
   ],
   "prerequisites": {
     "lessonIds": ["lesson-0-1-1"],
-    "conceptIds": ["concept-web-platform-trio"],
-    "skillIds": []
+    "conceptIds": ["concept-web-platform-trio", "concept-triad-roles"],
+    "skillIds": ["skill-differentiate-triad-roles"]
   },
   "activities": [
     {
       "id": "act-112-intro",
       "type": "intro",
       "intent": "orientation",
-      "objectiveIds": ["obj-element-anatomy"],
+      "objectiveIds": ["OBJ-HTML-201", "OBJ-HTML-202"],
       "content": {
-        "title": "The Building Blocks of the Web",
+        "title": "The Building Blocks: HTML Markup",
         "hook": "Every button, image, paragraph, and form on the web is represented as an HTML element.",
-        "context": "HTML syntax is based on elements configured with tags and attributes that instruct browsers how to construct the Document Object Model (DOM).",
+        "context": "HTML (HyperText Markup Language) gives structure to raw text by wrapping content in tags. The browser reads this structured markup to construct the Document Object Model (DOM) tree in memory. Understanding the precise anatomy of tags, elements, and attributes is the first essential step in becoming a frontend engineer.",
         "goals": [
-          "Break down the anatomy of standard and void HTML elements.",
-          "Write properly formatted attribute key-value pairs."
+          "Differentiate between an element, an opening tag, a closing tag, and a void element.",
+          "Construct syntactically valid HTML attributes using key-value pairs.",
+          "Nest HTML elements hierarchically without syntax errors or boundary overlaps."
         ]
       }
     },
     {
-      "id": "act-112-exp-anatomy",
+      "id": "act-112-explanation",
       "type": "explanation",
       "intent": "understanding",
-      "objectiveIds": ["obj-element-anatomy"],
+      "objectiveIds": ["OBJ-HTML-201", "OBJ-HTML-202"],
       "content": {
-        "title": "Anatomy of an HTML Element",
-        "text": "An HTML element typically consists of an opening tag with optional attributes, text or nested child nodes, and a closing tag denoted by a forward slash (e.g. </p>).",
+        "title": "Element Anatomy: Tags, Attributes, and Content",
+        "text": "An HTML element is the complete component representing a node in the web page. It typically consists of three parts:\n\n1. Opening Tag — Starts the element, sets the tag name, and holds any attributes.\nExample: <p class=\"lead\">\n\n2. Content — The text or nested child elements enclosed inside.\nExample: Welcome to Forge\n\n3. Closing Tag — Denoted by a forward slash (/) before the tag name, marking the end of the element.\nExample: </p>\n\nPutting it all together:\n<p class=\"lead\">Welcome to Forge</p>\n\nAttributes supply extra configuration and metadata. They are always placed in the opening tag using the format name=\"value\".\n\nVoid Elements:\nCertain elements like <img>, <input>, <br>, and <hr> cannot contain content or child nodes. In HTML5, void elements never have closing tags.",
         "callout": {
-          "variant": "info",
-          "text": "Void elements (such as <img>, <input>, <br>, and <hr>) do not contain text content or child elements, and therefore never have closing tags in HTML5."
+          "variant": "mistake",
+          "text": "Common Misconception: The terms 'tag' and 'element' are often used interchangeably in casual talk, but technically: <p> is an opening tag, </p> is a closing tag, and the whole structure <p>Hello</p> is the paragraph element."
         },
-        "keyTakeaway": "Attributes supply element metadata in name=\"value\" pairs inside the opening tag."
+        "keyTakeaway": "An element encompasses the opening tag, attributes, inner content, and closing tag. Attributes only ever belong in the opening tag."
       }
     },
     {
       "id": "act-112-code-example",
       "type": "code-example",
       "intent": "understanding",
-      "objectiveIds": ["obj-element-anatomy", "obj-void-elements"],
+      "objectiveIds": ["OBJ-HTML-201", "OBJ-HTML-202", "OBJ-HTML-203"],
       "content": {
-        "title": "Comparing Container and Void Elements",
-        "description": "Notice how the link <a> has a closing tag wrapping text, while the image <img> is a void element.",
+        "title": "Anatomy in Practice: Container vs Void Elements",
+        "description": "Inspect how standard container elements wrap content with opening and closing tags, while void elements stand alone without closing tags.",
+        "code": "<!-- Container Element: has opening tag, attributes, content, and closing tag -->\n<a href=\"https://forge.dev\" target=\"_blank\" class=\"external-link\">\n  Visit Forge Platform\n</a>\n\n<!-- Void Element: self-contained, no closing tag in HTML5 -->\n<img src=\"/logo.svg\" alt=\"Forge Logo\" width=\"120\" height=\"32\">\n\n<!-- Nested Elements: child element properly closed inside parent -->\n<p class=\"description\">\n  Build your skills with <strong>interactive practice</strong>.\n</p>",
         "language": "html",
-        "code": "<!-- Container element with attributes and closing tag -->\n<a href=\"https://example.com\" target=\"_blank\" class=\"external-link\">\n  Visit Example\n</a>\n\n<!-- Void element with attributes and no closing tag -->\n<img src=\"logo.png\" alt=\"Company Logo\" width=\"120\" height=\"40\">"
-      }
-    },
-    {
-      "id": "act-112-fill-blank",
-      "type": "fill-blank",
-      "intent": "retrieval",
-      "objectiveIds": ["obj-element-anatomy"],
-      "content": {
-        "prompt": "Fill in the missing parts to create a valid hyperlink element that points to /about.",
-        "template": "<a ___=\"/about\">About Us</___>",
-        "blanks": [
+        "highlightedLines": [2, 7, 11],
+        "annotations": [
           {
-            "id": "blank-attr",
-            "placeholder": "attribute name",
-            "hint": "The attribute used for hyperlinks"
+            "line": 2,
+            "comment": "Opening tag with 'href', 'target', and 'class' attributes"
           },
           {
-            "id": "blank-tag",
-            "placeholder": "closing tag name",
-            "hint": "The element name matching the opening tag"
+            "line": 4,
+            "comment": "Closing tag </a> completes the anchor element"
+          },
+          {
+            "line": 7,
+            "comment": "Void element <img>: no closing tag"
+          },
+          {
+            "line": 11,
+            "comment": "<strong> is nested and closed before </p>"
           }
-        ],
-        "explanation": "The 'href' attribute specifies the destination URL and 'a' is the element tag name."
-      },
-      "validation": {
-        "type": "multi-match",
-        "expected": ["href", "a"]
-      },
-      "feedback": {
-        "correct": "Excellent! <a href=\"/about\">About Us</a> is valid HTML.",
-        "incorrect": "Check your attribute and tag names. Remember href stands for Hypertext Reference."
+        ]
       }
     },
     {
-      "id": "act-112-multi-select",
-      "type": "multi-select",
-      "intent": "assessment",
-      "objectiveIds": ["obj-void-elements"],
+      "id": "act-112-ordering",
+      "type": "ordering",
+      "intent": "retrieval",
+      "objectiveIds": ["OBJ-HTML-202"],
       "content": {
-        "question": "Which of the following are valid void (self-closing) elements in HTML5 that do NOT require a closing tag?",
-        "options": [
-          { "id": "opt-img", "text": "<img>", "hint": "Embeds an image" },
-          { "id": "opt-p", "text": "<p>", "hint": "Paragraph container" },
-          { "id": "opt-input", "text": "<input>", "hint": "Form input element" },
-          { "id": "opt-div", "text": "<div>", "hint": "Generic container division" },
-          { "id": "opt-br", "text": "<br>", "hint": "Line break element" }
+        "prompt": "Assemble a valid HTML anchor (<a>) element that links to 'https://example.com' by ordering the syntax tokens from left to right.",
+        "items": [
+          {
+            "id": "tok-1",
+            "text": "<a"
+          },
+          {
+            "id": "tok-2",
+            "text": "href=\"https://example.com\""
+          },
+          {
+            "id": "tok-3",
+            "text": ">"
+          },
+          {
+            "id": "tok-4",
+            "text": "Click Here"
+          },
+          {
+            "id": "tok-5",
+            "text": "</a>"
+          }
         ],
-        "minSelections": 3,
-        "maxSelections": 3,
-        "explanation": "<img>, <input>, and <br> are void elements in HTML5."
+        "explanation": "A complete anchor element opens with '<a', followed by attributes like 'href=\"...\"', closed with '>', then the text content 'Click Here', and finally the closing tag '</a>'."
       },
       "validation": {
-        "type": "multi-match",
-        "expected": ["opt-img", "opt-input", "opt-br"]
+        "type": "ordering",
+        "correctSequence": ["tok-1", "tok-2", "tok-3", "tok-4", "tok-5"]
       },
       "feedback": {
-        "correct": "Correct! <img>, <input>, and <br> are all void elements that cannot contain children.",
-        "incorrect": "Review which elements hold children/text vs which are standalone void elements."
+        "correct": "Spot on! <a href=\"https://example.com\">Click Here</a> is a syntactically perfect HTML anchor element.",
+        "incorrect": "The token order is incorrect. Remember: opening bracket and tag name (<a) -> attributes -> closing bracket (>) -> content -> closing tag (</a>).",
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "Start with the opening tag name: <a."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "Attributes go inside the opening tag before the closing angle bracket >."
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "The content 'Click Here' comes before the closing tag </a>."
+          }
+        ]
+      },
+      "evidence": {
+        "conceptIds": ["concept-attributes-key-value", "concept-html-element-anatomy"],
+        "skillIds": ["skill-construct-element-attributes"],
+        "objectiveIds": ["OBJ-HTML-202"],
+        "demonstratedLevel": "competent"
+      }
+    },
+    {
+      "id": "act-112-mc-nesting",
+      "type": "multiple-choice",
+      "intent": "retrieval",
+      "objectiveIds": ["OBJ-HTML-203"],
+      "content": {
+        "question": "Which of the following code snippets demonstrates VALID HTML element nesting without overlapping tag boundaries?",
+        "options": [
+          {
+            "id": "opt-a",
+            "text": "<p>Learn <strong>frontend</strong> development.</p>",
+            "hint": "The <strong> element opens and closes entirely inside the <p> element."
+          },
+          {
+            "id": "opt-b",
+            "text": "<p>Learn <strong>frontend</p></strong>",
+            "hint": "Notice the </p> closes before the </strong> tag, violating hierarchical tree order."
+          },
+          {
+            "id": "opt-c",
+            "text": "<div><span>Important text</div></span>",
+            "hint": "The <span> tag was opened after <div> but closed after </div>, causing a tag crossover."
+          },
+          {
+            "id": "opt-d",
+            "text": "<a href=\"/\"><strong>Click here</a></strong>",
+            "hint": "The <strong> child was opened inside <a> but closed outside </a>."
+          }
+        ],
+        "explanation": "HTML elements must follow strict hierarchical nesting: elements opened last must be closed first (Last In, First Out). Only Option A cleanly nests <strong> entirely within <p>."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "opt-a"
+      },
+      "feedback": {
+        "correct": "Exactly right! In Option A, <strong> is cleanly contained inside <p> and closes before <p> closes.",
+        "incorrect": "Remember the Golden Rule of Nesting: elements must close in the reverse order they opened. A child element must close before its parent closes.",
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "Look at the order of closing tags relative to opening tags."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "If you open <p> then <strong>, you must close </strong> before </p>."
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "Check Option A: <p> starts first and ends last."
+          }
+        ]
+      },
+      "evidence": {
+        "conceptIds": ["concept-nesting-hierarchy", "concept-opening-closing-tags"],
+        "skillIds": ["skill-nest-elements-validly"],
+        "objectiveIds": ["OBJ-HTML-203"],
+        "demonstratedLevel": "competent"
+      }
+    },
+    {
+      "id": "act-112-code-interactive",
+      "type": "interactive-code",
+      "intent": "application",
+      "objectiveIds": ["OBJ-HTML-201", "OBJ-HTML-202", "OBJ-HTML-203"],
+      "content": {
+        "title": "Modify HTML Attributes and Nested Elements",
+        "prompt": "Edit the HTML markup to add attributes and wrap content properly.",
+        "instructions": "Complete the following two tasks in the HTML editor:\n1. Add an id attribute with the value \"profile-card\" to the outer <div> element.\n2. Wrap the text \"Developer\" in a <span> element with class=\"badge\".",
+        "language": "html",
+        "starterCode": "<div class=\"card\">\n  <h2>Alex Morgan</h2>\n  <p>Role: Developer</p>\n</div>",
+        "solutionCode": "<div class=\"card\" id=\"profile-card\">\n  <h2>Alex Morgan</h2>\n  <p>Role: <span class=\"badge\">Developer</span></p>\n</div>",
+        "hints": [
+          "Attributes go inside the opening tag: <div class=\"card\" id=\"profile-card\">.",
+          "Replace 'Developer' with '<span class=\"badge\">Developer</span>' inside the <p> element.",
+          "Ensure all tags are properly closed and validly nested."
+        ],
+        "testCases": [
+          {
+            "id": "test-id",
+            "description": "Outer <div> element has id='profile-card'",
+            "assertion": "Boolean(doc.querySelector('div#profile-card') || (doc.querySelector('div') && doc.querySelector('div').getAttribute('id') === 'profile-card'))"
+          },
+          {
+            "id": "test-badge",
+            "description": "Role 'Developer' is wrapped in <span class='badge'>",
+            "assertion": "Boolean(doc.querySelector('span.badge') && doc.querySelector('span.badge').textContent.trim() === 'Developer')"
+          },
+          {
+            "id": "test-nesting",
+            "description": "All elements are validly nested inside the profile card",
+            "assertion": "Boolean(doc.querySelector('#profile-card > p > span.badge') || doc.querySelector('div#profile-card p span.badge') || (doc.querySelector('p') && doc.querySelector('p').querySelector('span.badge')))"
+          }
+        ]
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "test-id",
+            "description": "Outer <div> element has id='profile-card'",
+            "assertion": "Boolean(doc.querySelector('div#profile-card') || (doc.querySelector('div') && doc.querySelector('div').getAttribute('id') === 'profile-card'))"
+          },
+          {
+            "id": "test-badge",
+            "description": "Role 'Developer' is wrapped in <span class='badge'>",
+            "assertion": "Boolean(doc.querySelector('span.badge') && doc.querySelector('span.badge').textContent.trim() === 'Developer')"
+          },
+          {
+            "id": "test-nesting",
+            "description": "All elements are validly nested inside the profile card",
+            "assertion": "Boolean(doc.querySelector('#profile-card > p > span.badge') || doc.querySelector('div#profile-card p span.badge') || (doc.querySelector('p') && doc.querySelector('p').querySelector('span.badge')))"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "Outstanding! You correctly added the id='profile-card' attribute and nested the <span class='badge'>Developer</span> element.",
+        "incorrect": "Ensure the outer div has id='profile-card' and 'Developer' is wrapped in <span class=\"badge\">.",
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "Attributes go inside the opening tag: <div class=\"card\" id=\"profile-card\">."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "Replace 'Developer' with '<span class=\"badge\">Developer</span>' inside the <p> element."
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "Make sure not to remove the outer <div> or the <h2> header."
+          }
+        ]
+      },
+      "evidence": {
+        "conceptIds": [
+          "concept-html-element-anatomy",
+          "concept-attributes-key-value",
+          "concept-nesting-hierarchy"
+        ],
+        "skillIds": [
+          "skill-construct-element-attributes",
+          "skill-nest-elements-validly",
+          "skill-write-valid-html-markup"
+        ],
+        "objectiveIds": ["OBJ-HTML-201", "OBJ-HTML-202", "OBJ-HTML-203"],
+        "demonstratedLevel": "competent"
       }
     },
     {
       "id": "act-112-summary",
       "type": "summary",
       "intent": "reflection",
-      "objectiveIds": ["obj-element-anatomy", "obj-void-elements"],
+      "objectiveIds": ["OBJ-HTML-201", "OBJ-HTML-202", "OBJ-HTML-203"],
       "content": {
-        "title": "Summary & Next Steps",
+        "title": "Lesson Summary & Element Anatomy Takeaways",
         "takeaways": [
-          "HTML elements are defined by opening tags, attributes, content, and closing tags.",
-          "Void elements cannot hold child elements and do not use closing tags.",
-          "Attributes configure element behaviors, URLs, accessibility labels, and classes."
+          "Element vs Tag: A tag (<p> or </p>) defines a boundary; an element is the complete component including opening tag, attributes, inner content, and closing tag.",
+          "Attributes: Configured as name=\"value\" pairs exclusively in opening tags to provide metadata, identifiers (id), classes (class), and resource links (href, src).",
+          "Void Elements: Elements like <img> and <input> cannot contain children and never have closing tags in HTML5.",
+          "Hierarchical Nesting: Child elements must open and close cleanly within parent boundaries without cross-boundary overlapping (LIFO: Last In, First Out)."
+        ],
+        "reviewQuestions": [
+          "Why is <p class='text'></p class='text'> invalid HTML syntax?",
+          "What happens if a child element closes after its parent element closes?",
+          "Which HTML elements are void elements that do not take closing tags?"
+        ],
+        "nextSteps": [
+          "Proceed to Lesson 3: CSS Flexbox Layout Mechanics to master multi-element alignment and responsive layout dynamics."
         ]
       }
     }
   ],
   "completion": {
-    "requiredActivityIds": ["act-112-fill-blank", "act-112-multi-select"],
-    "minimumScore": 100
+    "requiredActivityIds": [
+      "act-112-intro",
+      "act-112-explanation",
+      "act-112-code-example",
+      "act-112-ordering",
+      "act-112-mc-nesting",
+      "act-112-code-interactive",
+      "act-112-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-HTML-201",
+        "activityIds": ["act-112-code-interactive"],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-202",
+        "activityIds": ["act-112-ordering", "act-112-code-interactive"],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-203",
+        "activityIds": ["act-112-mc-nesting", "act-112-code-interactive"],
+        "requirement": "success"
+      }
+    ]
   }
 }

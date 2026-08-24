@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
+import { parseCssRules } from "../validation";
 import { ActivityContainer } from "../primitives/activity-container";
 import { ActivityHeader } from "../primitives/activity-header";
 import { ActivityFeedback } from "../primitives/activity-feedback";
@@ -64,7 +65,38 @@ export function InteractiveCodeRenderer({
     };
 
     try {
-      if (language === "javascript" || language === "typescript") {
+      if (language === "html") {
+        if (typeof DOMParser !== "undefined") {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(currentCode, "text/html");
+          if (testCases && testCases.length > 0) {
+            for (const test of testCases) {
+              try {
+                if (test.assertion) {
+                  const testFn = new Function(
+                    "doc",
+                    "document",
+                    "code",
+                    `return (${test.assertion});`,
+                  );
+                  const passed = Boolean(testFn(doc, doc, currentCode));
+                  results.push({ description: test.description, passed });
+                  if (!passed) testsPassed = false;
+                } else {
+                  results.push({ description: test.description, passed: true });
+                }
+              } catch (err: any) {
+                results.push({
+                  description: test.description,
+                  passed: false,
+                  error: err.message,
+                });
+                testsPassed = false;
+              }
+            }
+          }
+        }
+      } else if (language === "javascript" || language === "typescript") {
         // Execute in safe function wrapper with captured console
         const runner = new Function("console", currentCode);
         runner(customConsole);
@@ -79,6 +111,29 @@ export function InteractiveCodeRenderer({
                   `${currentCode}\nreturn (${test.assertion});`,
                 );
                 const passed = Boolean(testFn(customConsole));
+                results.push({ description: test.description, passed });
+                if (!passed) testsPassed = false;
+              } else {
+                results.push({ description: test.description, passed: true });
+              }
+            } catch (err: any) {
+              results.push({
+                description: test.description,
+                passed: false,
+                error: err.message,
+              });
+              testsPassed = false;
+            }
+          }
+        }
+      } else if (language === "css") {
+        const rules = parseCssRules(currentCode);
+        if (testCases && testCases.length > 0) {
+          for (const test of testCases) {
+            try {
+              if (test.assertion) {
+                const testFn = new Function("rules", "code", `return (${test.assertion});`);
+                const passed = Boolean(testFn(rules, currentCode));
                 results.push({ description: test.description, passed });
                 if (!passed) testsPassed = false;
               } else {
@@ -233,7 +288,16 @@ export function InteractiveCodeRenderer({
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-t-lg bg-lesson-surface border-t border-x border-lesson-border text-xs font-semibold text-foreground/90 font-mono">
                   <FileCode className="w-3.5 h-3.5 text-primary" />
-                  <span>solution.{language === "javascript" ? "js" : "ts"}</span>
+                  <span>
+                    solution.
+                    {language === "javascript"
+                      ? "js"
+                      : language === "css"
+                        ? "css"
+                        : language === "html"
+                          ? "html"
+                          : "ts"}
+                  </span>
                 </div>
                 <Badge variant="outline" className="text-[10px] uppercase font-mono px-1.5 py-0">
                   {language}

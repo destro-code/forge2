@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import type { CanonicalLesson } from "@/lib/curriculum/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
 import { evaluateActivityValidation } from "./validation";
+import type { ActivityCompletionEvent } from "./types";
 import { useLessonSession } from "@/lib/learning-engine/use-lesson-session";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { Button } from "@/components/ui/button";
@@ -71,14 +72,16 @@ export function CanonicalLessonPlayer({
       currentActivity.content &&
       "starterCode" in currentActivity.content
     ) {
-      responseToEvaluate = (currentActivity.content as any).starterCode;
+      const codeContent = currentActivity.content as { starterCode?: string };
+      responseToEvaluate = codeContent.starterCode;
     }
     if (
       (responseToEvaluate === null || responseToEvaluate === undefined) &&
       currentActivity.content &&
       "buggyCode" in currentActivity.content
     ) {
-      responseToEvaluate = (currentActivity.content as any).buggyCode;
+      const debugContent = currentActivity.content as { buggyCode?: string };
+      responseToEvaluate = debugContent.buggyCode;
     }
     const valResult = evaluateActivityValidation(currentActivity, responseToEvaluate);
     resolveEvaluation(valResult, currentActivity.id);
@@ -102,7 +105,7 @@ export function CanonicalLessonPlayer({
   }, [currentActivity, revealHint]);
 
   const handleActivityContinue = useCallback(
-    (event?: any) => {
+    (_event?: ActivityCompletionEvent<unknown>) => {
       if (!currentActivity) return;
 
       completeActivity(currentActivity.id);

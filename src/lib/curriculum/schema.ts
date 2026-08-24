@@ -315,15 +315,27 @@ export const interactiveCodeActivitySchema = z.object({
   content: z.object({
     title: z.string().min(1),
     prompt: z.string().min(1),
+    instructions: z.string().optional(),
     language: z.string().min(1),
     starterCode: z.string(),
     solutionCode: z.string().optional(),
+    hints: z.array(z.string()).optional(),
     files: z
       .array(
         z.object({
           name: z.string().min(1),
           content: z.string(),
           readOnly: z.boolean().optional(),
+        }),
+      )
+      .optional(),
+    testCases: z
+      .array(
+        z.object({
+          id: z.string().optional(),
+          description: z.string().min(1),
+          assertion: z.string().optional(),
+          testCode: z.string().optional(),
         }),
       )
       .optional(),
@@ -336,10 +348,31 @@ export const debugActivitySchema = z.object({
   content: z.object({
     title: z.string().min(1),
     prompt: z.string().min(1),
-    buggyCode: z.string().min(1),
+    buggyCode: z.string(),
     language: z.string().min(1),
     bugDescription: z.string().min(1),
     hints: z.array(z.string()).optional(),
+    fixRequirements: z.array(z.string()).optional(),
+    files: z
+      .array(
+        z.object({
+          name: z.string().min(1),
+          content: z.string(),
+          readOnly: z.boolean().optional(),
+        }),
+      )
+      .optional(),
+    solutionCode: z.string().optional(),
+    testCases: z
+      .array(
+        z.object({
+          id: z.string().optional(),
+          description: z.string().min(1),
+          assertion: z.string().optional(),
+          testCode: z.string().optional(),
+        }),
+      )
+      .optional(),
   }),
 });
 

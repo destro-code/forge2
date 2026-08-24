@@ -26,7 +26,9 @@ export function ActivityFeedback({
     status === "incorrect" || (status === "submitted" && validationResult?.isValid === false);
 
   const activeHints = hints
-    ? hints.slice(0, hintsRevealed).map((h) => (typeof h === "string" ? h : h.text))
+    ? hints
+        .slice(0, hintsRevealed)
+        .map((h) => (typeof h === "string" ? h : h.content || (h as { text?: string }).text || ""))
     : [];
 
   // Parse enhanced diagnostic feedback if present

@@ -1,72 +1,194 @@
 [
   {
     "id": "misc-frontend-is-just-ui-styling",
-    "title": "Frontend is Only Visual Styling",
-    "description": "Believing frontend engineering only entails styling mockups rather than handling network state, performance budgets, accessibility, client caching, and complex data logic.",
+    "title": "Frontend Is Only Visual UI & Styling",
+    "description": "Belief that frontend development is limited to colors and layout rather than state management, performance, network requests, and security.",
     "conceptId": "concept-frontend-definition",
-    "indicators": [
-      "Assuming frontend engineers do not write algorithms or business logic",
-      "Treating frontend solely as CSS aesthetics"
-    ],
-    "correction": "Frontend engineering encompasses client architecture, asynchronous state, web platform APIs, security, accessibility, and high-performance UI rendering."
+    "indicators": ["Believing all complex logic must execute on the backend", "Ignoring client-side state architectures"],
+    "correction": "Frontend engineering encompasses rich client state, routing, caching, accessibility, network synchronization, and high-performance DOM updates in the browser."
   },
   {
     "id": "misc-js-replaces-html",
-    "title": "JavaScript Replaces Semantic HTML",
-    "description": "Believing modern single page applications can replace semantic HTML structure with generic <div> tags and JavaScript event listeners.",
+    "title": "JavaScript Replaces HTML and CSS",
+    "description": "Belief that writing everything in JavaScript eliminates the need to understand HTML semantics and CSS cascade mechanics.",
     "conceptId": "concept-web-platform-trio",
-    "indicators": [
-      "Using <div onClick=...> instead of <button>",
-      "Ignoring native form elements and accessibility trees"
-    ],
-    "correction": "Semantic HTML provides built-in accessibility, keyboard navigation, SEO, and browser platform optimizations that JavaScript cannot replace."
+    "indicators": ["Using <div> for every interactive control", "Re-implementing basic browser navigation in custom script"],
+    "correction": "JavaScript manipulates the DOM; HTML provides semantic meaning and accessibility, and CSS provides hardware-accelerated rendering."
+  },
+  {
+    "id": "misc-triad-interchangeable",
+    "title": "HTML, CSS, and JS are Interchangeable",
+    "description": "Belief that HTML, CSS, and JavaScript do the same things and any one of them can replace the other two completely.",
+    "conceptId": "concept-triad-roles",
+    "indicators": ["Trying to write calculation logic in HTML", "Using JS animations when pure CSS transitions suffice"],
+    "correction": "Each technology in the triad has a distinct, specialized role: HTML is structure/meaning, CSS is presentation/layout, and JS is runtime behavior."
+  },
+  {
+    "id": "misc-frontend-direct-database",
+    "title": "Frontend Directly Connects to Databases",
+    "description": "Belief that browser JavaScript can or should directly connect to production database servers (like PostgreSQL or MongoDB) with credentials.",
+    "conceptId": "concept-client-server-split",
+    "indicators": ["Looking for DB connection strings in client JS", "Believing the browser directly holds SQL database tables"],
+    "correction": "Frontend code runs on untrusted client machines and communicates with backend servers over HTTP/WebSockets; the server securely handles database queries."
+  },
+  {
+    "id": "misc-websites-static-only",
+    "title": "Websites Are Purely Static Documents",
+    "description": "Belief that web pages only load once as inert text documents and cannot execute dynamic applications in the browser.",
+    "conceptId": "concept-web-architecture",
+    "indicators": ["Thinking all updates require a full page refresh from the server"],
+    "correction": "Modern web applications run rich client-side code that dynamically updates the DOM, handles events, and synchronizes data asynchronously."
   },
   {
     "id": "misc-all-tags-need-closing-tags",
-    "title": "All HTML Elements Require Closing Tags",
-    "description": "Believing void elements such as <img>, <input>, and <br> require closing tags like </img> in HTML5.",
+    "title": "All HTML Tags Must Have Closing Tags",
+    "description": "Belief that void elements like <img>, <input>, and <br> require separate </image> or </input> closing tags.",
     "conceptId": "concept-html-elements",
-    "indicators": [
-      "Writing <img>...</img> in HTML documents",
-      "Confusing XML/XHTML strict rules with standard HTML5 void element parsing"
-    ],
-    "correction": "In HTML5, void elements (e.g. <img>, <input>, <hr>, <br>) cannot have children and do not require or permit closing tags."
+    "indicators": ["Writing <img></img> or <br></br> in standard HTML5"],
+    "correction": "Void elements are self-contained and forbidden from having closing tags or inner content in standard HTML5. In standard HTML5, void elements never have closing tags."
+  },
+  {
+    "id": "misc-attributes-in-closing-tags",
+    "title": "Attributes Belong in Closing Tags",
+    "description": "Belief that attributes like class, id, or src can or should be repeated inside the closing tag </tag>.",
+    "conceptId": "concept-opening-closing-tags",
+    "indicators": ["Writing </a href='url'> or </div class='box'>"],
+    "correction": "Attributes configure an element and must ONLY appear in the opening tag. Closing tags only contain the element name preceded by a slash (e.g. </a>)."
+  },
+  {
+    "id": "misc-element-tag-identical",
+    "title": "Element and Tag Are Identical Terms",
+    "description": "Confusing the opening/closing tags with the entire DOM element node that encompasses tags, attributes, and inner content.",
+    "conceptId": "concept-html-element-anatomy",
+    "indicators": ["Referring to an entire paragraph node as just 'the <p> tag'"],
+    "correction": "A tag is the markup syntax used to denote boundaries (<p> and </p>), while an element is the complete component including opening tag, attributes, content, and closing tag."
+  },
+  {
+    "id": "misc-attribute-quotes-optional",
+    "title": "Attribute Quotes Are Interchangeable with Spaces",
+    "description": "Belief that multi-word attribute values do not require quotes (e.g. class=btn primary instead of class='btn primary').",
+    "conceptId": "concept-attributes-key-value",
+    "indicators": ["Writing class=btn primary", "Omitting quotes on URLs containing parameters"],
+    "correction": "Without quotes, spaces delimit separate attributes, turning 'primary' into an unintended boolean attribute rather than part of the class value."
+  },
+  {
+    "id": "misc-html-tags-overlap",
+    "title": "HTML Tags Can Overlap Arbitrarily",
+    "description": "Belief that elements can open and close out of hierarchical order, such as <p><b>Hello</p></b>.",
+    "conceptId": "concept-nesting-hierarchy",
+    "indicators": ["Opening child before parent and closing parent before child"],
+    "correction": "HTML elements form a strict hierarchical tree: the most recently opened element must be closed before its parent element can close."
   },
   {
     "id": "misc-padding-vs-margin",
-    "title": "Confusing Padding and Margin",
-    "description": "Treating padding and margin interchangeably without understanding their relationship to background colors, borders, and click target hitboxes.",
+    "title": "Padding and Margin Are the Same",
+    "description": "Confusing internal content clearance (padding) with external spacing between elements (margin).",
     "conceptId": "concept-css-box-model",
-    "indicators": [
-      "Using margin to increase click target area of a button",
-      "Expecting element background color to fill margin space"
-    ],
-    "correction": "Padding is space inside the border (included in element click area and backgrounds), while margin is external clearance outside the border."
+    "indicators": ["Applying margin when expecting background color expansion", "Using padding to push sibling elements away"],
+    "correction": "Padding sits inside the border and is covered by backgrounds; margin sits outside the border and creates space between sibling boxes."
   },
   {
     "id": "misc-justify-vs-align-items",
-    "title": "Confusing justify-content and align-items Axes",
-    "description": "Assuming justify-content is always horizontal and align-items is always vertical regardless of flex-direction.",
+    "title": "justify-content Always Aligns Horizontally",
+    "description": "Assuming justify-content is always horizontal, regardless of flex-direction.",
     "conceptId": "concept-css-flexbox-layout",
-    "indicators": ["Expecting justify-content to remain horizontal when flex-direction is column"],
-    "correction": "justify-content aligns along the MAIN axis, and align-items aligns along the CROSS axis. When flex-direction is column, the main axis is vertical."
+    "indicators": ["Expecting align-items to align horizontally in column layout"],
+    "correction": "justify-content aligns along the MAIN axis (horizontal in row, vertical in column); align-items aligns along the CROSS axis."
+  },
+  {
+    "id": "misc-justify-moves-individual-items",
+    "title": "justify-content Moves Individual Child Items",
+    "description": "Belief that justify-content is a property applied to individual child items rather than the parent flex container to distribute all children.",
+    "conceptId": "concept-justify-align-distribution",
+    "indicators": ["Applying justify-content: space-between on a child <div> instead of the parent container"],
+    "correction": "justify-content is a container-level property that coordinates the collective distribution of all child items along the main axis."
+  },
+  {
+    "id": "misc-align-items-centers-horizontally",
+    "title": "align-items Always Centers Horizontally",
+    "description": "Assuming align-items controls horizontal centering regardless of flex-direction.",
+    "conceptId": "concept-main-cross-axes",
+    "indicators": ["Setting flex-direction: column and expecting align-items: center to center vertically"],
+    "correction": "align-items always operates on the cross axis. When flex-direction is column, the cross axis is horizontal, so align-items centers horizontally."
+  },
+  {
+    "id": "misc-display-flex-applies-to-all-descendants",
+    "title": "display: flex Affects All Nested Descendants",
+    "description": "Belief that setting display: flex on a top-level container turns grandchildren and deep descendants into flex items.",
+    "conceptId": "concept-flex-container",
+    "indicators": ["Expecting grandchild elements to automatically align into a row without setting display: flex on their parent"],
+    "correction": "display: flex only creates a flex context for immediate direct children. Nested elements require their own display: flex declarations."
+  },
+  {
+    "id": "misc-flexbox-requires-hardcoded-margins",
+    "title": "Flexbox Requires Hardcoded Margins for Spacing",
+    "description": "Using margin-right: 20px on every flex item instead of leveraging justify-content or the gap property.",
+    "conceptId": "concept-justify-align-distribution",
+    "indicators": ["Adding hardcoded pixel margins on flex children and breaking last-child alignment"],
+    "correction": "Flexbox containers natively space items using justify-content (e.g. space-between) and the modern CSS gap property."
   },
   {
     "id": "misc-return-vs-console-log",
-    "title": "Equating console.log with Function Return Values",
-    "description": "Believing printing a value to the browser console returns that value to the caller.",
+    "title": "console.log() Returns a Value from a Function",
+    "description": "Confusing printing output to the developer console with returning a value to the calling expression.",
     "conceptId": "concept-js-functions",
-    "indicators": [
-      "Using console.log() and expecting the outer expression to receive the logged value instead of undefined"
-    ],
-    "correction": "console.log() is an output side-effect for developer inspection. Only the 'return' keyword passes data back to the function caller."
+    "indicators": ["Writing const result = add(1, 2) where add only does console.log", "Expecting console.log to provide data to callers"],
+    "correction": "console.log writes text to the DevTools console and evaluates to undefined. return explicitly passes a value back to whoever called the function."
+  },
+  {
+    "id": "misc-console-log-returns-value",
+    "title": "console.log() Outputs Data to Calling Code",
+    "description": "Believing that console.log(x) sends x back to the variable receiving the function call.",
+    "conceptId": "concept-console-log-side-effects",
+    "indicators": ["Expecting let x = calculate(5) to receive data when calculate only has console.log"],
+    "correction": "console.log is purely a debugging side effect for humans; only return sends data to the executing JavaScript program."
+  },
+  {
+    "id": "misc-functions-auto-return-last-var",
+    "title": "Functions Auto-Return the Last Defined Variable",
+    "description": "Believing JavaScript works like some languages where the last evaluated expression is automatically returned without a return keyword.",
+    "conceptId": "concept-undefined-default-return",
+    "indicators": ["Defining let sum = a + b inside a function and omitting return sum"],
+    "correction": "In JavaScript standard functions, if there is no explicit return statement, the function execution finishes and evaluates to undefined."
+  },
+  {
+    "id": "misc-code-after-return-executes",
+    "title": "Code After return Continues to Run",
+    "description": "Believing statements written below a return statement inside a function block will still execute.",
+    "conceptId": "concept-function-return-value",
+    "indicators": ["Writing cleanup or logging code directly below return x"],
+    "correction": "The return statement immediately halts function execution and exits the function frame; subsequent code is unreachable."
   },
   {
     "id": "misc-random-code-tweaking",
-    "title": "Shotgun Debugging",
-    "description": "Randomly modifying lines of code without forming a diagnostic hypothesis or checking console error outputs.",
+    "title": "Debugging by Random Guesswork",
+    "description": "Randomly modifying syntax without forming a hypothesis about why the failure occurs.",
     "conceptId": "concept-debugging-workflow",
-    "indicators": ["Making multiple speculative changes at once without testing each individually"],
-    "correction": "Systematic debugging isolates failure reproduction, inspects call stacks and error messages, and tests isolated hypotheses one by one."
+    "indicators": ["Adding random ! or ; or changing random CSS values without inspecting DevTools"],
+    "correction": "Systematic debugging involves observing symptoms, inspecting DevTools console and DOM state, forming a hypothesis, and testing targeted fixes."
+  },
+  {
+    "id": "misc-click-failure-always-js-logic",
+    "title": "Click Failure Is Always a JS Calculation Bug",
+    "description": "Assuming that when a button click does nothing, the bug is inside the calculation function rather than a broken querySelector or missing event listener.",
+    "conceptId": "concept-event-listener-binding",
+    "indicators": ["Rewriting math logic when the button handler was never attached to the DOM node"],
+    "correction": "Trace the entire event chain: check HTML ID matching, querySelector resolution, event listener binding, and finally the callback logic."
+  },
+  {
+    "id": "misc-css-typos-always-show-errors",
+    "title": "CSS Typos Throw Visible Console Errors",
+    "description": "Believing misspelled CSS property names (like displau: flex or colr: red) will trigger error logs in the JavaScript console.",
+    "conceptId": "concept-style-attribute-typos",
+    "indicators": ["Checking only the JS console when CSS layout fails to apply"],
+    "correction": "Browsers follow CSS fault tolerance rules and silently ignore unrecognized properties without throwing runtime exceptions."
+  },
+  {
+    "id": "misc-null-addeventlistener-broken-js",
+    "title": "Cannot read properties of null Means Corrupt JS",
+    "description": "Thinking 'Cannot read properties of null (reading addEventListener)' means the browser's JavaScript engine is broken.",
+    "conceptId": "concept-dom-element-resolution",
+    "indicators": ["Believing addEventListener is missing from the browser API"],
+    "correction": "This error means document.querySelector returned null because the element selector ID/class did not match any element in the HTML DOM."
   }
 ]

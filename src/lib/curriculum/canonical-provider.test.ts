@@ -72,7 +72,7 @@ describe("Canonical Provider & Legacy Adapter", () => {
 
       const lesson2 = canonicalProvider.getLesson("lesson-1-1-2");
       expect(lesson2).toBeDefined();
-      expect(lesson2?.title).toBe("Elements, Tags & Attributes");
+      expect(lesson2?.title).toBe("Elements, Tags, and Attributes");
     });
 
     it("seamlessly adapts legacy lesson from lessons.json if not a golden fixture", () => {
@@ -176,13 +176,17 @@ describe("Canonical Provider & Legacy Adapter", () => {
     });
 
     it("adapts canonical lesson directly to presentation LessonStep array for LessonPlayer", () => {
-      const goldenLesson = canonicalProvider.getLesson("lesson-0-1-1")!;
-      const steps = adaptCanonicalLessonToSteps(goldenLesson);
+      const goldenLesson1 = canonicalProvider.getLesson("lesson-0-1-1")!;
+      const steps1 = adaptCanonicalLessonToSteps(goldenLesson1);
 
-      expect(steps.length).toBeGreaterThanOrEqual(4);
-      expect(steps.some((s) => s.type === "content")).toBe(true);
-      expect(steps.some((s) => s.type === "code-example")).toBe(true);
-      expect(steps.some((s) => s.type === "quiz")).toBe(true);
+      expect(steps1.length).toBeGreaterThanOrEqual(4);
+      expect(steps1.some((s) => s.type === "content")).toBe(true);
+      expect(steps1.some((s) => s.type === "quiz")).toBe(true);
+      expect(steps1.some((s) => s.type === "checkpoint")).toBe(true);
+
+      const goldenLesson2 = canonicalProvider.getLesson("lesson-1-1-2")!;
+      const steps2 = adaptCanonicalLessonToSteps(goldenLesson2);
+      expect(steps2.some((s) => s.type === "code-example")).toBe(true);
     });
   });
 });

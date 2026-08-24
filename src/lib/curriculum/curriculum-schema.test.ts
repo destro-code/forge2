@@ -39,12 +39,13 @@ describe("Canonical Curriculum Schema & Validation", () => {
       expect(lesson.objectives.length).toBeGreaterThanOrEqual(1);
     });
 
-    it("validates Golden Lesson 2 (Elements, Tags & Attributes)", () => {
+    it("validates Golden Lesson 2 (Elements, Tags, and Attributes)", () => {
       const lesson = validateLesson(lessonElementsTags);
       expect(lesson.id).toBe("lesson-1-1-2");
       expect(lesson.lessonType).toBe("instruction");
-      expect(lesson.activities.some((a) => a.type === "fill-blank")).toBe(true);
-      expect(lesson.activities.some((a) => a.type === "multi-select")).toBe(true);
+      expect(lesson.activities.some((a) => a.type === "ordering")).toBe(true);
+      expect(lesson.activities.some((a) => a.type === "multiple-choice")).toBe(true);
+      expect(lesson.activities.some((a) => a.type === "interactive-code")).toBe(true);
     });
 
     it("validates Golden Lesson 3 (CSS Flexbox)", () => {
@@ -52,17 +53,18 @@ describe("Canonical Curriculum Schema & Validation", () => {
       expect(lesson.id).toBe("lesson-1-2-7");
       expect(lesson.lessonType).toBe("practice");
       expect(lesson.activities.some((a) => a.type === "interactive-code")).toBe(true);
-      expect(lesson.activities.some((a) => a.type === "ordering")).toBe(true);
+      expect(lesson.activities.some((a) => a.type === "visual")).toBe(true);
       expect(lesson.activities.some((a) => a.type === "output-prediction")).toBe(true);
     });
 
     it("validates Golden Lesson 4 (JavaScript Functions)", () => {
       const lesson = validateLesson(lessonJsFunctions);
-      expect(lesson.id).toBe("lesson-2-1-3");
+      expect(lesson.id).toBe("lesson-1-3-1");
       expect(lesson.lessonType).toBe("instruction");
-      expect(lesson.activities.some((a) => a.type === "code-example")).toBe(true);
+      expect(lesson.activities.some((a) => a.type === "explanation")).toBe(true);
       expect(lesson.activities.some((a) => a.type === "output-prediction")).toBe(true);
       expect(lesson.activities.some((a) => a.type === "interactive-code")).toBe(true);
+      expect(lesson.activities.some((a) => a.type === "reflection")).toBe(true);
     });
 
     it("validates Golden Lesson 5 (Fix Broken Page Challenge)", () => {

@@ -3,50 +3,108 @@
     "id": "what-is-frontend-development",
     "moduleId": "module-0-1",
     "title": "What Is Frontend Development?",
-    "description": "Orientation to what frontend engineers build, separation of concerns, and web runtime foundations.",
+    "description": "Orientation to what frontend engineers build, separation of concerns, client-server split, and web platform runtime foundations.",
     "order": 1,
-    "conceptIds": ["concept-frontend-definition", "concept-web-platform-trio"],
-    "skillIds": ["skill-distinguish-web-responsibilities"],
+    "conceptIds": [
+      "concept-frontend-definition",
+      "concept-web-platform-trio",
+      "concept-web-architecture",
+      "concept-client-server-split",
+      "concept-triad-roles"
+    ],
+    "skillIds": [
+      "skill-distinguish-web-responsibilities",
+      "skill-classify-stack-responsibilities",
+      "skill-differentiate-triad-roles",
+      "skill-explain-client-execution"
+    ],
     "lessonIds": ["lesson-0-1-1"]
   },
   {
     "id": "elements-tags-attributes",
     "moduleId": "module-1-1",
     "title": "HTML Elements, Tags & Attributes",
-    "description": "Core syntax of HTML: opening tags, attributes, void elements, text nodes, and nesting hierarchy.",
+    "description": "Core syntax of HTML: element anatomy, opening and closing tags, attributes, void elements, text nodes, and nesting hierarchy.",
     "order": 2,
-    "conceptIds": ["concept-html-elements"],
-    "skillIds": ["skill-write-valid-html-markup"],
+    "conceptIds": [
+      "concept-html-elements",
+      "concept-html-element-anatomy",
+      "concept-opening-closing-tags",
+      "concept-attributes-key-value",
+      "concept-nesting-hierarchy"
+    ],
+    "skillIds": [
+      "skill-write-valid-html-markup",
+      "skill-parse-element-syntax",
+      "skill-construct-element-attributes",
+      "skill-nest-elements-validly"
+    ],
     "lessonIds": ["lesson-1-1-2"]
   },
   {
     "id": "flexbox-layout",
     "moduleId": "module-1-2",
     "title": "Flexbox Layout Mechanics",
-    "description": "One-dimensional flexible layout: main vs cross axis, justify-content, align-items, flex-wrap, and responsive flow.",
+    "description": "One-dimensional flexible layout: flex containers, flex items, main vs cross axis, justify-content, align-items, flex-wrap, and responsive flow.",
     "order": 3,
-    "conceptIds": ["concept-css-flexbox-layout", "concept-css-box-model"],
-    "skillIds": ["skill-implement-flexbox-alignments"],
+    "conceptIds": [
+      "concept-css-flexbox-layout",
+      "concept-css-box-model",
+      "concept-flex-container",
+      "concept-flex-items",
+      "concept-main-cross-axes",
+      "concept-justify-align-distribution"
+    ],
+    "skillIds": [
+      "skill-implement-flexbox-alignments",
+      "skill-identify-flex-axes",
+      "skill-predict-flex-distribution",
+      "skill-author-flexbox-rules"
+    ],
     "lessonIds": ["lesson-1-2-7"]
   },
   {
     "id": "javascript-functions",
     "moduleId": "module-2-1",
     "title": "JavaScript Functions & Execution Scope",
-    "description": "Functions as first-class citizens, parameters, default arguments, return statements, and local variable scope.",
+    "description": "Functions as first-class citizens, parameters, return statements vs console.log, call expression substitution, and local variable scope.",
     "order": 4,
-    "conceptIds": ["concept-js-functions"],
-    "skillIds": ["skill-author-javascript-functions"],
-    "lessonIds": ["lesson-2-1-3"]
+    "conceptIds": [
+      "concept-js-functions",
+      "concept-function-return-value",
+      "concept-console-log-side-effects",
+      "concept-caller-expression-substitution",
+      "concept-undefined-default-return"
+    ],
+    "skillIds": [
+      "skill-author-javascript-functions",
+      "skill-distinguish-return-vs-log",
+      "skill-predict-call-expression-values",
+      "skill-author-returning-functions"
+    ],
+    "lessonIds": ["lesson-1-3-1"]
   },
   {
     "id": "debugging-strategies",
     "moduleId": "module-0-2",
     "title": "Systematic Frontend Debugging",
-    "description": "Diagnostic workflow, DevTools Elements/Console inspection, and isolating frontend defects.",
+    "description": "Diagnostic workflow, DevTools Elements/Console inspection, syntax/runtime/logic error classification, and repairing multi-file frontend defects.",
     "order": 5,
-    "conceptIds": ["concept-debugging-workflow", "concept-html-elements", "concept-js-functions"],
-    "skillIds": ["skill-diagnose-frontend-bugs"],
+    "conceptIds": [
+      "concept-debugging-workflow",
+      "concept-html-elements",
+      "concept-js-functions",
+      "concept-syntax-error-vs-runtime-error",
+      "concept-dom-element-resolution",
+      "concept-event-listener-binding",
+      "concept-style-attribute-typos"
+    ],
+    "skillIds": [
+      "skill-diagnose-frontend-bugs",
+      "skill-diagnose-symptom-root-causes",
+      "skill-formulate-debugging-hypothesis",
+      "skill-repair-multi-file-defects"
+    ],
     "lessonIds": ["lesson-0-2-5"]
   }
 ]

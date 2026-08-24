@@ -2,168 +2,346 @@
   "id": "lesson-1-2-7",
   "schemaVersion": "1.0.0",
   "topicId": "flexbox-layout",
-  "title": "Flexbox Layout Mechanics",
-  "description": "Master 1-dimensional CSS layouts: main and cross axis alignment, justify-content, align-items, flex-direction, and flexible wrapping.",
+  "title": "Build a Layout with Flexbox",
+  "description": "Master 1-dimensional CSS Flexbox layout: control main and cross axes, distribute items with justify-content, align with align-items, and build real-world navigation and modal components.",
   "lessonType": "practice",
   "difficulty": "Beginner",
   "estimatedMinutes": 30,
-  "conceptIds": ["concept-css-flexbox-layout", "concept-css-box-model"],
-  "skillIds": ["skill-implement-flexbox-alignments"],
+  "conceptIds": [
+    "concept-flexbox-container-items",
+    "concept-flex-axes",
+    "concept-flex-alignment",
+    "concept-flex-direction",
+    "concept-flex-wrap"
+  ],
+  "skillIds": [
+    "skill-configure-flex-container",
+    "skill-align-flex-items",
+    "skill-manipulate-flex-axes",
+    "skill-build-responsive-nav"
+  ],
   "objectives": [
     {
-      "id": "obj-flex-axes",
-      "statement": "Identify how flex-direction establishes main vs cross axes.",
-      "conceptIds": ["concept-css-flexbox-layout"],
-      "skillIds": ["skill-implement-flexbox-alignments"],
+      "id": "OBJ-CSS-301",
+      "statement": "Understand flex containers, flex items, and the distinction between main and cross axes established by flex-direction.",
+      "conceptIds": [
+        "concept-flexbox-container-items",
+        "concept-flex-axes",
+        "concept-flex-direction"
+      ],
+      "skillIds": [
+        "skill-configure-flex-container",
+        "skill-manipulate-flex-axes"
+      ],
       "priority": "primary"
     },
     {
-      "id": "obj-flex-alignment",
-      "statement": "Apply justify-content and align-items to center and distribute child elements.",
-      "conceptIds": ["concept-css-flexbox-layout"],
-      "skillIds": ["skill-implement-flexbox-alignments"],
+      "id": "OBJ-CSS-302",
+      "statement": "Distribute and align elements along main and cross axes using justify-content and align-items.",
+      "conceptIds": [
+        "concept-flex-alignment",
+        "concept-flex-axes"
+      ],
+      "skillIds": [
+        "skill-align-flex-items"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-CSS-303",
+      "statement": "Implement responsive navigation bars and centered modal overlay layouts using standard Flexbox properties.",
+      "conceptIds": [
+        "concept-flexbox-container-items",
+        "concept-flex-alignment"
+      ],
+      "skillIds": [
+        "skill-build-responsive-nav",
+        "skill-align-flex-items"
+      ],
       "priority": "primary"
     }
   ],
   "prerequisites": {
-    "lessonIds": ["lesson-1-1-2"],
-    "conceptIds": ["concept-css-box-model"],
-    "skillIds": ["skill-write-valid-html-markup"]
+    "lessonIds": [
+      "lesson-1-1-2"
+    ],
+    "conceptIds": [
+      "concept-html-elements",
+      "concept-css-box-model"
+    ],
+    "skillIds": [
+      "skill-write-valid-html-markup"
+    ]
   },
   "activities": [
     {
       "id": "act-127-intro",
       "type": "intro",
       "intent": "orientation",
-      "objectiveIds": ["obj-flex-axes"],
+      "objectiveIds": [
+        "OBJ-CSS-301"
+      ],
       "content": {
-        "title": "Mastering Flexible Box Layout",
-        "hook": "Centering an element vertically and horizontally used to require hacky CSS. Flexbox solved this once and for all with two directional axes.",
-        "context": "Flexbox provides dynamic space distribution and alignment across screens of any size.",
+        "title": "Build a Layout with Flexbox",
+        "hook": "Centering an element or building responsive navigation once required complex floats and table hacks. Flexbox introduced a predictable, one-dimensional layout model.",
+        "context": "Modern UI development relies on CSS Flexible Box Layout (Flexbox) to dynamically distribute space, align content across directional axes, and build resilient components.",
         "goals": [
-          "Understand how the main axis changes when flex-direction is row vs column.",
-          "Write CSS rules to center and space items in navigation bars and cards."
+          "Differentiate between flex containers and flex items",
+          "Master main axis vs cross axis orientation controlled by flex-direction",
+          "Control spatial distribution with justify-content and alignment with align-items",
+          "Construct real-world UI components including responsive navbars and centered modal backdrops"
         ]
       }
     },
     {
-      "id": "act-127-exp-axes",
+      "id": "act-127-explanation",
       "type": "explanation",
       "intent": "understanding",
-      "objectiveIds": ["obj-flex-axes"],
+      "objectiveIds": [
+        "OBJ-CSS-301",
+        "OBJ-CSS-302"
+      ],
       "content": {
-        "title": "The Two Axes of Flexbox",
-        "text": "When you apply display: flex to a container, it creates a flex formatting context. The main axis is determined by flex-direction (row by default). justify-content always controls alignment along the main axis. align-items always controls alignment along the perpendicular cross axis.",
+        "title": "Flexbox Architecture: Containers, Axes, and Alignment",
+        "text": "When you declare display: flex on an element, it becomes a flex container and its direct children become flex items.\n\nFlexbox operates along two orthogonal axes:\n1. Main Axis: The primary direction items flow, governed by flex-direction (defaults to row, flowing left-to-right).\n2. Cross Axis: Perpendicular to the main axis (defaults to top-to-bottom in row mode).\n\nAlignment properties target specific axes:\n- justify-content aligns items along the MAIN axis (e.g., flex-start, center, flex-end, space-between, space-around, space-evenly).\n- align-items aligns items along the CROSS axis (e.g., stretch, center, flex-start, flex-end, baseline).",
         "callout": {
           "variant": "warning",
-          "text": "If flex-direction is set to 'column', justify-content controls vertical alignment and align-items controls horizontal alignment!"
+          "text": "Remember: justify-content ALWAYS aligns along the main axis. If flex-direction: column is applied, the main axis becomes vertical, meaning justify-content controls vertical distribution and align-items controls horizontal alignment!"
         },
-        "keyTakeaway": "justify-content aligns along the main axis; align-items aligns along the cross axis."
+        "keyTakeaway": "justify-content governs the main axis; align-items governs the cross axis. The main axis direction is defined by flex-direction."
+      }
+    },
+    {
+      "id": "act-127-visual",
+      "type": "visual",
+      "intent": "understanding",
+      "objectiveIds": [
+        "OBJ-CSS-301",
+        "OBJ-CSS-302"
+      ],
+      "content": {
+        "title": "Visualizing Flexbox Axes & Space Distribution",
+        "visualType": "diagram",
+        "description": "An architectural visualization demonstrating a flex container in row mode. The horizontal main axis is governed by justify-content: space-between, pushing the first and last child to opposite edges. The vertical cross axis is governed by align-items: center, vertically aligning items along the container's center line.",
+        "visualData": {
+          "container": "display: flex (row)",
+          "mainAxis": "justify-content: space-between",
+          "crossAxis": "align-items: center"
+        }
+      }
+    },
+    {
+      "id": "act-127-output-prediction",
+      "type": "output-prediction",
+      "intent": "retrieval",
+      "objectiveIds": [
+        "OBJ-CSS-302",
+        "OBJ-CSS-303"
+      ],
+      "content": {
+        "prompt": "Predict the exact visual layout produced by the following CSS declarations applied to a navigation header container:",
+        "language": "css",
+        "code": ".navbar {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  align-items: center;\n  height: 64px;\n  width: 100%;\n}",
+        "options": [
+          "Items are distributed evenly across the horizontal main axis with the first and last items flush against the edges, and vertically centered along the cross axis",
+          "Items are tightly grouped in the horizontal center with no spacing between them, and aligned to the top edge",
+          "Items are stacked vertically from top to bottom with equal space between them, and centered horizontally",
+          "Items are pushed completely to the right edge horizontally, and stretched to fill the full height of 64px"
+        ],
+        "explanation": "With flex-direction: row, the main axis is horizontal. justify-content: space-between distributes available space between items, pushing the outer items flush to the left and right edges. align-items: center vertically centers the items along the 64px cross axis."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "Items are distributed evenly across the horizontal main axis with the first and last items flush against the edges, and vertically centered along the cross axis"
+      },
+      "feedback": {
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "Identify the main axis: with flex-direction: row (or default), the main axis runs horizontally."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "What does justify-content: space-between do on the main axis? It places equal space between items, pushing the first and last items to the edges."
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "What does align-items: center do on the cross axis? It centers the items vertically across the container height."
+          }
+        ],
+        "correct": "Spot on! In row orientation, justify-content: space-between distributes items edge-to-edge horizontally and align-items: center centers them vertically.",
+        "incorrect": "Remember: In row mode, the main axis is horizontal (justify-content: space-between spreads items to edges) and the cross axis is vertical (align-items: center centers items vertically)."
       }
     },
     {
       "id": "act-127-interactive-code",
       "type": "interactive-code",
       "intent": "application",
-      "objectiveIds": ["obj-flex-alignment"],
+      "objectiveIds": [
+        "OBJ-CSS-301",
+        "OBJ-CSS-302",
+        "OBJ-CSS-303"
+      ],
       "content": {
-        "title": "Build a Centered Hero Card",
-        "prompt": "Update the .container class to use Flexbox, center all children horizontally and vertically, and add a 16px gap between items.",
-        "language": "html",
-        "starterCode": "<style>\n  .container {\n    /* Add your flexbox rules here */\n    min-height: 200px;\n    background: #f1f5f9;\n    padding: 20px;\n    border-radius: 8px;\n  }\n  .box {\n    background: #3b82f6;\n    color: white;\n    padding: 12px 24px;\n    border-radius: 6px;\n    font-family: sans-serif;\n  }\n</style>\n\n<div class=\"container\">\n  <div class=\"box\">Item 1</div>\n  <div class=\"box\">Item 2</div>\n</div>",
-        "solutionCode": "<style>\n  .container {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    gap: 16px;\n    min-height: 200px;\n    background: #f1f5f9;\n    padding: 20px;\n    border-radius: 8px;\n  }\n  .box {\n    background: #3b82f6;\n    color: white;\n    padding: 12px 24px;\n    border-radius: 6px;\n    font-family: sans-serif;\n  }\n</style>\n\n<div class=\"container\">\n  <div class=\"box\">Item 1</div>\n  <div class=\"box\">Item 2</div>\n</div>"
-      },
-      "validation": {
-        "type": "code-output",
-        "expectedOutput": "Item 1",
-        "matchType": "contains"
-      },
-      "feedback": {
-        "correct": "Great job! display: flex with justify-content: center and align-items: center perfectly centers children.",
-        "incorrect": "Make sure you include display: flex, justify-content: center, align-items: center, and gap: 16px in the .container selector."
-      }
-    },
-    {
-      "id": "act-127-ordering",
-      "type": "ordering",
-      "intent": "retrieval",
-      "objectiveIds": ["obj-flex-axes"],
-      "content": {
-        "prompt": "Order the steps of the browser layout engine when resolving Flexbox rules for a container.",
-        "items": [
-          {
-            "id": "step-1",
-            "text": "1. Establish flex formatting context on parent (display: flex)"
-          },
-          {
-            "id": "step-2",
-            "text": "2. Determine main axis direction from flex-direction (row/column)"
-          },
-          {
-            "id": "step-3",
-            "text": "3. Calculate item hypothetical sizes (flex-basis, min-content)"
-          },
-          {
-            "id": "step-4",
-            "text": "4. Distribute available free space along main axis (justify-content)"
-          },
-          { "id": "step-5", "text": "5. Align items across cross axis (align-items)" }
-        ],
-        "explanation": "Flex container formatting establishes direction first, calculates sizes, distributes space, and finally aligns across the cross axis."
-      },
-      "validation": {
-        "type": "ordering",
-        "correctSequence": ["step-1", "step-2", "step-3", "step-4", "step-5"]
-      },
-      "feedback": {
-        "correct": "Spot on! That accurately mirrors browser layout flow.",
-        "incorrect": "Review the order: formatting context -> direction -> size calculation -> space distribution -> cross alignment."
-      }
-    },
-    {
-      "id": "act-127-predict",
-      "type": "output-prediction",
-      "intent": "prediction",
-      "objectiveIds": ["obj-flex-axes", "obj-flex-alignment"],
-      "content": {
+        "title": "Interactive Flexbox Workshop: Build Navbar & Modal Overlay",
+        "prompt": "Complete the two essential UI layout tasks in the CSS editor for the navbar and modal backdrop.",
+        "instructions": "Complete the two essential UI layout tasks in the CSS editor:\n\n1. Navigation Bar (.navbar):\n   - Set display to flex to establish a flex formatting context.\n   - Distribute items to the outer edges using justify-content: space-between.\n   - Vertically center items along the cross axis using align-items: center.\n\n2. Modal Backdrop (.modal-backdrop):\n   - Set display to flex.\n   - Horizontally center the modal dialog using justify-content: center.\n   - Vertically center the modal dialog using align-items: center.",
         "language": "css",
-        "code": ".nav-bar {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  height: 300px;\n}",
-        "prompt": "Where will items inside .nav-bar be distributed along the page?",
-        "options": [
-          "Horizontally across the top of the container",
-          "Vertically from top to bottom with equal space between them",
-          "Centered both horizontally and vertically",
-          "Stacked on top of each other at the top edge with no space"
-        ],
-        "explanation": "Because flex-direction is column, the main axis is vertical (height: 300px). justify-content: space-between distributes items vertically from top to bottom."
+        "starterCode": "/* ==========================================================================\n   Task 1: Navigation Bar Layout\n   ========================================================================== */\n.navbar {\n  /* Add Flexbox properties below */\n  height: 64px;\n  padding: 0 24px;\n  background-color: #1e293b;\n  color: #ffffff;\n}\n\n/* ==========================================================================\n   Task 2: Centered Modal Overlay Layout\n   ========================================================================== */\n.modal-backdrop {\n  /* Add Flexbox properties below */\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  background-color: rgba(0, 0, 0, 0.5);\n}",
+        "solutionCode": "/* ==========================================================================\n   Task 1: Navigation Bar Layout\n   ========================================================================== */\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  height: 64px;\n  padding: 0 24px;\n  background-color: #1e293b;\n  color: #ffffff;\n}\n\n/* ==========================================================================\n   Task 2: Centered Modal Overlay Layout\n   ========================================================================== */\n.modal-backdrop {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  background-color: rgba(0, 0, 0, 0.5);\n}",
+        "testCases": [
+          {
+            "id": "tc-navbar-flex",
+            "description": ".navbar has display: flex",
+            "assertion": "rules['.navbar']?.['display'] === 'flex'"
+          },
+          {
+            "id": "tc-navbar-justify",
+            "description": ".navbar uses justify-content: space-between",
+            "assertion": "rules['.navbar']?.['justify-content'] === 'space-between'"
+          },
+          {
+            "id": "tc-navbar-align",
+            "description": ".navbar uses align-items: center",
+            "assertion": "rules['.navbar']?.['align-items'] === 'center'"
+          },
+          {
+            "id": "tc-modal-flex",
+            "description": ".modal-backdrop has display: flex",
+            "assertion": "rules['.modal-backdrop']?.['display'] === 'flex'"
+          },
+          {
+            "id": "tc-modal-justify",
+            "description": ".modal-backdrop uses justify-content: center",
+            "assertion": "rules['.modal-backdrop']?.['justify-content'] === 'center'"
+          },
+          {
+            "id": "tc-modal-align",
+            "description": ".modal-backdrop uses align-items: center",
+            "assertion": "rules['.modal-backdrop']?.['align-items'] === 'center'"
+          }
+        ]
       },
       "validation": {
-        "type": "exact-match",
-        "expected": "Vertically from top to bottom with equal space between them"
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "tc-navbar-flex",
+            "description": ".navbar has display: flex",
+            "assertion": "rules['.navbar']?.['display'] === 'flex'"
+          },
+          {
+            "id": "tc-navbar-justify",
+            "description": ".navbar uses justify-content: space-between",
+            "assertion": "rules['.navbar']?.['justify-content'] === 'space-between'"
+          },
+          {
+            "id": "tc-navbar-align",
+            "description": ".navbar uses align-items: center",
+            "assertion": "rules['.navbar']?.['align-items'] === 'center'"
+          },
+          {
+            "id": "tc-modal-flex",
+            "description": ".modal-backdrop has display: flex",
+            "assertion": "rules['.modal-backdrop']?.['display'] === 'flex'"
+          },
+          {
+            "id": "tc-modal-justify",
+            "description": ".modal-backdrop uses justify-content: center",
+            "assertion": "rules['.modal-backdrop']?.['justify-content'] === 'center'"
+          },
+          {
+            "id": "tc-modal-align",
+            "description": ".modal-backdrop uses align-items: center",
+            "assertion": "rules['.modal-backdrop']?.['align-items'] === 'center'"
+          }
+        ]
       },
       "feedback": {
-        "correct": "Correct! Column direction turns the vertical axis into the main axis.",
-        "incorrect": "Remember: flex-direction: column makes the vertical axis the main axis governed by justify-content."
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "To activate Flexbox layout on .navbar and .modal-backdrop, add 'display: flex;' to both rules."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "On .navbar, add 'justify-content: space-between;' to spread items edge-to-edge, and 'align-items: center;' to vertically center them."
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "On .modal-backdrop, add 'justify-content: center;' and 'align-items: center;' to achieve perfect 2-axis centering."
+          }
+        ],
+        "correct": "Outstanding! You have successfully implemented standard Flexbox patterns for both the navigation bar and the centered modal backdrop.",
+        "incorrect": "Ensure .navbar has display: flex, justify-content: space-between, and align-items: center, and .modal-backdrop has display: flex, justify-content: center, and align-items: center."
       }
     },
     {
-      "id": "act-127-reflection",
-      "type": "reflection",
+      "id": "act-127-summary",
+      "type": "summary",
       "intent": "reflection",
-      "objectiveIds": ["obj-flex-axes"],
+      "objectiveIds": [
+        "OBJ-CSS-301",
+        "OBJ-CSS-302",
+        "OBJ-CSS-303"
+      ],
       "content": {
-        "prompt": "Explain why knowing the difference between the main axis and cross axis prevents layout confusion when using flex-direction: column.",
-        "guidelines": [
-          "Mention justify-content vs align-items.",
-          "Describe how container height affects column distribution."
+        "title": "Flexbox Layout Mastery: Synthesis & Key Takeaways",
+        "summary": "You have mastered 1-dimensional CSS layout mechanics using Flexbox.",
+        "takeaways": [
+          "Flex Containers vs Items: Setting display: flex establishes a flex formatting context for immediate children.",
+          "Main vs Cross Axes: The main axis is determined by flex-direction (row by default). The cross axis runs perpendicular.",
+          "Main Axis Distribution: justify-content controls alignment and spacing along the main axis (flex-start, center, flex-end, space-between, space-around, space-evenly).",
+          "Cross Axis Alignment: align-items controls alignment across the cross axis (stretch, center, flex-start, flex-end, baseline).",
+          "Common UI Patterns: Combining justify-content: space-between with align-items: center powers navigation bars, while dual centering with justify-content: center and align-items: center creates modal overlays."
         ],
-        "sampleResponse": "When flex-direction changes to column, justify-content operates vertically along container height, and align-items operates horizontally across container width.",
-        "minCharacters": 40
+        "nextSteps": [
+          "Apply Flexbox wrapping, flex-grow, flex-shrink, and flex-basis for fluid components.",
+          "Transition into 2-dimensional CSS Grid layouts for full page scaffolding."
+        ]
       }
     }
   ],
   "completion": {
-    "requiredActivityIds": ["act-127-interactive-code", "act-127-ordering", "act-127-predict"],
-    "minimumScore": 100
+    "requiredActivityIds": [
+      "act-127-intro",
+      "act-127-explanation",
+      "act-127-visual",
+      "act-127-output-prediction",
+      "act-127-interactive-code",
+      "act-127-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-CSS-301",
+        "activityIds": [
+          "act-127-interactive-code"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-CSS-302",
+        "activityIds": [
+          "act-127-output-prediction",
+          "act-127-interactive-code"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-CSS-303",
+        "activityIds": [
+          "act-127-output-prediction",
+          "act-127-interactive-code"
+        ],
+        "requirement": "success"
+      }
+    ]
   }
 }

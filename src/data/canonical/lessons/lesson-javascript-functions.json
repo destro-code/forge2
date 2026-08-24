@@ -1,138 +1,330 @@
 {
-  "id": "lesson-2-1-3",
+  "id": "lesson-1-3-1",
   "schemaVersion": "1.0.0",
   "topicId": "javascript-functions",
-  "title": "JavaScript Functions & Execution Scope",
-  "description": "Master first-class functions in JavaScript: declarations vs expressions, arrow functions, parameters, return statements, and local scope boundaries.",
+  "title": "Make Your Functions Return Useful Values",
+  "description": "Master the fundamental boundary between side-effect logging and explicit function return values in JavaScript. Learn how return statements hand data back to callers, evaluate call expressions, and avoid common undefined bugs.",
   "lessonType": "instruction",
   "difficulty": "Beginner",
-  "estimatedMinutes": 30,
-  "conceptIds": ["concept-js-functions"],
-  "skillIds": ["skill-author-javascript-functions"],
+  "estimatedMinutes": 20,
+  "conceptIds": [
+    "concept-function-return-value",
+    "concept-console-log-side-effects",
+    "concept-caller-expression-substitution",
+    "concept-undefined-default-return"
+  ],
+  "skillIds": [
+    "skill-distinguish-return-vs-log",
+    "skill-predict-call-expression-values",
+    "skill-author-returning-functions"
+  ],
   "objectives": [
     {
-      "id": "obj-func-declaration",
-      "statement": "Declare and invoke named and arrow functions with arguments and return values.",
-      "conceptIds": ["concept-js-functions"],
-      "skillIds": ["skill-author-javascript-functions"],
+      "id": "OBJ-JS-401",
+      "statement": "Distinguish between returning a value from a function and logging a value to the console.",
+      "conceptIds": [
+        "concept-function-return-value",
+        "concept-console-log-side-effects"
+      ],
+      "skillIds": [
+        "skill-distinguish-return-vs-log"
+      ],
       "priority": "primary"
     },
     {
-      "id": "obj-func-scope",
-      "statement": "Explain how function execution creates a local variable scope.",
-      "conceptIds": ["concept-js-functions"],
-      "skillIds": ["skill-author-javascript-functions"],
+      "id": "OBJ-JS-402",
+      "statement": "Predict the value of call expressions when functions explicitly return vs implicitly return undefined.",
+      "conceptIds": [
+        "concept-caller-expression-substitution",
+        "concept-undefined-default-return"
+      ],
+      "skillIds": [
+        "skill-predict-call-expression-values"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-JS-403",
+      "statement": "Refactor JavaScript functions to explicitly return computed values for downstream call expression substitution.",
+      "conceptIds": [
+        "concept-function-return-value"
+      ],
+      "skillIds": [
+        "skill-author-returning-functions"
+      ],
       "priority": "secondary"
     }
   ],
   "prerequisites": {
-    "lessonIds": ["lesson-0-1-1"],
-    "conceptIds": ["concept-web-platform-trio"],
-    "skillIds": ["skill-distinguish-web-responsibilities"]
+    "lessonIds": [
+      "lesson-1-2-7"
+    ],
+    "conceptIds": [
+      "concept-js-functions"
+    ],
+    "skillIds": [
+      "skill-author-javascript-functions"
+    ]
   },
   "activities": [
     {
-      "id": "act-213-intro",
+      "id": "act-131-intro",
       "type": "intro",
       "intent": "orientation",
-      "objectiveIds": ["obj-func-declaration"],
+      "objectiveIds": [
+        "OBJ-JS-401"
+      ],
       "content": {
-        "title": "Functions: The Verbs of JavaScript",
-        "hook": "Functions are reusable blocks of logic that turn raw data inputs into meaningful outputs and side-effects.",
-        "context": "In JavaScript, functions are first-class values that can be stored in variables, passed to other functions as callbacks, and returned dynamically.",
+        "title": "Make Your Functions Return Useful Values",
+        "hook": "Why does console.log feel like it works, right up until your app breaks?",
+        "context": "In JavaScript, printing text to the screen is a side effect for developers. To pass data to other parts of your code, a function must explicitly return a value.",
         "goals": [
-          "Write clean function declarations and arrow functions.",
-          "Distinguish returning a value from logging to the console."
+          "Distinguish between printing data with console.log() and handing data back with return.",
+          "Understand how function calls evaluate to returned values.",
+          "Refactor buggy functions that log instead of returning."
         ]
       }
     },
     {
-      "id": "act-213-exp-scope",
+      "id": "act-131-explanation",
       "type": "explanation",
       "intent": "understanding",
-      "objectiveIds": ["obj-func-scope"],
+      "objectiveIds": [
+        "OBJ-JS-401",
+        "OBJ-JS-402"
+      ],
       "content": {
-        "title": "Parameters, Return Values, and Scope",
-        "text": "When a function is called, JavaScript allocates a local execution context. Variables declared inside with let or const are inaccessible from outside (block/function scope). To send computation results back to the caller, use the return keyword.",
+        "title": "console.log() vs return: What Actually Happens",
+        "text": "When you call a function, JavaScript creates a local execution frame. The return keyword hands a computed value back to the caller and immediately exits the function frame.\n\nconsole.log(), by contrast, only writes output to the developer console for debugging and always evaluates to undefined.\n\nIf a function finishes executing without an explicit return statement, JavaScript automatically returns undefined.",
         "callout": {
           "variant": "mistake",
-          "text": "Do not confuse console.log(val) with return val. console.log prints to developer tools, while return hands the value back to the caller."
+          "title": "Common Misconception",
+          "text": "Thinking console.log(x) sends x back to the caller. Assigning const result = logSomething() results in result being undefined!"
         },
-        "keyTakeaway": "Functions encapsulate computation and create isolated variable environments."
+        "keyTakeaway": "Use return to pass data to variables and other functions; use console.log() only for temporary debugging."
       }
     },
     {
-      "id": "act-213-code-forms",
-      "type": "code-example",
-      "intent": "understanding",
-      "objectiveIds": ["obj-func-declaration"],
-      "content": {
-        "title": "Three Syntaxes for Writing Functions",
-        "description": "Notice the subtle differences between function declaration, function expression, and arrow function syntax.",
-        "language": "javascript",
-        "code": "// 1. Function Declaration (hoisted)\nfunction calculateTotal(price, taxRate = 0.08) {\n  return price + (price * taxRate);\n}\n\n// 2. Function Expression\nconst formatCurrency = function(amount) {\n  return `$${amount.toFixed(2)}`;\n};\n\n// 3. Arrow Function (concise body)\nconst add = (a, b) => a + b;\n\nconsole.log(formatCurrency(calculateTotal(100))); // \"$108.00\""
-      }
-    },
-    {
-      "id": "act-213-predict-output",
+      "id": "act-131-output-prediction",
       "type": "output-prediction",
       "intent": "prediction",
-      "objectiveIds": ["obj-func-declaration", "obj-func-scope"],
+      "objectiveIds": [
+        "OBJ-JS-401",
+        "OBJ-JS-402"
+      ],
       "content": {
+        "prompt": "What value is stored in receipt after running this code?",
         "language": "javascript",
-        "code": "function createMultiplier(multiplier) {\n  return (value) => value * multiplier;\n}\n\nconst triple = createMultiplier(3);\nconsole.log(triple(5));",
-        "prompt": "What will be printed to the console when this script runs?",
-        "options": ["15", "undefined", "Function: triple", "8"],
-        "explanation": "createMultiplier returns an inner arrow function that multiplies its argument by 3. triple(5) calculates 5 * 3 = 15."
+        "code": "function calculateTotal(price, tax) {\n  const total = price + tax;\n  console.log(\"Total is:\", total);\n}\n\nconst receipt = calculateTotal(50, 5);\nconsole.log(receipt);",
+        "options": [
+          "55",
+          "undefined",
+          "Total is: 55",
+          "null"
+        ],
+        "explanation": "calculateTotal uses console.log() to print the total, but lacks a return statement. Functions without a return statement implicitly return undefined. Therefore, receipt receives undefined."
       },
       "validation": {
         "type": "exact-match",
-        "expected": "15"
+        "expected": "undefined"
       },
       "feedback": {
-        "correct": "Correct! 5 multiplied by 3 produces 15.",
-        "incorrect": "Trace the execution: createMultiplier(3) returns (value) => value * 3. Then triple(5) evaluates 5 * 3."
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "Inspect calculateTotal. Does it contain a return statement?"
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "console.log() prints output to the console, but what does it return to receipt?"
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "When a JavaScript function finishes without an explicit return, it evaluates to undefined."
+          }
+        ],
+        "correct": "Spot on! Because calculateTotal lacks a return statement, it implicitly returns undefined, so receipt holds undefined.",
+        "incorrect": "Look closely at calculateTotal. Does it have a return statement? If a function finishes without return, what value does it return?"
       }
     },
     {
-      "id": "act-213-interactive-code",
+      "id": "act-131-interactive-code",
       "type": "interactive-code",
       "intent": "application",
-      "objectiveIds": ["obj-func-declaration"],
+      "objectiveIds": [
+        "OBJ-JS-403"
+      ],
       "content": {
-        "title": "Write a Temperature Converter",
-        "prompt": "Implement the function celsiusToFahrenheit(celsius) that returns the Fahrenheit equivalent using the formula: (celsius * 9 / 5) + 32.",
+        "title": "Refactor utils.js to Return Values",
+        "prompt": "Refactor the helper functions in utils.js so they return computed values instead of logging them.",
+        "instructions": "The utility functions in utils.js currently use console.log() instead of return. Replace console.log() with return in calculateDiscount, formatFullName, and isAdult so they return their computed results to callers.",
         "language": "javascript",
-        "starterCode": "function celsiusToFahrenheit(celsius) {\n  // Write your return statement here\n}\n\n// Test invocation:\nconsole.log(celsiusToFahrenheit(0));   // Should log 32\nconsole.log(celsiusToFahrenheit(100)); // Should log 212",
-        "solutionCode": "function celsiusToFahrenheit(celsius) {\n  return (celsius * 9 / 5) + 32;\n}\n\nconsole.log(celsiusToFahrenheit(0));\nconsole.log(celsiusToFahrenheit(100));"
+        "starterCode": "// 1. Calculate discounted price\nfunction calculateDiscount(price, discountPercent) {\n  const discountAmount = price * (discountPercent / 100);\n  console.log(price - discountAmount);\n}\n\n// 2. Format a full name\nfunction formatFullName(firstName, lastName) {\n  console.log(`${firstName} ${lastName}`);\n}\n\n// 3. Check if user is an adult (age 18+)\nfunction isAdult(age) {\n  console.log(age >= 18);\n}",
+        "solutionCode": "// 1. Calculate discounted price\nfunction calculateDiscount(price, discountPercent) {\n  const discountAmount = price * (discountPercent / 100);\n  return price - discountAmount;\n}\n\n// 2. Format a full name\nfunction formatFullName(firstName, lastName) {\n  return `${firstName} ${lastName}`;\n}\n\n// 3. Check if user is an adult (age 18+)\nfunction isAdult(age) {\n  return age >= 18;\n}",
+        "testCases": [
+          {
+            "id": "tc-discount-1",
+            "description": "calculateDiscount(100, 20) returns 80",
+            "assertion": "calculateDiscount(100, 20) === 80"
+          },
+          {
+            "id": "tc-discount-2",
+            "description": "calculateDiscount(50, 10) returns 45",
+            "assertion": "calculateDiscount(50, 10) === 45"
+          },
+          {
+            "id": "tc-fullname-1",
+            "description": "formatFullName(\"Alex\", \"Chen\") returns \"Alex Chen\"",
+            "assertion": "formatFullName(\"Alex\", \"Chen\") === \"Alex Chen\""
+          },
+          {
+            "id": "tc-fullname-2",
+            "description": "formatFullName(\"Maria\", \"Garcia\") returns \"Maria Garcia\"",
+            "assertion": "formatFullName(\"Maria\", \"Garcia\") === \"Maria Garcia\""
+          },
+          {
+            "id": "tc-adult-1",
+            "description": "isAdult(18) returns true",
+            "assertion": "isAdult(18) === true"
+          },
+          {
+            "id": "tc-adult-2",
+            "description": "isAdult(17) returns false",
+            "assertion": "isAdult(17) === false"
+          }
+        ]
       },
       "validation": {
-        "type": "code-output",
-        "expectedOutput": "32",
-        "matchType": "contains"
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "tc-discount-1",
+            "description": "calculateDiscount(100, 20) returns 80",
+            "assertion": "calculateDiscount(100, 20) === 80"
+          },
+          {
+            "id": "tc-discount-2",
+            "description": "calculateDiscount(50, 10) returns 45",
+            "assertion": "calculateDiscount(50, 10) === 45"
+          },
+          {
+            "id": "tc-fullname-1",
+            "description": "formatFullName(\"Alex\", \"Chen\") returns \"Alex Chen\"",
+            "assertion": "formatFullName(\"Alex\", \"Chen\") === \"Alex Chen\""
+          },
+          {
+            "id": "tc-fullname-2",
+            "description": "formatFullName(\"Maria\", \"Garcia\") returns \"Maria Garcia\"",
+            "assertion": "formatFullName(\"Maria\", \"Garcia\") === \"Maria Garcia\""
+          },
+          {
+            "id": "tc-adult-1",
+            "description": "isAdult(18) returns true",
+            "assertion": "isAdult(18) === true"
+          },
+          {
+            "id": "tc-adult-2",
+            "description": "isAdult(17) returns false",
+            "assertion": "isAdult(17) === false"
+          }
+        ]
       },
       "feedback": {
-        "correct": "Excellent! celsiusToFahrenheit correctly calculates temperature conversions.",
-        "incorrect": "Ensure you return the formula (celsius * 9 / 5) + 32."
+        "hints": [
+          {
+            "id": "hint-1",
+            "level": 1,
+            "content": "In calculateDiscount, replace console.log(price - discountAmount) with return price - discountAmount."
+          },
+          {
+            "id": "hint-2",
+            "level": 2,
+            "content": "In formatFullName, return the template string: return `${firstName} ${lastName}`;"
+          },
+          {
+            "id": "hint-3",
+            "level": 3,
+            "content": "In isAdult, return the comparison result: return age >= 18;"
+          }
+        ],
+        "correct": "Great job! All functions now return useful values to their callers.",
+        "incorrect": "Check your functions. Make sure calculateDiscount, formatFullName, and isAdult use return statements instead of console.log()."
       }
     },
     {
-      "id": "act-213-summary",
+      "id": "act-131-reflection",
+      "type": "reflection",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-JS-401"
+      ],
+      "content": {
+        "title": "Reflection: return vs console.log()",
+        "prompt": "In your own words, explain the fundamental difference between console.log() and return in JavaScript. Why is relying on console.log() a problem when building real web applications?",
+        "minCharacters": 50
+      },
+      "feedback": {
+        "correct": "Thank you for sharing your reflection! Understanding the distinction between developer logging and program data flow is critical.",
+        "incorrect": "Please write at least 50 characters explaining the difference between return and console.log()."
+      }
+    },
+    {
+      "id": "act-131-summary",
       "type": "summary",
       "intent": "reflection",
-      "objectiveIds": ["obj-func-declaration", "obj-func-scope"],
+      "objectiveIds": [
+        "OBJ-JS-401",
+        "OBJ-JS-402",
+        "OBJ-JS-403"
+      ],
       "content": {
-        "title": "Module Summary",
+        "title": "Function Return Value Mastery",
+        "summary": "You have mastered the mechanics of JavaScript function return values and caller expression substitution.",
         "takeaways": [
-          "Functions can be declared with standard function keywords or concise arrow syntax.",
-          "Parameters allow passing dynamic inputs; default parameters prevent undefined errors.",
-          "return transmits computed output back to the caller; console.log is for logging only."
+          "return hands computed values back to the caller and terminates function execution immediately.",
+          "console.log() is an I/O side effect for developer inspection, not a data delivery channel.",
+          "Functions without explicit return statements implicitly return undefined when called.",
+          "Call expressions evaluate directly to their returned values in variable assignments and arithmetic expressions."
+        ],
+        "nextSteps": [
+          "Explore function scope, parameters, and arrow functions.",
+          "Pass functions as callbacks to handle browser DOM events."
         ]
       }
     }
   ],
   "completion": {
-    "requiredActivityIds": ["act-213-predict-output", "act-213-interactive-code"],
-    "minimumScore": 100
+    "requiredActivityIds": [
+      "act-131-output-prediction",
+      "act-131-interactive-code",
+      "act-131-reflection"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-JS-401",
+        "activityIds": [
+          "act-131-output-prediction"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-JS-402",
+        "activityIds": [
+          "act-131-output-prediction"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-JS-403",
+        "activityIds": [
+          "act-131-interactive-code"
+        ],
+        "requirement": "success"
+      }
+    ]
   }
 }

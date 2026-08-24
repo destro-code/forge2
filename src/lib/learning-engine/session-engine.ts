@@ -324,34 +324,137 @@ export function previousSessionActivity(
 }
 
 /**
+ * Resolves the list of required activity IDs for a CanonicalLesson.
+ * If explicitly declared in completion rules, uses that list.
+ * Otherwise, defaults to all non-optional activities in the lesson.
+ */
+export function getRequiredActivityIds(lesson: CanonicalLesson): string[] {
+  const completionRule = lesson.completion || {};
+  if (completionRule.requiredActivityIds && completionRule.requiredActivityIds.length > 0) {
+    return completionRule.requiredActivityIds;
+  }
+  return lesson.activities.filter((a) => !a.optional).map((a) => a.id);
+}
+
+/**
+ * Determines whether a specific activity is required for lesson completion.
+ */
+export function isActivityRequired(lesson: CanonicalLesson, activityId: string): boolean {
+  const requiredIds = getRequiredActivityIds(lesson);
+  return requiredIds.includes(activityId);
+}
+
+/**
+ * Returns the list of required activity IDs that have not yet been completed in the session.
+ */
+export function getRemainingRequiredActivities(
+  session: LessonSessionState,
+  lesson: CanonicalLesson,
+): string[] {
+  const requiredIds = getRequiredActivityIds(lesson);
+  return requiredIds.filter((id) => !session.completedActivityIds.includes(id));
+}
+
+/**
+ * Helper to extract a human-readable title or description for an activity.
+ */
+function getActivityDescriptor(activity: CanonicalLesson["activities"][number]): string {
+  if (activity.content && typeof activity.content === "object" && "title" in activity.content) {
+    const title = (activity.content as { title?: string }).title;
+    if (title && typeof title === "string" && title.trim()) {
+      return `"${title.trim()}" (${activity.id})`;
+    }
+  }
+  return `${activity.type} (${activity.id})`;
+}
+
+/**
  * Checks whether the session fulfills the CanonicalLesson's completion requirements.
  */
 export function checkLessonCompletion(
   session: LessonSessionState,
   lesson: CanonicalLesson,
 ): LessonCompletionCheckResult {
-  const completionRule = lesson.completion || {};
-  const requiredIds =
-    completionRule.requiredActivityIds && completionRule.requiredActivityIds.length > 0
-      ? completionRule.requiredActivityIds
-      : lesson.activities.map((a) => a.id);
+  if (session.status === "completed") {
+    return {
+      canComplete: true,
+      isCompleted: true,
+      missingRequiredActivityIds: [],
+      completedCount: session.completedActivityIds.length,
+      totalCount: session.totalActivities,
+      reasons: undefined,
+    };
+  }
 
-  const missingRequired = requiredIds.filter((id) => !session.completedActivityIds.includes(id));
-
+  const missingRequired = getRemainingRequiredActivities(session, lesson);
   const completedCount = session.completedActivityIds.length;
   const totalCount = session.totalActivities;
-  const canComplete = missingRequired.length === 0;
-
   const reasons: string[] = [];
-  if (!canComplete) {
-    reasons.push(
-      `Missing ${missingRequired.length} required activities: ${missingRequired.join(", ")}`,
-    );
+
+  // 1. Evaluate missing required activities
+  if (missingRequired.length > 0) {
+    for (const missingId of missingRequired) {
+      const act = lesson.activities.find((a) => a.id === missingId);
+      const desc = act ? getActivityDescriptor(act) : missingId;
+      reasons.push(`Complete required activity: ${desc}`);
+    }
   }
+
+  // 2. Evaluate evidence requirements if declared
+  if (
+    lesson.completion?.evidenceRequirements &&
+    lesson.completion.evidenceRequirements.length > 0
+  ) {
+    for (const req of lesson.completion.evidenceRequirements) {
+      const isSatisfied = req.activityIds.some((actId) => {
+        const actState = session.activities[actId];
+        if (!actState || !session.completedActivityIds.includes(actId)) return false;
+        if (req.requirement === "complete") return true;
+        if (req.requirement === "success") {
+          return actState.lastEvaluation ? actState.lastEvaluation.isValid : true;
+        }
+        if (req.requirement === "minimum-score") {
+          const score =
+            actState.lastEvaluation?.score ?? (actState.lastEvaluation?.isValid ? 1 : 0);
+          return score >= (req.threshold ?? 1);
+        }
+        return true;
+      });
+
+      if (!isSatisfied) {
+        reasons.push(
+          `Evidence requirement for objective "${req.objectiveId}" is not satisfied (requirement: ${req.requirement})`,
+        );
+      }
+    }
+  }
+
+  // 3. Evaluate minimum score requirement if declared
+  if (typeof lesson.completion?.minimumScore === "number" && lesson.completion.minimumScore > 0) {
+    let totalScore = 0;
+    let scoredCount = 0;
+    for (const completedId of session.completedActivityIds) {
+      const actState = session.activities[completedId];
+      if (actState?.lastEvaluation?.score !== undefined) {
+        totalScore += actState.lastEvaluation.score;
+        scoredCount++;
+      }
+    }
+    if (scoredCount > 0) {
+      const averageScore = Math.round(totalScore / scoredCount);
+      if (averageScore < lesson.completion.minimumScore) {
+        reasons.push(
+          `Minimum score of ${lesson.completion.minimumScore}% not met (current average: ${averageScore}%)`,
+        );
+      }
+    }
+  }
+
+  const canComplete = reasons.length === 0;
 
   return {
     canComplete,
-    isCompleted: session.status === "completed",
+    isCompleted: false,
     missingRequiredActivityIds: missingRequired,
     completedCount,
     totalCount,

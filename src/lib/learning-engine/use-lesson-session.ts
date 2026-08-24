@@ -9,6 +9,7 @@ import type {
   LessonSessionState,
   ActivitySessionState,
   LessonSessionProgress,
+  LessonCompletionCheckResult,
   ActivityEvaluationResult,
   LearningEvidenceToken,
   LessonObjectivesSummary,
@@ -32,6 +33,9 @@ import {
   checkLessonCompletion,
   completeLessonSession,
   calculateSessionProgress,
+  getRequiredActivityIds,
+  isActivityRequired,
+  getRemainingRequiredActivities,
 } from "./session-engine";
 import {
   generateEvidenceTokens,
@@ -186,6 +190,20 @@ export function useLessonSession(lesson: CanonicalLesson, options: UseLessonSess
   const progress: LessonSessionProgress = useMemo(() => {
     return calculateSessionProgress(session);
   }, [session]);
+
+  // Session completion readiness check
+  const completionReadiness: LessonCompletionCheckResult = useMemo(() => {
+    return checkLessonCompletion(session, lesson);
+  }, [session, lesson]);
+
+  // Required activity helpers
+  const requiredActivityIds = useMemo(() => {
+    return getRequiredActivityIds(lesson);
+  }, [lesson]);
+
+  const remainingRequiredActivities = useMemo(() => {
+    return getRemainingRequiredActivities(session, lesson);
+  }, [session, lesson]);
 
   // Objective satisfaction summary
   const objectiveSummary: LessonObjectivesSummary = useMemo(() => {
@@ -393,6 +411,9 @@ export function useLessonSession(lesson: CanonicalLesson, options: UseLessonSess
     currentActivityState,
     getActivityState,
     progress,
+    completionReadiness,
+    requiredActivityIds,
+    remainingRequiredActivities,
     isLoading,
 
     engage,

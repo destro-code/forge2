@@ -148,7 +148,9 @@ export function OutputPredictionRenderer({
                         >
                           {String.fromCharCode(65 + idx)}
                         </div>
-                        <span className="flex-1 truncate tracking-wide">{opt}</span>
+                        <span className="flex-1 tracking-wide leading-relaxed break-words text-xs sm:text-sm">
+                          {opt}
+                        </span>
                       </button>
                     );
                   })}

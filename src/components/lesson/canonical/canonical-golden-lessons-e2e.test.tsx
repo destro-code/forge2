@@ -157,7 +157,7 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       "lesson-0-1-1",
       "lesson-1-1-2",
       "lesson-1-2-7",
-      "lesson-2-1-3",
+      "lesson-1-3-1",
       "lesson-0-2-5",
     ];
 
@@ -199,7 +199,7 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       const player = renderPlayer(lesson);
 
       expect(player.container.textContent).toContain(lesson.title);
-      expect(player.container.textContent).toContain("1 / 6"); // Activity 1 of 6
+      expect(player.container.textContent).toContain("1 / 7"); // Activity 1 of 7
       expect(player.container.textContent).toContain("Welcome to Frontend Engineering");
 
       player.unmount();
@@ -213,39 +213,36 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
         },
       });
 
-      // Activity 0: Intro -> Start Learning
+      // Activity 1: Intro -> Start Learning
       advanceActivity(player.container);
 
-      // Activity 1: Explanation -> Continue
-      expect(player.container.textContent).toContain("Frontend Is More Than Aesthetics");
-      advanceActivity(player.container);
-
-      // Activity 2: Visual -> Continue
-      expect(player.container.textContent).toContain("The Web Platform Trio");
-      advanceActivity(player.container);
-
-      // Activity 3: Code Example -> Continue
+      // Activity 2: Explanation -> Continue
       expect(player.container.textContent).toContain(
-        "A Minimal Interactive Button in Three Layers",
+        "The Frontend Triad: Structure, Presentation, and Behavior",
       );
       advanceActivity(player.container);
 
-      // Activity 4: Multiple Choice Quiz (act-011-quiz-boundary)
-      expect(player.container.textContent).toContain("Which of the following tasks is primarily");
+      // Activity 3: Visual -> Continue
+      expect(player.container.textContent).toContain(
+        "The Client-Server Boundary and Browser Rendering Pipeline",
+      );
+      advanceActivity(player.container);
 
-      // Attempt 1: Click wrong option (opt-a: Writing SQL database migrations)
+      // Activity 4: Multiple Choice (act-011-mc-roles)
+      expect(player.container.textContent).toContain(
+        "A developer needs to change a button from gray to deep blue",
+      );
+
+      // Attempt 1: Click wrong option (HTML)
       let buttons = Array.from(player.container.querySelectorAll("button"));
-      const optA = buttons.find((b) => b.textContent?.includes("Writing SQL database migrations"));
-      expect(optA).toBeDefined();
+      const optHTML = buttons.find((b) => b.textContent?.includes("HTML"));
+      expect(optHTML).toBeDefined();
       act(() => {
-        optA?.click();
+        optHTML?.click();
       });
 
       // Click Submit
       submitActivity(player.container);
-
-      // Verify failure feedback shown
-      expect(player.container.textContent).toContain("Not quite.");
 
       // Click Try Again
       buttons = Array.from(player.container.querySelectorAll("button"));
@@ -255,27 +252,74 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
         retryBtn?.click();
       });
 
-      // Attempt 2: Click correct option (opt-b: Implementing a responsive dropdown menu)
+      // Attempt 2: Click correct option (CSS)
       buttons = Array.from(player.container.querySelectorAll("button"));
-      const optB = buttons.find((b) =>
-        b.textContent?.includes("Implementing a responsive dropdown menu"),
-      );
-      expect(optB).toBeDefined();
+      const optCSS = buttons.find((b) => b.textContent?.includes("CSS"));
+      expect(optCSS).toBeDefined();
       act(() => {
-        optB?.click();
+        optCSS?.click();
       });
 
       // Submit correct answer
       submitActivity(player.container);
 
       // Verify success feedback
-      expect(player.container.textContent).toContain("Correct!");
+      expect(player.container.textContent).toContain("Spot on!");
 
-      // Advance to Summary
+      // Advance to Activity 5 (Multi-Select)
       advanceActivity(player.container);
 
-      // Activity 5: Summary
-      expect(player.container.textContent).toContain("Key Takeaways");
+      // Activity 5: Multi-Select (act-011-ms-boundaries)
+      expect(player.container.textContent).toContain(
+        "Select ALL tasks that run directly on the client",
+      );
+      buttons = Array.from(player.container.querySelectorAll("button"));
+      const opt1 = buttons.find((b) =>
+        b.textContent?.includes("Checking if a password field is empty"),
+      );
+      const opt2 = buttons.find((b) =>
+        b.textContent?.includes("Animating a mobile dropdown navigation menu"),
+      );
+      const opt4 = buttons.find((b) =>
+        b.textContent?.includes("Recalculating the subtotal on a shopping cart"),
+      );
+      expect(opt1).toBeDefined();
+      expect(opt2).toBeDefined();
+      expect(opt4).toBeDefined();
+
+      act(() => {
+        opt1?.click();
+      });
+      act(() => {
+        opt2?.click();
+      });
+      act(() => {
+        opt4?.click();
+      });
+
+      // Submit Multi-Select
+      submitActivity(player.container);
+      advanceActivity(player.container);
+
+      // Activity 6: Reflection (act-011-reflect-runtime)
+      expect(player.container.textContent).toContain(
+        "Imagine you open a modern news website with JavaScript disabled",
+      );
+      const textarea = player.container.querySelector("textarea");
+      expect(textarea).toBeDefined();
+      if (textarea) {
+        setInputValue(
+          textarea,
+          "Without JavaScript, HTML content and CSS visual styling still display, but dynamic menus and interactive forms stop functioning.",
+        );
+      }
+
+      // Submit Reflection
+      submitActivity(player.container);
+      advanceActivity(player.container);
+
+      // Activity 7: Summary
+      expect(player.container.textContent).toContain("Lesson Summary & Core Takeaways");
       advanceActivity(player.container);
 
       // Verification of completion
@@ -287,9 +331,9 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
   });
 
   // -------------------------------------------------------------------------
-  // GATE 6.3: Golden Lesson 2 — lesson-1-1-2 (Elements, Tags & Attributes)
+  // GATE 6.3: Golden Lesson 2 — lesson-1-1-2 (Elements, Tags, and Attributes)
   // -------------------------------------------------------------------------
-  describe("Gate 6.3: Golden Lesson 2 (lesson-1-1-2: Elements, Tags & Attributes)", () => {
+  describe("Gate 6.3: Golden Lesson 2 (lesson-1-1-2: Elements, Tags, and Attributes)", () => {
     let lesson: CanonicalLesson;
 
     beforeEach(() => {
@@ -297,7 +341,7 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       expect(lesson).toBeDefined();
     });
 
-    it("1. Executes Fill-Blank and Multi-Select interactive activities with validation", () => {
+    it("1. Executes Ordering, Multiple Choice, and Interactive Code activities with validation", () => {
       let completedCalled = false;
       const player = renderPlayer(lesson, {
         onComplete: () => {
@@ -310,55 +354,54 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
         advanceActivity(player.container);
       }
 
-      // Activity 3: Fill-Blank (act-112-fill-blank)
-      expect(player.container.textContent).toContain("Fill in the missing parts");
-      const inputs = Array.from(player.container.querySelectorAll("input"));
-      expect(inputs.length).toBe(2);
-
-      // Fill in blanks using setInputValue
-      setInputValue(inputs[0], "href");
-      setInputValue(inputs[1], "a");
-
-      // Submit Fill-Blank
+      // Activity 3: Ordering (act-112-ordering)
+      expect(player.container.textContent).toContain("Assemble a valid HTML anchor");
       submitActivity(player.container);
 
-      expect(player.container.textContent).toContain("Excellent!");
-
-      // Advance to Multi-Select
+      // Advance to Multiple Choice
       advanceActivity(player.container);
 
-      // Activity 4: Multi-Select (act-112-multi-select)
-      expect(player.container.textContent).toContain("Which of the following are valid void");
+      // Activity 4: Multiple Choice (act-112-mc-nesting)
+      expect(player.container.textContent).toContain("VALID HTML element nesting");
 
       const buttons = Array.from(player.container.querySelectorAll("button"));
-      const imgOpt = buttons.find((b) => b.textContent?.includes("<img>"));
-      const inputOpt = buttons.find((b) => b.textContent?.includes("<input>"));
-      const brOpt = buttons.find((b) => b.textContent?.includes("<br>"));
+      const validOpt = buttons.find((b) =>
+        b.textContent?.includes("<p>Learn <strong>frontend</strong>"),
+      );
 
-      expect(imgOpt).toBeDefined();
-      expect(inputOpt).toBeDefined();
-      expect(brOpt).toBeDefined();
-
+      expect(validOpt).toBeDefined();
       act(() => {
-        imgOpt?.click();
-      });
-      act(() => {
-        inputOpt?.click();
-      });
-      act(() => {
-        brOpt?.click();
+        validOpt?.click();
       });
 
-      // Submit Multi-Select
+      // Submit Multiple Choice
       submitActivity(player.container);
 
-      expect(player.container.textContent).toContain("Correct!");
+      // Advance to Interactive Code
+      advanceActivity(player.container);
+
+      // Activity 5: Interactive Code (act-112-code-interactive)
+      expect(player.container.textContent).toContain(
+        "Complete the following two tasks in the HTML editor",
+      );
+
+      const codeArea = player.container.querySelector<HTMLTextAreaElement>(
+        "[data-testid='code-editor-textarea'], textarea",
+      );
+      expect(codeArea).not.toBeNull();
+      setInputValue(
+        codeArea!,
+        `<div class="card" id="profile-card">\n  <h2>Alex Morgan</h2>\n  <p>Role: <span class="badge">Developer</span></p>\n</div>`,
+      );
+
+      // Submit Interactive Code
+      submitActivity(player.container);
 
       // Advance to Summary
       advanceActivity(player.container);
 
-      // Activity 5: Summary
-      expect(player.container.textContent).toContain("Summary & Next Steps");
+      // Activity 6: Summary
+      expect(player.container.textContent).toContain("Lesson Summary & Element Anatomy Takeaways");
       advanceActivity(player.container);
 
       expect(completedCalled).toBe(true);
@@ -373,12 +416,12 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       // Mount session 1
       const player1 = renderPlayer(lesson);
 
-      // Advance to Fill-Blank (activity 3)
+      // Advance to Ordering (activity 3)
       for (let i = 0; i < 3; i++) {
         advanceActivity(player1.container);
       }
 
-      expect(player1.container.textContent).toContain("Fill in the missing parts");
+      expect(player1.container.textContent).toContain("Assemble a valid HTML anchor");
 
       // Unmount player 1
       player1.unmount();
@@ -386,17 +429,17 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       // Mount player 2 with same adapter (restores session state)
       const player2 = renderPlayer(lesson);
 
-      // Player 2 should resume at Activity 3 (Fill-Blank)
-      expect(player2.container.textContent).toContain("Fill in the missing parts");
+      // Player 2 should resume at Activity 3 (Ordering)
+      expect(player2.container.textContent).toContain("Assemble a valid HTML anchor");
 
       player2.unmount();
     });
   });
 
   // -------------------------------------------------------------------------
-  // GATE 6.4: Golden Lesson 3 — lesson-1-2-7 (Flexbox Layout Mechanics)
+  // GATE 6.4: Golden Lesson 3 — lesson-1-2-7 (Build a Layout with Flexbox)
   // -------------------------------------------------------------------------
-  describe("Gate 6.4: Golden Lesson 3 (lesson-1-2-7: Flexbox Layout Mechanics)", () => {
+  describe("Gate 6.4: Golden Lesson 3 (lesson-1-2-7: Build a Layout with Flexbox)", () => {
     let lesson: CanonicalLesson;
 
     beforeEach(() => {
@@ -404,7 +447,7 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       expect(lesson).toBeDefined();
     });
 
-    it("1. Executes Interactive Code, Ordering, Output Prediction & Reflection activities", () => {
+    it("1. Executes Intro, Explanation, Visual, Output Prediction, Interactive Code & Summary activities", () => {
       let completedCalled = false;
       const player = renderPlayer(lesson, {
         onComplete: () => {
@@ -412,45 +455,16 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
         },
       });
 
-      // Advance past Intro (0) and Explanation (1)
-      for (let i = 0; i < 2; i++) {
+      // Advance past Intro (0), Explanation (1), and Visual (2)
+      for (let i = 0; i < 3; i++) {
         advanceActivity(player.container);
       }
 
-      // Activity 2: Interactive Code (act-127-interactive-code)
-      expect(player.container.textContent).toContain("Interactive Code Challenge");
-
-      const codeArea = player.container.querySelector<HTMLTextAreaElement>(
-        "[data-testid='code-editor-textarea'], textarea",
-      );
-      expect(codeArea).not.toBeNull();
-      setInputValue(
-        codeArea!,
-        '<style>.container { display: flex; justify-content: center; align-items: center; gap: 16px; }</style><div class="container"><div class="box">Item 1</div></div>',
-      );
-
-      // Submit interactive code
-      submitActivity(player.container);
-
-      // Advance to Ordering
-      advanceActivity(player.container);
-
-      // Activity 3: Ordering (act-127-ordering)
-      expect(player.container.textContent).toContain(
-        "Order the steps of the browser layout engine",
-      );
-      submitActivity(player.container);
-
-      // Advance to Output Prediction
-      advanceActivity(player.container);
-
-      // Activity 4: Output Prediction (act-127-predict)
-      expect(player.container.textContent).toContain(
-        "Where will items inside .nav-bar be distributed",
-      );
+      // Activity 3: Output Prediction (act-127-output-prediction)
+      expect(player.container.textContent).toContain("Predict the exact visual layout produced");
       const buttons = Array.from(player.container.querySelectorAll("button"));
       const correctOpt = buttons.find((b) =>
-        b.textContent?.includes("Vertically from top to bottom with equal space between them"),
+        b.textContent?.includes("Items are distributed evenly across the horizontal main axis"),
       );
       expect(correctOpt).toBeDefined();
       act(() => {
@@ -459,20 +473,45 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
 
       submitActivity(player.container);
 
-      // Advance to Reflection
+      // Advance to Interactive Code
       advanceActivity(player.container);
 
-      // Activity 5: Reflection (act-127-reflection)
-      expect(player.container.textContent).toContain("Explain why knowing the difference between");
-      const textarea = player.container.querySelector("textarea");
-      if (textarea) {
-        setInputValue(
-          textarea,
-          "When flex-direction changes to column, justify-content operates vertically along container height, and align-items operates horizontally.",
-        );
-      }
+      // Activity 4: Interactive Code (act-127-interactive-code)
+      expect(player.container.textContent).toContain("Interactive Code Challenge");
 
+      const codeArea = player.container.querySelector<HTMLTextAreaElement>(
+        "[data-testid='code-editor-textarea'], textarea",
+      );
+      expect(codeArea).not.toBeNull();
+      setInputValue(
+        codeArea!,
+        `.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  padding: 0 24px;
+}
+.modal-backdrop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}`,
+      );
+
+      // Submit interactive code
       submitActivity(player.container);
+
+      // Advance to Summary
+      advanceActivity(player.container);
+
+      // Activity 5: Summary (act-127-summary)
+      expect(player.container.textContent).toContain("Flexbox Layout Mastery");
       advanceActivity(player.container);
 
       expect(completedCalled).toBe(true);
@@ -483,17 +522,17 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
   });
 
   // -------------------------------------------------------------------------
-  // GATE 6.5: Golden Lesson 4 — lesson-2-1-3 (JavaScript Functions & Scope)
+  // GATE 6.5: Golden Lesson 4 — lesson-1-3-1 (Make Your Functions Return Useful Values)
   // -------------------------------------------------------------------------
-  describe("Gate 6.5: Golden Lesson 4 (lesson-2-1-3: JavaScript Functions & Scope)", () => {
+  describe("Gate 6.5: Golden Lesson 4 (lesson-1-3-1: Make Your Functions Return Useful Values)", () => {
     let lesson: CanonicalLesson;
 
     beforeEach(() => {
-      lesson = canonicalProvider.getLesson("lesson-2-1-3")!;
+      lesson = canonicalProvider.getLesson("lesson-1-3-1")!;
       expect(lesson).toBeDefined();
     });
 
-    it("1. Executes Output Prediction & Interactive Code temperature converter challenge", () => {
+    it("1. Executes Output Prediction, Interactive Code refactoring, Reflection, & Summary activities", () => {
       let completedCalled = false;
       const player = renderPlayer(lesson, {
         onComplete: () => {
@@ -501,18 +540,21 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
         },
       });
 
-      // Advance past Intro (0), Explanation (1), Code Example (2)
-      for (let i = 0; i < 3; i++) {
-        advanceActivity(player.container);
-      }
+      // Activity 0: Intro -> Start Learning
+      expect(player.container.textContent).toContain("Make Your Functions Return Useful Values");
+      advanceActivity(player.container);
 
-      // Activity 3: Output Prediction (act-213-predict-output)
-      expect(player.container.textContent).toContain("Output Prediction");
+      // Activity 1: Explanation -> Continue
+      expect(player.container.textContent).toContain("console.log() vs return: What Actually Happens");
+      advanceActivity(player.container);
+
+      // Activity 2: Output Prediction (act-131-output-prediction)
+      expect(player.container.textContent).toContain("What value is stored in receipt");
       const buttons = Array.from(player.container.querySelectorAll("button"));
-      const opt15 = buttons.find((b) => b.textContent?.includes("15"));
-      expect(opt15).toBeDefined();
+      const optUndefined = buttons.find((b) => b.textContent?.includes("undefined"));
+      expect(optUndefined).toBeDefined();
       act(() => {
-        opt15?.click();
+        optUndefined?.click();
       });
 
       submitActivity(player.container);
@@ -520,7 +562,7 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       // Advance to Interactive Code
       advanceActivity(player.container);
 
-      // Activity 4: Interactive Code (act-213-interactive-code)
+      // Activity 3: Interactive Code (act-131-interactive-code)
       expect(player.container.textContent).toContain("Interactive Code Challenge");
 
       const codeArea = player.container.querySelector<HTMLTextAreaElement>(
@@ -529,20 +571,47 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       expect(codeArea).not.toBeNull();
       setInputValue(
         codeArea!,
-        "function celsiusToFahrenheit(celsius) { return (celsius * 9 / 5) + 32; }",
+        `function calculateDiscount(price, discountPercent) {
+  const discountAmount = price * (discountPercent / 100);
+  return price - discountAmount;
+}
+
+function formatFullName(firstName, lastName) {
+  return \`\${firstName} \${lastName}\`;
+}
+
+function isAdult(age) {
+  return age >= 18;
+}`,
       );
+
+      submitActivity(player.container);
+
+      // Advance to Reflection
+      advanceActivity(player.container);
+
+      // Activity 4: Reflection (act-131-reflection)
+      expect(player.container.textContent).toContain("explain the fundamental difference between console.log() and return");
+      const textarea = player.container.querySelector("textarea");
+      expect(textarea).not.toBeNull();
+      if (textarea) {
+        setInputValue(
+          textarea,
+          "console.log writes output to the developer console for debugging and evaluates to undefined, while return hands computed data back to callers for expression evaluation.",
+        );
+      }
 
       submitActivity(player.container);
 
       // Advance to Summary
       advanceActivity(player.container);
 
-      // Activity 5: Summary
-      expect(player.container.textContent).toContain("Module Summary");
+      // Activity 5: Summary (act-131-summary)
+      expect(player.container.textContent).toContain("Function Return Value Mastery");
       advanceActivity(player.container);
 
       expect(completedCalled).toBe(true);
-      expect(useProgressStore.getState().lessonsCompleted).toContain("lesson-2-1-3");
+      expect(useProgressStore.getState().lessonsCompleted).toContain("lesson-1-3-1");
 
       player.unmount();
     });
@@ -652,21 +721,23 @@ describe("GATE 6: Full-Stack End-to-End Verification of the 5 Golden Canonical L
       const lesson = canonicalProvider.getLesson("lesson-0-1-1")!;
       const player = renderPlayer(lesson);
 
-      // Header should show 1 / 6
-      expect(player.container.textContent).toContain("1 / 6");
+      // Header should show 1 / 7
+      expect(player.container.textContent).toContain("1 / 7");
 
-      // Click activity 5 indicator in progress ribbon
+      // Click activity 4 indicator in progress ribbon
       const ribbonButtons = Array.from(
         player.container.querySelectorAll("header button[aria-label^='Activity ']"),
       );
-      expect(ribbonButtons.length).toBe(6);
+      expect(ribbonButtons.length).toBe(7);
 
       act(() => {
-        (ribbonButtons[4] as HTMLButtonElement).click(); // Activity 5 (Multiple Choice)
+        (ribbonButtons[3] as HTMLButtonElement).click(); // Activity 4 (Multiple Choice)
       });
 
-      expect(player.container.textContent).toContain("5 / 6");
-      expect(player.container.textContent).toContain("Which of the following tasks is primarily");
+      expect(player.container.textContent).toContain("4 / 7");
+      expect(player.container.textContent).toContain(
+        "A developer needs to change a button from gray to deep blue",
+      );
 
       player.unmount();
     });

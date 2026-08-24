@@ -254,8 +254,9 @@ export class CanonicalProvider implements ContentProvider {
           this.lessons.push(validated);
         } catch (err: any) {
           if (err instanceof ContentIntegrityError) throw err;
+          const details = err?.errors ? JSON.stringify(err.errors) : err?.message || String(err);
           throw new ContentValidationError(
-            `Golden lesson validation failed for: ${(raw as any).id}`,
+            `Golden lesson validation failed for: ${(raw as any).id} — ${details}`,
             err,
           );
         }
@@ -532,7 +533,7 @@ export class CanonicalProvider implements ContentProvider {
         "lesson-0-1-1",
         "lesson-1-1-2",
         "lesson-1-2-7",
-        "lesson-2-1-3",
+        "lesson-1-3-1",
         "lesson-0-2-5",
       ].includes(l.id);
     });
@@ -542,7 +543,7 @@ export class CanonicalProvider implements ContentProvider {
     const lesson = this.lessonsById.get(id);
     if (
       lesson &&
-      ["lesson-0-1-1", "lesson-1-1-2", "lesson-1-2-7", "lesson-2-1-3", "lesson-0-2-5"].includes(id)
+      ["lesson-0-1-1", "lesson-1-1-2", "lesson-1-2-7", "lesson-1-3-1", "lesson-0-2-5"].includes(id)
     ) {
       return lesson;
     }

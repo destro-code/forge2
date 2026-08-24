@@ -330,10 +330,18 @@ export interface InteractiveCodeFile {
 export interface InteractiveCodeActivityContent {
   title: string;
   prompt: string;
+  instructions?: string;
   language: string;
   starterCode: string;
   solutionCode?: string;
+  hints?: string[];
   files?: InteractiveCodeFile[];
+  testCases?: Array<{
+    id?: string;
+    description: string;
+    assertion?: string;
+    testCode?: string;
+  }>;
 }
 
 export interface InteractiveCodeActivity {
@@ -355,6 +363,15 @@ export interface DebugActivityContent {
   language: string;
   bugDescription: string;
   hints?: string[];
+  fixRequirements?: string[];
+  files?: InteractiveCodeFile[];
+  solutionCode?: string;
+  testCases?: Array<{
+    id?: string;
+    description: string;
+    assertion?: string;
+    testCode?: string;
+  }>;
 }
 
 export interface DebugActivity {

@@ -5,7 +5,7 @@
     "definition": "Frontend development encompasses all presentation, interaction, accessibility, and client-side logic executing inside user agents (browsers), distinct from server-side storage and business processing.",
     "topicId": "what-is-frontend-development",
     "prerequisiteConceptIds": [],
-    "relatedConceptIds": ["concept-web-platform-trio"],
+    "relatedConceptIds": ["concept-web-platform-trio", "concept-client-server-split"],
     "misconceptionIds": ["misc-frontend-is-just-ui-styling"]
   },
   {
@@ -14,8 +14,35 @@
     "definition": "The separation of concerns between structure/meaning (HTML), visual styling/layout (CSS), and client runtime behavior (JavaScript).",
     "topicId": "what-is-frontend-development",
     "prerequisiteConceptIds": ["concept-frontend-definition"],
-    "relatedConceptIds": ["concept-html-elements", "concept-css-box-model"],
+    "relatedConceptIds": ["concept-html-elements", "concept-css-box-model", "concept-triad-roles"],
     "misconceptionIds": ["misc-js-replaces-html"]
+  },
+  {
+    "id": "concept-web-architecture",
+    "title": "Web Platform & Client-Server Architecture",
+    "definition": "The distributed network architecture of the web where client user agents request, parse, render, and execute static and dynamic web assets hosted on remote servers.",
+    "topicId": "what-is-frontend-development",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": ["concept-client-server-split", "concept-triad-roles"],
+    "misconceptionIds": ["misc-websites-static-only"]
+  },
+  {
+    "id": "concept-client-server-split",
+    "title": "Client-Server Split & Browser Runtime",
+    "definition": "The clear structural separation between client-side execution (browser rendering engine, DOM, JavaScript runtime) and server-side processing (databases, server APIs, persistent storage).",
+    "topicId": "what-is-frontend-development",
+    "prerequisiteConceptIds": ["concept-web-architecture"],
+    "relatedConceptIds": ["concept-frontend-definition", "concept-triad-roles"],
+    "misconceptionIds": ["misc-frontend-direct-database"]
+  },
+  {
+    "id": "concept-triad-roles",
+    "title": "The Frontend Triad (HTML, CSS, JavaScript Roles)",
+    "definition": "The three foundational pillars of frontend engineering: HTML defines semantics and document structure, CSS defines visual styling and layout, and JavaScript defines interactive runtime behavior.",
+    "topicId": "what-is-frontend-development",
+    "prerequisiteConceptIds": ["concept-web-architecture", "concept-client-server-split"],
+    "relatedConceptIds": ["concept-html-elements", "concept-css-flexbox-layout", "concept-js-functions"],
+    "misconceptionIds": ["misc-triad-interchangeable", "misc-js-replaces-html"]
   },
   {
     "id": "concept-html-elements",
@@ -23,14 +50,50 @@
     "definition": "HTML elements represent distinct document nodes consisting of an opening tag, optional attributes providing metadata, content, and a closing tag.",
     "topicId": "elements-tags-attributes",
     "prerequisiteConceptIds": ["concept-web-platform-trio"],
-    "relatedConceptIds": ["concept-semantic-html"],
+    "relatedConceptIds": ["concept-html-element-anatomy", "concept-opening-closing-tags"],
     "misconceptionIds": ["misc-all-tags-need-closing-tags"]
+  },
+  {
+    "id": "concept-html-element-anatomy",
+    "title": "HTML Element Anatomy",
+    "definition": "The syntactic structure of an HTML element, consisting of an opening tag with element name and optional attributes, inner text or child node content, and a closing tag.",
+    "topicId": "elements-tags-attributes",
+    "prerequisiteConceptIds": ["concept-triad-roles"],
+    "relatedConceptIds": ["concept-opening-closing-tags", "concept-attributes-key-value"],
+    "misconceptionIds": ["misc-element-tag-identical"]
+  },
+  {
+    "id": "concept-opening-closing-tags",
+    "title": "Opening vs Closing Tags & Void Elements",
+    "definition": "Opening tags begin an element and house attributes; closing tags finalize container elements with a forward slash. Void elements (such as <img> and <input>) cannot have content and never have closing tags.",
+    "topicId": "elements-tags-attributes",
+    "prerequisiteConceptIds": ["concept-html-element-anatomy"],
+    "relatedConceptIds": ["concept-attributes-key-value", "concept-nesting-hierarchy"],
+    "misconceptionIds": ["misc-attributes-in-closing-tags", "misc-all-tags-need-closing-tags"]
+  },
+  {
+    "id": "concept-attributes-key-value",
+    "title": "HTML Attributes & Key-Value Configuration",
+    "definition": "Name-value pairs placed inside an element's opening tag that modify behavior, provide metadata, link external resources, or assign styling classes and identifiers.",
+    "topicId": "elements-tags-attributes",
+    "prerequisiteConceptIds": ["concept-html-element-anatomy"],
+    "relatedConceptIds": ["concept-opening-closing-tags", "concept-nesting-hierarchy"],
+    "misconceptionIds": ["misc-attribute-quotes-optional"]
+  },
+  {
+    "id": "concept-nesting-hierarchy",
+    "title": "Document Tree Hierarchy & Element Nesting",
+    "definition": "The recursive parent-child tree structure of the Document Object Model (DOM) requiring elements to close in the reverse order of opening without improper cross-boundary overlapping.",
+    "topicId": "elements-tags-attributes",
+    "prerequisiteConceptIds": ["concept-opening-closing-tags"],
+    "relatedConceptIds": ["concept-html-element-anatomy"],
+    "misconceptionIds": ["misc-html-tags-overlap"]
   },
   {
     "id": "concept-css-box-model",
     "title": "CSS Box Model",
     "definition": "The rectangular box geometry encompassing every rendered DOM element, consisting of content, padding, border, and margin areas.",
-    "topicId": "box-model",
+    "topicId": "flexbox-layout",
     "prerequisiteConceptIds": ["concept-web-platform-trio"],
     "relatedConceptIds": ["concept-css-flexbox-layout"],
     "misconceptionIds": ["misc-padding-vs-margin"]
@@ -41,8 +104,44 @@
     "definition": "A 1-dimensional layout model providing directional alignment, distribution of space, and flexible item sizing along main and cross axes.",
     "topicId": "flexbox-layout",
     "prerequisiteConceptIds": ["concept-css-box-model"],
-    "relatedConceptIds": ["concept-css-grid-layout"],
+    "relatedConceptIds": ["concept-flex-container", "concept-flex-items", "concept-main-cross-axes"],
     "misconceptionIds": ["misc-justify-vs-align-items"]
+  },
+  {
+    "id": "concept-flex-container",
+    "title": "Flex Container Formatting Context",
+    "definition": "An element with display: flex applied that establishes a flex formatting context, transforming its immediate direct children into flex items.",
+    "topicId": "flexbox-layout",
+    "prerequisiteConceptIds": ["concept-css-box-model"],
+    "relatedConceptIds": ["concept-flex-items", "concept-main-cross-axes"],
+    "misconceptionIds": ["misc-display-flex-applies-to-all-descendants"]
+  },
+  {
+    "id": "concept-flex-items",
+    "title": "Flex Items & Flow Behavior",
+    "definition": "The immediate direct child elements of a flex container that participate in flex layout calculations, alignment, and distribution.",
+    "topicId": "flexbox-layout",
+    "prerequisiteConceptIds": ["concept-flex-container"],
+    "relatedConceptIds": ["concept-main-cross-axes", "concept-justify-align-distribution"],
+    "misconceptionIds": ["misc-display-flex-applies-to-all-descendants"]
+  },
+  {
+    "id": "concept-main-cross-axes",
+    "title": "Main vs Cross Axis Dynamics",
+    "definition": "The two perpendicular axes established by flex-direction: the main axis along which items flow and justify-content operates, and the cross axis along which align-items operates.",
+    "topicId": "flexbox-layout",
+    "prerequisiteConceptIds": ["concept-flex-container"],
+    "relatedConceptIds": ["concept-justify-align-distribution", "concept-flex-items"],
+    "misconceptionIds": ["misc-justify-vs-align-items", "misc-align-items-centers-horizontally"]
+  },
+  {
+    "id": "concept-justify-align-distribution",
+    "title": "Flex Space Distribution & Alignment",
+    "definition": "The use of justify-content (main axis distribution) and align-items (cross axis alignment) along with the gap property to space and align flex items without hardcoded margins.",
+    "topicId": "flexbox-layout",
+    "prerequisiteConceptIds": ["concept-main-cross-axes"],
+    "relatedConceptIds": ["concept-flex-container", "concept-flex-items"],
+    "misconceptionIds": ["misc-justify-moves-individual-items", "misc-flexbox-requires-hardcoded-margins"]
   },
   {
     "id": "concept-js-functions",
@@ -50,8 +149,44 @@
     "definition": "First-class callable objects in JavaScript that encapsulate reusable computation, create local variable scope, and can be passed as values or returned from other functions.",
     "topicId": "javascript-functions",
     "prerequisiteConceptIds": ["concept-web-platform-trio"],
-    "relatedConceptIds": ["concept-js-closures"],
+    "relatedConceptIds": ["concept-function-return-value", "concept-console-log-side-effects"],
     "misconceptionIds": ["misc-return-vs-console-log"]
+  },
+  {
+    "id": "concept-function-return-value",
+    "title": "Function Return Values & Output Channels",
+    "definition": "The explicit data value delivered back to the caller of a function via the return statement, which terminates function execution immediately.",
+    "topicId": "javascript-functions",
+    "prerequisiteConceptIds": ["concept-js-functions"],
+    "relatedConceptIds": ["concept-caller-expression-substitution", "concept-console-log-side-effects"],
+    "misconceptionIds": ["misc-return-vs-console-log", "misc-code-after-return-executes"]
+  },
+  {
+    "id": "concept-console-log-side-effects",
+    "title": "console.log vs Return Values",
+    "definition": "console.log() is an I/O side effect intended for developer diagnostic inspection in DevTools; it does not supply data back to the calling expression or assign values to variables.",
+    "topicId": "javascript-functions",
+    "prerequisiteConceptIds": ["concept-js-functions"],
+    "relatedConceptIds": ["concept-function-return-value"],
+    "misconceptionIds": ["misc-console-log-returns-value", "misc-return-vs-console-log"]
+  },
+  {
+    "id": "concept-caller-expression-substitution",
+    "title": "Call Expression Value Substitution",
+    "definition": "When a function finishes execution, its call expression in code (e.g. calculateTotal(10, 2)) is evaluated and substituted with the function's returned value.",
+    "topicId": "javascript-functions",
+    "prerequisiteConceptIds": ["concept-function-return-value"],
+    "relatedConceptIds": ["concept-undefined-default-return"],
+    "misconceptionIds": ["misc-functions-auto-return-last-var"]
+  },
+  {
+    "id": "concept-undefined-default-return",
+    "title": "Implicit undefined Return Behavior",
+    "definition": "In JavaScript, any function that finishes executing without encountering an explicit return statement with a value implicitly returns undefined.",
+    "topicId": "javascript-functions",
+    "prerequisiteConceptIds": ["concept-function-return-value"],
+    "relatedConceptIds": ["concept-caller-expression-substitution"],
+    "misconceptionIds": ["misc-functions-auto-return-last-var"]
   },
   {
     "id": "concept-debugging-workflow",
@@ -59,7 +194,43 @@
     "definition": "A disciplined, hypothesis-driven workflow for diagnosing defects using browser DevTools, console logs, breakpoint inspection, and DOM state verification.",
     "topicId": "debugging-strategies",
     "prerequisiteConceptIds": ["concept-web-platform-trio", "concept-html-elements"],
-    "relatedConceptIds": ["concept-js-functions"],
+    "relatedConceptIds": ["concept-syntax-error-vs-runtime-error", "concept-dom-element-resolution"],
     "misconceptionIds": ["misc-random-code-tweaking"]
+  },
+  {
+    "id": "concept-syntax-error-vs-runtime-error",
+    "title": "Syntax Errors vs Runtime Exceptions vs Logic Bugs",
+    "definition": "Syntax errors prevent code parsing; runtime exceptions halt execution during runtime (e.g. TypeError); logic bugs allow code to run but produce incorrect visual or behavioral results.",
+    "topicId": "debugging-strategies",
+    "prerequisiteConceptIds": ["concept-debugging-workflow"],
+    "relatedConceptIds": ["concept-dom-element-resolution", "concept-event-listener-binding"],
+    "misconceptionIds": ["misc-css-typos-always-show-errors"]
+  },
+  {
+    "id": "concept-dom-element-resolution",
+    "title": "DOM Element Query Resolution & Null Checking",
+    "definition": "Resolving DOM nodes with document.querySelector; if a selector matches no element, it returns null, causing downstream property access or listener attachments to throw runtime TypeErrors.",
+    "topicId": "debugging-strategies",
+    "prerequisiteConceptIds": ["concept-html-elements", "concept-debugging-workflow"],
+    "relatedConceptIds": ["concept-event-listener-binding", "concept-syntax-error-vs-runtime-error"],
+    "misconceptionIds": ["misc-null-addeventlistener-broken-js"]
+  },
+  {
+    "id": "concept-event-listener-binding",
+    "title": "Event Listener Binding & Handler Lifecycle",
+    "definition": "Registering callback functions to user interaction events (click, submit, input) on valid DOM element references so user actions trigger state and UI updates.",
+    "topicId": "debugging-strategies",
+    "prerequisiteConceptIds": ["concept-dom-element-resolution", "concept-js-functions"],
+    "relatedConceptIds": ["concept-debugging-workflow"],
+    "misconceptionIds": ["misc-click-failure-always-js-logic"]
+  },
+  {
+    "id": "concept-style-attribute-typos",
+    "title": "CSS Selector & Property Invalidation",
+    "definition": "Browsers silently discard invalid CSS property names, misspelled values, or mismatched selectors without throwing JavaScript console errors, requiring computed style DevTools inspection.",
+    "topicId": "debugging-strategies",
+    "prerequisiteConceptIds": ["concept-css-box-model", "concept-debugging-workflow"],
+    "relatedConceptIds": ["concept-syntax-error-vs-runtime-error"],
+    "misconceptionIds": ["misc-css-typos-always-show-errors"]
   }
 ]
