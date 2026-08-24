@@ -48,9 +48,7 @@
     "title": "Confusing justify-content and align-items Axes",
     "description": "Assuming justify-content is always horizontal and align-items is always vertical regardless of flex-direction.",
     "conceptId": "concept-css-flexbox-layout",
-    "indicators": [
-      "Expecting justify-content to remain horizontal when flex-direction is column"
-    ],
+    "indicators": ["Expecting justify-content to remain horizontal when flex-direction is column"],
     "correction": "justify-content aligns along the MAIN axis, and align-items aligns along the CROSS axis. When flex-direction is column, the main axis is vertical."
   },
   {
@@ -68,9 +66,7 @@
     "title": "Shotgun Debugging",
     "description": "Randomly modifying lines of code without forming a diagnostic hypothesis or checking console error outputs.",
     "conceptId": "concept-debugging-workflow",
-    "indicators": [
-      "Making multiple speculative changes at once without testing each individually"
-    ],
+    "indicators": ["Making multiple speculative changes at once without testing each individually"],
     "correction": "Systematic debugging isolates failure reproduction, inspects call stacks and error messages, and tests isolated hypotheses one by one."
   }
 ]

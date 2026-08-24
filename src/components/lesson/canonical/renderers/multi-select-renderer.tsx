@@ -4,8 +4,9 @@ import { ActivityContainer } from "../primitives/activity-container";
 import { ActivityHeader } from "../primitives/activity-header";
 import { ActivityFeedback } from "../primitives/activity-feedback";
 import { ActivityActions } from "../primitives/activity-actions";
-import { CheckSquare, Square, CheckCircle2, XCircle } from "lucide-react";
+import { Check, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 export function MultiSelectRenderer({
   activity,
@@ -26,7 +27,7 @@ export function MultiSelectRenderer({
   const isCorrect = state.status === "correct" || state.status === "completed";
   const isIncorrect = state.status === "incorrect";
 
-  const hintsRemaining = (activity.hints?.length || 0) - state.hintsRevealed;
+  const hintsRemaining = (activity.feedback?.hints?.length || 0) - state.hintsRevealed;
 
   const toggleOption = (id: string) => {
     if (readOnly || (isSubmitted && isCorrect)) return;
@@ -45,76 +46,126 @@ export function MultiSelectRenderer({
     selectedOptionIds.length >= minSelections &&
     (!maxSelections || selectedOptionIds.length <= maxSelections);
 
+  // Generate dynamic instructions based on counts
+  let instructionText = "Select all that apply.";
+  if (minSelections > 1 && maxSelections && minSelections === maxSelections) {
+    instructionText = `Select exactly ${minSelections} answers.`;
+  } else if (minSelections > 1 && maxSelections) {
+    instructionText = `Select between ${minSelections} and ${maxSelections} answers.`;
+  } else if (minSelections > 1) {
+    instructionText = `Select at least ${minSelections} answers.`;
+  } else if (maxSelections) {
+    instructionText = `Select up to ${maxSelections} answers.`;
+  }
+
   return (
-    <ActivityContainer id={`activity-${activity.id}`}>
+    <ActivityContainer id={`activity-${activity.id}`} variant="standard">
       <ActivityHeader
         activity={activity}
         onRevealHint={onRevealHint}
         hintsRemaining={hintsRemaining}
       />
 
-      <div className="p-6 md:p-8 flex flex-col gap-6">
-        <div className="space-y-1">
-          <h2 className="text-xl font-bold tracking-tight text-foreground flex items-start gap-2.5">
-            <CheckSquare className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <span>{question}</span>
+      <div className="p-6 md:p-10 flex flex-col gap-8">
+        {/* Instruction Eyebrow and Question */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary/80 font-mono">
+              Multiple Selection
+            </span>
+            <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full uppercase tracking-wider font-mono">
+              {instructionText}
+            </span>
+          </div>
+          <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground leading-snug">
+            {question}
           </h2>
-          <p className="text-xs text-muted-foreground">
-            {minSelections > 1
-              ? `Select at least ${minSelections} options.`
-              : "Select all that apply."}
-            {maxSelections ? ` (Max ${maxSelections})` : ""}
-          </p>
         </div>
 
         {/* Multi-Select Options Grid */}
-        <div className="grid gap-3" role="group" aria-label={question}>
+        <div className="grid gap-3.5" role="group" aria-label={question}>
           {options.map((option) => {
             const isSelected = selectedOptionIds.includes(option.id);
 
+            // Default style state
+            let containerStyle =
+              "border-lesson-border bg-muted/10 hover:bg-muted/20 text-foreground";
+            let checkboxStyle = "border-muted-foreground/30 text-transparent bg-muted/5";
+
+            // Selected (before or after submission)
+            if (isSelected) {
+              containerStyle = "border-primary bg-primary/5 text-foreground ring-1 ring-primary";
+              checkboxStyle = "border-primary bg-primary text-primary-foreground";
+            }
+
+            // Verification styling after submission
+            if (isSubmitted) {
+              if (isSelected) {
+                if (isCorrect) {
+                  containerStyle =
+                    "border-emerald-500 bg-emerald-500/5 text-foreground ring-1 ring-emerald-500/50";
+                  checkboxStyle = "border-emerald-600 bg-emerald-600 text-white";
+                } else if (isIncorrect) {
+                  containerStyle =
+                    "border-rose-500 bg-rose-500/5 text-foreground ring-1 ring-rose-500/50";
+                  checkboxStyle = "border-rose-600 bg-rose-600 text-white";
+                }
+              }
+            }
+
             return (
-              <button
+              <motion.button
                 key={option.id}
                 type="button"
                 role="checkbox"
                 aria-checked={isSelected}
                 disabled={readOnly || (isSubmitted && isCorrect)}
+                whileTap={readOnly || (isSubmitted && isCorrect) ? {} : { scale: 0.985 }}
                 onClick={() => toggleOption(option.id)}
                 className={cn(
-                  "flex items-start gap-3.5 p-4 rounded-xl border text-left transition-all relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  isSelected
-                    ? "border-primary bg-primary/5 shadow-xs font-medium"
-                    : "border-border/80 bg-card hover:bg-muted/40 hover:border-border",
-                  isCorrect && isSelected && "border-emerald-500 bg-emerald-500/10",
-                  isIncorrect && isSelected && "border-rose-500 bg-rose-500/10",
+                  "flex items-center justify-between gap-4 p-4 md:p-5 rounded-2xl border text-left transition-all relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary min-h-[56px] cursor-pointer shadow-xs",
+                  containerStyle,
+                  (readOnly || (isSubmitted && isCorrect)) && "cursor-default opacity-85",
                 )}
               >
-                <div
-                  className={cn(
-                    "w-5 h-5 rounded-md border flex items-center justify-center text-xs shrink-0 transition-colors mt-0.5",
-                    isSelected
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-muted-foreground/40 group-hover:border-muted-foreground/70",
-                    isCorrect && isSelected && "border-emerald-600 bg-emerald-600 text-white",
-                    isIncorrect && isSelected && "border-rose-600 bg-rose-600 text-white",
-                  )}
-                >
-                  {isSelected ? (
-                    <CheckSquare className="w-3.5 h-3.5" />
-                  ) : (
-                    <Square className="w-3.5 h-3.5 opacity-0" />
-                  )}
+                <div className="flex items-center gap-4 flex-1">
+                  {/* Styled Checkbox box */}
+                  <div
+                    className={cn(
+                      "w-6 h-6 rounded-md border flex items-center justify-center transition-all shrink-0",
+                      checkboxStyle,
+                    )}
+                  >
+                    <Check
+                      className={cn(
+                        "w-4 h-4 stroke-[3px] transition-transform duration-200",
+                        isSelected ? "scale-100" : "scale-0",
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex-1">
+                    <p className="text-base font-semibold text-foreground/90 leading-relaxed">
+                      {option.text}
+                    </p>
+                    {option.hint && isIncorrect && isSelected && (
+                      <p className="text-xs text-rose-600 dark:text-rose-400 mt-1.5 font-normal flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                        <span>Hint: {option.hint}</span>
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                <div className="flex-1">
-                  <p className="text-sm text-foreground leading-relaxed">{option.text}</p>
-                  {option.hint && isIncorrect && isSelected && (
-                    <p className="text-xs text-rose-600 dark:text-rose-400 mt-1 font-normal">
-                      Hint: {option.hint}
-                    </p>
-                  )}
-                </div>
-              </button>
+                {/* Validation Badge */}
+                {isSubmitted &&
+                  isSelected &&
+                  (isCorrect ? (
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  ) : (
+                    <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+                  ))}
+              </motion.button>
             );
           })}
         </div>
@@ -123,7 +174,7 @@ export function MultiSelectRenderer({
         <ActivityFeedback
           status={state.status}
           validationResult={state.validationResult}
-          hints={activity.hints}
+          hints={activity.feedback?.hints}
           hintsRevealed={state.hintsRevealed}
           explanation={explanation}
         />

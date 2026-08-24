@@ -82,12 +82,7 @@
         "language": "javascript",
         "code": "function createMultiplier(multiplier) {\n  return (value) => value * multiplier;\n}\n\nconst triple = createMultiplier(3);\nconsole.log(triple(5));",
         "prompt": "What will be printed to the console when this script runs?",
-        "options": [
-          "15",
-          "undefined",
-          "Function: triple",
-          "8"
-        ],
+        "options": ["15", "undefined", "Function: triple", "8"],
         "explanation": "createMultiplier returns an inner arrow function that multiplies its argument by 3. triple(5) calculates 5 * 3 = 15."
       },
       "validation": {

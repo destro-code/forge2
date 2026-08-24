@@ -483,10 +483,14 @@ export interface CanonicalLesson {
   metadata?: Record<string, unknown>;
 }
 
+export type LevelStage =
+  "foundational" | "core" | "intermediate" | "advanced" | "senior" | "professional";
+
 export interface Concept {
   id: string;
   title: string;
   definition: string;
+  description?: string;
   topicId: string;
   prerequisiteConceptIds: string[];
   relatedConceptIds: string[];
@@ -507,7 +511,8 @@ export interface Misconception {
   id: string;
   title: string;
   description: string;
-  conceptId: string;
+  conceptId?: string;
+  conceptIds?: string[];
   indicators: string[];
   correction: string;
 }
@@ -534,6 +539,7 @@ export interface CanonicalModule {
 
 export interface CanonicalLevel {
   id: string;
+  stage?: LevelStage;
   title: string;
   description: string;
   order: number;
@@ -546,4 +552,43 @@ export interface Academy {
   title: string;
   description: string;
   levels: CanonicalLevel[];
+}
+
+export interface EntityReference {
+  type: "lesson" | "concept" | "skill";
+  id: string;
+}
+
+export interface ContentProvider {
+  getLevels(): CanonicalLevel[];
+  getLevel(id: string): CanonicalLevel | undefined;
+
+  getModules(): CanonicalModule[];
+  getModule(id: string): CanonicalModule | undefined;
+
+  getTopics(): CanonicalTopic[];
+  getTopic(id: string): CanonicalTopic | undefined;
+
+  getConcepts(): Concept[];
+  getConcept(id: string): Concept | undefined;
+
+  getSkills(): Skill[];
+  getSkill(id: string): Skill | undefined;
+
+  getMisconceptions(): Misconception[];
+  getMisconception(id: string): Misconception | undefined;
+
+  getLessons(): CanonicalLesson[];
+  getLesson(id: string): CanonicalLesson | undefined;
+
+  getLessonsForTopic(topicId: string): CanonicalLesson[];
+  getLessonsForModule(moduleId: string): CanonicalLesson[];
+
+  getConceptsForTopic(topicId: string): Concept[];
+  getSkillsForTopic(topicId: string): Skill[];
+
+  getPrerequisites(id: string): EntityReference[];
+
+  getNextLesson(id: string): CanonicalLesson | undefined;
+  getPreviousLesson(id: string): CanonicalLesson | undefined;
 }

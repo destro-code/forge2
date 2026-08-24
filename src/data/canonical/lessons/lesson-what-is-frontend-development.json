@@ -72,9 +72,21 @@
         "description": "HTML provides structure and meaning. CSS controls styling and layout. JavaScript drives dynamic behavior and runtime state.",
         "visualData": {
           "layers": [
-            { "name": "HTML", "role": "Structure & Semantic Meaning", "analogy": "The Frame and Walls" },
-            { "name": "CSS", "role": "Presentation, Layout & Aesthetics", "analogy": "Paint, Lighting & Interior Design" },
-            { "name": "JavaScript", "role": "Behavior, State & API Logic", "analogy": "Electricity, Plumbing & Smart Automation" }
+            {
+              "name": "HTML",
+              "role": "Structure & Semantic Meaning",
+              "analogy": "The Frame and Walls"
+            },
+            {
+              "name": "CSS",
+              "role": "Presentation, Layout & Aesthetics",
+              "analogy": "Paint, Lighting & Interior Design"
+            },
+            {
+              "name": "JavaScript",
+              "role": "Behavior, State & API Logic",
+              "analogy": "Electricity, Plumbing & Smart Automation"
+            }
           ]
         }
       }
@@ -99,10 +111,26 @@
       "content": {
         "question": "Which of the following tasks is primarily the responsibility of a frontend engineer?",
         "options": [
-          { "id": "opt-a", "text": "Writing SQL database migrations for user account tables", "hint": "Database tables and migrations are backend persistence concerns." },
-          { "id": "opt-b", "text": "Implementing a responsive dropdown menu with keyboard accessibility (WCAG)", "hint": "Think about what runs in the user's browser." },
-          { "id": "opt-c", "text": "Configuring load balancers and physical server clusters", "hint": "Infrastructure and DevOps manage server clusters." },
-          { "id": "opt-d", "text": "Creating high-fidelity vector illustrations in design software", "hint": "Visual designers produce illustration assets." }
+          {
+            "id": "opt-a",
+            "text": "Writing SQL database migrations for user account tables",
+            "hint": "Database tables and migrations are backend persistence concerns."
+          },
+          {
+            "id": "opt-b",
+            "text": "Implementing a responsive dropdown menu with keyboard accessibility (WCAG)",
+            "hint": "Think about what runs in the user's browser."
+          },
+          {
+            "id": "opt-c",
+            "text": "Configuring load balancers and physical server clusters",
+            "hint": "Infrastructure and DevOps manage server clusters."
+          },
+          {
+            "id": "opt-d",
+            "text": "Creating high-fidelity vector illustrations in design software",
+            "hint": "Visual designers produce illustration assets."
+          }
         ],
         "explanation": "Frontend engineers implement interactive, accessible, and responsive components in browser environments."
       },
@@ -127,9 +155,7 @@
           "HTML declares structure, CSS controls presentation, and JavaScript powers dynamic behavior.",
           "Frontend is an engineering discipline requiring attention to accessibility, responsiveness, and state management."
         ],
-        "nextSteps": [
-          "Explore how browsers parse and execute HTML documents in the next lesson."
-        ]
+        "nextSteps": ["Explore how browsers parse and execute HTML documents in the next lesson."]
       }
     }
   ],

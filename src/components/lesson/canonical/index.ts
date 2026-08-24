@@ -27,10 +27,6 @@ export { SummaryRenderer } from "./renderers/summary-renderer";
 export { CompletionRenderer } from "./renderers/completion-renderer";
 
 // Registry & Views
-export {
-  ActivityRendererRegistry,
-  getActivityRenderer,
-  FallbackActivityRenderer,
-} from "./registry";
+export { renderActivity, FallbackActivityRenderer } from "./registry";
 export { CanonicalActivityView } from "./canonical-activity-view";
 export { CanonicalLessonPlayer } from "./canonical-lesson-player";

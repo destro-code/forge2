@@ -91,10 +91,22 @@
       "content": {
         "prompt": "Order the steps of the browser layout engine when resolving Flexbox rules for a container.",
         "items": [
-          { "id": "step-1", "text": "1. Establish flex formatting context on parent (display: flex)" },
-          { "id": "step-2", "text": "2. Determine main axis direction from flex-direction (row/column)" },
-          { "id": "step-3", "text": "3. Calculate item hypothetical sizes (flex-basis, min-content)" },
-          { "id": "step-4", "text": "4. Distribute available free space along main axis (justify-content)" },
+          {
+            "id": "step-1",
+            "text": "1. Establish flex formatting context on parent (display: flex)"
+          },
+          {
+            "id": "step-2",
+            "text": "2. Determine main axis direction from flex-direction (row/column)"
+          },
+          {
+            "id": "step-3",
+            "text": "3. Calculate item hypothetical sizes (flex-basis, min-content)"
+          },
+          {
+            "id": "step-4",
+            "text": "4. Distribute available free space along main axis (justify-content)"
+          },
           { "id": "step-5", "text": "5. Align items across cross axis (align-items)" }
         ],
         "explanation": "Flex container formatting establishes direction first, calculates sizes, distributes space, and finally aligns across the cross axis."

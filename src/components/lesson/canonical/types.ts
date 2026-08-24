@@ -26,6 +26,20 @@ export interface ActivityInteractionState<TResponse = unknown> {
   submittedAt?: number;
 }
 
+export interface ActivityCompletionEvent<TResponse = unknown> {
+  activityId: string;
+  activityType: string;
+  status: "passed" | "failed" | "completed";
+  finalResponse: TResponse;
+  validationResult?: ActivityValidationResult;
+  metrics: {
+    attempts: number;
+    hintsRevealed: number;
+    durationMs: number;
+  };
+  evidenceConfig?: ActivityEvidenceConfig;
+}
+
 export interface ActivityRendererProps<TActivity extends CanonicalActivity, TResponse = unknown> {
   activity: TActivity;
   state: ActivityInteractionState<TResponse>;

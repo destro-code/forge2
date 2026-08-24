@@ -17,6 +17,15 @@ import type {
 
 export const difficultySchema = z.enum(["Beginner", "Intermediate", "Advanced"]);
 
+export const levelStageSchema = z.enum([
+  "foundational",
+  "core",
+  "intermediate",
+  "advanced",
+  "senior",
+  "professional",
+]);
+
 export const lessonTypeSchema = z.enum([
   "instruction",
   "practice",
@@ -433,7 +442,8 @@ export const misconceptionSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   description: z.string().min(1),
-  conceptId: z.string().min(1),
+  conceptId: z.string().min(1).optional(),
+  conceptIds: z.array(z.string()).optional(),
   indicators: z.array(z.string()),
   correction: z.string().min(1),
 });
@@ -442,6 +452,7 @@ export const conceptSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   definition: z.string().min(1),
+  description: z.string().optional(),
   topicId: z.string().min(1),
   prerequisiteConceptIds: z.array(z.string()),
   relatedConceptIds: z.array(z.string()),
@@ -484,6 +495,7 @@ export const canonicalModuleSchema = z.object({
 
 export const canonicalLevelSchema = z.object({
   id: z.string().min(1),
+  stage: levelStageSchema.optional(),
   title: z.string().min(1),
   description: z.string().min(1),
   order: z.number().int().min(1),

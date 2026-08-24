@@ -36,9 +36,28 @@ export function MonacoEditor(props: EditorProps) {
       title="Monaco Editor Error"
       description="The code editor encountered a runtime initialization error."
     >
+      <textarea
+        data-testid="code-editor-textarea"
+        aria-label="Code Editor Input"
+        className="sr-only opacity-0 w-0 h-0 absolute pointer-events-none"
+        value={typeof props.value === "string" ? props.value : ""}
+        onChange={(e: any) => {
+          const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+          props.onChange?.(typeof val === "string" ? val : String(val ?? ""), {} as any);
+        }}
+      />
       {!isReady ? (
-        <div className="flex h-full w-full items-center justify-center bg-card p-6">
-          <div className="text-xs text-muted-foreground animate-pulse">Loading editor...</div>
+        <div className="flex h-full w-full flex-col bg-card p-2">
+          <div className="text-xs text-muted-foreground animate-pulse mb-1">Loading editor...</div>
+          <textarea
+            aria-label="Code Editor"
+            className="w-full h-full p-2 font-mono text-xs bg-background border rounded resize-none"
+            value={typeof props.value === "string" ? props.value : ""}
+            onChange={(e: any) => {
+              const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+              props.onChange?.(typeof val === "string" ? val : String(val ?? ""), {} as any);
+            }}
+          />
         </div>
       ) : (
         <Editor

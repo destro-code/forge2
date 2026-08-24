@@ -81,10 +81,26 @@
       "content": {
         "question": "The hero banner is invisible despite having content. The CSS contains: .hero { opacity: 0; display: block; }. What is the immediate fix to make it visible?",
         "options": [
-          { "id": "opt-1", "text": "Change opacity: 0 to opacity: 1", "hint": "Opacity 0 renders an element completely transparent." },
-          { "id": "opt-2", "text": "Change display: block to display: none", "hint": "display: none hides elements completely." },
-          { "id": "opt-3", "text": "Add z-index: -9999", "hint": "Negative z-index puts elements behind other layers." },
-          { "id": "opt-4", "text": "Change position to static", "hint": "Position static does not alter opacity." }
+          {
+            "id": "opt-1",
+            "text": "Change opacity: 0 to opacity: 1",
+            "hint": "Opacity 0 renders an element completely transparent."
+          },
+          {
+            "id": "opt-2",
+            "text": "Change display: block to display: none",
+            "hint": "display: none hides elements completely."
+          },
+          {
+            "id": "opt-3",
+            "text": "Add z-index: -9999",
+            "hint": "Negative z-index puts elements behind other layers."
+          },
+          {
+            "id": "opt-4",
+            "text": "Change position to static",
+            "hint": "Position static does not alter opacity."
+          }
         ],
         "explanation": "opacity: 0 makes the element 100% transparent. Changing it to opacity: 1 makes it fully visible."
       },

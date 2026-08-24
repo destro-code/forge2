@@ -5,8 +5,9 @@ import { ActivityContainer } from "../primitives/activity-container";
 import { ActivityHeader } from "../primitives/activity-header";
 import { ActivityFeedback } from "../primitives/activity-feedback";
 import { ActivityActions } from "../primitives/activity-actions";
-import { HelpCircle, CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 export function MultipleChoiceRenderer({
   activity,
@@ -26,26 +27,29 @@ export function MultipleChoiceRenderer({
   const isCorrect = state.status === "correct" || state.status === "completed";
   const isIncorrect = state.status === "incorrect";
 
-  const hintsRemaining = (activity.hints?.length || 0) - state.hintsRevealed;
+  const hintsRemaining = (activity.feedback?.hints?.length || 0) - state.hintsRevealed;
 
   return (
-    <ActivityContainer id={`activity-${activity.id}`}>
+    <ActivityContainer id={`activity-${activity.id}`} variant="standard">
       <ActivityHeader
         activity={activity}
         onRevealHint={onRevealHint}
         hintsRemaining={hintsRemaining}
       />
 
-      <div className="p-6 md:p-8 flex flex-col gap-6">
+      <div className="p-6 md:p-10 flex flex-col gap-8">
+        {/* Question Header */}
         <div className="space-y-2">
-          <h2 className="text-xl font-bold tracking-tight text-foreground flex items-start gap-2.5">
-            <HelpCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <span>{question}</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-primary/80 font-mono">
+            Conceptual Recall
+          </span>
+          <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground leading-snug">
+            {question}
           </h2>
         </div>
 
-        {/* Options Selection Grid */}
-        <div className="grid gap-3" role="radiogroup" aria-label={question}>
+        {/* Options Grid */}
+        <div className="grid gap-3.5" role="radiogroup" aria-label={question}>
           {options.map((option, idx) => {
             const isSelected = selectedOptionId === option.id;
             const isExpected =
@@ -53,65 +57,99 @@ export function MultipleChoiceRenderer({
               activity.validation?.type === "exact-match" &&
               activity.validation.expected === option.id;
 
+            // Default style state
+            let containerStyle =
+              "border-lesson-border bg-muted/10 hover:bg-muted/20 text-foreground";
+            let circleStyle = "border-muted-foreground/30 text-muted-foreground bg-muted/5";
+
+            // Selected (before or after submission)
+            if (isSelected) {
+              containerStyle = "border-primary bg-primary/5 text-foreground ring-1 ring-primary";
+              circleStyle = "border-primary bg-primary text-primary-foreground";
+            }
+
+            // Verification styling after submission
+            if (isSubmitted) {
+              if (isSelected) {
+                if (isCorrect) {
+                  containerStyle =
+                    "border-emerald-500 bg-emerald-500/5 text-foreground ring-1 ring-emerald-500/50";
+                  circleStyle = "border-emerald-600 bg-emerald-600 text-white";
+                } else if (isIncorrect) {
+                  containerStyle =
+                    "border-rose-500 bg-rose-500/5 text-foreground ring-1 ring-rose-500/50";
+                  circleStyle = "border-rose-600 bg-rose-600 text-white";
+                }
+              } else if (isExpected) {
+                // Draw attention to correct answer
+                containerStyle = "border-emerald-500/60 bg-emerald-500/5 text-foreground";
+                circleStyle = "border-emerald-600 bg-emerald-600 text-white";
+              }
+            }
+
             return (
-              <button
+              <motion.button
                 key={option.id}
                 type="button"
                 role="radio"
                 aria-checked={isSelected}
                 disabled={readOnly || (isSubmitted && isCorrect)}
+                whileTap={readOnly || (isSubmitted && isCorrect) ? {} : { scale: 0.985 }}
                 onClick={() => {
                   if (!readOnly && (!isSubmitted || isIncorrect)) {
                     onResponse(option.id);
                   }
                 }}
                 className={cn(
-                  "flex items-start gap-3.5 p-4 rounded-xl border text-left transition-all relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  isSelected
-                    ? "border-primary bg-primary/5 shadow-xs font-medium"
-                    : "border-border/80 bg-card hover:bg-muted/40 hover:border-border",
-                  isCorrect && isSelected && "border-emerald-500 bg-emerald-500/10",
-                  isIncorrect && isSelected && "border-rose-500 bg-rose-500/10",
+                  "flex items-center justify-between gap-4 p-4 md:p-5 rounded-2xl border text-left transition-all relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary min-h-[56px] cursor-pointer shadow-xs",
+                  containerStyle,
+                  (readOnly || (isSubmitted && isCorrect)) && "cursor-default opacity-85",
                 )}
               >
-                <div
-                  className={cn(
-                    "w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 transition-colors mt-0.5",
-                    isSelected
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-muted-foreground/30 group-hover:border-muted-foreground/60 text-muted-foreground",
-                    isCorrect && isSelected && "border-emerald-600 bg-emerald-600 text-white",
-                    isIncorrect && isSelected && "border-rose-600 bg-rose-600 text-white",
-                  )}
-                >
-                  {String.fromCharCode(65 + idx)}
-                </div>
+                <div className="flex items-center gap-4 flex-1">
+                  {/* Circle Label */}
+                  <div
+                    className={cn(
+                      "w-7 h-7 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 transition-colors",
+                      circleStyle,
+                    )}
+                  >
+                    {String.fromCharCode(65 + idx)}
+                  </div>
 
-                <div className="flex-1">
-                  <p className="text-sm text-foreground leading-relaxed">{option.text}</p>
-                  {option.hint && isIncorrect && isSelected && (
-                    <p className="text-xs text-rose-600 dark:text-rose-400 mt-1.5 font-normal">
-                      Hint: {option.hint}
+                  <div className="flex-1">
+                    <p className="text-base font-semibold text-foreground/90 leading-relaxed">
+                      {option.text}
                     </p>
-                  )}
+                    {option.hint && isIncorrect && isSelected && (
+                      <p className="text-xs text-rose-600 dark:text-rose-400 mt-1.5 font-normal flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                        <span>Hint: {option.hint}</span>
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                {isCorrect && isSelected && (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                {/* Validation Badge */}
+                {isSubmitted && isSelected && isCorrect && (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 )}
-                {isIncorrect && isSelected && (
-                  <XCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                {isSubmitted && isSelected && isIncorrect && (
+                  <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
                 )}
-              </button>
+                {isSubmitted && !isSelected && isExpected && (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500/50 dark:text-emerald-400/50 shrink-0" />
+                )}
+              </motion.button>
             );
           })}
         </div>
 
-        {/* Feedback Section */}
+        {/* Feedback block */}
         <ActivityFeedback
           status={state.status}
           validationResult={state.validationResult}
-          hints={activity.hints}
+          hints={activity.feedback?.hints}
           hintsRevealed={state.hintsRevealed}
           explanation={explanation}
         />

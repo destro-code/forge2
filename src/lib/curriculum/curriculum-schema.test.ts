@@ -399,8 +399,8 @@ describe("Canonical Curriculum Schema & Validation", () => {
 
     it("verifies relational integrity across all canonical entities", () => {
       const academy = validateAcademy(academyData);
-      const levels = (levelsData as any[]).map((l) => validateLevel(l));
-      const topics = (topicsData as any[]).map((t) => validateTopic(t));
+      const levels = canonicalProvider.getLevels();
+      const topics = canonicalProvider.getTopics();
       const concepts = (conceptsData as any[]).map((c) => validateConcept(c));
       const skills = (skillsData as any[]).map((s) => validateSkill(s));
       const misconceptions = (misconceptionsData as any[]).map((m) => validateMisconception(m));
@@ -427,6 +427,127 @@ describe("Canonical Curriculum Schema & Validation", () => {
 
       expect(report.valid).toBe(true);
       expect(report.errors).toEqual([]);
+    });
+
+    it("detects cross-entity relational integrity violations", () => {
+      const academy = validateAcademy(academyData);
+      const levels = canonicalProvider.getLevels();
+      const topics = canonicalProvider.getTopics();
+      const concepts = (conceptsData as any[]).map((c) => validateConcept(c));
+      const skills = (skillsData as any[]).map((s) => validateSkill(s));
+      const misconceptions = (misconceptionsData as any[]).map((m) => validateMisconception(m));
+      const lessons = [validateLesson(lessonWhatIsFrontend)];
+      const modules = canonicalProvider.getModules();
+
+      // Introduce a breaking reference in levels referencing a missing module
+      const brokenLevels = levels.map((lvl) =>
+        lvl.id === "level-0" ? { ...lvl, moduleIds: ["missing-module-abc"] } : lvl,
+      );
+
+      const report = validateCurriculumIntegrity({
+        academy,
+        levels: brokenLevels,
+        modules,
+        topics,
+        concepts,
+        skills,
+        misconceptions,
+        lessons,
+      });
+
+      expect(report.valid).toBe(false);
+      expect(report.errors.some((err) => err.includes("references missing module"))).toBe(true);
+    });
+
+    it("proves Concept supports description, CanonicalLevel supports stage enum, and Misconception supports conceptIds list", () => {
+      // 1. Concept V2 support
+      const concept = validateConcept({
+        id: "concept-v2-test",
+        title: "Test V2 Concept",
+        definition: "definition string",
+        description: "This is a detailed description of the concept.",
+        topicId: "what-is-frontend-development",
+        prerequisiteConceptIds: [],
+        relatedConceptIds: [],
+        misconceptionIds: [],
+      });
+      expect(concept.description).toBe("This is a detailed description of the concept.");
+
+      // 2. CanonicalLevel V2 stage support
+      const level = validateLevel({
+        id: "level-v2-test",
+        stage: "intermediate",
+        title: "Level 2: Intermediate Frontend Engineering",
+        description: "Some intermediate description",
+        order: 3,
+        moduleIds: [],
+      });
+      expect(level.stage).toBe("intermediate");
+
+      // 3. Misconception V2 plural conceptIds support
+      const misconception = validateMisconception({
+        id: "misc-v2-test",
+        title: "Multiple Concepts Misconception",
+        description: "Incorrect mental model spanning two concepts",
+        conceptIds: ["concept-a", "concept-b"],
+        indicators: ["indicator-a"],
+        correction: "Correction path",
+      });
+      expect(misconception.conceptIds).toEqual(["concept-a", "concept-b"]);
+    });
+
+    it("rejects unsupported lesson types, difficulty, or activity intents", () => {
+      // Lesson types check
+      expect(() => {
+        validateLesson({
+          ...lessonWhatIsFrontend,
+          lessonType: "unsupported-lesson-type-123",
+        });
+      }).toThrow();
+
+      // Difficulty check
+      expect(() => {
+        validateLesson({
+          ...lessonWhatIsFrontend,
+          difficulty: "SuperAdvanced",
+        });
+      }).toThrow();
+
+      // Activity Intent check
+      expect(() => {
+        validateActivity({
+          id: "act-intent-fail",
+          type: "intro",
+          intent: "not-a-valid-intent",
+          objectiveIds: ["obj-1"],
+          content: {
+            title: "Intro Title",
+            hook: "Let's hook them",
+          },
+        });
+      }).toThrow();
+    });
+
+    it("rejects malformed validation definitions", () => {
+      expect(() => {
+        validateActivity({
+          id: "act-val-fail",
+          type: "multiple-choice",
+          intent: "assessment",
+          objectiveIds: ["obj-1"],
+          content: {
+            question: "Question text",
+            options: [
+              { id: "o1", text: "Opt 1" },
+              { id: "o2", text: "Opt 2" },
+            ],
+          },
+          validation: {
+            type: "exact-match",
+            expected: { obj: "unsupported object pattern" }, // exact-match expected must be primitive
+          },
+        });
+      }).toThrow();
     });
   });
 });

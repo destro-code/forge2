@@ -100,19 +100,24 @@ export function adaptLegacyLessonToCanonical(legacy: LegacyLesson): CanonicalLes
         flushExplanation();
         currentTitle = sec.text;
       } else if (sec.type === "paragraph") {
-        currentExplanationTexts.push(sec.text);
+        const pText = sec.text || sec.paragraph || "";
+        if (pText.trim()) {
+          currentExplanationTexts.push(pText);
+        }
       } else if (sec.type === "callout") {
         flushExplanation();
+        const calloutText = sec.text || sec.title || "Note";
         activities.push({
           id: `act-${legacy.id}-callout-${activities.length + 1}`,
           type: "explanation",
           intent: "understanding",
           objectiveIds: [objectives[0].id],
           content: {
-            text: sec.text,
+            title: sec.title || undefined,
+            text: calloutText,
             callout: {
-              variant: sec.variant,
-              text: sec.text,
+              variant: sec.variant || sec.callout || "info",
+              text: calloutText,
             },
           },
         });

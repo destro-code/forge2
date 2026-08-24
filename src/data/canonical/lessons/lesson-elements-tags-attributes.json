@@ -82,8 +82,16 @@
         "prompt": "Fill in the missing parts to create a valid hyperlink element that points to /about.",
         "template": "<a ___=\"/about\">About Us</___>",
         "blanks": [
-          { "id": "blank-attr", "placeholder": "attribute name", "hint": "The attribute used for hyperlinks" },
-          { "id": "blank-tag", "placeholder": "closing tag name", "hint": "The element name matching the opening tag" }
+          {
+            "id": "blank-attr",
+            "placeholder": "attribute name",
+            "hint": "The attribute used for hyperlinks"
+          },
+          {
+            "id": "blank-tag",
+            "placeholder": "closing tag name",
+            "hint": "The element name matching the opening tag"
+          }
         ],
         "explanation": "The 'href' attribute specifies the destination URL and 'a' is the element tag name."
       },

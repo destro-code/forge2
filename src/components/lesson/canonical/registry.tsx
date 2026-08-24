@@ -1,5 +1,5 @@
 import type { CanonicalActivity } from "@/lib/curriculum/types";
-import type { ActivityComponent } from "./types";
+import type { ActivityComponent, ActivityRendererProps } from "./types";
 import { ActivityContainer } from "./primitives/activity-container";
 import { ActivityHeader } from "./primitives/activity-header";
 import { ActivityActions } from "./primitives/activity-actions";
@@ -28,7 +28,7 @@ export function FallbackActivityRenderer({
   activity,
   state,
   onContinue,
-}: Parameters<ActivityComponent<CanonicalActivity>>[0]) {
+}: ActivityRendererProps<CanonicalActivity>) {
   return (
     <ActivityContainer id={`activity-${activity.id}`} className="border-dashed border-amber-500/40">
       <ActivityHeader activity={activity} />
@@ -36,7 +36,7 @@ export function FallbackActivityRenderer({
         <AlertCircle className="w-10 h-10 text-amber-500" />
         <div className="space-y-1">
           <h3 className="text-lg font-bold text-foreground">
-            Activity Type &quot;{activity.type}&quot;
+            Activity Type &quot;{(activity as CanonicalActivity).type || "unknown"}&quot;
           </h3>
           <p className="text-sm text-muted-foreground max-w-md">
             This activity is rendered with standard presentation fallback.
@@ -53,30 +53,45 @@ export function FallbackActivityRenderer({
   );
 }
 
-/**
- * Activity Renderer Registry mapping all 14 canonical activity types to their native components.
- */
-export const ActivityRendererRegistry: Record<CanonicalActivity["type"], ActivityComponent<any>> = {
-  intro: IntroRenderer,
-  explanation: ExplanationRenderer,
-  "code-example": CodeExampleRenderer,
-  visual: VisualRenderer,
-  "multiple-choice": MultipleChoiceRenderer,
-  "multi-select": MultiSelectRenderer,
-  "fill-blank": FillBlankRenderer,
-  ordering: OrderingRenderer,
-  "output-prediction": OutputPredictionRenderer,
-  "interactive-code": InteractiveCodeRenderer,
-  debug: DebugRenderer,
-  reflection: ReflectionRenderer,
-  summary: SummaryRenderer,
-  completion: CompletionRenderer,
-};
+export type BaseRendererProps = Omit<ActivityRendererProps<CanonicalActivity, any>, "activity">;
 
 /**
- * Resolves the appropriate renderer component for a given activity type.
+ * Single authoritative Activity Registry responsible for resolving an
+ * activity instance to its appropriate presentation renderer.
+ *
+ * Uses a discriminated union switch to guarantee type safety without `any` escapes.
  */
-export function getActivityRenderer(type: string): ActivityComponent<CanonicalActivity> {
-  const renderer = (ActivityRendererRegistry as Record<string, ActivityComponent<any>>)[type];
-  return renderer || FallbackActivityRenderer;
+export function renderActivity(activity: CanonicalActivity, props: BaseRendererProps): JSX.Element {
+  switch (activity.type) {
+    case "intro":
+      return <IntroRenderer activity={activity} {...props} />;
+    case "explanation":
+      return <ExplanationRenderer activity={activity} {...props} />;
+    case "code-example":
+      return <CodeExampleRenderer activity={activity} {...props} />;
+    case "visual":
+      return <VisualRenderer activity={activity} {...props} />;
+    case "multiple-choice":
+      return <MultipleChoiceRenderer activity={activity} {...props} />;
+    case "multi-select":
+      return <MultiSelectRenderer activity={activity} {...props} />;
+    case "fill-blank":
+      return <FillBlankRenderer activity={activity} {...props} />;
+    case "ordering":
+      return <OrderingRenderer activity={activity} {...props} />;
+    case "output-prediction":
+      return <OutputPredictionRenderer activity={activity} {...props} />;
+    case "interactive-code":
+      return <InteractiveCodeRenderer activity={activity} {...props} />;
+    case "debug":
+      return <DebugRenderer activity={activity} {...props} />;
+    case "reflection":
+      return <ReflectionRenderer activity={activity} {...props} />;
+    case "summary":
+      return <SummaryRenderer activity={activity} {...props} />;
+    case "completion":
+      return <CompletionRenderer activity={activity} {...props} />;
+    default:
+      return <FallbackActivityRenderer activity={activity} {...props} />;
+  }
 }

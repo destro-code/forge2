@@ -4,7 +4,6 @@ import type { ActivityIntent, CanonicalActivity } from "@/lib/curriculum/types";
 import {
   Compass,
   BookOpen,
-  Code2,
   Eye,
   HelpCircle,
   CheckSquare,
@@ -33,57 +32,57 @@ const INTENT_METADATA: Record<
   orientation: {
     label: "Orientation",
     icon: Compass,
-    color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    color: "text-blue-600 dark:text-blue-400 bg-blue-500/5 border-blue-500/15",
   },
   understanding: {
-    label: "Concept",
+    label: "Concept Study",
     icon: BookOpen,
-    color: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
+    color: "text-indigo-600 dark:text-indigo-400 bg-indigo-500/5 border-indigo-500/15",
   },
   recognition: {
     label: "Visual Model",
     icon: Eye,
-    color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+    color: "text-purple-600 dark:text-purple-400 bg-purple-500/5 border-purple-500/15",
   },
   retrieval: {
     label: "Active Recall",
     icon: HelpCircle,
-    color: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+    color: "text-amber-600 dark:text-amber-400 bg-amber-500/5 border-amber-500/15",
   },
   prediction: {
-    label: "Prediction",
+    label: "Output Prediction",
     icon: Sparkles,
-    color: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+    color: "text-orange-600 dark:text-orange-400 bg-orange-500/5 border-orange-500/15",
   },
   application: {
     label: "Coding Practice",
     icon: Terminal,
-    color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+    color: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 border-emerald-500/15",
   },
   debugging: {
     label: "Debug Challenge",
     icon: Bug,
-    color: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+    color: "text-rose-600 dark:text-rose-400 bg-rose-500/5 border-rose-500/15",
   },
   assessment: {
     label: "Knowledge Check",
     icon: CheckSquare,
-    color: "bg-teal-500/10 text-teal-500 border-teal-500/20",
+    color: "text-teal-600 dark:text-teal-400 bg-teal-500/5 border-teal-500/15",
   },
   reflection: {
-    label: "Reflection",
+    label: "Self Reflection",
     icon: Brain,
-    color: "bg-sky-500/10 text-sky-500 border-sky-500/20",
+    color: "text-sky-600 dark:text-sky-400 bg-sky-500/5 border-sky-500/15",
   },
   synthesis: {
-    label: "Synthesis",
+    label: "Synthesis Practice",
     icon: Award,
-    color: "bg-violet-500/10 text-violet-500 border-violet-500/20",
+    color: "text-violet-600 dark:text-violet-400 bg-violet-500/5 border-violet-500/15",
   },
   reinforcement: {
     label: "Reinforcement",
     icon: ListOrdered,
-    color: "bg-zinc-500/10 text-zinc-500 border-zinc-500/20",
+    color: "text-zinc-600 dark:text-zinc-400 bg-zinc-500/5 border-zinc-500/15",
   },
 };
 
@@ -100,24 +99,26 @@ export function ActivityHeader({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-3 px-6 py-4 border-b border-border/60 bg-muted/20",
+        "flex items-center justify-between gap-3 px-6 py-4 border-b border-lesson-border bg-lesson-surface-subtle/30",
         className,
       )}
     >
-      <div className="flex items-center gap-2.5 flex-wrap">
+      <div className="flex items-center gap-3">
         <Badge
           variant="outline"
           className={cn(
-            "px-2.5 py-0.5 text-xs font-medium border flex items-center gap-1.5",
+            "px-2.5 py-1 text-xs font-medium border flex items-center gap-1.5 shadow-none rounded-md",
             meta.color,
           )}
         >
           <Icon className="w-3.5 h-3.5" />
           <span>{meta.label}</span>
         </Badge>
-        <span className="text-xs text-muted-foreground uppercase tracking-wider font-mono">
-          {activity.type}
-        </span>
+        {title && (
+          <span className="text-sm font-medium text-lesson-text-secondary hidden sm:inline truncate max-w-xs">
+            {title}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center gap-2">
@@ -126,9 +127,9 @@ export function ActivityHeader({
             variant="ghost"
             size="sm"
             onClick={onRevealHint}
-            className="h-7 text-xs text-amber-500 hover:text-amber-600 hover:bg-amber-500/10 gap-1.5"
+            className="h-8 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-amber-500/5 focus-visible:ring-2 focus-visible:ring-lesson-focus-ring gap-1.5 px-3 rounded-md font-medium"
           >
-            <Lightbulb className="w-3.5 h-3.5" />
+            <Lightbulb className="w-4 h-4 shrink-0" />
             <span>Hint ({hintsRemaining})</span>
           </Button>
         )}

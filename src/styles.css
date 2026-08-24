@@ -54,6 +54,27 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-lesson-bg: var(--lesson-bg);
+  --color-lesson-surface: var(--lesson-surface);
+  --color-lesson-surface-elevated: var(--lesson-surface-elevated);
+  --color-lesson-surface-subtle: var(--lesson-surface-subtle);
+  --color-lesson-text-primary: var(--lesson-text-primary);
+  --color-lesson-text-secondary: var(--lesson-text-secondary);
+  --color-lesson-text-muted: var(--lesson-text-muted);
+  --color-lesson-border: var(--lesson-border);
+  --color-lesson-focus-ring: var(--lesson-focus-ring);
+  --color-lesson-accent: var(--lesson-accent);
+  --color-lesson-accent-foreground: var(--lesson-accent-foreground);
+  --color-lesson-success-bg: var(--lesson-success-bg);
+  --color-lesson-success-border: var(--lesson-success-border);
+  --color-lesson-success-text: var(--lesson-success-text);
+  --color-lesson-error-bg: var(--lesson-error-bg);
+  --color-lesson-error-border: var(--lesson-error-border);
+  --color-lesson-error-text: var(--lesson-error-text);
+  --color-lesson-warning-bg: var(--lesson-warning-bg);
+  --color-lesson-warning-border: var(--lesson-warning-border);
+  --color-lesson-warning-text: var(--lesson-warning-text);
 }
 
 /* Dark first — Forge palette: near-black graphite + ember/amber accent */
@@ -99,6 +120,28 @@
   --sidebar-border: oklch(1 0 0 / 6%);
   --sidebar-ring: oklch(0.72 0.19 45 / 50%);
 
+  /* Lesson Specific Semantic Tokens - Focused, calm dark mode */
+  --lesson-bg: oklch(0.12 0.01 250);
+  --lesson-surface: oklch(0.16 0.015 250);
+  --lesson-surface-elevated: oklch(0.2 0.018 250);
+  --lesson-surface-subtle: oklch(0.14 0.012 250);
+  --lesson-text-primary: oklch(0.96 0.01 250);
+  --lesson-text-secondary: oklch(0.85 0.015 250);
+  --lesson-text-muted: oklch(0.65 0.02 250);
+  --lesson-border: oklch(1 0 0 / 10%);
+  --lesson-focus-ring: oklch(0.72 0.19 45);
+  --lesson-accent: oklch(0.72 0.19 45);
+  --lesson-accent-foreground: oklch(0.12 0.01 250);
+  --lesson-success-bg: oklch(0.72 0.16 155 / 10%);
+  --lesson-success-border: oklch(0.72 0.16 155 / 30%);
+  --lesson-success-text: oklch(0.78 0.12 155);
+  --lesson-error-bg: oklch(0.65 0.22 25 / 10%);
+  --lesson-error-border: oklch(0.65 0.22 25 / 30%);
+  --lesson-error-text: oklch(0.72 0.16 25);
+  --lesson-warning-bg: oklch(0.82 0.16 85 / 10%);
+  --lesson-warning-border: oklch(0.82 0.16 85 / 30%);
+  --lesson-warning-text: oklch(0.82 0.14 85);
+
   --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-glow));
   --gradient-surface: linear-gradient(180deg, oklch(0.19 0.014 60), oklch(0.15 0.01 60));
   --gradient-ember: radial-gradient(
@@ -139,6 +182,28 @@
   --sidebar-accent-foreground: oklch(0.2 0.02 60);
   --sidebar-border: oklch(0.9 0.01 60);
   --sidebar-ring: oklch(0.62 0.2 42 / 40%);
+
+  /* Lesson Specific Semantic Tokens - Light Mode */
+  --lesson-bg: oklch(0.98 0.005 250);
+  --lesson-surface: oklch(1 0 0);
+  --lesson-surface-elevated: oklch(0.99 0.005 250);
+  --lesson-surface-subtle: oklch(0.95 0.01 250);
+  --lesson-text-primary: oklch(0.22 0.02 250);
+  --lesson-text-secondary: oklch(0.38 0.02 250);
+  --lesson-text-muted: oklch(0.55 0.02 250);
+  --lesson-border: oklch(0.92 0.01 250);
+  --lesson-focus-ring: oklch(0.55 0.18 250);
+  --lesson-accent: oklch(0.55 0.18 250);
+  --lesson-accent-foreground: oklch(0.98 0.005 250);
+  --lesson-success-bg: oklch(0.95 0.03 155);
+  --lesson-success-border: oklch(0.8 0.08 155);
+  --lesson-success-text: oklch(0.35 0.08 155);
+  --lesson-error-bg: oklch(0.96 0.02 25);
+  --lesson-error-border: oklch(0.82 0.08 25);
+  --lesson-error-text: oklch(0.4 0.1 25);
+  --lesson-warning-bg: oklch(0.97 0.03 85);
+  --lesson-warning-border: oklch(0.88 0.08 85);
+  --lesson-warning-text: oklch(0.45 0.08 85);
 }
 
 * {

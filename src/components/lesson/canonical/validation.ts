@@ -1,9 +1,27 @@
 import type { CanonicalActivity, ActivityValidationConfig } from "@/lib/curriculum/types";
 import type { ActivityValidationResult } from "./types";
 
-export function evaluateActivityValidation(
-  activity: CanonicalActivity,
-  response: unknown,
+export type ActivityResponse<T extends CanonicalActivity["type"]> = T extends "multiple-choice"
+  ? string
+  : T extends "multi-select"
+    ? string[]
+    : T extends "fill-blank"
+      ? string[]
+      : T extends "ordering"
+        ? string[]
+        : T extends "output-prediction"
+          ? string
+          : T extends "interactive-code"
+            ? string | boolean[] | { passed: boolean }
+            : T extends "debug"
+              ? string | boolean[] | { passed: boolean }
+              : T extends "reflection"
+                ? string
+                : undefined;
+
+export function evaluateActivityValidation<T extends CanonicalActivity>(
+  activity: T,
+  response: ActivityResponse<T["type"]>,
 ): ActivityValidationResult {
   const config = activity.validation;
   const feedback = activity.feedback;
@@ -28,7 +46,7 @@ export function evaluateActivityValidation(
           isMatch = expected.trim() === response.trim();
         }
       } else {
-        isMatch = expected === response;
+        isMatch = expected === (response as unknown);
       }
 
       return {
@@ -38,7 +56,6 @@ export function evaluateActivityValidation(
           : feedback?.incorrect || "That is not quite right. Review the explanation and try again.",
       };
     }
-
     case "one-of": {
       const validOptions = config.validOptions;
       let isMatch = false;
@@ -46,15 +63,18 @@ export function evaluateActivityValidation(
       if (typeof response === "string") {
         const checkStr =
           config.caseSensitive === false ? response.trim().toLowerCase() : response.trim();
+
         isMatch = validOptions.some((opt) => {
           if (typeof opt === "string") {
             const optStr = config.caseSensitive === false ? opt.trim().toLowerCase() : opt.trim();
             return optStr === checkStr;
           }
-          return opt === response;
+          return opt === (response as unknown);
         });
       } else {
-        isMatch = validOptions.includes(response as any);
+        isMatch = validOptions.includes(
+          response as Extract<(typeof validOptions)[number], string | number>,
+        );
       }
 
       return {
@@ -64,7 +84,6 @@ export function evaluateActivityValidation(
           : feedback?.incorrect || "The selected option is incorrect. Try another selection.",
       };
     }
-
     case "multi-match": {
       const expected = config.expected;
       const actual = Array.isArray(response) ? (response as string[]) : [];
@@ -94,7 +113,6 @@ export function evaluateActivityValidation(
           : feedback?.incorrect || "The combination of selected items is not quite correct.",
       };
     }
-
     case "ordering": {
       const correctSequence = config.correctSequence;
       const actualSequence = Array.isArray(response) ? (response as string[]) : [];
@@ -107,7 +125,6 @@ export function evaluateActivityValidation(
       }
 
       const isMatch = correctSequence.every((id, idx) => id === actualSequence[idx]);
-
       return {
         isValid: isMatch,
         feedbackMessage: isMatch
@@ -116,7 +133,6 @@ export function evaluateActivityValidation(
             "The sequence is not in the correct order yet. Rearrange and try again.",
       };
     }
-
     case "code-output": {
       const expectedOutput = config.expectedOutput.trim();
       const actualOutput =
@@ -147,9 +163,7 @@ export function evaluateActivityValidation(
         details: { expected: expectedOutput, actual: actualOutput },
       };
     }
-
     case "tests": {
-      const testCases = config.testCases;
       // In client-side test validation, response can be an array of test result booleans or a test report object
       if (Array.isArray(response)) {
         const allPassed = response.every((r) => r === true);
@@ -160,7 +174,6 @@ export function evaluateActivityValidation(
             : feedback?.incorrect || "Some test cases failed. Inspect your code logic.",
         };
       }
-
       if (response && typeof response === "object" && "passed" in response) {
         const passed = Boolean((response as any).passed);
         return {
@@ -170,13 +183,11 @@ export function evaluateActivityValidation(
             : feedback?.incorrect || "Test assertion failed.",
         };
       }
-
       return {
         isValid: true,
         feedbackMessage: "Test validation executed.",
       };
     }
-
     default:
       return {
         isValid: true,
