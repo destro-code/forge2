@@ -12,10 +12,7 @@
     "concept-network-panel-evidence",
     "concept-failure-locus-diagnosis"
   ],
-  "skillIds": [
-    "skill-diagnose-request-failure-locus",
-    "skill-read-network-panel-timing"
-  ],
+  "skillIds": ["skill-diagnose-request-failure-locus", "skill-read-network-panel-timing"],
   "objectives": [
     {
       "id": "OBJ-NET-401",
@@ -76,9 +73,18 @@
       "content": {
         "question": "The Network panel shows a request that failed with `DNS_PROBE_FINISHED_NXDOMAIN` after 40ms. What does this tell you?",
         "options": [
-          { "id": "opt-a", "text": "The server received the request but took too long to respond." },
-          { "id": "opt-b", "text": "The hostname could not be resolved to an address — the browser never reached any server at all." },
-          { "id": "opt-c", "text": "The connection was established but the response body was empty." },
+          {
+            "id": "opt-a",
+            "text": "The server received the request but took too long to respond."
+          },
+          {
+            "id": "opt-b",
+            "text": "The hostname could not be resolved to an address — the browser never reached any server at all."
+          },
+          {
+            "id": "opt-c",
+            "text": "The connection was established but the response body was empty."
+          },
           { "id": "opt-d", "text": "The server returned a 5xx error." }
         ],
         "explanation": "NXDOMAIN is a DNS-stage failure: the browser could not resolve the hostname to an IP address, so it never attempted to connect to any server."

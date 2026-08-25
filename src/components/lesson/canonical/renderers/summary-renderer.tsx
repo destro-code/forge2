@@ -5,7 +5,11 @@ import { ActivityHeader } from "../primitives/activity-header";
 import { ActivityActions } from "../primitives/activity-actions";
 import { CheckCircle2, ArrowRight, HelpCircle, BookOpen } from "lucide-react";
 
-export function SummaryRenderer({ activity, state, onContinue }: ActivityRendererProps<SummaryActivity>) {
+export function SummaryRenderer({
+  activity,
+  state,
+  onContinue,
+}: ActivityRendererProps<SummaryActivity>) {
   const { title, takeaways = [], nextSteps = [], reviewQuestions = [] } = activity.content;
 
   return (
@@ -14,7 +18,9 @@ export function SummaryRenderer({ activity, state, onContinue }: ActivityRendere
       <div className="mx-auto w-full max-w-4xl px-5 py-9 sm:px-8 sm:py-12">
         <header className="max-w-3xl">
           <p className="text-sm font-medium text-lesson-accent">Lesson synthesis</p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-lesson-text-primary sm:text-4xl">{title}</h2>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-lesson-text-primary sm:text-4xl">
+            {title}
+          </h2>
           <p className="mt-4 text-base leading-7 text-lesson-text-secondary">
             A concise review of the concepts and skills covered in this lesson.
           </p>
@@ -29,7 +35,10 @@ export function SummaryRenderer({ activity, state, onContinue }: ActivityRendere
               </div>
               <ul className="space-y-2">
                 {takeaways.map((takeaway, idx) => (
-                  <li key={idx} className="flex items-start gap-3 rounded-xl bg-lesson-surface-subtle px-4 py-3.5">
+                  <li
+                    key={idx}
+                    className="flex items-start gap-3 rounded-xl bg-lesson-surface-subtle px-4 py-3.5"
+                  >
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                     <span className="text-sm leading-6 text-lesson-text-secondary">{takeaway}</span>
                   </li>
@@ -47,7 +56,9 @@ export function SummaryRenderer({ activity, state, onContinue }: ActivityRendere
                 </div>
                 <ul className="space-y-2">
                   {reviewQuestions.map((question, idx) => (
-                    <li key={idx} className="text-sm leading-6 text-lesson-text-secondary">{question}</li>
+                    <li key={idx} className="text-sm leading-6 text-lesson-text-secondary">
+                      {question}
+                    </li>
                   ))}
                 </ul>
               </section>
@@ -61,7 +72,9 @@ export function SummaryRenderer({ activity, state, onContinue }: ActivityRendere
                 </div>
                 <ul className="space-y-2">
                   {nextSteps.map((step, idx) => (
-                    <li key={idx} className="text-sm leading-6 text-lesson-text-secondary">{step}</li>
+                    <li key={idx} className="text-sm leading-6 text-lesson-text-secondary">
+                      {step}
+                    </li>
                   ))}
                 </ul>
               </section>
@@ -69,7 +82,12 @@ export function SummaryRenderer({ activity, state, onContinue }: ActivityRendere
           </div>
         </div>
       </div>
-      <ActivityActions status={state.status} isInteractive={false} onContinue={onContinue} continueLabel="Continue" />
+      <ActivityActions
+        status={state.status}
+        isInteractive={false}
+        onContinue={onContinue}
+        continueLabel="Continue"
+      />
     </ActivityContainer>
   );
 }

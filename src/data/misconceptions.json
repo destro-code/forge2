@@ -48,9 +48,7 @@
     "title": "Websites Are Purely Static Documents",
     "description": "Belief that web pages only load once as inert text documents and cannot execute dynamic applications in the browser.",
     "conceptId": "concept-web-architecture",
-    "indicators": [
-      "Thinking all updates require a full page refresh from the server"
-    ],
+    "indicators": ["Thinking all updates require a full page refresh from the server"],
     "correction": "Modern web applications run rich client-side code that dynamically updates the DOM, handles events, and synchronizes data asynchronously."
   },
   {
@@ -58,9 +56,7 @@
     "title": "All HTML Tags Must Have Closing Tags",
     "description": "Belief that void elements like <img>, <input>, and <br> require separate </image> or </input> closing tags.",
     "conceptId": "concept-html-elements",
-    "indicators": [
-      "Writing <img></img> or <br></br> in standard HTML5"
-    ],
+    "indicators": ["Writing <img></img> or <br></br> in standard HTML5"],
     "correction": "Void elements are self-contained and forbidden from having closing tags or inner content in standard HTML5. In standard HTML5, void elements never have closing tags."
   },
   {
@@ -68,9 +64,7 @@
     "title": "Attributes Belong in Closing Tags",
     "description": "Belief that attributes like class, id, or src can or should be repeated inside the closing tag </tag>.",
     "conceptId": "concept-opening-closing-tags",
-    "indicators": [
-      "Writing </a href='url'> or </div class='box'>"
-    ],
+    "indicators": ["Writing </a href='url'> or </div class='box'>"],
     "correction": "Attributes configure an element and must ONLY appear in the opening tag. Closing tags only contain the element name preceded by a slash (e.g. </a>)."
   },
   {
@@ -78,9 +72,7 @@
     "title": "Element and Tag Are Identical Terms",
     "description": "Confusing the opening/closing tags with the entire DOM element node that encompasses tags, attributes, and inner content.",
     "conceptId": "concept-html-element-anatomy",
-    "indicators": [
-      "Referring to an entire paragraph node as just 'the <p> tag'"
-    ],
+    "indicators": ["Referring to an entire paragraph node as just 'the <p> tag'"],
     "correction": "A tag is the markup syntax used to denote boundaries (<p> and </p>), while an element is the complete component including opening tag, attributes, content, and closing tag."
   },
   {
@@ -88,10 +80,7 @@
     "title": "Attribute Quotes Are Interchangeable with Spaces",
     "description": "Belief that multi-word attribute values do not require quotes (e.g. class=btn primary instead of class='btn primary').",
     "conceptId": "concept-attributes-key-value",
-    "indicators": [
-      "Writing class=btn primary",
-      "Omitting quotes on URLs containing parameters"
-    ],
+    "indicators": ["Writing class=btn primary", "Omitting quotes on URLs containing parameters"],
     "correction": "Without quotes, spaces delimit separate attributes, turning 'primary' into an unintended boolean attribute rather than part of the class value."
   },
   {
@@ -99,9 +88,7 @@
     "title": "HTML Tags Can Overlap Arbitrarily",
     "description": "Belief that elements can open and close out of hierarchical order, such as <p><b>Hello</p></b>.",
     "conceptId": "concept-nesting-hierarchy",
-    "indicators": [
-      "Opening child before parent and closing parent before child"
-    ],
+    "indicators": ["Opening child before parent and closing parent before child"],
     "correction": "HTML elements form a strict hierarchical tree: the most recently opened element must be closed before its parent element can close."
   },
   {
@@ -120,9 +107,7 @@
     "title": "justify-content Always Aligns Horizontally",
     "description": "Assuming justify-content is always horizontal, regardless of flex-direction.",
     "conceptId": "concept-css-flexbox-layout",
-    "indicators": [
-      "Expecting align-items to align horizontally in column layout"
-    ],
+    "indicators": ["Expecting align-items to align horizontally in column layout"],
     "correction": "justify-content aligns along the MAIN axis (horizontal in row, vertical in column); align-items aligns along the CROSS axis."
   },
   {
@@ -191,9 +176,7 @@
     "title": "Functions Auto-Return the Last Defined Variable",
     "description": "Believing JavaScript works like some languages where the last evaluated expression is automatically returned without a return keyword.",
     "conceptId": "concept-undefined-default-return",
-    "indicators": [
-      "Defining let sum = a + b inside a function and omitting return sum"
-    ],
+    "indicators": ["Defining let sum = a + b inside a function and omitting return sum"],
     "correction": "In JavaScript standard functions, if there is no explicit return statement, the function execution finishes and evaluates to undefined."
   },
   {
@@ -201,9 +184,7 @@
     "title": "Code After return Continues to Run",
     "description": "Believing statements written below a return statement inside a function block will still execute.",
     "conceptId": "concept-function-return-value",
-    "indicators": [
-      "Writing cleanup or logging code directly below return x"
-    ],
+    "indicators": ["Writing cleanup or logging code directly below return x"],
     "correction": "The return statement immediately halts function execution and exits the function frame; subsequent code is unreachable."
   },
   {
@@ -231,9 +212,7 @@
     "title": "CSS Typos Throw Visible Console Errors",
     "description": "Believing misspelled CSS property names (like displau: flex or colr: red) will trigger error logs in the JavaScript console.",
     "conceptId": "concept-style-attribute-typos",
-    "indicators": [
-      "Checking only the JS console when CSS layout fails to apply"
-    ],
+    "indicators": ["Checking only the JS console when CSS layout fails to apply"],
     "correction": "Browsers follow CSS fault tolerance rules and silently ignore unrecognized properties without throwing runtime exceptions."
   },
   {
@@ -241,9 +220,7 @@
     "title": "Cannot read properties of null Means Corrupt JS",
     "description": "Thinking 'Cannot read properties of null (reading addEventListener)' means the browser's JavaScript engine is broken.",
     "conceptId": "concept-dom-element-resolution",
-    "indicators": [
-      "Believing addEventListener is missing from the browser API"
-    ],
+    "indicators": ["Believing addEventListener is missing from the browser API"],
     "correction": "This error means document.querySelector returned null because the element selector ID/class did not match any element in the HTML DOM."
   },
   {

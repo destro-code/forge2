@@ -41,7 +41,11 @@
     "definition": "The three foundational pillars of frontend engineering: HTML defines semantics and document structure, CSS defines visual styling and layout, and JavaScript defines interactive runtime behavior.",
     "topicId": "what-is-frontend-development",
     "prerequisiteConceptIds": ["concept-web-architecture", "concept-client-server-split"],
-    "relatedConceptIds": ["concept-html-elements", "concept-css-flexbox-layout", "concept-js-functions"],
+    "relatedConceptIds": [
+      "concept-html-elements",
+      "concept-css-flexbox-layout",
+      "concept-js-functions"
+    ],
     "misconceptionIds": ["misc-triad-interchangeable", "misc-js-replaces-html"]
   },
   {
@@ -104,7 +108,11 @@
     "definition": "A 1-dimensional layout model providing directional alignment, distribution of space, and flexible item sizing along main and cross axes.",
     "topicId": "flexbox-layout",
     "prerequisiteConceptIds": ["concept-css-box-model"],
-    "relatedConceptIds": ["concept-flex-container", "concept-flex-items", "concept-main-cross-axes"],
+    "relatedConceptIds": [
+      "concept-flex-container",
+      "concept-flex-items",
+      "concept-main-cross-axes"
+    ],
     "misconceptionIds": ["misc-justify-vs-align-items"]
   },
   {
@@ -141,7 +149,10 @@
     "topicId": "flexbox-layout",
     "prerequisiteConceptIds": ["concept-main-cross-axes"],
     "relatedConceptIds": ["concept-flex-container", "concept-flex-items"],
-    "misconceptionIds": ["misc-justify-moves-individual-items", "misc-flexbox-requires-hardcoded-margins"]
+    "misconceptionIds": [
+      "misc-justify-moves-individual-items",
+      "misc-flexbox-requires-hardcoded-margins"
+    ]
   },
   {
     "id": "concept-js-functions",
@@ -158,7 +169,10 @@
     "definition": "The explicit data value delivered back to the caller of a function via the return statement, which terminates function execution immediately.",
     "topicId": "javascript-functions",
     "prerequisiteConceptIds": ["concept-js-functions"],
-    "relatedConceptIds": ["concept-caller-expression-substitution", "concept-console-log-side-effects"],
+    "relatedConceptIds": [
+      "concept-caller-expression-substitution",
+      "concept-console-log-side-effects"
+    ],
     "misconceptionIds": ["misc-return-vs-console-log", "misc-code-after-return-executes"]
   },
   {
@@ -194,7 +208,10 @@
     "definition": "A disciplined, hypothesis-driven workflow for diagnosing defects using browser DevTools, console logs, breakpoint inspection, and DOM state verification.",
     "topicId": "debugging-strategies",
     "prerequisiteConceptIds": ["concept-web-platform-trio", "concept-html-elements"],
-    "relatedConceptIds": ["concept-syntax-error-vs-runtime-error", "concept-dom-element-resolution"],
+    "relatedConceptIds": [
+      "concept-syntax-error-vs-runtime-error",
+      "concept-dom-element-resolution"
+    ],
     "misconceptionIds": ["misc-random-code-tweaking"]
   },
   {
@@ -212,7 +229,10 @@
     "definition": "Resolving DOM nodes with document.querySelector; if a selector matches no element, it returns null, causing downstream property access or listener attachments to throw runtime TypeErrors.",
     "topicId": "debugging-strategies",
     "prerequisiteConceptIds": ["concept-html-elements", "concept-debugging-workflow"],
-    "relatedConceptIds": ["concept-event-listener-binding", "concept-syntax-error-vs-runtime-error"],
+    "relatedConceptIds": [
+      "concept-event-listener-binding",
+      "concept-syntax-error-vs-runtime-error"
+    ],
     "misconceptionIds": ["misc-null-addeventlistener-broken-js"]
   },
   {

@@ -4,10 +4,7 @@
     "title": "Distinguish Frontend vs Backend Responsibilities",
     "description": "Categorize software architecture responsibilities into client-side browser execution vs server-side data persistence and API processing.",
     "topicId": "what-is-frontend-development",
-    "conceptIds": [
-      "concept-frontend-definition",
-      "concept-web-platform-trio"
-    ],
+    "conceptIds": ["concept-frontend-definition", "concept-web-platform-trio"],
     "difficulty": "Beginner",
     "prerequisiteSkillIds": []
   },
@@ -16,10 +13,7 @@
     "title": "Classify Full-Stack Responsibilities",
     "description": "Distinguish between client-side responsibilities (rendering, interaction, client state) and server-side responsibilities (database queries, authentication, business APIs).",
     "topicId": "what-is-frontend-development",
-    "conceptIds": [
-      "concept-client-server-split",
-      "concept-web-architecture"
-    ],
+    "conceptIds": ["concept-client-server-split", "concept-web-architecture"],
     "difficulty": "Beginner",
     "prerequisiteSkillIds": []
   },
@@ -28,9 +22,7 @@
     "title": "Differentiate HTML, CSS, and JS Roles",
     "description": "Map specific web features and file responsibilities to the correct language: HTML for document structure, CSS for presentation, and JavaScript for runtime interaction.",
     "topicId": "what-is-frontend-development",
-    "conceptIds": [
-      "concept-triad-roles"
-    ],
+    "conceptIds": ["concept-triad-roles"],
     "difficulty": "Beginner",
     "prerequisiteSkillIds": []
   },
@@ -39,10 +31,7 @@
     "title": "Explain Client-Side Browser Execution",
     "description": "Trace how the browser receives assets over HTTP, builds the DOM and CSSOM, and runs the JavaScript event loop to power interactive web applications.",
     "topicId": "what-is-frontend-development",
-    "conceptIds": [
-      "concept-web-architecture",
-      "concept-client-server-split"
-    ],
+    "conceptIds": ["concept-web-architecture", "concept-client-server-split"],
     "difficulty": "Beginner",
     "prerequisiteSkillIds": []
   },
@@ -51,133 +40,88 @@
     "title": "Author Syntactically Valid HTML",
     "description": "Construct well-formed HTML document fragments with matching tags, proper attribute quotes, and correct semantic elements.",
     "topicId": "elements-tags-attributes",
-    "conceptIds": [
-      "concept-html-elements"
-    ],
+    "conceptIds": ["concept-html-elements"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-distinguish-web-responsibilities"
-    ]
+    "prerequisiteSkillIds": ["skill-distinguish-web-responsibilities"]
   },
   {
     "id": "skill-parse-element-syntax",
     "title": "Parse HTML Element Syntax",
     "description": "Identify and dissect opening tags, closing tags, attribute names, attribute values, and child content in HTML code.",
     "topicId": "elements-tags-attributes",
-    "conceptIds": [
-      "concept-html-element-anatomy",
-      "concept-opening-closing-tags"
-    ],
+    "conceptIds": ["concept-html-element-anatomy", "concept-opening-closing-tags"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-differentiate-triad-roles"
-    ]
+    "prerequisiteSkillIds": ["skill-differentiate-triad-roles"]
   },
   {
     "id": "skill-construct-element-attributes",
     "title": "Construct HTML Attributes",
     "description": "Configure elements using valid attribute name-value pairs, boolean attributes, class names, IDs, and resource URLs.",
     "topicId": "elements-tags-attributes",
-    "conceptIds": [
-      "concept-attributes-key-value",
-      "concept-opening-closing-tags"
-    ],
+    "conceptIds": ["concept-attributes-key-value", "concept-opening-closing-tags"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-parse-element-syntax"
-    ]
+    "prerequisiteSkillIds": ["skill-parse-element-syntax"]
   },
   {
     "id": "skill-nest-elements-validly",
     "title": "Nest HTML Elements Structurally",
     "description": "Construct valid hierarchical DOM structures by nesting child elements cleanly inside parent container elements without overlapping boundaries.",
     "topicId": "elements-tags-attributes",
-    "conceptIds": [
-      "concept-nesting-hierarchy"
-    ],
+    "conceptIds": ["concept-nesting-hierarchy"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-parse-element-syntax"
-    ]
+    "prerequisiteSkillIds": ["skill-parse-element-syntax"]
   },
   {
     "id": "skill-implement-flexbox-alignments",
     "title": "Implement CSS Flexbox Layouts",
     "description": "Apply display: flex, flex-direction, justify-content, and align-items to build flexible 1-dimensional layouts.",
     "topicId": "flexbox-layout",
-    "conceptIds": [
-      "concept-css-flexbox-layout",
-      "concept-css-box-model"
-    ],
+    "conceptIds": ["concept-css-flexbox-layout", "concept-css-box-model"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-write-valid-html-markup"
-    ]
+    "prerequisiteSkillIds": ["skill-write-valid-html-markup"]
   },
   {
     "id": "skill-identify-flex-axes",
     "title": "Identify Main and Cross Axes",
     "description": "Determine the orientation of the main axis and cross axis based on the flex-direction property (row vs column).",
     "topicId": "flexbox-layout",
-    "conceptIds": [
-      "concept-main-cross-axes",
-      "concept-flex-container"
-    ],
+    "conceptIds": ["concept-main-cross-axes", "concept-flex-container"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-write-valid-html-markup"
-    ]
+    "prerequisiteSkillIds": ["skill-write-valid-html-markup"]
   },
   {
     "id": "skill-predict-flex-distribution",
     "title": "Predict Flex Item Alignment & Distribution",
     "description": "Predict visual placement of flex items under combinations of justify-content (center, space-between, flex-start) and align-items.",
     "topicId": "flexbox-layout",
-    "conceptIds": [
-      "concept-main-cross-axes",
-      "concept-justify-align-distribution"
-    ],
+    "conceptIds": ["concept-main-cross-axes", "concept-justify-align-distribution"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-identify-flex-axes"
-    ]
+    "prerequisiteSkillIds": ["skill-identify-flex-axes"]
   },
   {
     "id": "skill-author-flexbox-rules",
     "title": "Author CSS Flexbox Rules",
     "description": "Write clean, robust CSS rules using display: flex, justify-content, align-items, and gap to build real-world UI components.",
     "topicId": "flexbox-layout",
-    "conceptIds": [
-      "concept-flex-container",
-      "concept-justify-align-distribution"
-    ],
+    "conceptIds": ["concept-flex-container", "concept-justify-align-distribution"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-predict-flex-distribution"
-    ]
+    "prerequisiteSkillIds": ["skill-predict-flex-distribution"]
   },
   {
     "id": "skill-author-javascript-functions",
     "title": "Author and Invoke JavaScript Functions",
     "description": "Write parameterized functions, execute them with arguments, and return computed results to calling contexts.",
     "topicId": "javascript-functions",
-    "conceptIds": [
-      "concept-js-functions"
-    ],
+    "conceptIds": ["concept-js-functions"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-distinguish-web-responsibilities"
-    ]
+    "prerequisiteSkillIds": ["skill-distinguish-web-responsibilities"]
   },
   {
     "id": "skill-distinguish-return-vs-log",
     "title": "Distinguish Return Values from Console Logging",
     "description": "Differentiate between producing a return value for caller expressions and emitting debug strings to the console via console.log.",
     "topicId": "javascript-functions",
-    "conceptIds": [
-      "concept-function-return-value",
-      "concept-console-log-side-effects"
-    ],
+    "conceptIds": ["concept-function-return-value", "concept-console-log-side-effects"],
     "difficulty": "Beginner",
     "prerequisiteSkillIds": []
   },
@@ -186,36 +130,25 @@
     "title": "Predict Call Expression Values",
     "description": "Trace function execution to predict what a function call evaluates to in variable assignments and arithmetic expressions.",
     "topicId": "javascript-functions",
-    "conceptIds": [
-      "concept-caller-expression-substitution",
-      "concept-undefined-default-return"
-    ],
+    "conceptIds": ["concept-caller-expression-substitution", "concept-undefined-default-return"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-distinguish-return-vs-log"
-    ]
+    "prerequisiteSkillIds": ["skill-distinguish-return-vs-log"]
   },
   {
     "id": "skill-author-returning-functions",
     "title": "Author Functions with Return Values",
     "description": "Write reusable JavaScript functions that calculate data, explicitly return results, and compose cleanly with callers.",
     "topicId": "javascript-functions",
-    "conceptIds": [
-      "concept-function-return-value"
-    ],
+    "conceptIds": ["concept-function-return-value"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-predict-call-expression-values"
-    ]
+    "prerequisiteSkillIds": ["skill-predict-call-expression-values"]
   },
   {
     "id": "skill-diagnose-frontend-bugs",
     "title": "Diagnose Multi-File Frontend Defects",
     "description": "Isolate HTML structure errors, CSS styling failures, and JavaScript runtime errors in a multi-file web project.",
     "topicId": "debugging-strategies",
-    "conceptIds": [
-      "concept-debugging-workflow"
-    ],
+    "conceptIds": ["concept-debugging-workflow"],
     "difficulty": "Beginner",
     "prerequisiteSkillIds": [
       "skill-write-valid-html-markup",
@@ -228,10 +161,7 @@
     "title": "Diagnose Symptom Root Causes",
     "description": "Formulate hypotheses explaining broken visual or interactive behaviors by inspecting symptoms across HTML, CSS, and JS layers.",
     "topicId": "debugging-strategies",
-    "conceptIds": [
-      "concept-syntax-error-vs-runtime-error",
-      "concept-debugging-workflow"
-    ],
+    "conceptIds": ["concept-syntax-error-vs-runtime-error", "concept-debugging-workflow"],
     "difficulty": "Beginner",
     "prerequisiteSkillIds": []
   },
@@ -246,33 +176,23 @@
       "concept-style-attribute-typos"
     ],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-diagnose-symptom-root-causes"
-    ]
+    "prerequisiteSkillIds": ["skill-diagnose-symptom-root-causes"]
   },
   {
     "id": "skill-repair-multi-file-defects",
     "title": "Repair Multi-File Frontend Defects",
     "description": "Apply surgical code corrections to HTML markup, CSS stylesheet rules, and JavaScript DOM handlers to restore application functionality.",
     "topicId": "debugging-strategies",
-    "conceptIds": [
-      "concept-event-listener-binding",
-      "concept-dom-element-resolution"
-    ],
+    "conceptIds": ["concept-event-listener-binding", "concept-dom-element-resolution"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": [
-      "skill-formulate-debugging-hypothesis"
-    ]
+    "prerequisiteSkillIds": ["skill-formulate-debugging-hypothesis"]
   },
   {
     "id": "skill-diagnose-request-failure-locus",
     "title": "Diagnose Which Request Stage Failed",
     "description": "Given evidence from a failed network request, determine whether the failure occurred during DNS resolution, connection, or server processing, and explain what that implies about where the fix belongs.",
     "topicId": "understanding-network-requests",
-    "conceptIds": [
-      "concept-request-lifecycle-stages",
-      "concept-failure-locus-diagnosis"
-    ],
+    "conceptIds": ["concept-request-lifecycle-stages", "concept-failure-locus-diagnosis"],
     "difficulty": "Intermediate",
     "prerequisiteSkillIds": []
   },
@@ -281,9 +201,7 @@
     "title": "Read Network Panel Timing Evidence",
     "description": "Interpret Network panel timing breakdowns (DNS lookup, connecting, waiting/TTFB) to identify which stage of a request consumed the time or produced the failure.",
     "topicId": "understanding-network-requests",
-    "conceptIds": [
-      "concept-network-panel-evidence"
-    ],
+    "conceptIds": ["concept-network-panel-evidence"],
     "difficulty": "Intermediate",
     "prerequisiteSkillIds": []
   }

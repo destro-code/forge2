@@ -5,7 +5,11 @@ import { ActivityHeader } from "../primitives/activity-header";
 import { ActivityActions } from "../primitives/activity-actions";
 import { Target, Compass } from "lucide-react";
 
-export function IntroRenderer({ activity, state, onContinue }: ActivityRendererProps<IntroActivity>) {
+export function IntroRenderer({
+  activity,
+  state,
+  onContinue,
+}: ActivityRendererProps<IntroActivity>) {
   const { title, hook, context, goals } = activity.content;
 
   return (
@@ -41,7 +45,10 @@ export function IntroRenderer({ activity, state, onContinue }: ActivityRendererP
               </div>
               <ul className="space-y-2">
                 {goals.map((goal, idx) => (
-                  <li key={idx} className="flex items-start gap-3 rounded-lg px-3 py-3 text-sm leading-6 text-lesson-text-secondary">
+                  <li
+                    key={idx}
+                    className="flex items-start gap-3 rounded-lg px-3 py-3 text-sm leading-6 text-lesson-text-secondary"
+                  >
                     <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-lesson-border text-[10px] font-semibold text-lesson-text-muted">
                       {idx + 1}
                     </span>
@@ -53,7 +60,12 @@ export function IntroRenderer({ activity, state, onContinue }: ActivityRendererP
           )}
         </div>
 
-        <ActivityActions status={state.status} isInteractive={false} onContinue={onContinue} continueLabel="Start learning" />
+        <ActivityActions
+          status={state.status}
+          isInteractive={false}
+          onContinue={onContinue}
+          continueLabel="Start learning"
+        />
       </div>
     </ActivityContainer>
   );

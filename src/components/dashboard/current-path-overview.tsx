@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Play, ChevronRight, Clock, BookOpen } from "lucide-react";
+import { CheckCircle2, Play, ChevronRight, Clock, MapPin } from "lucide-react";
 import type { Module, Lesson } from "@/lib/types";
 
 interface CurrentPathOverviewProps {
@@ -23,13 +23,13 @@ export function CurrentPathOverview({
   const moduleProgress = Math.round((completedCount / (totalCount || 1)) * 100);
 
   return (
-    <div className="space-y-4 rounded-xl border border-border/60 bg-card/60 p-5 sm:p-6 shadow-xs">
+    <div className="space-y-4 rounded-xl border border-border/60 bg-card/40 p-5 sm:p-6 shadow-xs">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/50 pb-4">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
-            <BookOpen className="h-3.5 w-3.5" />
-            Active Module Path
+            <MapPin className="h-3.5 w-3.5" />
+            Learning Path
           </div>
           <h3 className="text-xl font-bold tracking-tight text-foreground mt-0.5">
             {module.title}
@@ -42,10 +42,10 @@ export function CurrentPathOverview({
         <div className="flex items-center gap-4 shrink-0">
           <div className="text-right">
             <div className="text-xs font-semibold text-foreground">
-              {completedCount} of {totalCount} lessons done
+              {completedCount} of {totalCount} lessons completed
             </div>
             <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
-              {moduleProgress}% complete
+              {moduleProgress}% module progress
             </div>
           </div>
           <Button
@@ -113,9 +113,9 @@ export function CurrentPathOverview({
                     <span
                       className={`text-sm font-semibold truncate ${
                         isCurrent
-                          ? "text-foreground"
+                          ? "text-foreground font-bold"
                           : isCompleted
-                            ? "text-foreground/90"
+                            ? "text-foreground/80"
                             : "text-muted-foreground group-hover:text-foreground"
                       }`}
                     >

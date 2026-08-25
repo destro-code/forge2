@@ -22,58 +22,36 @@
     {
       "id": "OBJ-JS-401",
       "statement": "Distinguish between returning a value from a function and logging a value to the console.",
-      "conceptIds": [
-        "concept-function-return-value",
-        "concept-console-log-side-effects"
-      ],
-      "skillIds": [
-        "skill-distinguish-return-vs-log"
-      ],
+      "conceptIds": ["concept-function-return-value", "concept-console-log-side-effects"],
+      "skillIds": ["skill-distinguish-return-vs-log"],
       "priority": "primary"
     },
     {
       "id": "OBJ-JS-402",
       "statement": "Predict the value of call expressions when functions explicitly return vs implicitly return undefined.",
-      "conceptIds": [
-        "concept-caller-expression-substitution",
-        "concept-undefined-default-return"
-      ],
-      "skillIds": [
-        "skill-predict-call-expression-values"
-      ],
+      "conceptIds": ["concept-caller-expression-substitution", "concept-undefined-default-return"],
+      "skillIds": ["skill-predict-call-expression-values"],
       "priority": "primary"
     },
     {
       "id": "OBJ-JS-403",
       "statement": "Refactor JavaScript functions to explicitly return computed values for downstream call expression substitution.",
-      "conceptIds": [
-        "concept-function-return-value"
-      ],
-      "skillIds": [
-        "skill-author-returning-functions"
-      ],
+      "conceptIds": ["concept-function-return-value"],
+      "skillIds": ["skill-author-returning-functions"],
       "priority": "secondary"
     }
   ],
   "prerequisites": {
-    "lessonIds": [
-      "lesson-1-2-7"
-    ],
-    "conceptIds": [
-      "concept-js-functions"
-    ],
-    "skillIds": [
-      "skill-author-javascript-functions"
-    ]
+    "lessonIds": ["lesson-1-2-7"],
+    "conceptIds": ["concept-js-functions"],
+    "skillIds": ["skill-author-javascript-functions"]
   },
   "activities": [
     {
       "id": "act-131-intro",
       "type": "intro",
       "intent": "orientation",
-      "objectiveIds": [
-        "OBJ-JS-401"
-      ],
+      "objectiveIds": ["OBJ-JS-401"],
       "content": {
         "title": "Make Your Functions Return Useful Values",
         "hook": "Why does console.log feel like it works, right up until your app breaks?",
@@ -89,10 +67,7 @@
       "id": "act-131-explanation",
       "type": "explanation",
       "intent": "understanding",
-      "objectiveIds": [
-        "OBJ-JS-401",
-        "OBJ-JS-402"
-      ],
+      "objectiveIds": ["OBJ-JS-401", "OBJ-JS-402"],
       "content": {
         "title": "console.log() vs return: What Actually Happens",
         "text": "When you call a function, JavaScript creates a local execution frame. The return keyword hands a computed value back to the caller and immediately exits the function frame.\n\nconsole.log(), by contrast, only writes output to the developer console for debugging and always evaluates to undefined.\n\nIf a function finishes executing without an explicit return statement, JavaScript automatically returns undefined.",
@@ -108,20 +83,12 @@
       "id": "act-131-output-prediction",
       "type": "output-prediction",
       "intent": "prediction",
-      "objectiveIds": [
-        "OBJ-JS-401",
-        "OBJ-JS-402"
-      ],
+      "objectiveIds": ["OBJ-JS-401", "OBJ-JS-402"],
       "content": {
         "prompt": "What value is stored in receipt after running this code?",
         "language": "javascript",
         "code": "function calculateTotal(price, tax) {\n  const total = price + tax;\n  console.log(\"Total is:\", total);\n}\n\nconst receipt = calculateTotal(50, 5);\nconsole.log(receipt);",
-        "options": [
-          "55",
-          "undefined",
-          "Total is: 55",
-          "null"
-        ],
+        "options": ["55", "undefined", "Total is: 55", "null"],
         "explanation": "calculateTotal uses console.log() to print the total, but lacks a return statement. Functions without a return statement implicitly return undefined. Therefore, receipt receives undefined."
       },
       "validation": {
@@ -154,9 +121,7 @@
       "id": "act-131-interactive-code",
       "type": "interactive-code",
       "intent": "application",
-      "objectiveIds": [
-        "OBJ-JS-403"
-      ],
+      "objectiveIds": ["OBJ-JS-403"],
       "content": {
         "title": "Refactor utils.js to Return Values",
         "prompt": "Refactor the helper functions in utils.js so they return computed values instead of logging them.",
@@ -258,9 +223,7 @@
       "id": "act-131-reflection",
       "type": "reflection",
       "intent": "reflection",
-      "objectiveIds": [
-        "OBJ-JS-401"
-      ],
+      "objectiveIds": ["OBJ-JS-401"],
       "content": {
         "title": "Reflection: return vs console.log()",
         "prompt": "In your own words, explain the fundamental difference between console.log() and return in JavaScript. Why is relying on console.log() a problem when building real web applications?",
@@ -275,11 +238,7 @@
       "id": "act-131-summary",
       "type": "summary",
       "intent": "reflection",
-      "objectiveIds": [
-        "OBJ-JS-401",
-        "OBJ-JS-402",
-        "OBJ-JS-403"
-      ],
+      "objectiveIds": ["OBJ-JS-401", "OBJ-JS-402", "OBJ-JS-403"],
       "content": {
         "title": "Function Return Value Mastery",
         "summary": "You have mastered the mechanics of JavaScript function return values and caller expression substitution.",
@@ -306,23 +265,17 @@
     "evidenceRequirements": [
       {
         "objectiveId": "OBJ-JS-401",
-        "activityIds": [
-          "act-131-output-prediction"
-        ],
+        "activityIds": ["act-131-output-prediction"],
         "requirement": "success"
       },
       {
         "objectiveId": "OBJ-JS-402",
-        "activityIds": [
-          "act-131-output-prediction"
-        ],
+        "activityIds": ["act-131-output-prediction"],
         "requirement": "success"
       },
       {
         "objectiveId": "OBJ-JS-403",
-        "activityIds": [
-          "act-131-interactive-code"
-        ],
+        "activityIds": ["act-131-interactive-code"],
         "requirement": "success"
       }
     ]

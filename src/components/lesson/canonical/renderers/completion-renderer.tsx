@@ -5,7 +5,11 @@ import { ActivityHeader } from "../primitives/activity-header";
 import { ActivityActions } from "../primitives/activity-actions";
 import { Award, Sparkles, CheckCircle2 } from "lucide-react";
 
-export function CompletionRenderer({ activity, state, onContinue }: ActivityRendererProps<CompletionActivity>) {
+export function CompletionRenderer({
+  activity,
+  state,
+  onContinue,
+}: ActivityRendererProps<CompletionActivity>) {
   const { title, message, badgeId, congratulations } = activity.content;
 
   return (
@@ -18,9 +22,19 @@ export function CompletionRenderer({ activity, state, onContinue }: ActivityRend
 
         <div className="mt-7 max-w-2xl">
           <p className="text-sm font-semibold text-lesson-accent">Lesson complete</p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-lesson-text-primary sm:text-4xl">{title || "Lesson completed"}</h2>
-          {message && <p className="mt-4 text-base leading-7 text-lesson-text-secondary sm:text-lg">{message}</p>}
-          {congratulations && <p className="mt-4 text-sm font-medium leading-6 text-lesson-text-secondary">{congratulations}</p>}
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-lesson-text-primary sm:text-4xl">
+            {title || "Lesson completed"}
+          </h2>
+          {message && (
+            <p className="mt-4 text-base leading-7 text-lesson-text-secondary sm:text-lg">
+              {message}
+            </p>
+          )}
+          {congratulations && (
+            <p className="mt-4 text-sm font-medium leading-6 text-lesson-text-secondary">
+              {congratulations}
+            </p>
+          )}
         </div>
 
         {badgeId && (
@@ -30,14 +44,21 @@ export function CompletionRenderer({ activity, state, onContinue }: ActivityRend
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold text-lesson-text-muted">Milestone</p>
-              <p className="mt-0.5 truncate text-sm font-semibold text-lesson-text-primary">{badgeId}</p>
+              <p className="mt-0.5 truncate text-sm font-semibold text-lesson-text-primary">
+                {badgeId}
+              </p>
             </div>
             <Sparkles className="h-4 w-4 shrink-0 text-lesson-accent" />
           </div>
         )}
       </div>
 
-      <ActivityActions status={state.status} isInteractive={false} onContinue={onContinue} continueLabel="Continue learning" />
+      <ActivityActions
+        status={state.status}
+        isInteractive={false}
+        onContinue={onContinue}
+        continueLabel="Continue learning"
+      />
     </ActivityContainer>
   );
 }

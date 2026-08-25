@@ -6,7 +6,11 @@ import { ActivityActions } from "../primitives/activity-actions";
 import { Callout } from "@/components/shared/callout";
 import { Sparkles } from "lucide-react";
 
-export function ExplanationRenderer({ activity, state, onContinue }: ActivityRendererProps<ExplanationActivity>) {
+export function ExplanationRenderer({
+  activity,
+  state,
+  onContinue,
+}: ActivityRendererProps<ExplanationActivity>) {
   const { title, text, callout, keyTakeaway } = activity.content;
 
   return (
@@ -27,20 +31,31 @@ export function ExplanationRenderer({ activity, state, onContinue }: ActivityRen
             ))}
           </div>
 
-          {callout && <div className="mt-8"><Callout variant={callout.variant} text={callout.text} /></div>}
+          {callout && (
+            <div className="mt-8">
+              <Callout variant={callout.variant} text={callout.text} />
+            </div>
+          )}
 
           {keyTakeaway && (
             <div className="mt-8 flex items-start gap-3 rounded-xl bg-lesson-surface-subtle px-4 py-4">
               <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-lesson-accent" />
               <div>
                 <p className="text-xs font-semibold text-lesson-text-muted">Key takeaway</p>
-                <p className="mt-1 text-sm font-medium leading-6 text-lesson-text-primary">{keyTakeaway}</p>
+                <p className="mt-1 text-sm font-medium leading-6 text-lesson-text-primary">
+                  {keyTakeaway}
+                </p>
               </div>
             </div>
           )}
         </article>
 
-        <ActivityActions status={state.status} isInteractive={false} onContinue={onContinue} continueLabel="Continue" />
+        <ActivityActions
+          status={state.status}
+          isInteractive={false}
+          onContinue={onContinue}
+          continueLabel="Continue"
+        />
       </div>
     </ActivityContainer>
   );

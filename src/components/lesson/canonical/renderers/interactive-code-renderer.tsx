@@ -8,15 +8,35 @@ import { ActivityFeedback } from "../primitives/activity-feedback";
 import { ActivityActions } from "../primitives/activity-actions";
 import { LessonCodeEditor } from "@/components/shared/lesson-editor/lesson-code-editor";
 import { Button } from "@/components/ui/button";
-import { Code2, Play, RotateCcw, Terminal, BookOpen, CheckCircle2, AlertCircle, Lightbulb } from "lucide-react";
+import {
+  Code2,
+  Play,
+  RotateCcw,
+  Terminal,
+  BookOpen,
+  CheckCircle2,
+  AlertCircle,
+  Lightbulb,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function InteractiveCodeRenderer({ activity, state, onResponse, onSubmit, onRetry, onContinue, onRevealHint, readOnly }: ActivityRendererProps<InteractiveCodeActivity, string>) {
+export function InteractiveCodeRenderer({
+  activity,
+  state,
+  onResponse,
+  onSubmit,
+  onRetry,
+  onContinue,
+  onRevealHint,
+  readOnly,
+}: ActivityRendererProps<InteractiveCodeActivity, string>) {
   const { instructions, starterCode, language, testCases } = activity.content;
   const currentCode = typeof state.response === "string" ? state.response : starterCode;
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [testResults, setTestResults] = useState<Array<{ description: string; passed: boolean; error?: string }>>([]);
+  const [testResults, setTestResults] = useState<
+    Array<{ description: string; passed: boolean; error?: string }>
+  >([]);
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
   const isCorrect = state.status === "correct" || state.status === "completed";
   const resolvedHints = activity.feedback?.hints || activity.content?.hints;
@@ -40,7 +60,12 @@ export function InteractiveCodeRenderer({ activity, state, onResponse, onSubmit,
           for (const test of testCases || []) {
             try {
               if (test.assertion) {
-                const testFn = new Function("doc", "document", "code", `return (${test.assertion});`);
+                const testFn = new Function(
+                  "doc",
+                  "document",
+                  "code",
+                  `return (${test.assertion});`,
+                );
                 const passed = Boolean(testFn(doc, doc, currentCode));
                 results.push({ description: test.description, passed });
                 if (!passed) testsPassed = false;
@@ -71,7 +96,9 @@ export function InteractiveCodeRenderer({ activity, state, onResponse, onSubmit,
         for (const test of testCases || []) {
           try {
             if (test.assertion) {
-              const passed = Boolean(new Function("rules", "code", `return (${test.assertion});`)(rules, currentCode));
+              const passed = Boolean(
+                new Function("rules", "code", `return (${test.assertion});`)(rules, currentCode),
+              );
               results.push({ description: test.description, passed });
               if (!passed) testsPassed = false;
             } else results.push({ description: test.description, passed: true });
@@ -99,7 +126,11 @@ export function InteractiveCodeRenderer({ activity, state, onResponse, onSubmit,
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
-      <ActivityHeader activity={activity} onRevealHint={onRevealHint} hintsRemaining={hintsRemaining} />
+      <ActivityHeader
+        activity={activity}
+        onRevealHint={onRevealHint}
+        hintsRemaining={hintsRemaining}
+      />
 
       <div className="border-b border-lesson-border bg-lesson-surface-subtle/30 px-3 py-3 lg:hidden">
         <div className="grid grid-cols-3 gap-1 rounded-lg bg-lesson-surface-subtle p-1">
@@ -115,7 +146,9 @@ export function InteractiveCodeRenderer({ activity, state, onResponse, onSubmit,
               aria-pressed={activeTab === tab}
               className={cn(
                 "flex min-h-11 items-center justify-center gap-1.5 rounded-md px-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lesson-focus-ring",
-                activeTab === tab ? "bg-lesson-surface text-lesson-text-primary shadow-xs" : "text-lesson-text-muted hover:text-lesson-text-primary",
+                activeTab === tab
+                  ? "bg-lesson-surface text-lesson-text-primary shadow-xs"
+                  : "text-lesson-text-muted hover:text-lesson-text-primary",
               )}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -126,15 +159,28 @@ export function InteractiveCodeRenderer({ activity, state, onResponse, onSubmit,
       </div>
 
       <div className="grid min-h-[32rem] grid-cols-1 lg:grid-cols-[minmax(240px,0.85fr)_minmax(0,1.6fr)]">
-        <aside className={cn("border-b border-lesson-border bg-lesson-surface-subtle/20 p-5 sm:p-7 lg:border-b-0 lg:border-r", activeTab === "instructions" ? "block" : "hidden lg:block")}>
+        <aside
+          className={cn(
+            "border-b border-lesson-border bg-lesson-surface-subtle/20 p-5 sm:p-7 lg:border-b-0 lg:border-r",
+            activeTab === "instructions" ? "block" : "hidden lg:block",
+          )}
+        >
           <div className="sticky top-0 space-y-5">
             <div>
               <p className="text-xs font-medium text-lesson-text-muted">Your task</p>
-              <h2 className="mt-1 text-xl font-bold tracking-tight text-lesson-text-primary">Build the solution</h2>
+              <h2 className="mt-1 text-xl font-bold tracking-tight text-lesson-text-primary">
+                Build the solution
+              </h2>
             </div>
-            <div className="whitespace-pre-wrap text-sm leading-7 text-lesson-text-secondary">{instructions}</div>
+            <div className="whitespace-pre-wrap text-sm leading-7 text-lesson-text-secondary">
+              {instructions}
+            </div>
             {onRevealHint && hintsRemaining > 0 && (
-              <Button variant="ghost" onClick={onRevealHint} className="min-h-11 w-full justify-start gap-2 px-3 text-sm text-lesson-text-secondary hover:bg-lesson-surface hover:text-lesson-text-primary">
+              <Button
+                variant="ghost"
+                onClick={onRevealHint}
+                className="min-h-11 w-full justify-start gap-2 px-3 text-sm text-lesson-text-secondary hover:bg-lesson-surface hover:text-lesson-text-primary"
+              >
                 <Lightbulb className="h-4 w-4" />
                 Hint · {hintsRemaining} remaining
               </Button>
@@ -142,22 +188,44 @@ export function InteractiveCodeRenderer({ activity, state, onResponse, onSubmit,
           </div>
         </aside>
 
-        <section className={cn("min-w-0 bg-lesson-surface p-4 sm:p-6", activeTab === "code" || activeTab === "results" ? "block" : "hidden lg:block")}>
+        <section
+          className={cn(
+            "min-w-0 bg-lesson-surface p-4 sm:p-6",
+            activeTab === "code" || activeTab === "results" ? "block" : "hidden lg:block",
+          )}
+        >
           <div className={cn("space-y-3", activeTab === "results" ? "hidden lg:block" : "block")}>
             <div className="flex min-h-10 items-center justify-between gap-3 border-b border-lesson-border pb-2">
               <div className="flex min-w-0 items-center gap-2 text-xs text-lesson-text-muted">
                 <Code2 className="h-4 w-4 shrink-0" />
                 <span className="font-mono">{language || "javascript"}</span>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => onResponse(starterCode)} className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onResponse(starterCode)}
+                className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
+              >
                 <RotateCcw className="h-3.5 w-3.5" /> Reset
               </Button>
             </div>
 
-            <LessonCodeEditor value={currentCode} language={language || "javascript"} onChange={(value) => onResponse(value || "")} readOnly={readOnly} className="min-h-[18rem] md:min-h-[26rem]" aria-label="Lesson code editor" id={`lesson-code-editor-${activity.id}`} />
+            <LessonCodeEditor
+              value={currentCode}
+              language={language || "javascript"}
+              onChange={(value) => onResponse(value || "")}
+              readOnly={readOnly}
+              className="min-h-[18rem] md:min-h-[26rem]"
+              aria-label="Lesson code editor"
+              id={`lesson-code-editor-${activity.id}`}
+            />
 
             <div className="flex justify-end pt-1">
-              <Button onClick={handleRunCode} disabled={isRunning || readOnly} className="min-h-11 gap-2 px-5">
+              <Button
+                onClick={handleRunCode}
+                disabled={isRunning || readOnly}
+                className="min-h-11 gap-2 px-5"
+              >
                 <Play className="h-4 w-4 fill-current" />
                 {isRunning ? "Running…" : "Run & verify"}
               </Button>
@@ -167,40 +235,83 @@ export function InteractiveCodeRenderer({ activity, state, onResponse, onSubmit,
           <div className={cn("space-y-4", activeTab === "code" ? "hidden lg:block" : "block")}>
             {hasExecuted ? (
               <>
-                <div className={cn("flex items-start gap-3 rounded-xl border p-4", allTestsPassed ? "border-emerald-500/30 bg-emerald-500/5" : "border-lesson-border bg-lesson-surface-subtle")}>
-                  {allTestsPassed ? <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" /> : <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-lesson-text-muted" />}
+                <div
+                  className={cn(
+                    "flex items-start gap-3 rounded-xl border p-4",
+                    allTestsPassed
+                      ? "border-emerald-500/30 bg-emerald-500/5"
+                      : "border-lesson-border bg-lesson-surface-subtle",
+                  )}
+                >
+                  {allTestsPassed ? (
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                  ) : (
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-lesson-text-muted" />
+                  )}
                   <div>
-                    <p className="text-sm font-semibold text-lesson-text-primary">{allTestsPassed ? "Checks passed" : "Keep working"}</p>
-                    <p className="mt-1 text-sm leading-6 text-lesson-text-secondary">{allTestsPassed ? "Your solution passed the available checks." : "Review the results and adjust your solution."}</p>
+                    <p className="text-sm font-semibold text-lesson-text-primary">
+                      {allTestsPassed ? "Checks passed" : "Keep working"}
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-lesson-text-secondary">
+                      {allTestsPassed
+                        ? "Your solution passed the available checks."
+                        : "Review the results and adjust your solution."}
+                    </p>
                   </div>
                 </div>
 
                 <div>
-                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-lesson-text-muted"><Terminal className="h-3.5 w-3.5" /> Console</div>
-                  <pre className="max-h-40 overflow-auto rounded-xl bg-zinc-950 p-4 font-mono text-xs leading-6 text-zinc-100">{consoleOutput.join("\n")}</pre>
+                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
+                    <Terminal className="h-3.5 w-3.5" /> Console
+                  </div>
+                  <pre className="max-h-40 overflow-auto rounded-xl bg-zinc-950 p-4 font-mono text-xs leading-6 text-zinc-100">
+                    {consoleOutput.join("\n")}
+                  </pre>
                 </div>
 
                 {testResults.length > 0 && (
                   <div className="space-y-2">
                     <p className="text-xs font-semibold text-lesson-text-muted">Verification</p>
                     {testResults.map((test, index) => (
-                      <div key={`${test.description}-${index}`} className="flex items-start gap-3 rounded-lg border border-lesson-border px-3 py-3 text-sm">
-                        {test.passed ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> : <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-lesson-text-muted" />}
-                        <span className="min-w-0 flex-1 text-lesson-text-secondary">{test.description}</span>
+                      <div
+                        key={`${test.description}-${index}`}
+                        className="flex items-start gap-3 rounded-lg border border-lesson-border px-3 py-3 text-sm"
+                      >
+                        {test.passed ? (
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                        ) : (
+                          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-lesson-text-muted" />
+                        )}
+                        <span className="min-w-0 flex-1 text-lesson-text-secondary">
+                          {test.description}
+                        </span>
                       </div>
                     ))}
                   </div>
                 )}
               </>
             ) : (
-              <div className="flex min-h-64 items-center justify-center rounded-xl border border-dashed border-lesson-border px-6 text-center text-sm text-lesson-text-muted">Run the code to see results.</div>
+              <div className="flex min-h-64 items-center justify-center rounded-xl border border-dashed border-lesson-border px-6 text-center text-sm text-lesson-text-muted">
+                Run the code to see results.
+              </div>
             )}
           </div>
         </section>
       </div>
 
-      <ActivityFeedback status={state.status} validationResult={state.validationResult} hints={resolvedHints} hintsRevealed={state.hintsRevealed} />
-      <ActivityActions status={state.status} onSubmit={onSubmit} onRetry={onRetry} onContinue={onContinue} canSubmit={Boolean(currentCode)} />
+      <ActivityFeedback
+        status={state.status}
+        validationResult={state.validationResult}
+        hints={resolvedHints}
+        hintsRevealed={state.hintsRevealed}
+      />
+      <ActivityActions
+        status={state.status}
+        onSubmit={onSubmit}
+        onRetry={onRetry}
+        onContinue={onContinue}
+        canSubmit={Boolean(currentCode)}
+      />
     </ActivityContainer>
   );
 }

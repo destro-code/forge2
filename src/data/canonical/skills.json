@@ -150,7 +150,11 @@
     "topicId": "debugging-strategies",
     "conceptIds": ["concept-debugging-workflow"],
     "difficulty": "Beginner",
-    "prerequisiteSkillIds": ["skill-write-valid-html-markup", "skill-implement-flexbox-alignments", "skill-author-javascript-functions"]
+    "prerequisiteSkillIds": [
+      "skill-write-valid-html-markup",
+      "skill-implement-flexbox-alignments",
+      "skill-author-javascript-functions"
+    ]
   },
   {
     "id": "skill-diagnose-symptom-root-causes",
@@ -166,7 +170,11 @@
     "title": "Formulate Debugging Hypotheses",
     "description": "Use console logs, error stack traces, and element inspection to locate exact lines containing syntax, selector, or null reference bugs.",
     "topicId": "debugging-strategies",
-    "conceptIds": ["concept-syntax-error-vs-runtime-error", "concept-dom-element-resolution", "concept-style-attribute-typos"],
+    "conceptIds": [
+      "concept-syntax-error-vs-runtime-error",
+      "concept-dom-element-resolution",
+      "concept-style-attribute-typos"
+    ],
     "difficulty": "Beginner",
     "prerequisiteSkillIds": ["skill-diagnose-symptom-root-causes"]
   },

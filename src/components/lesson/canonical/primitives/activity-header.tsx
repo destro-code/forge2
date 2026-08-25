@@ -44,9 +44,7 @@ export function ActivityHeader({
       <div className="min-w-0">
         <p className="text-xs font-medium text-lesson-text-muted">{label}</p>
         {title && (
-          <p className="mt-0.5 truncate text-sm font-medium text-lesson-text-secondary">
-            {title}
-          </p>
+          <p className="mt-0.5 truncate text-sm font-medium text-lesson-text-secondary">{title}</p>
         )}
       </div>
 

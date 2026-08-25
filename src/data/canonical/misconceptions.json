@@ -4,7 +4,10 @@
     "title": "Frontend Is Only Visual UI & Styling",
     "description": "Belief that frontend development is limited to colors and layout rather than state management, performance, network requests, and security.",
     "conceptId": "concept-frontend-definition",
-    "indicators": ["Believing all complex logic must execute on the backend", "Ignoring client-side state architectures"],
+    "indicators": [
+      "Believing all complex logic must execute on the backend",
+      "Ignoring client-side state architectures"
+    ],
     "correction": "Frontend engineering encompasses rich client state, routing, caching, accessibility, network synchronization, and high-performance DOM updates in the browser."
   },
   {
@@ -12,7 +15,10 @@
     "title": "JavaScript Replaces HTML and CSS",
     "description": "Belief that writing everything in JavaScript eliminates the need to understand HTML semantics and CSS cascade mechanics.",
     "conceptId": "concept-web-platform-trio",
-    "indicators": ["Using <div> for every interactive control", "Re-implementing basic browser navigation in custom script"],
+    "indicators": [
+      "Using <div> for every interactive control",
+      "Re-implementing basic browser navigation in custom script"
+    ],
     "correction": "JavaScript manipulates the DOM; HTML provides semantic meaning and accessibility, and CSS provides hardware-accelerated rendering."
   },
   {
@@ -20,7 +26,10 @@
     "title": "HTML, CSS, and JS are Interchangeable",
     "description": "Belief that HTML, CSS, and JavaScript do the same things and any one of them can replace the other two completely.",
     "conceptId": "concept-triad-roles",
-    "indicators": ["Trying to write calculation logic in HTML", "Using JS animations when pure CSS transitions suffice"],
+    "indicators": [
+      "Trying to write calculation logic in HTML",
+      "Using JS animations when pure CSS transitions suffice"
+    ],
     "correction": "Each technology in the triad has a distinct, specialized role: HTML is structure/meaning, CSS is presentation/layout, and JS is runtime behavior."
   },
   {
@@ -28,7 +37,10 @@
     "title": "Frontend Directly Connects to Databases",
     "description": "Belief that browser JavaScript can or should directly connect to production database servers (like PostgreSQL or MongoDB) with credentials.",
     "conceptId": "concept-client-server-split",
-    "indicators": ["Looking for DB connection strings in client JS", "Believing the browser directly holds SQL database tables"],
+    "indicators": [
+      "Looking for DB connection strings in client JS",
+      "Believing the browser directly holds SQL database tables"
+    ],
     "correction": "Frontend code runs on untrusted client machines and communicates with backend servers over HTTP/WebSockets; the server securely handles database queries."
   },
   {
@@ -84,7 +96,10 @@
     "title": "Padding and Margin Are the Same",
     "description": "Confusing internal content clearance (padding) with external spacing between elements (margin).",
     "conceptId": "concept-css-box-model",
-    "indicators": ["Applying margin when expecting background color expansion", "Using padding to push sibling elements away"],
+    "indicators": [
+      "Applying margin when expecting background color expansion",
+      "Using padding to push sibling elements away"
+    ],
     "correction": "Padding sits inside the border and is covered by backgrounds; margin sits outside the border and creates space between sibling boxes."
   },
   {
@@ -100,7 +115,9 @@
     "title": "justify-content Moves Individual Child Items",
     "description": "Belief that justify-content is a property applied to individual child items rather than the parent flex container to distribute all children.",
     "conceptId": "concept-justify-align-distribution",
-    "indicators": ["Applying justify-content: space-between on a child <div> instead of the parent container"],
+    "indicators": [
+      "Applying justify-content: space-between on a child <div> instead of the parent container"
+    ],
     "correction": "justify-content is a container-level property that coordinates the collective distribution of all child items along the main axis."
   },
   {
@@ -108,7 +125,9 @@
     "title": "align-items Always Centers Horizontally",
     "description": "Assuming align-items controls horizontal centering regardless of flex-direction.",
     "conceptId": "concept-main-cross-axes",
-    "indicators": ["Setting flex-direction: column and expecting align-items: center to center vertically"],
+    "indicators": [
+      "Setting flex-direction: column and expecting align-items: center to center vertically"
+    ],
     "correction": "align-items always operates on the cross axis. When flex-direction is column, the cross axis is horizontal, so align-items centers horizontally."
   },
   {
@@ -116,7 +135,9 @@
     "title": "display: flex Affects All Nested Descendants",
     "description": "Belief that setting display: flex on a top-level container turns grandchildren and deep descendants into flex items.",
     "conceptId": "concept-flex-container",
-    "indicators": ["Expecting grandchild elements to automatically align into a row without setting display: flex on their parent"],
+    "indicators": [
+      "Expecting grandchild elements to automatically align into a row without setting display: flex on their parent"
+    ],
     "correction": "display: flex only creates a flex context for immediate direct children. Nested elements require their own display: flex declarations."
   },
   {
@@ -124,7 +145,9 @@
     "title": "Flexbox Requires Hardcoded Margins for Spacing",
     "description": "Using margin-right: 20px on every flex item instead of leveraging justify-content or the gap property.",
     "conceptId": "concept-justify-align-distribution",
-    "indicators": ["Adding hardcoded pixel margins on flex children and breaking last-child alignment"],
+    "indicators": [
+      "Adding hardcoded pixel margins on flex children and breaking last-child alignment"
+    ],
     "correction": "Flexbox containers natively space items using justify-content (e.g. space-between) and the modern CSS gap property."
   },
   {
@@ -132,7 +155,10 @@
     "title": "console.log() Returns a Value from a Function",
     "description": "Confusing printing output to the developer console with returning a value to the calling expression.",
     "conceptId": "concept-js-functions",
-    "indicators": ["Writing const result = add(1, 2) where add only does console.log", "Expecting console.log to provide data to callers"],
+    "indicators": [
+      "Writing const result = add(1, 2) where add only does console.log",
+      "Expecting console.log to provide data to callers"
+    ],
     "correction": "console.log writes text to the DevTools console and evaluates to undefined. return explicitly passes a value back to whoever called the function."
   },
   {
@@ -140,7 +166,9 @@
     "title": "console.log() Outputs Data to Calling Code",
     "description": "Believing that console.log(x) sends x back to the variable receiving the function call.",
     "conceptId": "concept-console-log-side-effects",
-    "indicators": ["Expecting let x = calculate(5) to receive data when calculate only has console.log"],
+    "indicators": [
+      "Expecting let x = calculate(5) to receive data when calculate only has console.log"
+    ],
     "correction": "console.log is purely a debugging side effect for humans; only return sends data to the executing JavaScript program."
   },
   {
@@ -164,7 +192,9 @@
     "title": "Debugging by Random Guesswork",
     "description": "Randomly modifying syntax without forming a hypothesis about why the failure occurs.",
     "conceptId": "concept-debugging-workflow",
-    "indicators": ["Adding random ! or ; or changing random CSS values without inspecting DevTools"],
+    "indicators": [
+      "Adding random ! or ; or changing random CSS values without inspecting DevTools"
+    ],
     "correction": "Systematic debugging involves observing symptoms, inspecting DevTools console and DOM state, forming a hypothesis, and testing targeted fixes."
   },
   {
@@ -172,7 +202,9 @@
     "title": "Click Failure Is Always a JS Calculation Bug",
     "description": "Assuming that when a button click does nothing, the bug is inside the calculation function rather than a broken querySelector or missing event listener.",
     "conceptId": "concept-event-listener-binding",
-    "indicators": ["Rewriting math logic when the button handler was never attached to the DOM node"],
+    "indicators": [
+      "Rewriting math logic when the button handler was never attached to the DOM node"
+    ],
     "correction": "Trace the entire event chain: check HTML ID matching, querySelector resolution, event listener binding, and finally the callback logic."
   },
   {

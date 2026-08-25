@@ -99,15 +99,22 @@ function Dashboard() {
   };
 
   const unlockedAchievementsCount = achievements.filter((a) => a.unlocked).length;
+  const isNewLearner = progress.lessonsCompleted.length === 0;
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-8">
       {/* 1. Header / Greeting Context */}
       <PageHeader
         className="mb-0 border-b-0 pb-0"
-        eyebrow="Academy Dashboard"
-        title="Welcome back"
-        description={`You are on a ${progress.streakDays}-day active learning streak. Continue your path below.`}
+        eyebrow="Frontend Engineering Academy"
+        title={isNewLearner ? "Welcome to Forge" : "Welcome back"}
+        description={
+          isNewLearner
+            ? "Your interactive engineering workbench. Start your journey with your first lesson below."
+            : progress.streakDays > 0
+              ? `You are on a ${progress.streakDays}-day active learning streak. Continue your path below.`
+              : "Continue your frontend engineering curriculum below."
+        }
         actions={
           <Button
             asChild
@@ -117,7 +124,7 @@ function Dashboard() {
           >
             <Link suppressHydrationWarning to="/learn">
               <BookOpen className="mr-1.5 h-3.5 w-3.5 text-primary" />
-              Browse Library
+              Browse Curriculum
             </Link>
           </Button>
         }
@@ -147,7 +154,7 @@ function Dashboard() {
                   Welcome to Forge — Frontend Mastery Lifecycle
                 </h3>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
-                  Progress fluidly through any stage at your own pace:
+                  Progress fluidly through each stage of the engineering mastery curriculum:
                 </p>
               </div>
 
@@ -174,7 +181,7 @@ function Dashboard() {
         </Card>
       )}
 
-      {/* 2. Primary Continue Learning Hero Experience (First Viewport Centerpiece) */}
+      {/* 2. Primary Continue Learning Hero Experience (Dominant Viewport Centerpiece) */}
       {continueLesson && (
         <section aria-label="Continue Learning">
           <ContinueLearningCard
@@ -182,24 +189,12 @@ function Dashboard() {
             progressPercent={continueProgressPercent}
             moduleTitle={currentModule?.title}
             topicTitle={currentTopic?.title}
+            isNewLearner={isNewLearner}
           />
         </section>
       )}
 
-      {/* 3. Compact Progress Summary */}
-      <section aria-label="Progress Overview">
-        <CompactProgressSummary
-          streakDays={progress.streakDays}
-          bestStreakDays={progress.bestStreakDays ?? progress.streakDays}
-          totalHours={(progress.totalMinutes / 60).toFixed(1)}
-          completedLessonsCount={progress.lessonsCompleted.length}
-          totalLessonsCount={lessons.length}
-          unlockedAchievementsCount={unlockedAchievementsCount}
-          totalAchievementsCount={achievements.length}
-        />
-      </section>
-
-      {/* 4. Current Learning Path */}
+      {/* 3. Current Learning Path (Timeline / Active Module Map) */}
       {currentModule && (
         <section aria-label="Current Learning Path">
           <CurrentPathOverview
@@ -211,14 +206,25 @@ function Dashboard() {
         </section>
       )}
 
-      {/* 5. Recent Activity & Secondary Focus */}
-      <section aria-label="Recent Activity and Focus" className="grid gap-6 lg:grid-cols-3">
+      {/* 4. Curriculum Details & Supporting Practice Context */}
+      <section aria-label="Curriculum and Studio Practice" className="grid gap-6 lg:grid-cols-3">
+        {/* Main 2-Column: Topics & Recent Lessons */}
         <div className="lg:col-span-2 space-y-6">
-          <RecentLessonsCard lessons={lessons} masteryMap={progress.mastery} />
           <RecommendedTopicsCard topics={topics} />
+          <RecentLessonsCard lessons={lessons} masteryMap={progress.mastery} />
         </div>
 
+        {/* Sidebar 1-Column: Progress Summary, Daily Practice & Portfolio Project */}
         <div className="space-y-6">
+          <CompactProgressSummary
+            streakDays={progress.streakDays}
+            bestStreakDays={progress.bestStreakDays ?? progress.streakDays}
+            totalHours={(progress.totalMinutes / 60).toFixed(1)}
+            completedLessonsCount={progress.lessonsCompleted.length}
+            totalLessonsCount={lessons.length}
+            unlockedAchievementsCount={unlockedAchievementsCount}
+            totalAchievementsCount={achievements.length}
+          />
           <DailyGoalCard
             todayMinutes={progress.weekly[6] || 0}
             dailyTargetMinutes={30}
@@ -228,13 +234,13 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* 6. Activity Overview / Trends */}
-      <section aria-label="Activity Analytics" className="pt-2 border-t border-border/40">
+      {/* 5. Activity Overview / Trends */}
+      <section aria-label="Activity Analytics" className="pt-4 border-t border-border/40">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">Weekly Activity & Log</h3>
+            <h3 className="text-sm font-semibold text-foreground">Study Habits & Activity Log</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Study habits logged over the past week and past 12 weeks
+              Practice history and consistency across recent weeks
             </p>
           </div>
           <Button
