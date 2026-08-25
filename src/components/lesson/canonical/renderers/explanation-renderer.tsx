@@ -6,55 +6,42 @@ import { ActivityActions } from "../primitives/activity-actions";
 import { Callout } from "@/components/shared/callout";
 import { Sparkles } from "lucide-react";
 
-export function ExplanationRenderer({
-  activity,
-  state,
-  onContinue,
-}: ActivityRendererProps<ExplanationActivity>) {
+export function ExplanationRenderer({ activity, state, onContinue }: ActivityRendererProps<ExplanationActivity>) {
   const { title, text, callout, keyTakeaway } = activity.content;
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="reading">
-      <ActivityHeader activity={activity} />
+      <div className="mx-auto w-full max-w-[72ch]">
+        <ActivityHeader activity={activity} />
 
-      <div className="p-6 md:p-8 flex flex-col gap-6">
-        {title && (
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-lesson-text-primary">
-            {title}
-          </h2>
-        )}
+        <article className="px-1 py-8 sm:py-10">
+          {title && (
+            <h2 className="mb-7 text-2xl font-bold tracking-tight text-lesson-text-primary sm:text-3xl">
+              {title}
+            </h2>
+          )}
 
-        <div className="prose prose-neutral dark:prose-invert max-w-none text-base text-lesson-text-secondary leading-relaxed space-y-4">
-          {text.split("\n\n").map((para, idx) => (
-            <p key={idx} className="leading-relaxed">
-              {para}
-            </p>
-          ))}
-        </div>
-
-        {callout && <Callout variant={callout.variant} text={callout.text} />}
-
-        {keyTakeaway && (
-          <div className="p-4.5 rounded-xl bg-lesson-accent/5 border border-lesson-accent/15 flex items-start gap-3.5">
-            <Sparkles className="w-5 h-5 text-lesson-accent shrink-0 mt-0.5" />
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-lesson-accent mb-1">
-                Key Takeaway
-              </p>
-              <p className="text-sm text-lesson-text-primary font-semibold leading-relaxed">
-                {keyTakeaway}
-              </p>
-            </div>
+          <div className="space-y-5 text-base leading-8 text-lesson-text-secondary sm:text-[17px]">
+            {text.split("\n\n").map((para, idx) => (
+              <p key={idx}>{para}</p>
+            ))}
           </div>
-        )}
-      </div>
 
-      <ActivityActions
-        status={state.status}
-        isInteractive={false}
-        onContinue={onContinue}
-        continueLabel="Continue"
-      />
+          {callout && <div className="mt-8"><Callout variant={callout.variant} text={callout.text} /></div>}
+
+          {keyTakeaway && (
+            <div className="mt-8 flex items-start gap-3 rounded-xl bg-lesson-surface-subtle px-4 py-4">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-lesson-accent" />
+              <div>
+                <p className="text-xs font-semibold text-lesson-text-muted">Key takeaway</p>
+                <p className="mt-1 text-sm font-medium leading-6 text-lesson-text-primary">{keyTakeaway}</p>
+              </div>
+            </div>
+          )}
+        </article>
+
+        <ActivityActions status={state.status} isInteractive={false} onContinue={onContinue} continueLabel="Continue" />
+      </div>
     </ActivityContainer>
   );
 }
