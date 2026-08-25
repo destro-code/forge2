@@ -144,7 +144,7 @@ function AppLayout() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8"
+              className="mx-auto w-full max-w-[1360px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-9"
             >
               <Outlet />
             </motion.div>
