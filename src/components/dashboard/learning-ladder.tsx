@@ -86,7 +86,7 @@ export function LearningLadder({
             return (
               <div
                 key={lesson.id}
-                className="py-3 px-3.5 sm:px-4 -mx-3.5 sm:-mx-4 rounded-xl border border-[#D35C37] bg-[#FCF1E9] dark:border-primary/30 dark:bg-primary/[0.055] my-1.5 transition-colors"
+                className="py-3 px-3.5 sm:px-4 -mx-3.5 sm:-mx-4 rounded-r-[4px] rounded-l-[1px] border-l-2 border-l-[#D35C37] border-y border-r border-[#E0B99F]/60 bg-[#FCF1E9] dark:border-l-primary dark:border-y-border/40 dark:border-r-border/40 dark:bg-primary/[0.055] my-1.5 transition-colors"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
@@ -104,7 +104,7 @@ export function LearningLadder({
                         >
                           {lesson.title}
                         </Link>
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold uppercase tracking-wider bg-[#D35C37]/15 text-[#D35C37] border border-[#D35C37]/30 shrink-0">
+                        <span className="px-1.5 py-0.5 rounded-[3px] text-[10px] font-mono font-semibold uppercase tracking-wider bg-[#D35C37]/15 text-[#D35C37] border border-[#D35C37]/30 shrink-0">
                           ACTIVE FRONTIER
                         </span>
                       </div>
@@ -200,11 +200,11 @@ export function LearningLadder({
 
               <div className="flex items-center gap-2.5 shrink-0">
                 {statusLabel === "LAB MILESTONE" ? (
-                  <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#EFECE6] dark:bg-muted/50 border border-[#E3DDD6] dark:border-border/40 text-[#5C5852] dark:text-foreground/75 font-medium">
-                    LAB MILESTONE
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-[3px] bg-[#EFECE6] dark:bg-muted/50 border border-[#E3DDD6] dark:border-border/40 text-[#5C5852] dark:text-foreground/75 font-medium">
+                    LAB MILESTONE // {lesson.estimatedMinutes || 20}m
                   </span>
                 ) : statusLabel === "ASSESSMENT" ? (
-                  <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#EFECE6] dark:bg-muted/50 border border-[#E3DDD6] dark:border-border/40 text-[#5C5852] dark:text-foreground/75 font-medium">
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-[3px] bg-[#EFECE6] dark:bg-muted/50 border border-[#E3DDD6] dark:border-border/40 text-[#5C5852] dark:text-foreground/75 font-medium">
                     ASSESSMENT
                   </span>
                 ) : statusLabel === "UP NEXT" ? (

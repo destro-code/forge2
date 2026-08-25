@@ -31,7 +31,7 @@ export function HeroStudio({
   return (
     <section aria-label="Current Engineering Challenge">
       {/* Precision Architectural Studio Surface */}
-      <div className="relative rounded-xl sm:rounded-2xl border border-[#E7E2DA] dark:border-border/40 bg-[#FCFBF9] dark:bg-card/65 p-5 sm:p-8 lg:p-9 shadow-2xs backdrop-blur-[1px]">
+      <div className="relative rounded-lg border border-[#E7E2DA] dark:border-border/40 bg-[#FCFBF9] dark:bg-card/65 p-5 sm:p-8 lg:p-9 shadow-2xs backdrop-blur-[1px]">
         {/* Subtle Precision Top Hairline */}
         <div className="absolute inset-x-5 sm:inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#E7E2DA] dark:via-border/50 to-transparent pointer-events-none" />
 
@@ -44,7 +44,7 @@ export function HeroStudio({
           </div>
 
           <div className="flex items-center gap-2 font-mono text-[11px] sm:text-xs text-[#78746E] dark:text-muted-foreground shrink-0">
-            <span className="capitalize px-2 py-0.5 rounded bg-[#EFECE6] dark:bg-muted/50 text-[11px] font-mono font-medium text-[#5C5852] dark:text-foreground/80 border border-[#E3DDD6] dark:border-border/30">
+            <span className="capitalize px-2 py-0.5 rounded-[3px] bg-[#EFECE6] dark:bg-muted/50 text-[11px] font-mono font-medium text-[#5C5852] dark:text-foreground/80 border border-[#E3DDD6] dark:border-border/30">
               {lesson.difficulty || "Beginner"}
             </span>
             <span className="inline-flex items-center gap-1 font-mono text-[11px] text-[#78746E] dark:text-muted-foreground/80">
@@ -78,9 +78,9 @@ export function HeroStudio({
                 {isNewLearner ? "Ready to start" : `${progressPercent}%`}
               </span>
             </div>
-            <div className="h-1.5 w-full bg-[#EFECE6] dark:bg-muted/60 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-[#EFECE6] dark:bg-muted/60 rounded-[2px] overflow-hidden">
               <div
-                className="h-full bg-[#D35C37] dark:bg-primary transition-all duration-500 rounded-full"
+                className="h-full bg-[#D35C37] dark:bg-primary transition-all duration-500 rounded-[2px]"
                 style={{ width: `${Math.max(isNewLearner ? 0 : 6, progressPercent)}%` }}
               />
             </div>
