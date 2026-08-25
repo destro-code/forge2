@@ -1,0 +1,177 @@
+{
+  "id": "lesson-1-4-4",
+  "schemaVersion": "1.0.0",
+  "topicId": "understanding-network-requests",
+  "title": "Understanding Network Requests",
+  "description": "Learn how to use the Network panel to see what a webpage requests, what comes back, and — when a request fails — which stage of the request lifecycle actually broke.",
+  "lessonType": "instruction",
+  "difficulty": "Intermediate",
+  "estimatedMinutes": 25,
+  "conceptIds": [
+    "concept-request-lifecycle-stages",
+    "concept-network-panel-evidence",
+    "concept-failure-locus-diagnosis"
+  ],
+  "skillIds": [
+    "skill-diagnose-request-failure-locus",
+    "skill-read-network-panel-timing"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-NET-401",
+      "statement": "Explain the distinct stages a network request passes through (DNS resolution, connection, server processing, response) and why each can fail independently.",
+      "conceptIds": ["concept-request-lifecycle-stages"],
+      "skillIds": ["skill-read-network-panel-timing"],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-NET-402",
+      "statement": "Given evidence of a failed or slow request, correctly reason about which stage failed and what that implies about where the actual problem is.",
+      "conceptIds": ["concept-failure-locus-diagnosis", "concept-network-panel-evidence"],
+      "skillIds": ["skill-diagnose-request-failure-locus"],
+      "priority": "primary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": ["lesson-2-4-2"],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-144-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": ["OBJ-NET-401"],
+      "content": {
+        "title": "Understanding Network Requests",
+        "hook": "A page that \"just doesn't load\" can be failing for very different reasons. Before you can fix it, you have to know which stage of the request actually broke — the browser's Network panel is where you find out.",
+        "context": "This lesson builds on HTTP request/response structure to focus on diagnosing failures at the network level rather than the application level.",
+        "goals": [
+          "Understand the stages a network request passes through",
+          "Diagnose which stage failed using Network panel evidence"
+        ]
+      }
+    },
+    {
+      "id": "act-144-explanation",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": ["OBJ-NET-401"],
+      "content": {
+        "title": "Four Stages, Four Different Failures",
+        "text": "Every network request passes through stages before your code ever sees a response: DNS resolution turns a hostname into an IP address; a connection is then established to that address; the server processes the request; and finally a response travels back. A failure at each stage looks and means something different. DNS resolution failure means the browser never even found an address to connect to — the hostname itself couldn't be resolved. A connection or server timeout means DNS succeeded (the browser found the server) but the server never responded in time. Those are not the same bug, and they don't have the same fix: one points at a naming/DNS problem, the other points at the server itself being slow, overloaded, or hung.",
+        "callout": {
+          "variant": "tip",
+          "text": "The Network panel shows per-stage timing (DNS Lookup, Initial Connection, Waiting/TTFB) — that breakdown is the evidence, not just the final pass/fail status."
+        },
+        "keyTakeaway": "Where a request fails in the timeline tells you which system to investigate."
+      }
+    },
+    {
+      "id": "act-144-mc-stage",
+      "type": "multiple-choice",
+      "intent": "retrieval",
+      "objectiveIds": ["OBJ-NET-401"],
+      "content": {
+        "question": "The Network panel shows a request that failed with `DNS_PROBE_FINISHED_NXDOMAIN` after 40ms. What does this tell you?",
+        "options": [
+          { "id": "opt-a", "text": "The server received the request but took too long to respond." },
+          { "id": "opt-b", "text": "The hostname could not be resolved to an address — the browser never reached any server at all." },
+          { "id": "opt-c", "text": "The connection was established but the response body was empty." },
+          { "id": "opt-d", "text": "The server returned a 5xx error." }
+        ],
+        "explanation": "NXDOMAIN is a DNS-stage failure: the browser could not resolve the hostname to an IP address, so it never attempted to connect to any server."
+      },
+      "validation": { "type": "exact-match", "expected": "opt-b" },
+      "feedback": {
+        "correct": "Right — DNS failure happens before any connection is attempted.",
+        "incorrect": "Not quite — NXDOMAIN is specifically a DNS resolution failure, which happens before any connection attempt."
+      }
+    },
+    {
+      "id": "act-144-judgment-diagnose",
+      "type": "judgment",
+      "intent": "reflection",
+      "objectiveIds": ["OBJ-NET-402"],
+      "content": {
+        "title": "Diagnose the Failure: DNS or Server?",
+        "prompt": "A teammate says: \"The checkout page is broken — the API call is failing.\" You open the Network panel and see two different requests failing on two different days. On Monday, the request to `api.storefront-app.com/checkout` fails almost instantly with `net::ERR_NAME_NOT_RESOLVED`. On Wednesday, a request to the same URL shows DNS Lookup: 12ms, Initial Connection: 38ms, then sits at Waiting (TTFB) for 30 seconds before failing with a timeout. Explain what actually went wrong in each case, why they are different problems, and what you would investigate next for each one. Be specific about which stage of the request lifecycle failed in each case and why that matters for where you'd look for a fix.",
+        "context": "Both failures show up to the user as \"the checkout page is broken,\" and both produce a failed request in the Network panel. Your teammate is treating them as the same bug. Your job is to show they aren't.",
+        "responsePlaceholder": "Walk through Monday's failure and Wednesday's failure separately. For each: which stage failed, what that means, and where you'd look next...",
+        "modelAnswer": {
+          "summary": "Monday is a DNS resolution failure (the hostname itself couldn't be resolved, so no server was ever contacted). Wednesday is a server-side timeout after successful DNS and connection (the server was reachable but never responded). They require completely different investigations.",
+          "detailedAnalysis": "Monday's request fails almost instantly with ERR_NAME_NOT_RESOLVED — this happens during the DNS resolution stage, before any connection attempt. The browser tried to turn `api.storefront-app.com` into an IP address and could not. This is not a server problem at all; the server was never reached. Likely causes: the DNS record was deleted or misconfigured, a typo in the hostname, an expired domain, or a DNS provider outage. The fix lives in DNS configuration or the URL being requested, not in server code.\n\nWednesday's request shows DNS Lookup (12ms) and Initial Connection (38ms) both succeeding quickly — so the hostname resolved correctly and a connection to the server was established. The failure happens during Waiting (TTFB): the browser sent the request and is waiting for the server to start responding, and after 30 seconds it gives up. This means the server was reachable and accepted the connection, but something on the server side — an overloaded process, a slow database query, a deadlock, a hung request handler — prevented it from responding in time. The fix lives on the server: check server logs, look at what that specific `/checkout` endpoint was doing at that timestamp, check database or downstream service health, not DNS.\n\nThe core reasoning skill is: don't stop at 'the request failed' — read where in the timeline it failed, because that tells you which system to actually investigate.",
+          "keyTradeoffs": [
+            "DNS failures are fast and 'loud' (immediate error) but point outside your own infrastructure — you may not control the fix (DNS provider, registrar).",
+            "Server timeouts are 'slow failures' that cost the user 30 seconds of waiting before anything visible happens, which is a worse experience even though the underlying bug may be easier for your team to fix directly.",
+            "Treating both as 'the API is down' and restarting/redeploying the frontend would fix neither — the frontend was never the broken layer in either case."
+          ]
+        },
+        "evaluationRubric": [
+          {
+            "id": "crit-identifies-dns-stage",
+            "label": "Correctly identifies Monday as a DNS resolution failure",
+            "description": "States that the hostname could not be resolved and that no server was ever contacted."
+          },
+          {
+            "id": "crit-identifies-timeout-stage",
+            "label": "Correctly identifies Wednesday as a post-connection server timeout",
+            "description": "States that DNS and connection succeeded, and the server failed to respond in time — not a DNS or connectivity issue."
+          },
+          {
+            "id": "crit-explains-why-different",
+            "label": "Explains why these require different fixes",
+            "description": "Connects each failure to a different area of investigation (DNS/domain config vs. server-side performance/logs)."
+          },
+          {
+            "id": "crit-uses-timeline-evidence",
+            "label": "Reasons from the timing evidence, not just the symptom",
+            "description": "Response references the actual Network panel timing (instant failure vs. DNS+connection succeeding then stalling at TTFB) rather than only restating 'the API is broken.'"
+          }
+        ],
+        "takeaways": [
+          "\"The request failed\" is a symptom, not a diagnosis — the Network panel's timing breakdown tells you which stage actually broke.",
+          "A DNS failure means no server was ever reached; a timeout after successful DNS/connection means the server was reached but didn't respond in time.",
+          "These two failure types point to completely different places to investigate: DNS/domain configuration vs. server-side health and performance."
+        ]
+      }
+    },
+    {
+      "id": "act-144-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": ["OBJ-NET-401", "OBJ-NET-402"],
+      "content": {
+        "title": "What You Should Take Away",
+        "takeaways": [
+          "A network request passes through distinct stages — DNS resolution, connection, server processing, response — and each can fail independently.",
+          "The Network panel's per-stage timing is evidence, not just a pass/fail indicator; use it to find which stage actually failed.",
+          "A DNS resolution failure and a server timeout look similar to a user (\"it's broken\") but mean completely different things and need different fixes."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": [
+      "act-144-intro",
+      "act-144-explanation",
+      "act-144-mc-stage",
+      "act-144-judgment-diagnose",
+      "act-144-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-NET-401",
+        "activityIds": ["act-144-explanation", "act-144-mc-stage"],
+        "requirement": "complete"
+      },
+      {
+        "objectiveId": "OBJ-NET-402",
+        "activityIds": ["act-144-judgment-diagnose"],
+        "requirement": "success"
+      }
+    ]
+  }
+}
