@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
 import { parseCssRules } from "../validation";
@@ -10,7 +10,6 @@ import { LessonCodeEditor } from "@/components/shared/lesson-editor/lesson-code-
 import { Button } from "@/components/ui/button";
 import {
   Code2,
-  Play,
   RotateCcw,
   Terminal,
   BookOpen,
@@ -49,7 +48,7 @@ export function InteractiveCodeRenderer({
   const resolvedHints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (resolvedHints?.length || 0) - state.hintsRevealed;
 
-  const handleRunCode = () => {
+  const runEvaluation = useCallback(() => {
     setIsRunning(true);
     const logs: string[] = [];
     let testsPassed = true;
@@ -126,7 +125,20 @@ export function InteractiveCodeRenderer({
     } finally {
       setIsRunning(false);
     }
-  };
+  }, [currentCode, language, testCases]);
+
+  useEffect(() => {
+    if (
+      state.status === "evaluating" ||
+      state.status === "correct" ||
+      state.status === "incorrect" ||
+      state.status === "failed" ||
+      state.status === "passed" ||
+      state.status === "completed"
+    ) {
+      runEvaluation();
+    }
+  }, [state.status, state.validationResult, runEvaluation]);
 
   const hasExecuted = consoleOutput.length > 0 || testResults.length > 0;
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
@@ -246,17 +258,6 @@ export function InteractiveCodeRenderer({
               aria-label="Lesson code editor"
               id={`lesson-code-editor-${activity.id}`}
             />
-
-            <div className="flex justify-end pt-1">
-              <Button
-                onClick={handleRunCode}
-                disabled={isRunning || readOnly}
-                className="min-h-11 gap-2 px-5"
-              >
-                <Play className="h-4 w-4 fill-current" />
-                {isRunning ? "Running…" : "Run & verify"}
-              </Button>
-            </div>
           </div>
 
           <div className={cn("space-y-4", activeTab === "code" ? "hidden lg:block" : "block")}>

@@ -140,6 +140,47 @@ describe("InteractiveCodeRenderer with CodeMirror Integration", () => {
     expect(onResponseSpy).toHaveBeenCalledWith("let answer = 0;");
     unmount();
   });
+
+  it("does not render duplicate 'Run & verify' evaluation button in content body (single-action invariant)", () => {
+    const { container, unmount } = renderInteractiveCodeRenderer({
+      activity: mockActivity,
+      state: mockState,
+      onResponse: () => {},
+    });
+
+    const buttons = Array.from(container.querySelectorAll("button"));
+    const runButton = buttons.find(
+      (btn) =>
+        btn.textContent?.toLowerCase().includes("run & verify") ||
+        btn.textContent?.toLowerCase().includes("run code"),
+    );
+    expect(runButton).toBeUndefined();
+
+    // Verify utility controls like Reset Code are preserved
+    const resetButton = buttons.find((btn) => btn.textContent?.includes("Reset Code"));
+    expect(resetButton).toBeDefined();
+
+    unmount();
+  });
+
+  it("automatically renders test results when evaluated via canonical player", () => {
+    const evaluatedState: ActivityInteractionState<string> = {
+      status: "incorrect",
+      response: "let answer = 10;",
+      attempts: 1,
+      hintsRevealed: 0,
+      startedAt: Date.now(),
+    };
+
+    const { container, unmount } = renderInteractiveCodeRenderer({
+      activity: mockActivity,
+      state: evaluatedState,
+      onResponse: () => {},
+    });
+
+    expect(container.textContent).toContain("answer equals 42");
+    unmount();
+  });
 });
 
 describe("DebugRenderer with CodeMirror Integration", () => {
@@ -218,6 +259,26 @@ describe("DebugRenderer with CodeMirror Integration", () => {
 
     setInputValue(textarea, "function add(a, b) { return a + b; }");
     expect(onResponseSpy).toHaveBeenCalledWith("function add(a, b) { return a + b; }");
+    unmount();
+  });
+
+  it("does not render duplicate 'Test Your Fix' button in content body (single-action invariant)", () => {
+    const { container, unmount } = renderDebugRenderer({
+      activity: mockActivity,
+      state: mockState,
+      onResponse: () => {},
+    });
+
+    const buttons = Array.from(container.querySelectorAll("button"));
+    const testButton = buttons.find((btn) =>
+      btn.textContent?.toLowerCase().includes("test your fix"),
+    );
+    expect(testButton).toBeUndefined();
+
+    // Verify utility controls like Reset Buggy Code are preserved
+    const resetButton = buttons.find((btn) => btn.textContent?.includes("Reset Buggy Code"));
+    expect(resetButton).toBeDefined();
+
     unmount();
   });
 });

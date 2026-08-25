@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { DebugActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
 import { ActivityContainer } from "../primitives/activity-container";
@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Bug,
   RotateCcw,
-  Play,
   Terminal,
   CheckCircle2,
   XCircle,
@@ -47,7 +46,7 @@ export function DebugRenderer({
   const hints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (hints?.length || 0) - state.hintsRevealed;
 
-  const handleRunTest = () => {
+  const handleRunTest = useCallback(() => {
     setIsRunning(true);
     const logs: string[] = [];
     let allPassed = true;
@@ -101,7 +100,20 @@ export function DebugRenderer({
     } finally {
       setIsRunning(false);
     }
-  };
+  }, [currentCode, language, testCases]);
+
+  useEffect(() => {
+    if (
+      state.status === "evaluating" ||
+      state.status === "correct" ||
+      state.status === "incorrect" ||
+      state.status === "failed" ||
+      state.status === "passed" ||
+      state.status === "completed"
+    ) {
+      handleRunTest();
+    }
+  }, [state.status, state.validationResult, handleRunTest]);
 
   const hasExecuted = consoleOutput.length > 0 || testResults.length > 0;
   const allTestsPassed = testResults.length > 0 && testResults.every((t) => t.passed);
@@ -281,19 +293,6 @@ export function DebugRenderer({
               aria-label="Debug Lesson Code Editor"
               id={`lesson-code-editor-${activity.id}`}
             />
-
-            {/* Test Your Fix Action Button */}
-            <div className="flex items-center justify-between pt-1">
-              <Button
-                size="md"
-                onClick={handleRunTest}
-                disabled={isRunning}
-                className="gap-2 h-11 px-5 rounded-lg font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-sm"
-              >
-                <Play className="w-4 h-4 fill-current" />
-                <span>Test Your Fix</span>
-              </Button>
-            </div>
           </div>
 
           {/* RESULTS AREA */}
