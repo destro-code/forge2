@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { useModules, useLessons, useProjects, useTopics } from "@/lib/hooks/use-content";
@@ -45,10 +46,26 @@ function Dashboard() {
   const currentModule = modules.find((m) => m.id === continueLessonModuleId) || modules[0];
   const currentTopic = topics.find((t) => t.id === continueLesson?.topicId);
 
-  const currentModuleLessons = lessons.filter((l) => {
-    const mId = l.moduleId || topics.find((t) => t.id === l.topicId)?.moduleId;
-    return mId === currentModule?.id;
-  });
+  const currentModuleLessons = useMemo(() => {
+    if (!currentModule) return [];
+    const moduleTopics = topics.filter((t) => t.moduleId === currentModule.id);
+    const topicIdSet = new Set(moduleTopics.map((t) => t.id));
+
+    const modLessons = lessons.filter(
+      (l) => l.moduleId === currentModule.id || (l.topicId && topicIdSet.has(l.topicId)),
+    );
+
+    return [...modLessons].sort((a, b) => {
+      const topicA = moduleTopics.find((t) => t.id === a.topicId);
+      const topicB = moduleTopics.find((t) => t.id === b.topicId);
+      const topicOrderA = topicA?.order ?? 0;
+      const topicOrderB = topicB?.order ?? 0;
+      if (topicOrderA !== topicOrderB) {
+        return topicOrderA - topicOrderB;
+      }
+      return (a.order ?? 0) - (b.order ?? 0);
+    });
+  }, [currentModule, lessons, topics]);
 
   const continueProgressPercent = continueLessonModuleId
     ? getModuleProgress(continueLessonModuleId, progress.lessonsCompleted)
