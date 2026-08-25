@@ -11,6 +11,7 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckSquare,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,26 @@ export function JudgmentRenderer({
     setIsCommitted(true);
   };
 
+  // Revise = retry-before-completion. This is deliberately local component
+  // state, not a session-engine RETRY transition: the session's activity
+  // state machine only allows RETRY from a "failed" (evaluated-and-wrong)
+  // status, and judgment activities never enter evaluating/passed/failed —
+  // they go straight to "completed" via onComplete/handleFinish. Committing
+  // a judgment response never calls into the session at all, so there is
+  // nothing on the session side to unwind here; resetting local state is
+  // both sufficient and correct.
+  //
+  // Once `isCompleted` is true (the learner has finished the drill and the
+  // session recorded it), the activity-state-machine's "completed" status is
+  // terminal — no transition out of it is permitted except an idempotent
+  // COMPLETE_ACTIVITY. Retry-after-completion is therefore intentionally NOT
+  // offered here; the button is gated on `!isCompleted`.
+  const handleRevise = () => {
+    if (isCompleted) return;
+    setIsCommitted(false);
+    setCheckedCriteria(new Set());
+  };
+
   const toggleCriterion = (criterionId: string) => {
     if (isCompleted) return;
     setCheckedCriteria((prev) => {
@@ -61,6 +82,15 @@ export function JudgmentRenderer({
     });
   };
 
+  // Design decision (Phase 2E): rubric checkboxes are informational
+  // self-assessment, not a completion gate. Completion here means "the
+  // learner committed a real response and compared it against the expert
+  // model answer" — not "the learner's self-graded checklist matches some
+  // target count." There is no objectively correct subset of criteria a
+  // free-text architectural judgment must hit, so gating on checkedCriteria
+  // would be artificial gating dressed up as rigor. `totalCriteria` and
+  // `checkedCriteria` are still recorded in the evidence payload below so
+  // downstream analytics/instructors can see self-assessment engagement.
   const handleFinish = () => {
     onComplete({
       response,
@@ -352,7 +382,17 @@ export function JudgmentRenderer({
               )}
 
               {/* Completion Action */}
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-end items-center gap-3 pt-2">
+                {!isCompleted && (
+                  <Button
+                    onClick={handleRevise}
+                    variant="ghost"
+                    className="gap-2 text-muted-foreground hover:text-foreground font-medium"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Revise Response</span>
+                  </Button>
+                )}
                 {!isCompleted ? (
                   <Button
                     onClick={handleFinish}
