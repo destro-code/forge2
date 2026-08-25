@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CanonicalLesson } from "@/lib/curriculum/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
 import { evaluateActivityValidation } from "./validation";
@@ -59,6 +59,15 @@ export function CanonicalLessonPlayer({
   const activities = lesson.activities || [];
   const currentActivityIndex = session.currentActivityIndex;
   const totalActivities = session.totalActivities;
+
+  const scrollContainerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    scrollContainerRef.current?.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, [currentActivity?.id]);
 
   const handleResponseChange = useCallback(
     (newResponse: unknown) => {
@@ -256,7 +265,10 @@ export function CanonicalLessonPlayer({
         </div>
       </header>
 
-      <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 pb-32 sm:px-6 sm:pb-36 md:py-8 lg:px-8">
+      <main
+        ref={scrollContainerRef}
+        className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 pb-32 sm:px-6 sm:pb-36 md:py-8 lg:px-8"
+      >
         <div className="mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start">
           {currentActivity ? (
             <CanonicalActivityView
