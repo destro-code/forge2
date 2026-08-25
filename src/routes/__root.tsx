@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -127,6 +128,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function AppLayout() {
   useTheme(); // hydrate theme
+  const location = useLocation();
+  const isLessonRoute = location.pathname.startsWith("/lesson");
+
   return (
     <SidebarProvider>
       <a
@@ -136,18 +140,22 @@ function AppLayout() {
         Skip to main content
       </a>
       <div className="flex min-h-dvh w-full bg-background text-foreground">
-        <AppSidebar />
+        {!isLessonRoute && <AppSidebar />}
         <div className="relative flex min-w-0 flex-1 flex-col">
-          <TopBar />
+          {!isLessonRoute && <TopBar />}
           <main id="main-content" tabIndex={-1} className="relative flex-1 focus:outline-none">
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="mx-auto w-full max-w-[1360px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-9"
-            >
+            {isLessonRoute ? (
               <Outlet />
-            </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="mx-auto w-full max-w-[1360px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-9"
+              >
+                <Outlet />
+              </motion.div>
+            )}
           </main>
         </div>
         <CommandPalette />

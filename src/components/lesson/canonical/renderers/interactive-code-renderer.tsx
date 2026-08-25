@@ -114,9 +114,13 @@ export function InteractiveCodeRenderer({
           }
         }
       }
-      setConsoleOutput(logs.length ? logs : ["(No console output)"]);
+      setConsoleOutput(logs);
       setTestResults(results);
-      setActiveTab("results");
+      if (!testsPassed) {
+        setActiveTab("results");
+      } else {
+        setActiveTab("code");
+      }
     } catch (err: any) {
       setConsoleOutput([...logs, `Runtime Error: ${err.message}`]);
       setTestResults([]);
@@ -137,6 +141,8 @@ export function InteractiveCodeRenderer({
       state.status === "completed"
     ) {
       runEvaluation();
+    } else if (state.status === "idle") {
+      setActiveTab("code");
     }
   }, [state.status, state.validationResult, runEvaluation]);
 
@@ -243,6 +249,7 @@ export function InteractiveCodeRenderer({
                 variant="ghost"
                 size="sm"
                 onClick={() => onResponse(starterCode)}
+                disabled={readOnly || isCorrect}
                 className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
               >
                 <RotateCcw className="h-3.5 w-3.5" /> Reset Code
@@ -253,11 +260,20 @@ export function InteractiveCodeRenderer({
               value={currentCode}
               language={language || "javascript"}
               onChange={(value) => onResponse(value || "")}
-              readOnly={readOnly}
+              readOnly={readOnly || isCorrect}
               className="min-h-[18rem] md:min-h-[26rem]"
               aria-label="Lesson code editor"
               id={`lesson-code-editor-${activity.id}`}
             />
+
+            {isCorrect && (
+              <div className="flex items-center gap-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-800 dark:text-emerald-300">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <span className="font-medium">
+                  {activity.feedback?.correct || "Solution verified. All checks passed!"}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className={cn("space-y-4", activeTab === "code" ? "hidden lg:block" : "block")}>
@@ -267,54 +283,83 @@ export function InteractiveCodeRenderer({
                   className={cn(
                     "flex items-start gap-3 rounded-xl border p-4",
                     allTestsPassed
-                      ? "border-emerald-500/30 bg-emerald-500/5"
-                      : "border-lesson-border bg-lesson-surface-subtle",
+                      ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-900 dark:text-emerald-200"
+                      : "border-rose-500/20 bg-rose-500/5 text-rose-900 dark:text-rose-200",
                   )}
                 >
                   {allTestsPassed ? (
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
                   ) : (
-                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-lesson-text-muted" />
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-rose-500" />
                   )}
                   <div>
                     <p className="text-sm font-semibold text-lesson-text-primary">
-                      {allTestsPassed ? "Checks passed" : "Keep working"}
+                      {allTestsPassed ? "All checks passed" : "Requirements not met"}
                     </p>
-                    <p className="mt-1 text-sm leading-6 text-lesson-text-secondary">
+                    <p className="mt-0.5 text-xs text-lesson-text-secondary leading-relaxed">
                       {allTestsPassed
-                        ? "Your solution passed the available checks."
-                        : "Review the results and adjust your solution."}
+                        ? activity.feedback?.correct || "Your solution passed all validation tests."
+                        : activity.feedback?.incorrect ||
+                          "Review the failing requirements below and adjust your code."}
                     </p>
                   </div>
-                </div>
-
-                <div>
-                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
-                    <Terminal className="h-3.5 w-3.5" /> Console
-                  </div>
-                  <pre className="max-h-40 overflow-auto rounded-xl bg-zinc-950 p-4 font-mono text-xs leading-6 text-zinc-100">
-                    {consoleOutput.join("\n")}
-                  </pre>
                 </div>
 
                 {testResults.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold text-lesson-text-muted">Verification</p>
-                    {testResults.map((test, index) => (
-                      <div
-                        key={`${test.description}-${index}`}
-                        className="flex items-start gap-3 rounded-lg border border-lesson-border px-3 py-3 text-sm"
-                      >
-                        {test.passed ? (
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                        ) : (
-                          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-lesson-text-muted" />
-                        )}
-                        <span className="min-w-0 flex-1 text-lesson-text-secondary">
-                          {test.description}
-                        </span>
-                      </div>
-                    ))}
+                    <p className="text-xs font-semibold uppercase tracking-wider text-lesson-text-muted">
+                      Validation
+                    </p>
+                    <div className="space-y-1.5">
+                      {testResults.map((test, index) => (
+                        <div
+                          key={`${test.description}-${index}`}
+                          className={cn(
+                            "flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-xs sm:text-sm",
+                            test.passed
+                              ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-900 dark:text-emerald-200"
+                              : "border-rose-500/20 bg-rose-500/5 text-rose-900 dark:text-rose-200",
+                          )}
+                        >
+                          {test.passed ? (
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                          ) : (
+                            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" />
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <span className="font-medium text-lesson-text-primary">
+                              {test.description}
+                            </span>
+                            {test.error && (
+                              <p className="mt-1 font-mono text-[11px] text-rose-500">
+                                {test.error}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {!allTestsPassed &&
+                  (activity.feedback?.incorrect || (resolvedHints && state.hintsRevealed > 0)) && (
+                    <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-900 dark:text-amber-200">
+                      <p className="font-semibold text-amber-800 dark:text-amber-300">Guidance</p>
+                      <p className="mt-1 text-lesson-text-secondary">
+                        {activity.feedback?.incorrect || resolvedHints?.[0]}
+                      </p>
+                    </div>
+                  )}
+
+                {consoleOutput.length > 0 && (
+                  <div>
+                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
+                      <Terminal className="h-3.5 w-3.5" /> Console
+                    </div>
+                    <pre className="max-h-40 overflow-auto rounded-xl bg-zinc-950 p-4 font-mono text-xs leading-6 text-zinc-100 border border-zinc-800">
+                      {consoleOutput.join("\n")}
+                    </pre>
                   </div>
                 )}
               </>

@@ -42,6 +42,8 @@ export function DebugRenderer({
     Array<{ description: string; passed: boolean; error?: string }>
   >([]);
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
+  const isCorrect =
+    state.status === "correct" || state.status === "completed" || state.status === "passed";
 
   const hints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (hints?.length || 0) - state.hintsRevealed;
@@ -88,11 +90,14 @@ export function DebugRenderer({
           }
         }
       }
-      setConsoleOutput(logs.length > 0 ? logs : ["(Executed with no output)"]);
+      setConsoleOutput(logs);
       setTestResults(results);
 
-      // Auto-switch to results tab on mobile/tablet view so learner gets instant feedback
-      setActiveTab("results");
+      if (allPassed) {
+        setActiveTab("code");
+      } else {
+        setActiveTab("results");
+      }
     } catch (err: any) {
       setConsoleOutput([...logs, `Runtime Error: ${err.message}`]);
       setTestResults([]);
@@ -112,6 +117,8 @@ export function DebugRenderer({
       state.status === "completed"
     ) {
       handleRunTest();
+    } else if (state.status === "idle") {
+      setActiveTab("code");
     }
   }, [state.status, state.validationResult, handleRunTest]);
 
@@ -275,6 +282,7 @@ export function DebugRenderer({
                 variant="ghost"
                 size="sm"
                 onClick={() => onResponse(buggyCode)}
+                disabled={readOnly || isCorrect}
                 className="h-8 text-xs text-muted-foreground hover:text-foreground gap-1.5 hover:bg-muted/50 rounded-md"
                 title="Reset buggy code to its initial broken template state"
               >
@@ -288,11 +296,20 @@ export function DebugRenderer({
               value={currentCode}
               language={language || "javascript"}
               onChange={(val) => onResponse(val || "")}
-              readOnly={readOnly}
+              readOnly={readOnly || isCorrect}
               className="min-h-[16rem] md:min-h-[22rem] h-auto flex flex-col"
               aria-label="Debug Lesson Code Editor"
               id={`lesson-code-editor-${activity.id}`}
             />
+
+            {isCorrect && (
+              <div className="flex items-center gap-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-800 dark:text-emerald-300">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <span className="font-medium">
+                  {activity.feedback?.correct || "Patch verified. All diagnostic checks passed!"}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* RESULTS AREA */}

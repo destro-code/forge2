@@ -181,7 +181,7 @@ function LessonView() {
 
   if (!search.classic) {
     return (
-      <div className="flex flex-col h-[calc(100dvh-7rem)] sm:h-[calc(100dvh-7.5rem)] min-h-[500px] w-full overflow-hidden">
+      <div className="flex flex-col h-dvh w-full overflow-hidden">
         {canonicalLesson ? (
           <CanonicalLessonPlayer
             key={canonicalLesson.id}
