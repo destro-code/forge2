@@ -5,54 +5,47 @@ import { ActivityHeader } from "../primitives/activity-header";
 import { ActivityActions } from "../primitives/activity-actions";
 import { Target, Compass } from "lucide-react";
 
-export function IntroRenderer({
-  activity,
-  state,
-  onContinue,
-}: ActivityRendererProps<IntroActivity>) {
+export function IntroRenderer({ activity, state, onContinue }: ActivityRendererProps<IntroActivity>) {
   const { title, hook, context, goals } = activity.content;
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="immersive">
-      <div className="bg-lesson-surface border border-lesson-border rounded-xl shadow-xs overflow-hidden">
+      <div className="overflow-hidden rounded-2xl border border-lesson-border bg-lesson-surface shadow-xs">
         <ActivityHeader activity={activity} />
 
-        <div className="p-6 md:p-10 flex flex-col gap-8">
-          <div className="space-y-4 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lesson-accent/10 text-lesson-accent text-xs font-semibold">
-              <Compass className="w-3.5 h-3.5 animate-pulse" />
-              <span>Orientation</span>
+        <div className="px-6 py-8 sm:px-10 sm:py-12 lg:px-14">
+          <div className="max-w-3xl space-y-5">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-lesson-accent">
+              <Compass className="h-4 w-4" />
+              <span>Begin this lesson</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-lesson-text-primary leading-tight">
+            <h2 className="text-3xl font-bold leading-tight tracking-tight text-lesson-text-primary sm:text-4xl lg:text-5xl">
               {title}
             </h2>
-            <p className="text-base sm:text-lg text-lesson-text-secondary leading-relaxed font-medium">
+            <p className="max-w-2xl text-base leading-7 text-lesson-text-secondary sm:text-lg sm:leading-8">
               {hook}
             </p>
           </div>
 
           {context && (
-            <div className="p-5 rounded-xl bg-lesson-surface-subtle border border-lesson-border text-sm text-lesson-text-secondary leading-relaxed max-w-3xl">
+            <div className="mt-8 max-w-3xl rounded-xl bg-lesson-surface-subtle px-5 py-4 text-sm leading-6 text-lesson-text-secondary">
               {context}
             </div>
           )}
 
           {goals && goals.length > 0 && (
-            <div className="space-y-4 pt-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-lesson-text-muted flex items-center gap-2">
-                <Target className="w-4 h-4 text-lesson-accent" />
-                <span>What You Will Learn</span>
-              </h3>
-              <ul className="grid sm:grid-cols-2 gap-3.5 max-w-4xl">
+            <div className="mt-10 max-w-3xl">
+              <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-lesson-text-primary">
+                <Target className="h-4 w-4 text-lesson-accent" />
+                <span>By the end of this lesson</span>
+              </div>
+              <ul className="space-y-2">
                 {goals.map((goal, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-3.5 p-4 rounded-xl bg-lesson-surface-subtle border border-lesson-border text-sm text-lesson-text-secondary hover:border-lesson-accent/20 hover:bg-lesson-surface-elevated transition-all duration-150"
-                  >
-                    <div className="w-6 h-6 rounded-full bg-lesson-accent/10 text-lesson-accent flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                  <li key={idx} className="flex items-start gap-3 rounded-lg px-3 py-3 text-sm leading-6 text-lesson-text-secondary">
+                    <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-lesson-border text-[10px] font-semibold text-lesson-text-muted">
                       {idx + 1}
-                    </div>
-                    <span className="leading-relaxed">{goal}</span>
+                    </span>
+                    <span>{goal}</span>
                   </li>
                 ))}
               </ul>
@@ -60,12 +53,7 @@ export function IntroRenderer({
           )}
         </div>
 
-        <ActivityActions
-          status={state.status}
-          isInteractive={false}
-          onContinue={onContinue}
-          continueLabel="Start Learning"
-        />
+        <ActivityActions status={state.status} isInteractive={false} onContinue={onContinue} continueLabel="Start learning" />
       </div>
     </ActivityContainer>
   );
