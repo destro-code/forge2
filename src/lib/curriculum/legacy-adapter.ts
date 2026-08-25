@@ -157,7 +157,9 @@ export function adaptLegacyLessonToCanonical(legacy: LegacyLesson): CanonicalLes
           objectiveIds: [objectives[0].id],
           content: {
             title: sec.title || "Interactive Sandbox",
-            prompt: sec.instructions || "Complete the sandbox exercise.",
+            prompt: sec.instructions || (sec as any).prompt || "Complete the sandbox exercise.",
+            instructions:
+              sec.instructions || (sec as any).prompt || "Complete the sandbox exercise.",
             language: sec.language || "html",
             starterCode: sec.initialCode,
           },
@@ -179,6 +181,7 @@ export function adaptLegacyLessonToCanonical(legacy: LegacyLesson): CanonicalLes
           ? {
               title: ex.title,
               prompt: ex.brief,
+              instructions: (ex as any).instructions || ex.brief,
               buggyCode: ex.playgroundCode || "",
               language: ex.playgroundLanguage || "html",
               bugDescription: ex.brief,
@@ -186,6 +189,7 @@ export function adaptLegacyLessonToCanonical(legacy: LegacyLesson): CanonicalLes
           : {
               title: ex.title,
               prompt: ex.brief,
+              instructions: (ex as any).instructions || ex.brief,
               starterCode: ex.playgroundCode || "",
               language: ex.playgroundLanguage || "html",
             },

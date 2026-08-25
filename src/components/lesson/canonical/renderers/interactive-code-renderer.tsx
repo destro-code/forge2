@@ -30,7 +30,14 @@ export function InteractiveCodeRenderer({
   onRevealHint,
   readOnly,
 }: ActivityRendererProps<InteractiveCodeActivity, string>) {
-  const { instructions, starterCode, language, testCases } = activity.content;
+  const { starterCode, language, testCases } = activity.content;
+  const taskTitle = activity.content.title || activity.title || "Interactive Code Challenge";
+  const taskInstructions =
+    activity.content.instructions ||
+    activity.content.prompt ||
+    (activity as any).prompt ||
+    (activity as any).description ||
+    "";
   const currentCode = typeof state.response === "string" ? state.response : starterCode;
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -128,6 +135,7 @@ export function InteractiveCodeRenderer({
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
       <ActivityHeader
         activity={activity}
+        title={activity.content?.title || "Interactive Code Challenge"}
         onRevealHint={onRevealHint}
         hintsRemaining={hintsRemaining}
       />
@@ -169,12 +177,32 @@ export function InteractiveCodeRenderer({
             <div>
               <p className="text-xs font-medium text-lesson-text-muted">Your task</p>
               <h2 className="mt-1 text-xl font-bold tracking-tight text-lesson-text-primary">
-                Build the solution
+                {taskTitle}
               </h2>
             </div>
-            <div className="whitespace-pre-wrap text-sm leading-7 text-lesson-text-secondary">
-              {instructions}
-            </div>
+            {taskInstructions ? (
+              <div className="whitespace-pre-wrap text-sm leading-7 text-lesson-text-secondary">
+                {taskInstructions}
+              </div>
+            ) : null}
+            {testCases && testCases.length > 0 && (
+              <div className="space-y-2 pt-2 border-t border-lesson-border/60">
+                <p className="text-xs font-semibold uppercase tracking-wider text-lesson-text-muted">
+                  Requirements
+                </p>
+                <div className="space-y-1.5">
+                  {testCases.map((tc, idx) => (
+                    <div
+                      key={tc.id || idx}
+                      className="flex items-start gap-2 text-xs text-lesson-text-secondary leading-relaxed"
+                    >
+                      <span className="font-mono text-lesson-accent select-none mt-0.5">•</span>
+                      <span>{tc.description}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {onRevealHint && hintsRemaining > 0 && (
               <Button
                 variant="ghost"
@@ -206,7 +234,7 @@ export function InteractiveCodeRenderer({
                 onClick={() => onResponse(starterCode)}
                 className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
               >
-                <RotateCcw className="h-3.5 w-3.5" /> Reset
+                <RotateCcw className="h-3.5 w-3.5" /> Reset Code
               </Button>
             </div>
 

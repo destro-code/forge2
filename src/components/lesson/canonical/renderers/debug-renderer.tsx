@@ -110,6 +110,7 @@ export function DebugRenderer({
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
       <ActivityHeader
         activity={activity}
+        title={activity.content?.title || "Debug Lab Challenge"}
         onRevealHint={onRevealHint}
         hintsRemaining={hintsRemaining}
       />
@@ -231,7 +232,7 @@ export function DebugRenderer({
                   className="w-full h-11 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 gap-2 rounded-lg font-semibold"
                 >
                   <Lightbulb className="w-4 h-4 text-amber-500 shrink-0" />
-                  <span>Need a hint? ({hintsRemaining} remaining)</span>
+                  <span>Hint ({hintsRemaining})</span>
                 </Button>
               </div>
             )}

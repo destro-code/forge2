@@ -165,7 +165,10 @@ export function CanonicalLessonPlayer({
     return state?.status || "idle";
   }, [currentActivity, getActivityState, currentActivityState]);
 
-  const isCorrect = effectiveStatus === "passed" || effectiveStatus === "correct" || effectiveStatus === "completed";
+  const isCorrect =
+    effectiveStatus === "passed" ||
+    effectiveStatus === "correct" ||
+    effectiveStatus === "completed";
   const isIncorrect = effectiveStatus === "failed" || effectiveStatus === "incorrect";
   const isSubmitted = effectiveStatus === "evaluating" || effectiveStatus === "submitted";
 
@@ -301,7 +304,7 @@ export function CanonicalLessonPlayer({
                 disabled={!currentActivity}
                 className="min-h-11 gap-2 px-6 text-sm font-semibold rounded-md bg-lesson-accent text-lesson-accent-foreground hover:bg-lesson-accent/90 focus-visible:ring-2 focus-visible:ring-lesson-focus-ring shadow-xs"
               >
-                <span>{isLastActivity ? "Complete lesson" : "Continue"}</span>
+                <span>{isLastActivity ? "Complete Lesson" : "Continue"}</span>
                 {isLastActivity ? (
                   <CheckCircle2 className="h-4 w-4 shrink-0" />
                 ) : (

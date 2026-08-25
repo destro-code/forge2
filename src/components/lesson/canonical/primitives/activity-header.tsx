@@ -32,7 +32,10 @@ export function ActivityHeader({
   hintsRemaining,
   className,
 }: ActivityHeaderProps) {
-  const label = INTENT_LABELS[activity.intent] || "Learning activity";
+  const label =
+    activity.type === "interactive-code"
+      ? "Interactive Code Challenge"
+      : INTENT_LABELS[activity.intent] || "Learning activity";
 
   return (
     <div
@@ -56,8 +59,7 @@ export function ActivityHeader({
           className="min-h-9 shrink-0 gap-1.5 px-2.5 text-xs font-medium text-lesson-text-secondary hover:bg-lesson-surface-subtle hover:text-lesson-text-primary focus-visible:ring-2 focus-visible:ring-lesson-focus-ring"
         >
           <Lightbulb className="h-4 w-4" />
-          <span>Hint</span>
-          <span className="font-mono text-[11px] text-lesson-text-muted">{hintsRemaining}</span>
+          <span>Hint ({hintsRemaining})</span>
         </Button>
       )}
     </div>
