@@ -6,7 +6,7 @@ import type { ActivityCompletionEvent } from "./types";
 import { useLessonSession } from "@/lib/learning-engine/use-lesson-session";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, BookOpen, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CanonicalLessonPlayerProps {
@@ -15,13 +15,8 @@ export interface CanonicalLessonPlayerProps {
   className?: string;
 }
 
-export function CanonicalLessonPlayer({
-  lesson,
-  onComplete,
-  className,
-}: CanonicalLessonPlayerProps) {
+export function CanonicalLessonPlayer({ lesson, onComplete, className }: CanonicalLessonPlayerProps) {
   const { completeLesson: completeGlobalProgress } = useProgress();
-
   const handleLessonCompleted = useCallback(() => {
     completeGlobalProgress(lesson.id);
     onComplete?.();
@@ -49,220 +44,131 @@ export function CanonicalLessonPlayer({
   const currentActivityIndex = session.currentActivityIndex;
   const totalActivities = session.totalActivities;
 
-  const handleResponseChange = useCallback(
-    (newResponse: unknown) => {
-      if (!currentActivity) return;
-      updateResponse(newResponse, currentActivity.id);
-    },
-    [currentActivity, updateResponse],
-  );
+  const handleResponseChange = useCallback((newResponse: unknown) => {
+    if (currentActivity) updateResponse(newResponse, currentActivity.id);
+  }, [currentActivity, updateResponse]);
 
   const handleSubmit = useCallback(() => {
     if (!currentActivity) return;
     const latestActState = getActivityState(currentActivity.id);
-    let responseToEvaluate =
-      latestActState?.response ??
-      session.activities[currentActivity.id]?.response ??
-      currentActivityState?.response;
-
+    let responseToEvaluate = latestActState?.response ?? session.activities[currentActivity.id]?.response ?? currentActivityState?.response;
     startEvaluation(currentActivity.id);
 
-    if (
-      (responseToEvaluate === null || responseToEvaluate === undefined) &&
-      currentActivity.content &&
-      "starterCode" in currentActivity.content
-    ) {
-      const codeContent = currentActivity.content as { starterCode?: string };
-      responseToEvaluate = codeContent.starterCode;
+    if (responseToEvaluate === null || responseToEvaluate === undefined) {
+      if (currentActivity.content && "starterCode" in currentActivity.content) {
+        responseToEvaluate = (currentActivity.content as { starterCode?: string }).starterCode;
+      } else if (currentActivity.content && "buggyCode" in currentActivity.content) {
+        responseToEvaluate = (currentActivity.content as { buggyCode?: string }).buggyCode;
+      }
     }
-    if (
-      (responseToEvaluate === null || responseToEvaluate === undefined) &&
-      currentActivity.content &&
-      "buggyCode" in currentActivity.content
-    ) {
-      const debugContent = currentActivity.content as { buggyCode?: string };
-      responseToEvaluate = debugContent.buggyCode;
-    }
+
     const valResult = evaluateActivityValidation(currentActivity, responseToEvaluate);
     resolveEvaluation(valResult, currentActivity.id);
-  }, [
-    currentActivity,
-    getActivityState,
-    session.activities,
-    currentActivityState?.response,
-    startEvaluation,
-    resolveEvaluation,
-  ]);
+  }, [currentActivity, getActivityState, session.activities, currentActivityState?.response, startEvaluation, resolveEvaluation]);
 
   const handleRetry = useCallback(() => {
-    if (!currentActivity) return;
-    retry(currentActivity.id);
+    if (currentActivity) retry(currentActivity.id);
   }, [currentActivity, retry]);
 
   const handleRevealHint = useCallback(() => {
-    if (!currentActivity) return;
-    revealHint(currentActivity.id);
+    if (currentActivity) revealHint(currentActivity.id);
   }, [currentActivity, revealHint]);
 
-  const handleActivityContinue = useCallback(
-    (_event?: ActivityCompletionEvent<unknown>) => {
-      if (!currentActivity) return;
+  const handleActivityContinue = useCallback((_event?: ActivityCompletionEvent<unknown>) => {
+    if (!currentActivity) return;
+    completeActivity(currentActivity.id);
+    if (currentActivityIndex < totalActivities - 1) goNext();
+    else completeLesson();
+  }, [currentActivity, currentActivityIndex, totalActivities, completeActivity, goNext, completeLesson]);
 
-      completeActivity(currentActivity.id);
-
-      if (currentActivityIndex < totalActivities - 1) {
-        goNext();
-      } else {
-        completeLesson();
-      }
-    },
-    [
-      currentActivity,
-      currentActivityIndex,
-      totalActivities,
-      completeActivity,
-      goNext,
-      completeLesson,
-    ],
-  );
+  const progressPercent = totalActivities > 0 ? ((currentActivityIndex + 1) / totalActivities) * 100 : 0;
 
   return (
-    <div className={cn("flex flex-col h-full w-full bg-lesson-bg overflow-hidden", className)}>
-      {/* Lesson Header */}
-      <header className="flex flex-col border-b border-lesson-border bg-lesson-surface/80 backdrop-blur-md px-4 sm:px-6 py-3.5 shrink-0 select-none">
-        {/* Mobile/Desktop Top Row */}
-        <div className="flex items-center justify-between gap-4">
-          {/* Left Section: Back button & Breadcrumbs */}
-          <div className="flex items-center gap-2.5 min-w-0">
-            <a
-              href="/learn"
-              className="inline-flex items-center justify-center h-10 px-2 sm:px-3 text-sm font-semibold text-lesson-text-secondary hover:text-lesson-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lesson-focus-ring rounded-lg hover:bg-lesson-surface-subtle transition-all shrink-0"
-            >
-              <ChevronLeft className="w-5 h-5 -ml-1" />
-              <span className="hidden sm:inline">Back</span>
-            </a>
+    <div className={cn("flex h-full min-h-0 w-full flex-col overflow-hidden bg-lesson-bg text-lesson-text-primary", className)} data-testid="canonical-lesson-player">
+      <header className="shrink-0 border-b border-lesson-border bg-lesson-bg px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4">
+          <a href="/learn" className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-sm font-medium text-lesson-text-secondary transition-colors hover:bg-lesson-surface-subtle hover:text-lesson-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lesson-focus-ring">
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Back to learning</span>
+          </a>
 
-            <div className="w-px h-5 bg-lesson-border shrink-0" />
-
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-lesson-text-muted tracking-wide uppercase">
-                <span>Lesson {lesson.order}</span>
-                <span className="w-1 h-1 rounded-full bg-lesson-border shrink-0" />
-                <span className="capitalize text-lesson-text-muted/80">{lesson.difficulty}</span>
-              </div>
-              <h1 className="text-sm sm:text-base font-bold text-lesson-text-primary truncate">
-                {lesson.title}
-              </h1>
-            </div>
+          <div className="min-w-0 flex-1 text-center sm:px-8">
+            <p className="truncate text-xs font-medium text-lesson-text-muted">Lesson {lesson.order}</p>
+            <h1 className="truncate text-sm font-semibold sm:text-base">{lesson.title}</h1>
           </div>
 
-          {/* Right Section: Compact Navigation and Stats */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="hidden lg:flex items-center gap-1.5 text-xs text-lesson-text-muted">
-              <Clock className="w-4 h-4 text-lesson-text-muted/75" />
-              <span>{lesson.estimatedMinutes} min</span>
-            </div>
-
-            {/* Steps Selector and Controls */}
-            <div className="flex items-center gap-1 bg-lesson-surface border border-lesson-border/60 rounded-xl p-1 shrink-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                disabled={currentActivityIndex === 0}
-                onClick={goPrevious}
-                className="h-9 w-9 text-lesson-text-secondary hover:text-lesson-text-primary hover:bg-lesson-surface-subtle disabled:opacity-25 rounded-lg focus-visible:ring-2 focus-visible:ring-lesson-focus-ring"
-                aria-label="Previous activity"
-              >
-                <ChevronLeft className="w-4.5 h-4.5" />
-              </Button>
-
-              <span className="text-xs font-mono font-bold px-2 text-lesson-text-secondary min-w-[50px] text-center select-none">
-                {currentActivityIndex + 1} / {totalActivities}
-              </span>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                disabled={currentActivityIndex === totalActivities - 1}
-                onClick={goNext}
-                className="h-9 w-9 text-lesson-text-secondary hover:text-lesson-text-primary hover:bg-lesson-surface-subtle disabled:opacity-25 rounded-lg focus-visible:ring-2 focus-visible:ring-lesson-focus-ring"
-                aria-label="Next activity"
-              >
-                <ChevronRight className="w-4.5 h-4.5" />
-              </Button>
-            </div>
+          <div className="shrink-0 text-right">
+            <p className="text-xs font-medium text-lesson-text-muted">Progress</p>
+            <p className="font-mono text-xs font-semibold text-lesson-text-secondary">{currentActivityIndex + 1} / {totalActivities}</p>
           </div>
         </div>
 
-        {/* Progress Area / Ribbon */}
-        {/* Desktop segmented bar, mobile unified thin bar */}
-        <div className="mt-3.5">
-          {/* Desktop Segmented Indicator */}
-          <div className="hidden md:flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            {activities.map((act, idx) => {
-              const isCurrent = idx === currentActivityIndex;
-              const isDone = session.completedActivityIds.includes(act.id);
-
+        <div className="mx-auto mt-3 max-w-[1400px]">
+          <div className="flex items-center justify-between gap-3 text-[11px] font-medium text-lesson-text-muted sm:hidden">
+            <span>Activity {currentActivityIndex + 1}</span>
+            <span>{Math.round(progressPercent)}%</span>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-lesson-surface-subtle">
+            <div className="h-full rounded-full bg-lesson-accent transition-[width] duration-300" style={{ width: `${progressPercent}%` }} />
+          </div>
+          <div className="mt-2 hidden items-center gap-1 md:flex" role="tablist" aria-label="Lesson activities">
+            {activities.map((activity, index) => {
+              const current = index === currentActivityIndex;
+              const done = session.completedActivityIds.includes(activity.id);
               return (
                 <button
-                  key={act.id}
+                  key={activity.id}
                   type="button"
-                  onClick={() => goToActivity(idx)}
-                  aria-label={`Activity ${idx + 1}: ${act.type}`}
-                  className="h-5 flex-1 min-w-[24px] flex items-center relative group cursor-pointer focus:outline-none"
+                  role="tab"
+                  aria-selected={current}
+                  aria-label={`Activity ${index + 1}: ${activity.type}`}
+                  onClick={() => goToActivity(index)}
+                  className="group flex min-h-7 flex-1 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lesson-focus-ring"
                 >
-                  <div
-                    className={cn(
-                      "h-1.5 w-full rounded-full transition-all duration-200",
-                      isCurrent
-                        ? "bg-lesson-accent shadow-xs ring-2 ring-lesson-accent/30"
-                        : isDone
-                          ? "bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-500/80 dark:hover:bg-emerald-500"
-                          : "bg-lesson-surface-subtle border border-lesson-border/40 hover:bg-lesson-text-muted/15",
-                    )}
-                  />
+                  <span className={cn("h-1.5 w-full rounded-full transition-colors", current ? "bg-lesson-accent" : done ? "bg-emerald-500/80" : "bg-lesson-surface-subtle group-hover:bg-lesson-text-muted/30")} />
                 </button>
               );
             })}
           </div>
-
-          {/* Mobile Simple Progress Bar */}
-          <div className="flex md:hidden flex-col gap-1 px-1">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-lesson-text-muted">
-              <span>Progress</span>
-              <span>{Math.round(((currentActivityIndex + 1) / totalActivities) * 100)}%</span>
-            </div>
-            <div className="w-full h-1.5 bg-lesson-surface-subtle border border-lesson-border/40 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-lesson-accent rounded-full transition-all duration-300 ease-out"
-                style={{ width: `${((currentActivityIndex + 1) / totalActivities) * 100}%` }}
-              />
-            </div>
-          </div>
         </div>
       </header>
 
-      {/* Main Activity Viewport */}
-      <main className="flex-1 overflow-y-auto px-4 md:px-6 lg:px-8 pt-4 md:pt-6 lg:pt-8 pb-0 md:pb-8 flex flex-col justify-start">
-        {currentActivity ? (
-          <CanonicalActivityView
-            key={currentActivity.id}
-            activity={currentActivity}
-            activityState={currentActivityState}
-            onResponseChange={handleResponseChange}
-            onSubmit={handleSubmit}
-            onRetry={handleRetry}
-            onRevealHint={handleRevealHint}
-            onComplete={handleActivityContinue}
-            matchedMisconception={matchedMisconception}
-            className="w-full my-auto"
-          />
-        ) : (
-          <div className="p-12 text-center text-lesson-text-muted">
-            No activities available in this lesson.
-          </div>
-        )}
+      <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 sm:px-6 md:py-8 lg:px-8">
+        <div className="mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start">
+          {currentActivity ? (
+            <CanonicalActivityView
+              key={currentActivity.id}
+              activity={currentActivity}
+              activityState={currentActivityState}
+              onResponseChange={handleResponseChange}
+              onSubmit={handleSubmit}
+              onRetry={handleRetry}
+              onRevealHint={handleRevealHint}
+              onComplete={handleActivityContinue}
+              matchedMisconception={matchedMisconception}
+              className="w-full"
+            />
+          ) : (
+            <div className="py-16 text-center text-lesson-text-muted">No activities available in this lesson.</div>
+          )}
+        </div>
       </main>
+
+      <footer className="shrink-0 border-t border-lesson-border bg-lesson-bg px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
+          <Button variant="ghost" onClick={goPrevious} disabled={currentActivityIndex === 0} className="min-h-11 gap-1 px-3 text-sm text-lesson-text-secondary hover:bg-lesson-surface-subtle hover:text-lesson-text-primary" aria-label="Previous activity">
+            <ChevronLeft className="h-4 w-4" />
+            <span>Back</span>
+          </Button>
+
+          <span className="hidden max-w-[45%] truncate text-xs font-medium text-lesson-text-muted sm:block">{currentActivity?.title || `Activity ${currentActivityIndex + 1}`}</span>
+
+          <Button onClick={handleActivityContinue} disabled={!currentActivity} className="min-h-11 gap-1.5 px-4 text-sm font-semibold">
+            <span>{currentActivityIndex === totalActivities - 1 ? "Complete lesson" : "Continue"}</span>
+            {currentActivityIndex === totalActivities - 1 ? <CheckCircle2 className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </Button>
+        </div>
+      </footer>
     </div>
   );
 }
