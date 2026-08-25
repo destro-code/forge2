@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import appCss from "../styles.css?url";
+import "../design-overrides.css";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
@@ -137,7 +138,6 @@ function AppLayout() {
       <div className="flex min-h-dvh w-full bg-background text-foreground">
         <AppSidebar />
         <div className="relative flex min-w-0 flex-1 flex-col">
-          <div className="ember-glow pointer-events-none absolute inset-x-0 top-0 h-64" />
           <TopBar />
           <main id="main-content" tabIndex={-1} className="relative flex-1 focus:outline-none">
             <motion.div
