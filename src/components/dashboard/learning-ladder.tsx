@@ -36,21 +36,22 @@ export function LearningLadder({
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-border/50 pb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+          <span className="text-[11px] font-mono font-semibold uppercase tracking-[0.08em] text-muted-foreground/80">
             MODULE ROADMAP
           </span>
-          <span className="text-border">·</span>
+          <span className="text-border/80">·</span>
           <span className="text-sm font-semibold text-foreground truncate">{module.title}</span>
         </div>
 
-        <div className="flex items-center gap-4 text-xs">
-          <span className="text-muted-foreground font-mono">
-            {completedCount} of {totalCount} completed
+        <div className="flex items-center gap-4 text-xs font-mono">
+          <span className="text-muted-foreground/80">
+            {String(completedCount).padStart(2, "0")} of {String(totalCount).padStart(2, "0")}{" "}
+            completed
           </span>
           <Link
             to="/learn/modules/$moduleId"
             params={{ moduleId: module.id }}
-            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 font-medium transition-colors"
+            className="text-muted-foreground/90 hover:text-foreground inline-flex items-center gap-1 font-medium transition-colors"
           >
             All Modules <ChevronRight className="h-3.5 w-3.5" />
           </Link>
@@ -63,6 +64,7 @@ export function LearningLadder({
           const isCompleted = completedLessonIds.includes(lesson.id);
           const isActive = lesson.id === currentLessonId || (!currentLessonId && idx === 0);
           const stepNumber = idx + 1;
+          const formattedStep = String(stepNumber).padStart(2, "0");
           const isMilestone =
             lesson.exercises?.some((e) => e.applyAction === "debug-lab") ||
             idx === moduleLessons.length - 1;
@@ -71,7 +73,7 @@ export function LearningLadder({
             return (
               <div
                 key={lesson.id}
-                className="py-3 sm:py-3.5 px-3 sm:px-4 -mx-3 sm:-mx-4 rounded-xl border border-primary/35 bg-card/75 shadow-2xs my-1"
+                className="py-3 sm:py-3.5 px-3.5 sm:px-4 -mx-3.5 sm:-mx-4 rounded-xl border border-primary/35 bg-primary/[0.035] dark:bg-primary/[0.055] shadow-2xs my-1.5 transition-colors"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3.5 min-w-0">
@@ -82,7 +84,7 @@ export function LearningLadder({
                     <div className="min-w-0">
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <span className="font-mono text-xs text-primary font-semibold">
-                          Step {stepNumber}
+                          Step {formattedStep}
                         </span>
                         <Link
                           to="/lesson/$lessonId"
@@ -93,10 +95,10 @@ export function LearningLadder({
                           {lesson.title}
                         </Link>
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider bg-primary/15 text-primary border border-primary/20 shrink-0">
-                          Active Step · {lesson.estimatedMinutes}m
+                          Active Frontier · {lesson.estimatedMinutes}m
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 max-w-2xl">
+                      <p className="text-xs text-muted-foreground/90 line-clamp-1 mt-0.5 max-w-2xl">
                         {lesson.description}
                       </p>
                     </div>
@@ -106,7 +108,7 @@ export function LearningLadder({
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary/90 transition-colors shadow-2xs"
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary/90 transition-colors shadow-2xs active:scale-[0.98]"
                   >
                     Resume <ArrowRight className="h-3 w-3" />
                   </Link>
@@ -127,14 +129,14 @@ export function LearningLadder({
                   </div>
 
                   <div className="min-w-0 flex items-baseline gap-2">
-                    <span className="font-mono text-xs text-muted-foreground/80">
-                      {stepNumber}.
+                    <span className="font-mono text-xs text-muted-foreground/70">
+                      {formattedStep}.
                     </span>
                     <Link
                       to="/lesson/$lessonId"
                       params={{ lessonId: lesson.id }}
                       search={{ mode: "curriculum" }}
-                      className="text-sm text-foreground/85 hover:text-foreground font-medium truncate"
+                      className="text-sm text-foreground/80 hover:text-foreground font-medium truncate"
                     >
                       {lesson.title}
                     </Link>
@@ -149,7 +151,7 @@ export function LearningLadder({
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-muted-foreground hover:text-foreground"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-muted-foreground hover:text-foreground font-mono"
                     title="Review lesson"
                   >
                     Review →
@@ -163,20 +165,22 @@ export function LearningLadder({
           return (
             <div
               key={lesson.id}
-              className="py-2.5 sm:py-3 flex items-center justify-between gap-3 text-muted-foreground/90 transition-colors group"
+              className="py-2.5 sm:py-3 flex items-center justify-between gap-3 text-muted-foreground/80 transition-colors group"
             >
               <div className="flex items-center gap-3.5 min-w-0">
-                <div className="h-6 w-6 rounded-full border border-border/70 grid place-items-center text-[11px] font-mono text-muted-foreground shrink-0">
-                  {stepNumber}
+                <div className="h-6 w-6 rounded-full border border-border/70 grid place-items-center text-[10px] font-mono text-muted-foreground/70 shrink-0">
+                  {formattedStep}
                 </div>
 
                 <div className="min-w-0 flex items-baseline gap-2">
-                  <span className="font-mono text-xs text-muted-foreground/60">{stepNumber}.</span>
+                  <span className="font-mono text-xs text-muted-foreground/50">
+                    {formattedStep}.
+                  </span>
                   <Link
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="text-sm text-muted-foreground group-hover:text-foreground font-medium truncate transition-colors"
+                    className="text-sm text-muted-foreground/85 group-hover:text-foreground font-medium truncate transition-colors"
                   >
                     {lesson.title}
                   </Link>
@@ -185,16 +189,16 @@ export function LearningLadder({
 
               <div className="flex items-center gap-3 shrink-0 text-xs text-muted-foreground">
                 {isMilestone ? (
-                  <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-muted/60 border border-border/50 text-foreground/80 font-medium">
-                    Milestone
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-muted/50 border border-border/40 text-foreground/75 font-medium">
+                    Lab Milestone
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 font-mono text-[11px]">
+                  <span className="inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground/70">
                     <Clock className="h-3 w-3" />
                     {lesson.estimatedMinutes}m
                   </span>
                 )}
-                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-foreground transition-colors" />
               </div>
             </div>
           );
