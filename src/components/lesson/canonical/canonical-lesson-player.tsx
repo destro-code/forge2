@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import type { CanonicalLesson } from "@/lib/curriculum/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
 import { evaluateActivityValidation } from "./validation";
@@ -6,7 +6,7 @@ import type { ActivityCompletionEvent } from "./types";
 import { useLessonSession } from "@/lib/learning-engine/use-lesson-session";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle2, Check, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CanonicalLessonPlayerProps {
@@ -14,6 +14,18 @@ export interface CanonicalLessonPlayerProps {
   onComplete?: () => void;
   className?: string;
 }
+
+const INTERACTIVE_TYPES = new Set([
+  "multiple-choice",
+  "multi-select",
+  "fill-blank",
+  "ordering",
+  "output-prediction",
+  "interactive-code",
+  "debug",
+  "reflection",
+  "judgment",
+]);
 
 export function CanonicalLessonPlayer({
   lesson,
@@ -108,6 +120,57 @@ export function CanonicalLessonPlayer({
     ],
   );
 
+  const isInteractive = currentActivity ? INTERACTIVE_TYPES.has(currentActivity.type) : false;
+
+  const activeResponse = useMemo(() => {
+    if (!currentActivity) return undefined;
+    return (
+      getActivityState(currentActivity.id)?.response ??
+      session.activities[currentActivity.id]?.response ??
+      currentActivityState?.response
+    );
+  }, [currentActivity, getActivityState, session.activities, currentActivityState?.response]);
+
+  const canSubmit = useMemo(() => {
+    if (!currentActivity) return false;
+    if (!isInteractive) return true;
+
+    switch (currentActivity.type) {
+      case "multiple-choice":
+        return typeof activeResponse === "string" && activeResponse.length > 0;
+      case "multi-select":
+        return Array.isArray(activeResponse) && activeResponse.length > 0;
+      case "fill-blank":
+        return (
+          typeof activeResponse === "object" &&
+          activeResponse !== null &&
+          Object.keys(activeResponse).length > 0
+        );
+      case "ordering":
+        return Array.isArray(activeResponse) && activeResponse.length > 0;
+      case "reflection":
+        return typeof activeResponse === "string" && activeResponse.trim().length >= 10;
+      case "interactive-code":
+      case "debug":
+      case "output-prediction":
+      case "judgment":
+      default:
+        return activeResponse !== undefined && activeResponse !== null;
+    }
+  }, [currentActivity, isInteractive, activeResponse]);
+
+  const effectiveStatus = useMemo(() => {
+    if (!currentActivity) return "idle";
+    const state = getActivityState(currentActivity.id) || currentActivityState;
+    return state?.status || "idle";
+  }, [currentActivity, getActivityState, currentActivityState]);
+
+  const isCorrect = effectiveStatus === "passed" || effectiveStatus === "correct" || effectiveStatus === "completed";
+  const isIncorrect = effectiveStatus === "failed" || effectiveStatus === "incorrect";
+  const isSubmitted = effectiveStatus === "evaluating" || effectiveStatus === "submitted";
+
+  const isLastActivity = currentActivityIndex === totalActivities - 1;
+
   const progressPercent =
     totalActivities > 0 ? ((currentActivityIndex + 1) / totalActivities) * 100 : 0;
 
@@ -190,7 +253,7 @@ export function CanonicalLessonPlayer({
         </div>
       </header>
 
-      <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 sm:px-6 md:py-8 lg:px-8">
+      <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 pb-32 sm:px-6 sm:pb-36 md:py-8 lg:px-8">
         <div className="mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start">
           {currentActivity ? (
             <CanonicalActivityView
@@ -213,7 +276,8 @@ export function CanonicalLessonPlayer({
         </div>
       </main>
 
-      <footer className="shrink-0 border-t border-lesson-border bg-lesson-bg px-4 py-3 sm:px-6">
+      {/* Single, authoritative, stateful lesson action bar */}
+      <footer className="shrink-0 border-t border-lesson-border bg-lesson-surface/95 backdrop-blur-sm px-4 py-3 sm:px-6 z-30 shadow-[0_-4px_16px_rgba(0,0,0,0.03)] pb-[calc(12px+env(safe-area-inset-bottom,0px))]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
           <Button
             variant="ghost"
@@ -230,20 +294,39 @@ export function CanonicalLessonPlayer({
             {currentActivity?.title || `Activity ${currentActivityIndex + 1}`}
           </span>
 
-          <Button
-            onClick={handleActivityContinue}
-            disabled={!currentActivity}
-            className="min-h-11 gap-1.5 px-4 text-sm font-semibold"
-          >
-            <span>
-              {currentActivityIndex === totalActivities - 1 ? "Complete lesson" : "Continue"}
-            </span>
-            {currentActivityIndex === totalActivities - 1 ? (
-              <CheckCircle2 className="h-4 w-4" />
+          <div className="flex items-center gap-2">
+            {!isInteractive || isCorrect ? (
+              <Button
+                onClick={handleActivityContinue}
+                disabled={!currentActivity}
+                className="min-h-11 gap-2 px-6 text-sm font-semibold rounded-md bg-lesson-accent text-lesson-accent-foreground hover:bg-lesson-accent/90 focus-visible:ring-2 focus-visible:ring-lesson-focus-ring shadow-xs"
+              >
+                <span>{isLastActivity ? "Complete lesson" : "Continue"}</span>
+                {isLastActivity ? (
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 shrink-0" />
+                )}
+              </Button>
+            ) : isIncorrect ? (
+              <Button
+                onClick={handleRetry}
+                className="min-h-11 gap-2 px-6 text-sm font-semibold rounded-md bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-2 focus-visible:ring-rose-500 shadow-xs"
+              >
+                <RotateCcw className="h-4 w-4 shrink-0" />
+                <span>Try Again</span>
+              </Button>
             ) : (
-              <ChevronRight className="h-4 w-4" />
+              <Button
+                onClick={handleSubmit}
+                disabled={!canSubmit || isSubmitted}
+                className="min-h-11 gap-2 px-6 text-sm font-semibold rounded-md bg-lesson-accent text-lesson-accent-foreground hover:bg-lesson-accent/90 disabled:opacity-45 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-lesson-focus-ring shadow-xs"
+              >
+                <Check className="h-4 w-4 shrink-0" />
+                <span>{isSubmitted ? "Evaluating…" : "Check Answer"}</span>
+              </Button>
             )}
-          </Button>
+          </div>
         </div>
       </footer>
     </div>

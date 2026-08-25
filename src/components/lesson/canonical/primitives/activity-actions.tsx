@@ -32,7 +32,7 @@ export function ActivityActions({
   return (
     <div
       className={cn(
-        "sticky bottom-0 sm:relative z-20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-6 py-4.5 border-t border-lesson-border bg-lesson-surface/95 backdrop-blur-sm sm:bg-lesson-surface-subtle/10 sm:backdrop-blur-none shadow-[0_-6px_20px_rgba(0,0,0,0.04)] sm:shadow-none pb-[calc(16px+env(safe-area-inset-bottom,0px))] sm:pb-4.5 rounded-b-xl sm:rounded-b-none",
+        "relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-6 py-4 border-t border-lesson-border bg-lesson-surface/50 sm:bg-lesson-surface-subtle/10 rounded-b-xl",
         className,
       )}
     >
