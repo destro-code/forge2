@@ -64,7 +64,7 @@ function Dashboard() {
   const isNewLearner = progress.lessonsCompleted.length === 0;
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-12 pt-2 px-1">
+    <div className="space-y-8 max-w-5xl mx-auto pb-12 pt-2 px-2 sm:px-4">
       {/* 1. Primary Hero Studio Monolith (Dominant Viewport Centerpiece) */}
       {continueLesson && (
         <HeroStudio

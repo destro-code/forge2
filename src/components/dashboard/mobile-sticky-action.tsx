@@ -40,8 +40,8 @@ export function MobileStickyAction({ lesson, isNewLearner = false }: MobileStick
             <Play className="h-3 w-3 fill-current ml-0.5" />
           </div>
           <div className="min-w-0">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-primary-foreground/80">
-              {isNewLearner ? "First Challenge" : "Active Challenge"}
+            <div className="text-[10px] font-mono uppercase tracking-[0.06em] text-primary-foreground/80 font-medium">
+              {isNewLearner ? "First Challenge" : "Active Frontier"}
             </div>
             <div className="text-xs truncate font-bold text-primary-foreground">{lesson.title}</div>
           </div>
