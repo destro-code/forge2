@@ -135,7 +135,6 @@ export function InteractiveCodeRenderer({
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
       <ActivityHeader
         activity={activity}
-        title={activity.content?.title || "Interactive Code Challenge"}
         onRevealHint={onRevealHint}
         hintsRemaining={hintsRemaining}
       />

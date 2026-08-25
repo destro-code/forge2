@@ -100,6 +100,7 @@ export function LessonCodeEditor({
         keymap.of([...defaultKeymap, ...historyKeymap, ...closeBracketsKeymap]),
         languageCompartment.of(getLanguageExtension(language)),
         readOnlyCompartment.of(EditorState.readOnly.of(readOnly)),
+        EditorView.lineWrapping,
         EditorView.updateListener.of((update) => {
           if (update.focusChanged) {
             setIsFocused(update.view.hasFocus);

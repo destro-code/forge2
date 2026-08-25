@@ -22,6 +22,7 @@ export const lessonTheme = EditorView.theme(
       flex: 1,
       minHeight: "0",
       scrollbarWidth: "thin",
+      overscrollBehaviorX: "contain",
     },
     ".cm-content": {
       caretColor: "var(--lesson-accent, #ea580c)",

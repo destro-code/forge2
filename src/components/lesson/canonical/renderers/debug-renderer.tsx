@@ -110,7 +110,6 @@ export function DebugRenderer({
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
       <ActivityHeader
         activity={activity}
-        title={activity.content?.title || "Debug Lab Challenge"}
         onRevealHint={onRevealHint}
         hintsRemaining={hintsRemaining}
       />
