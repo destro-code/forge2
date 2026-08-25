@@ -2,138 +2,673 @@
   {
     "id": "what-is-frontend-development",
     "moduleId": "module-0-1",
-    "title": "What Is Frontend Development?",
-    "description": "Orientation to what frontend engineers build, separation of concerns, client-server split, and web platform runtime foundations.",
-    "order": 1,
-    "conceptIds": [
-      "concept-frontend-definition",
-      "concept-web-platform-trio",
-      "concept-web-architecture",
-      "concept-client-server-split",
-      "concept-triad-roles"
-    ],
-    "skillIds": [
-      "skill-distinguish-web-responsibilities",
-      "skill-classify-stack-responsibilities",
-      "skill-differentiate-triad-roles",
-      "skill-explain-client-execution"
-    ],
-    "lessonIds": [
-      "lesson-0-1-1"
-    ]
+    "title": "What Is Frontend Development",
+    "description": "Topic covering what-is-frontend-development",
+    "order": 1
   },
   {
-    "id": "elements-tags-attributes",
+    "id": "how-the-web-works",
+    "moduleId": "module-0-1",
+    "title": "How The Web Works",
+    "description": "Topic covering how-the-web-works",
+    "order": 2
+  },
+  {
+    "id": "what-happens-when-you-click-a-link",
+    "moduleId": "module-0-1",
+    "title": "What Happens When You Click A Link",
+    "description": "Topic covering what-happens-when-you-click-a-link",
+    "order": 3
+  },
+  {
+    "id": "browser-server-and-client",
+    "moduleId": "module-0-1",
+    "title": "Browser Server And Client",
+    "description": "Topic covering browser-server-and-client",
+    "order": 4
+  },
+  {
+    "id": "how-forge-works",
+    "moduleId": "module-0-1",
+    "title": "How Forge Works",
+    "description": "Topic covering how-forge-works",
+    "order": 5
+  },
+  {
+    "id": "html-the-structure-of-the-web",
     "moduleId": "module-1-1",
-    "title": "HTML Elements, Tags & Attributes",
-    "description": "Core syntax of HTML: element anatomy, opening and closing tags, attributes, void elements, text nodes, and nesting hierarchy.",
-    "order": 2,
-    "conceptIds": [
-      "concept-html-elements",
-      "concept-html-element-anatomy",
-      "concept-opening-closing-tags",
-      "concept-attributes-key-value",
-      "concept-nesting-hierarchy"
-    ],
-    "skillIds": [
-      "skill-write-valid-html-markup",
-      "skill-parse-element-syntax",
-      "skill-construct-element-attributes",
-      "skill-nest-elements-validly"
-    ],
-    "lessonIds": [
-      "lesson-1-1-2"
-    ]
+    "title": "Html The Structure Of The Web",
+    "description": "Topic covering html-the-structure-of-the-web",
+    "order": 6
   },
   {
-    "id": "flexbox-layout",
+    "id": "elements-tags-and-attributes",
+    "moduleId": "module-1-1",
+    "title": "Elements Tags And Attributes",
+    "description": "Topic covering elements-tags-and-attributes",
+    "order": 7
+  },
+  {
+    "id": "headings-paragraphs-and-text",
+    "moduleId": "module-1-1",
+    "title": "Headings Paragraphs And Text",
+    "description": "Topic covering headings-paragraphs-and-text",
+    "order": 8
+  },
+  {
+    "id": "links-images-and-paths",
+    "moduleId": "module-1-1",
+    "title": "Links Images And Paths",
+    "description": "Topic covering links-images-and-paths",
+    "order": 9
+  },
+  {
+    "id": "lists-and-tables",
+    "moduleId": "module-1-1",
+    "title": "Lists And Tables",
+    "description": "Topic covering lists-and-tables",
+    "order": 10
+  },
+  {
+    "id": "forms-and-user-input",
+    "moduleId": "module-1-1",
+    "title": "Forms And User Input",
+    "description": "Topic covering forms-and-user-input",
+    "order": 11
+  },
+  {
+    "id": "semantic-html",
+    "moduleId": "module-1-1",
+    "title": "Semantic Html",
+    "description": "Topic covering semantic-html",
+    "order": 12
+  },
+  {
+    "id": "html-challenge-build-a-real-page",
+    "moduleId": "module-1-1",
+    "title": "Html Challenge Build A Real Page",
+    "description": "Topic covering html-challenge-build-a-real-page",
+    "order": 13
+  },
+  {
+    "id": "what-is-css",
     "moduleId": "module-1-2",
-    "title": "Flexbox Layout Mechanics",
-    "description": "One-dimensional flexible layout: flex containers, flex items, main vs cross axis, justify-content, align-items, flex-wrap, and responsive flow.",
-    "order": 3,
-    "conceptIds": [
-      "concept-css-flexbox-layout",
-      "concept-css-box-model",
-      "concept-flex-container",
-      "concept-flex-items",
-      "concept-main-cross-axes",
-      "concept-justify-align-distribution"
-    ],
-    "skillIds": [
-      "skill-implement-flexbox-alignments",
-      "skill-identify-flex-axes",
-      "skill-predict-flex-distribution",
-      "skill-author-flexbox-rules"
-    ],
-    "lessonIds": [
-      "lesson-1-2-7"
-    ]
+    "title": "What Is Css",
+    "description": "Topic covering what-is-css",
+    "order": 14
   },
   {
-    "id": "javascript-functions",
-    "moduleId": "module-2-1",
-    "title": "JavaScript Functions & Execution Scope",
-    "description": "Functions as first-class citizens, parameters, return statements vs console.log, call expression substitution, and local variable scope.",
-    "order": 4,
-    "conceptIds": [
-      "concept-js-functions",
-      "concept-function-return-value",
-      "concept-console-log-side-effects",
-      "concept-caller-expression-substitution",
-      "concept-undefined-default-return"
-    ],
-    "skillIds": [
-      "skill-author-javascript-functions",
-      "skill-distinguish-return-vs-log",
-      "skill-predict-call-expression-values",
-      "skill-author-returning-functions"
-    ],
-    "lessonIds": [
-      "lesson-1-3-1"
-    ]
+    "id": "selectors-and-specificity",
+    "moduleId": "module-1-2",
+    "title": "Selectors And Specificity",
+    "description": "Topic covering selectors-and-specificity",
+    "order": 15
   },
   {
-    "id": "debugging-strategies",
-    "moduleId": "module-0-2",
-    "title": "Systematic Frontend Debugging",
-    "description": "Diagnostic workflow, DevTools Elements/Console inspection, syntax/runtime/logic error classification, and repairing multi-file frontend defects.",
-    "order": 5,
-    "conceptIds": [
-      "concept-debugging-workflow",
-      "concept-html-elements",
-      "concept-js-functions",
-      "concept-syntax-error-vs-runtime-error",
-      "concept-dom-element-resolution",
-      "concept-event-listener-binding",
-      "concept-style-attribute-typos"
-    ],
-    "skillIds": [
-      "skill-diagnose-frontend-bugs",
-      "skill-diagnose-symptom-root-causes",
-      "skill-formulate-debugging-hypothesis",
-      "skill-repair-multi-file-defects"
-    ],
-    "lessonIds": [
-      "lesson-0-2-5"
-    ]
+    "id": "the-cascade-and-inheritance",
+    "moduleId": "module-1-2",
+    "title": "The Cascade And Inheritance",
+    "description": "Topic covering the-cascade-and-inheritance",
+    "order": 16
+  },
+  {
+    "id": "css-box-model",
+    "moduleId": "module-1-2",
+    "title": "Css Box Model",
+    "description": "Topic covering css-box-model",
+    "order": 17
+  },
+  {
+    "id": "spacing-sizing-and-layout",
+    "moduleId": "module-1-2",
+    "title": "Spacing Sizing And Layout",
+    "description": "Topic covering spacing-sizing-and-layout",
+    "order": 18
+  },
+  {
+    "id": "css-typography-and-text",
+    "moduleId": "module-1-2",
+    "title": "Css Typography And Text",
+    "description": "Topic covering css-typography-and-text",
+    "order": 19
+  },
+  {
+    "id": "colors-backgrounds-and-borders",
+    "moduleId": "module-1-2",
+    "title": "Colors Backgrounds And Borders",
+    "description": "Topic covering colors-backgrounds-and-borders",
+    "order": 20
+  },
+  {
+    "id": "css-display-and-normal-flow",
+    "moduleId": "module-1-2",
+    "title": "Css Display And Normal Flow",
+    "description": "Topic covering css-display-and-normal-flow",
+    "order": 21
+  },
+  {
+    "id": "css-flexbox",
+    "moduleId": "module-1-2",
+    "title": "Css Flexbox",
+    "description": "Topic covering css-flexbox",
+    "order": 22
+  },
+  {
+    "id": "css-grid",
+    "moduleId": "module-1-2",
+    "title": "Css Grid",
+    "description": "Topic covering css-grid",
+    "order": 23
+  },
+  {
+    "id": "responsive-design-and-media-queries",
+    "moduleId": "module-1-2",
+    "title": "Responsive Design And Media Queries",
+    "description": "Topic covering responsive-design-and-media-queries",
+    "order": 24
+  },
+  {
+    "id": "css-challenge-build-a-responsive-interface",
+    "moduleId": "module-1-2",
+    "title": "Css Challenge Build A Responsive Interface",
+    "description": "Topic covering css-challenge-build-a-responsive-interface",
+    "order": 25
+  },
+  {
+    "id": "javascript-and-the-browser",
+    "moduleId": "module-1-3",
+    "title": "Javascript And The Browser",
+    "description": "Topic covering javascript-and-the-browser",
+    "order": 26
+  },
+  {
+    "id": "variables-and-values",
+    "moduleId": "module-1-3",
+    "title": "Variables And Values",
+    "description": "Topic covering variables-and-values",
+    "order": 27
+  },
+  {
+    "id": "data-types-and-operators",
+    "moduleId": "module-1-3",
+    "title": "Data Types And Operators",
+    "description": "Topic covering data-types-and-operators",
+    "order": 28
+  },
+  {
+    "id": "conditions-and-decisions",
+    "moduleId": "module-1-3",
+    "title": "Conditions And Decisions",
+    "description": "Topic covering conditions-and-decisions",
+    "order": 29
+  },
+  {
+    "id": "loops-and-repetition",
+    "moduleId": "module-1-3",
+    "title": "Loops And Repetition",
+    "description": "Topic covering loops-and-repetition",
+    "order": 30
+  },
+  {
+    "id": "functions",
+    "moduleId": "module-1-3",
+    "title": "Functions",
+    "description": "Topic covering functions",
+    "order": 31
+  },
+  {
+    "id": "arrays",
+    "moduleId": "module-1-3",
+    "title": "Arrays",
+    "description": "Topic covering arrays",
+    "order": 32
+  },
+  {
+    "id": "objects",
+    "moduleId": "module-1-3",
+    "title": "Objects",
+    "description": "Topic covering objects",
+    "order": 33
+  },
+  {
+    "id": "javascript-mini-project",
+    "moduleId": "module-1-3",
+    "title": "Javascript Mini Project",
+    "description": "Topic covering javascript-mini-project",
+    "order": 34
+  },
+  {
+    "id": "meet-your-browser-devtools",
+    "moduleId": "module-1-4",
+    "title": "Meet Your Browser Devtools",
+    "description": "Topic covering meet-your-browser-devtools",
+    "order": 35
+  },
+  {
+    "id": "inspecting-html-with-elements",
+    "moduleId": "module-1-4",
+    "title": "Inspecting Html With Elements",
+    "description": "Topic covering inspecting-html-with-elements",
+    "order": 36
+  },
+  {
+    "id": "understanding-the-console",
+    "moduleId": "module-1-4",
+    "title": "Understanding The Console",
+    "description": "Topic covering understanding-the-console",
+    "order": 37
   },
   {
     "id": "understanding-network-requests",
     "moduleId": "module-1-4",
     "title": "Understanding Network Requests",
-    "description": "Diagnosing where a network request actually failed (DNS resolution, connection, or server response) using the browser Network panel, rather than guessing from symptoms alone.",
-    "order": 6,
-    "conceptIds": [
-      "concept-request-lifecycle-stages",
-      "concept-network-panel-evidence",
-      "concept-failure-locus-diagnosis"
-    ],
-    "skillIds": [
-      "skill-diagnose-request-failure-locus",
-      "skill-read-network-panel-timing"
-    ],
-    "lessonIds": [
-      "lesson-1-4-4"
-    ]
+    "description": "Topic covering understanding-network-requests",
+    "order": 38
+  },
+  {
+    "id": "your-first-debugging-exercise",
+    "moduleId": "module-1-4",
+    "title": "Your First Debugging Exercise",
+    "description": "Topic covering your-first-debugging-exercise",
+    "order": 39
+  },
+  {
+    "id": "understanding-browser-rendering",
+    "moduleId": "module-0-2",
+    "title": "Understanding Browser Rendering",
+    "description": "Topic covering understanding-browser-rendering",
+    "order": 40
+  },
+  {
+    "id": "reading-javascript-errors",
+    "moduleId": "module-0-2",
+    "title": "Reading Javascript Errors",
+    "description": "Topic covering reading-javascript-errors",
+    "order": 41
+  },
+  {
+    "id": "console-debugging",
+    "moduleId": "module-0-2",
+    "title": "Console Debugging",
+    "description": "Topic covering console-debugging",
+    "order": 42
+  },
+  {
+    "id": "debugging-dom-problems",
+    "moduleId": "module-0-2",
+    "title": "Debugging Dom Problems",
+    "description": "Topic covering debugging-dom-problems",
+    "order": 43
+  },
+  {
+    "id": "debug-challenge-fix-the-broken-page",
+    "moduleId": "module-0-2",
+    "title": "Debug Challenge Fix The Broken Page",
+    "description": "Topic covering debug-challenge-fix-the-broken-page",
+    "order": 44
+  },
+  {
+    "id": "advanced-flexbox",
+    "moduleId": "module-2-1",
+    "title": "Advanced Flexbox",
+    "description": "Topic covering advanced-flexbox",
+    "order": 45
+  },
+  {
+    "id": "advanced-css-grid",
+    "moduleId": "module-2-1",
+    "title": "Advanced Css Grid",
+    "description": "Topic covering advanced-css-grid",
+    "order": 46
+  },
+  {
+    "id": "positioning-and-layering",
+    "moduleId": "module-2-1",
+    "title": "Positioning And Layering",
+    "description": "Topic covering positioning-and-layering",
+    "order": 47
+  },
+  {
+    "id": "transitions-and-animations",
+    "moduleId": "module-2-1",
+    "title": "Transitions And Animations",
+    "description": "Topic covering transitions-and-animations",
+    "order": 48
+  },
+  {
+    "id": "css-architecture",
+    "moduleId": "module-2-1",
+    "title": "Css Architecture",
+    "description": "Topic covering css-architecture",
+    "order": 49
+  },
+  {
+    "id": "design-tokens-and-design-systems",
+    "moduleId": "module-2-1",
+    "title": "Design Tokens And Design Systems",
+    "description": "Topic covering design-tokens-and-design-systems",
+    "order": 50
+  },
+  {
+    "id": "advanced-responsive-design",
+    "moduleId": "module-2-1",
+    "title": "Advanced Responsive Design",
+    "description": "Topic covering advanced-responsive-design",
+    "order": 51
+  },
+  {
+    "id": "scope-and-hoisting",
+    "moduleId": "module-2-2",
+    "title": "Scope And Hoisting",
+    "description": "Topic covering scope-and-hoisting",
+    "order": 52
+  },
+  {
+    "id": "closures",
+    "moduleId": "module-2-2",
+    "title": "Closures",
+    "description": "Topic covering closures",
+    "order": 53
+  },
+  {
+    "id": "the-this-keyword",
+    "moduleId": "module-2-2",
+    "title": "The This Keyword",
+    "description": "Topic covering the-this-keyword",
+    "order": 54
+  },
+  {
+    "id": "destructuring-and-spread",
+    "moduleId": "module-2-2",
+    "title": "Destructuring And Spread",
+    "description": "Topic covering destructuring-and-spread",
+    "order": 55
+  },
+  {
+    "id": "array-methods",
+    "moduleId": "module-2-2",
+    "title": "Array Methods",
+    "description": "Topic covering array-methods",
+    "order": 56
+  },
+  {
+    "id": "modules-and-imports",
+    "moduleId": "module-2-2",
+    "title": "Modules And Imports",
+    "description": "Topic covering modules-and-imports",
+    "order": 57
+  },
+  {
+    "id": "promises",
+    "moduleId": "module-2-2",
+    "title": "Promises",
+    "description": "Topic covering promises",
+    "order": 58
+  },
+  {
+    "id": "async-and-await",
+    "moduleId": "module-2-2",
+    "title": "Async And Await",
+    "description": "Topic covering async-and-await",
+    "order": 59
+  },
+  {
+    "id": "error-handling",
+    "moduleId": "module-2-2",
+    "title": "Error Handling",
+    "description": "Topic covering error-handling",
+    "order": 60
+  },
+  {
+    "id": "modern-javascript-challenge",
+    "moduleId": "module-2-2",
+    "title": "Modern Javascript Challenge",
+    "description": "Topic covering modern-javascript-challenge",
+    "order": 61
+  },
+  {
+    "id": "why-version-control-exists",
+    "moduleId": "module-2-3",
+    "title": "Why Version Control Exists",
+    "description": "Topic covering why-version-control-exists",
+    "order": 62
+  },
+  {
+    "id": "git-fundamentals",
+    "moduleId": "module-2-3",
+    "title": "Git Fundamentals",
+    "description": "Topic covering git-fundamentals",
+    "order": 63
+  },
+  {
+    "id": "branches",
+    "moduleId": "module-2-3",
+    "title": "Branches",
+    "description": "Topic covering branches",
+    "order": 64
+  },
+  {
+    "id": "pull-requests",
+    "moduleId": "module-2-3",
+    "title": "Pull Requests",
+    "description": "Topic covering pull-requests",
+    "order": 65
+  },
+  {
+    "id": "merge-conflicts",
+    "moduleId": "module-2-3",
+    "title": "Merge Conflicts",
+    "description": "Topic covering merge-conflicts",
+    "order": 66
+  },
+  {
+    "id": "professional-git-workflow",
+    "moduleId": "module-2-3",
+    "title": "Professional Git Workflow",
+    "description": "Topic covering professional-git-workflow",
+    "order": 67
+  },
+  {
+    "id": "what-is-an-api",
+    "moduleId": "module-2-4",
+    "title": "What Is An Api",
+    "description": "Topic covering what-is-an-api",
+    "order": 68
+  },
+  {
+    "id": "http-requests-and-responses",
+    "moduleId": "module-2-4",
+    "title": "Http Requests And Responses",
+    "description": "Topic covering http-requests-and-responses",
+    "order": 69
+  },
+  {
+    "id": "json",
+    "moduleId": "module-2-4",
+    "title": "Json",
+    "description": "Topic covering json",
+    "order": 70
+  },
+  {
+    "id": "http-status-codes",
+    "moduleId": "module-2-4",
+    "title": "Http Status Codes",
+    "description": "Topic covering http-status-codes",
+    "order": 71
+  },
+  {
+    "id": "http-methods",
+    "moduleId": "module-2-4",
+    "title": "Http Methods",
+    "description": "Topic covering http-methods",
+    "order": 72
+  },
+  {
+    "id": "loading-error-empty-states",
+    "moduleId": "module-2-4",
+    "title": "Loading Error Empty States",
+    "description": "Topic covering loading-error-empty-states",
+    "order": 73
+  },
+  {
+    "id": "working-with-fetch",
+    "moduleId": "module-2-4",
+    "title": "Working With Fetch",
+    "description": "Topic covering working-with-fetch",
+    "order": 74
+  },
+  {
+    "id": "api-integration-project",
+    "moduleId": "module-2-4",
+    "title": "Api Integration Project",
+    "description": "Topic covering api-integration-project",
+    "order": 75
+  },
+  {
+    "id": "why-typescript",
+    "moduleId": "module-2-5",
+    "title": "Why Typescript",
+    "description": "Topic covering why-typescript",
+    "order": 76
+  },
+  {
+    "id": "basic-types",
+    "moduleId": "module-2-5",
+    "title": "Basic Types",
+    "description": "Topic covering basic-types",
+    "order": 77
+  },
+  {
+    "id": "interfaces-and-type-aliases",
+    "moduleId": "module-2-5",
+    "title": "Interfaces And Type Aliases",
+    "description": "Topic covering interfaces-and-type-aliases",
+    "order": 78
+  },
+  {
+    "id": "typing-functions",
+    "moduleId": "module-2-5",
+    "title": "Typing Functions",
+    "description": "Topic covering typing-functions",
+    "order": 79
+  },
+  {
+    "id": "union-types-and-narrowing",
+    "moduleId": "module-2-5",
+    "title": "Union Types And Narrowing",
+    "description": "Topic covering union-types-and-narrowing",
+    "order": 80
+  },
+  {
+    "id": "generics-fundamentals",
+    "moduleId": "module-2-5",
+    "title": "Generics Fundamentals",
+    "description": "Topic covering generics-fundamentals",
+    "order": 81
+  },
+  {
+    "id": "typing-real-world-data",
+    "moduleId": "module-2-5",
+    "title": "Typing Real World Data",
+    "description": "Topic covering typing-real-world-data",
+    "order": 82
+  },
+  {
+    "id": "capstone-convert-js-to-typescript",
+    "moduleId": "module-2-5",
+    "title": "Capstone Convert Js To Typescript",
+    "description": "Topic covering capstone-convert-js-to-typescript",
+    "order": 83
+  },
+  {
+    "id": "why-react",
+    "moduleId": "module-3-1",
+    "title": "Why React",
+    "description": "Topic covering why-react",
+    "order": 84
+  },
+  {
+    "id": "jsx",
+    "moduleId": "module-3-1",
+    "title": "Jsx",
+    "description": "Topic covering jsx",
+    "order": 85
+  },
+  {
+    "id": "components",
+    "moduleId": "module-3-1",
+    "title": "Components",
+    "description": "Topic covering components",
+    "order": 86
+  },
+  {
+    "id": "props",
+    "moduleId": "module-3-1",
+    "title": "Props",
+    "description": "Topic covering props",
+    "order": 87
+  },
+  {
+    "id": "state",
+    "moduleId": "module-3-1",
+    "title": "State",
+    "description": "Topic covering state",
+    "order": 88
+  },
+  {
+    "id": "conditional-rendering",
+    "moduleId": "module-3-1",
+    "title": "Conditional Rendering",
+    "description": "Topic covering conditional-rendering",
+    "order": 89
+  },
+  {
+    "id": "lists-and-keys",
+    "moduleId": "module-3-1",
+    "title": "Lists And Keys",
+    "description": "Topic covering lists-and-keys",
+    "order": 90
+  },
+  {
+    "id": "react-mini-project",
+    "moduleId": "module-3-1",
+    "title": "React Mini Project",
+    "description": "Topic covering react-mini-project",
+    "order": 91
+  },
+  {
+    "id": "events-in-react",
+    "moduleId": "module-3-2",
+    "title": "Events In React",
+    "description": "Topic covering events-in-react",
+    "order": 92
+  },
+  {
+    "id": "controlled-inputs",
+    "moduleId": "module-3-2",
+    "title": "Controlled Inputs",
+    "description": "Topic covering controlled-inputs",
+    "order": 93
+  },
+  {
+    "id": "forms-and-validation",
+    "moduleId": "module-3-2",
+    "title": "Forms And Validation",
+    "description": "Topic covering forms-and-validation",
+    "order": 94
+  },
+  {
+    "id": "use-effect",
+    "moduleId": "module-3-2",
+    "title": "Use Effect",
+    "description": "Topic covering use-effect",
+    "order": 95
+  },
+  {
+    "id": "side-effects-and-cleanup",
+    "moduleId": "module-3-2",
+    "title": "Side Effects And Cleanup",
+    "description": "Topic covering side-effects-and-cleanup",
+    "order": 96
   }
 ]

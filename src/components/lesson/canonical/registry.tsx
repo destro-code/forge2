@@ -98,13 +98,10 @@ function InvalidJudgmentActivity({
       <div className="p-8 flex flex-col items-center justify-center text-center gap-4">
         <ShieldAlert className="w-10 h-10 text-destructive" />
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground">
-            Invalid judgment activity content
-          </h3>
+          <h3 className="text-lg font-bold text-foreground">Invalid judgment activity content</h3>
           <p className="text-sm text-muted-foreground max-w-md">
-            This judgment activity (
-            <code className="font-mono text-xs">{activity.id}</code>) does not satisfy the
-            required judgment content contract and cannot be rendered.
+            This judgment activity (<code className="font-mono text-xs">{activity.id}</code>) does
+            not satisfy the required judgment content contract and cannot be rendered.
           </p>
           <ul className="text-xs font-mono text-destructive/90 max-w-md text-left list-disc list-inside">
             {errors.map((err, idx) => (

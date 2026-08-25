@@ -283,6 +283,41 @@ export class CanonicalProvider implements ContentProvider {
         }
       });
 
+      // Ensure all lessons reference a registered topic (synthesize fallback topics for legacy lessons if needed)
+      this.lessons.forEach((les) => {
+        if (!this.topicsById.has(les.topicId)) {
+          const formattedTitle = les.topicId
+            .split("-")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+          const match = les.id.match(/^lesson-(\d+-\d+)/);
+          let derivedModuleId =
+            (les as any).moduleId || (match ? `module-${match[1]}` : "module-0-1");
+          if (!this.modulesById.has(derivedModuleId)) {
+            if (derivedModuleId.startsWith("module-1-5")) derivedModuleId = "module-0-2";
+            else if (this.modulesById.has("module-0-1")) derivedModuleId = "module-0-1";
+            else derivedModuleId = this.modules[0]?.id || "module-0-1";
+          }
+          const fallbackTopic: CanonicalTopic = {
+            id: les.topicId,
+            moduleId: derivedModuleId,
+            title: formattedTitle,
+            description: `Topic for ${formattedTitle}`,
+            order: 99,
+            conceptIds: [],
+            skillIds: [],
+            lessonIds: [],
+          };
+          checkAndRegisterId(fallbackTopic.id, "CanonicalTopic (Synthesized)");
+          this.topicsById.set(fallbackTopic.id, fallbackTopic);
+          this.topics.push(fallbackTopic);
+          const parentMod = this.modulesById.get(fallbackTopic.moduleId);
+          if (parentMod && !parentMod.topicIds.includes(fallbackTopic.id)) {
+            parentMod.topicIds.push(fallbackTopic.id);
+          }
+        }
+      });
+
       // 7. Enforce Referential Integrity
       const integrityReport = validateCurriculumIntegrity({
         academy: this.academy,

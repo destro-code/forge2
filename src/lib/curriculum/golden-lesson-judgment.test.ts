@@ -94,7 +94,12 @@ describe("Phase 2E — Golden Judgment Certification (lesson-1-4-4): Understandi
     });
 
     it("rejects a judgment step missing modelAnswer", () => {
-      const malformed = { content: { prompt: "Diagnose this.", evaluationRubric: [{ id: "c1", label: "L", description: "D" }] } };
+      const malformed = {
+        content: {
+          prompt: "Diagnose this.",
+          evaluationRubric: [{ id: "c1", label: "L", description: "D" }],
+        },
+      };
       const result = validateJudgmentStep(malformed);
       expect(result.isValid).toBe(false);
       expect(result.errors.some((e) => e.includes("modelAnswer"))).toBe(true);
@@ -127,9 +132,8 @@ describe("Phase 2E — Golden Judgment Certification (lesson-1-4-4): Understandi
 
     it("the canonical-provider load-time Zod validation also rejects malformed judgment lessons", () => {
       const brokenLesson = JSON.parse(JSON.stringify(lesson));
-      delete brokenLesson.activities.find(
-        (a: any) => a.id === "act-144-judgment-diagnose",
-      ).content.modelAnswer;
+      delete brokenLesson.activities.find((a: any) => a.id === "act-144-judgment-diagnose").content
+        .modelAnswer;
 
       expect(() => validateLesson(brokenLesson)).toThrow();
     });
