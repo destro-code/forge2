@@ -86,7 +86,7 @@ export function LearningLadder({
             return (
               <div
                 key={lesson.id}
-                className="py-3 px-3.5 sm:px-4 -mx-3.5 sm:-mx-4 rounded-r-[4px] rounded-l-[1px] border-l-[3px] border-l-[#C8441B] border-y border-r border-[#E0B99F]/60 bg-[#FCF1E9] dark:border-l-primary dark:border-y-border/40 dark:border-r-border/40 dark:bg-primary/[0.055] my-1.5 transition-colors"
+                className="py-3 px-3.5 sm:px-4 -mx-3.5 sm:-mx-4 rounded-r-[4px] rounded-l-[1px] border-l-[3px] border-l-[#C8441B] dark:border-l-[#C8441B] border-y border-r border-[#E0B99F]/60 bg-[#FCF1E9] dark:border-y-border/40 dark:border-r-border/40 dark:bg-primary/[0.055] my-1.5 transition-colors"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">

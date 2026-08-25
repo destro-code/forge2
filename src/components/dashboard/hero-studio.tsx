@@ -31,7 +31,7 @@ export function HeroStudio({
   return (
     <section aria-label="Current Engineering Challenge">
       {/* Precision Architectural Studio Surface */}
-      <div className="relative rounded-lg border border-[#E7E2DA] dark:border-border/40 bg-[#FCFBF9] dark:bg-card/65 p-5 sm:p-8 lg:p-9 shadow-2xs backdrop-blur-[1px]">
+      <div className="relative rounded-lg border border-[#E7E2DA] dark:border-border/50 bg-[#FCFBF9] dark:bg-[#161514] p-5 sm:p-8 lg:p-9 shadow-2xs backdrop-blur-[1px]">
         {/* Subtle Precision Top Hairline */}
         <div className="absolute inset-x-5 sm:inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#E7E2DA] dark:via-border/50 to-transparent pointer-events-none" />
 
