@@ -78,6 +78,10 @@ export function validateJudgmentStep(step: unknown): { isValid: boolean; errors:
   const stepObj = step as Record<string, any>;
   const content = stepObj.content || stepObj;
 
+  if (!content.prompt || typeof content.prompt !== "string" || content.prompt.trim() === "") {
+    errors.push("Missing required 'prompt' field in judgment step.");
+  }
+
   if (!content.modelAnswer) {
     errors.push("Missing required 'modelAnswer' field in judgment step.");
   } else {

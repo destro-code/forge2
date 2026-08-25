@@ -3,7 +3,8 @@ import type { ActivityRendererProps, JudgmentStep, CanonicalStep } from "./types
 import { ActivityContainer } from "./primitives/activity-container";
 import { ActivityHeader } from "./primitives/activity-header";
 import { ActivityActions } from "./primitives/activity-actions";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ShieldAlert } from "lucide-react";
+import { validateJudgmentStep } from "./validation";
 
 // Native Renderers
 import { IntroRenderer } from "./renderers/intro-renderer";
@@ -75,6 +76,47 @@ export function FallbackActivityRenderer({
   );
 }
 
+/**
+ * Rendered when a judgment activity's authored content fails structural
+ * validation (see `validateJudgmentStep`). This exists so malformed
+ * canonical content produces a visible, diagnosable failure in the app
+ * instead of a JudgmentRenderer silently populated with empty model-answer
+ * and rubric defaults — which looked "fine" but shipped no real content.
+ */
+function InvalidJudgmentActivity({
+  activity,
+  errors,
+}: {
+  activity: CanonicalActivity | JudgmentStep | CanonicalStep;
+  errors: string[];
+}) {
+  return (
+    <ActivityContainer
+      id={`activity-${activity.id}`}
+      className="border-dashed border-destructive/50"
+    >
+      <div className="p-8 flex flex-col items-center justify-center text-center gap-4">
+        <ShieldAlert className="w-10 h-10 text-destructive" />
+        <div className="space-y-2">
+          <h3 className="text-lg font-bold text-foreground">
+            Invalid judgment activity content
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-md">
+            This judgment activity (
+            <code className="font-mono text-xs">{activity.id}</code>) does not satisfy the
+            required judgment content contract and cannot be rendered.
+          </p>
+          <ul className="text-xs font-mono text-destructive/90 max-w-md text-left list-disc list-inside">
+            {errors.map((err, idx) => (
+              <li key={idx}>{err}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </ActivityContainer>
+  );
+}
+
 export type BaseRendererProps = Omit<ActivityRendererProps<CanonicalActivity, any>, "activity">;
 
 /**
@@ -117,30 +159,41 @@ export function renderActivity(
     case "completion":
       return <CompletionRenderer activity={activity} {...props} />;
     case "judgment": {
-      const step: JudgmentStep =
-        "prompt" in activity && "modelAnswer" in activity
-          ? (activity as JudgmentStep)
-          : {
-              id: activity.id,
-              type: "judgment",
-              title: (activity as any).title || (activity as any).content?.title,
-              prompt: (activity as any).prompt || (activity as any).content?.prompt || "",
-              context: (activity as any).context || (activity as any).content?.context,
-              responsePlaceholder:
-                (activity as any).responsePlaceholder ||
-                (activity as any).content?.responsePlaceholder,
-              modelAnswer: (activity as any).modelAnswer ||
-                (activity as any).content?.modelAnswer || {
-                  summary: "",
-                  detailedAnalysis: "",
-                  keyTradeoffs: [],
-                },
-              evaluationRubric:
-                (activity as any).evaluationRubric ||
-                (activity as any).content?.evaluationRubric ||
-                [],
-              takeaways: (activity as any).takeaways || (activity as any).content?.takeaways || [],
-            };
+      // Canonical authored content stores judgment fields nested under
+      // `content` (see `judgmentActivitySchema` in schema.ts), matching every
+      // other activity type. `JudgmentStep` (this component's flat prop
+      // contract) is a deliberate, separate *render* shape — translating
+      // nested authored content into flat renderer props is legitimate
+      // (the same kind of view-model flattening `activity.content` undergoes
+      // for every other renderer, e.g. `const { question, options } =
+      // activity.content` in MultipleChoiceRenderer). What was NOT legitimate
+      // was defaulting missing required fields (modelAnswer, evaluationRubric)
+      // to empty values on the way through — that hid authoring bugs behind a
+      // renderer that looked fine but taught nothing. The `"prompt" in
+      // activity` flat-shape branch below is kept only as an isolated,
+      // documented legacy-compat path for any pre-existing flat JudgmentStep
+      // data; canonical migrated content should always use nested `content`.
+      const isFlatLegacyShape = "prompt" in activity && "modelAnswer" in activity;
+      const rawStep = isFlatLegacyShape
+        ? (activity as JudgmentStep)
+        : {
+            id: activity.id,
+            type: "judgment" as const,
+            title: (activity as any).content?.title,
+            prompt: (activity as any).content?.prompt,
+            context: (activity as any).content?.context,
+            responsePlaceholder: (activity as any).content?.responsePlaceholder,
+            modelAnswer: (activity as any).content?.modelAnswer,
+            evaluationRubric: (activity as any).content?.evaluationRubric,
+            takeaways: (activity as any).content?.takeaways,
+          };
+
+      const stepValidation = validateJudgmentStep({ content: rawStep });
+      if (!stepValidation.isValid) {
+        return <InvalidJudgmentActivity activity={activity} errors={stepValidation.errors} />;
+      }
+
+      const step = rawStep as JudgmentStep;
 
       return (
         <JudgmentRenderer
