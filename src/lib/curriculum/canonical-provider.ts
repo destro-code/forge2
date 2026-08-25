@@ -11,6 +11,7 @@ import lessonElementsTags from "../../data/canonical/lessons/lesson-elements-tag
 import lessonCssFlexbox from "../../data/canonical/lessons/lesson-css-flexbox.json";
 import lessonJsFunctions from "../../data/canonical/lessons/lesson-javascript-functions.json";
 import lessonFixBrokenPage from "../../data/canonical/lessons/lesson-fix-the-broken-page.json";
+import lessonUnderstandingNetworkRequests from "../../data/canonical/lessons/lesson-understanding-network-requests.json";
 
 import legacyLessonsData from "../../data/lessons.json";
 import legacyModulesData from "../../data/modules.json";
@@ -244,6 +245,7 @@ export class CanonicalProvider implements ContentProvider {
         lessonCssFlexbox,
         lessonJsFunctions,
         lessonFixBrokenPage,
+        lessonUnderstandingNetworkRequests,
       ];
 
       rawGoldenLessons.forEach((raw) => {
