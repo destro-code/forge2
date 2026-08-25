@@ -95,185 +95,184 @@ function Dashboard() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-8">
       <PageHeader
         className="mb-0"
-        eyebrow="Welcome back"
-        title={
-          <>
-            Let's forge <span className="text-gradient-primary">something new</span> today
-          </>
-        }
-        description={`You're on a ${progress.streakDays}-day streak — complete a lesson or exercise to keep the momentum going.`}
+        eyebrow="Your learning workspace"
+        title="Keep building your frontend skills"
+        description={`You're on a ${progress.streakDays}-day streak. Pick up where you left off and keep the momentum going.`}
         actions={
-          <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+          <Button asChild variant="outline" size="sm" className="h-9 px-3 text-sm">
             <Link suppressHydrationWarning to="/learn">
-              <BookOpen className="mr-1.5 h-3.5 w-3.5" />
+              <BookOpen className="mr-1.5 h-4 w-4" />
               Browse library
             </Link>
           </Button>
         }
       />
 
-      {/* First-Time Learner Orientation Banner */}
       {showOrientation && (
-        <Card className="border-primary/30 bg-card/60 p-4 relative overflow-hidden shadow-xs">
+        <Card className="relative border-border/60 bg-card shadow-none">
           <button
             onClick={() => {
               localStorage.setItem("forge_orientation_dismissed", "true");
               setShowOrientation(false);
             }}
-            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground p-1 rounded-md transition"
+            className="absolute right-3 top-3 rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Dismiss orientation"
           >
             <X className="h-4 w-4" />
           </button>
-
-          <div className="flex items-start gap-3 pr-8">
-            <div className="h-8 w-8 rounded-lg bg-primary/15 grid place-items-center shrink-0 text-primary mt-0.5">
+          <CardContent className="flex items-start gap-4 p-5 pr-12">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
               <Compass className="h-4 w-4" />
             </div>
-            <div className="space-y-2">
-              <div>
-                <h3 className="text-xs font-semibold text-foreground">
-                  Welcome to Forge — 6-Stage Frontend Mastery Lifecycle
-                </h3>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  Progress fluidly through any stage at your own pace:
-                </p>
-              </div>
-
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold">How Forge works</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+                Learn concepts, practice them, build projects, and review what you have mastered.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
                 {[
-                  {
-                    stage: "START",
-                    desc: "Select Path",
-                    color: "border-blue-500/30 text-blue-400",
-                  },
-                  {
-                    stage: "LEARN",
-                    desc: "Lessons",
-                    color: "border-indigo-500/30 text-indigo-400",
-                  },
-                  {
-                    stage: "PRACTICE",
-                    desc: "Quizzes",
-                    color: "border-amber-500/30 text-amber-400",
-                  },
-                  {
-                    stage: "BUILD",
-                    desc: "Projects",
-                    color: "border-emerald-500/30 text-emerald-400",
-                  },
-                  {
-                    stage: "REVIEW",
-                    desc: "Review Cards",
-                    color: "border-purple-500/30 text-purple-400",
-                  },
-                  {
-                    stage: "MASTER",
-                    desc: "Skill Matrix",
-                    color: "border-rose-500/30 text-rose-400",
-                  },
-                ].map((s) => (
-                  <div
-                    key={s.stage}
-                    className={`p-1.5 rounded-md border bg-background/60 text-center ${s.color}`}
-                  >
-                    <div className="font-bold text-[10px] font-mono">{s.stage}</div>
-                    <div className="text-[9px] text-muted-foreground">{s.desc}</div>
-                  </div>
+                  ["01", "Learn"],
+                  ["02", "Practice"],
+                  ["03", "Build"],
+                  ["04", "Review"],
+                  ["05", "Master"],
+                ].map(([step, label]) => (
+                  <span key={step} className="inline-flex items-center gap-1.5">
+                    <span className="font-mono text-[10px] text-primary">{step}</span>
+                    {label}
+                  </span>
                 ))}
               </div>
             </div>
-          </div>
+          </CardContent>
         </Card>
       )}
 
-      {/* Primary Continue Learning Hero Experience */}
       {continueLesson && (
-        <ContinueLearningCard
-          lesson={continueLesson}
-          progressPercent={continueProgressPercent}
-          moduleTitle={currentModule?.title}
-          topicTitle={currentTopic?.title}
-        />
+        <section aria-labelledby="continue-learning-heading">
+          <div className="mb-3 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                Up next
+              </p>
+              <h2 id="continue-learning-heading" className="mt-1 text-xl font-semibold tracking-tight">
+                Continue learning
+              </h2>
+            </div>
+            <Link
+              suppressHydrationWarning
+              to="/learn"
+              className="hidden items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+            >
+              View library <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <ContinueLearningCard
+            lesson={continueLesson}
+            progressPercent={continueProgressPercent}
+            moduleTitle={currentModule?.title}
+            topicTitle={currentTopic?.title}
+          />
+        </section>
       )}
 
-      {/* Subordinate Compact Metrics Ribbon */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Current streak"
-          value={`${progress.streakDays} days`}
-          delta={`Best: ${progress.bestStreakDays ?? progress.streakDays} days`}
-          icon={<Flame className="h-4 w-4" />}
-          tone="primary"
-        />
-        <StatCard
-          label="Time studied"
-          value={`${Math.round(progress.totalMinutes / 60)}h`}
-          delta="+2.5h this week"
-          icon={<Clock className="h-4 w-4" />}
-        />
-        <StatCard
-          label="Lessons done"
-          value={progress.lessonsCompleted.length}
-          delta={`of ${lessons.length} available`}
-          icon={<BookOpen className="h-4 w-4" />}
-        />
-        <StatCard
-          label="Achievements"
-          value={`${achievements.filter((a) => a.unlocked).length}/${achievements.length}`}
-          icon={<Trophy className="h-4 w-4" />}
-        />
-      </div>
-
-      {/* Recommended Topics Section */}
-      <RecommendedTopicsCard topics={topics} />
-
-      {/* Secondary Information Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <RecentLessonsCard lessons={lessons} masteryMap={progress.mastery} />
+      <section aria-labelledby="progress-heading">
+        <div className="mb-3">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">At a glance</p>
+          <h2 id="progress-heading" className="mt-1 text-lg font-semibold tracking-tight">Your progress</h2>
         </div>
-        <div className="space-y-6">
-          <DailyGoalCard
-            todayMinutes={progress.weekly[6] || 0}
-            dailyTargetMinutes={30}
-            onAddMinutes={handleAddMinutes}
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            label="Current streak"
+            value={`${progress.streakDays} days`}
+            delta={`Best: ${progress.bestStreakDays ?? progress.streakDays} days`}
+            icon={<Flame className="h-4 w-4" />}
+            tone="primary"
           />
-          <ContinueProjectCard project={activeProject} />
-          <StreakCard
-            streakDays={progress.streakDays}
-            bestStreak={progress.bestStreakDays ?? progress.streakDays}
+          <StatCard
+            label="Time studied"
+            value={`${Math.round(progress.totalMinutes / 60)}h`}
+            delta="+2.5h this week"
+            icon={<Clock className="h-4 w-4" />}
+          />
+          <StatCard
+            label="Lessons done"
+            value={progress.lessonsCompleted.length}
+            delta={`of ${lessons.length} available`}
+            icon={<BookOpen className="h-4 w-4" />}
+          />
+          <StatCard
+            label="Achievements"
+            value={`${achievements.filter((a) => a.unlocked).length}/${achievements.length}`}
+            icon={<Trophy className="h-4 w-4" />}
           />
         </div>
-      </div>
+      </section>
 
-      {/* Weekly Progress & Heat Map */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <WeeklyProgressCard weeklyMinutes={progress.weekly} />
-        </div>
+      <section aria-labelledby="learning-activity-heading" className="space-y-4">
         <div>
-          <HeatmapCard heatmapData={progress.heatmap} />
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Keep moving</p>
+          <h2 id="learning-activity-heading" className="mt-1 text-lg font-semibold tracking-tight">Learning activity</h2>
         </div>
-      </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <RecentLessonsCard lessons={lessons} masteryMap={progress.mastery} />
+          </div>
+          <div className="space-y-6">
+            <DailyGoalCard
+              todayMinutes={progress.weekly[6] || 0}
+              dailyTargetMinutes={30}
+              onAddMinutes={handleAddMinutes}
+            />
+            {activeProject && <ContinueProjectCard project={activeProject} />}
+          </div>
+        </div>
+      </section>
 
-      {/* Module Quick Access Grid */}
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold tracking-tight">Modules</h2>
+      <section aria-labelledby="progress-trends-heading">
+        <div className="mb-3">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Consistency</p>
+          <h2 id="progress-trends-heading" className="mt-1 text-lg font-semibold tracking-tight">Your rhythm</h2>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <WeeklyProgressCard weeklyMinutes={progress.weekly} />
+          </div>
+          <div>
+            <StreakCard
+              streakDays={progress.streakDays}
+              bestStreak={progress.bestStreakDays ?? progress.streakDays}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="recommended-heading">
+        <div className="mb-3">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Explore</p>
+          <h2 id="recommended-heading" className="mt-1 text-lg font-semibold tracking-tight">Recommended for you</h2>
+        </div>
+        <RecommendedTopicsCard topics={topics} />
+      </section>
+
+      <section aria-labelledby="modules-heading">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Curriculum</p>
+            <h2 id="modules-heading" className="mt-1 text-lg font-semibold tracking-tight">Modules</h2>
+          </div>
           <Link
             suppressHydrationWarning
             to="/learn/modules"
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             All modules <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {modules.slice(0, 6).map((m) => {
             const moduleProgress = getModuleProgress(m.id, progress.lessonsCompleted) / 100;
             return (
@@ -282,33 +281,26 @@ function Dashboard() {
                 key={m.id}
                 to="/learn/modules/$moduleId"
                 params={{ moduleId: m.id }}
-                className="group"
+                className="group min-w-0"
               >
-                <Card className="h-full border-border/50 bg-card/80 transition duration-200 hover:border-border">
-                  <CardContent className="p-5 flex flex-col justify-between h-full">
+                <Card className="h-full border-border/50 bg-card transition-colors duration-200 hover:border-border">
+                  <CardContent className="flex h-full flex-col justify-between p-5">
                     <div>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="text-xs font-medium text-muted-foreground">
-                            {m.difficulty}
-                          </div>
-                          <div className="mt-1 text-base font-semibold group-hover:text-primary transition-colors">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="text-xs font-medium text-muted-foreground">{m.difficulty}</div>
+                          <div className="mt-1 text-base font-semibold transition-colors group-hover:text-primary">
                             {m.title}
                           </div>
                         </div>
                         <ProgressRing value={moduleProgress} size={40} />
                       </div>
-                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
-                        {m.description}
-                      </p>
+                      <p className="mt-2 line-clamp-2 text-sm leading-5 text-muted-foreground">{m.description}</p>
                     </div>
-                    <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/40">
-                      <span>
-                        {m.lessonCount} lessons · ~{m.estimatedHours}h
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-primary font-medium">
-                        Open Module{" "}
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    <div className="mt-5 flex items-center justify-between border-t border-border/40 pt-3 text-xs text-muted-foreground">
+                      <span>{m.lessonCount} lessons · ~{m.estimatedHours}h</span>
+                      <span className="inline-flex items-center gap-1 font-medium text-primary">
+                        Open <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                       </span>
                     </div>
                   </CardContent>
@@ -317,7 +309,16 @@ function Dashboard() {
             );
           })}
         </div>
-      </div>
+      </section>
+
+      <section aria-label="Learning history" className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <HeatmapCard heatmapData={progress.heatmap} />
+        </div>
+        <div>
+          <ContinueProjectCard project={activeProject} />
+        </div>
+      </section>
     </div>
   );
 }
