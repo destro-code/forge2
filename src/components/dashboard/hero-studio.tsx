@@ -28,7 +28,7 @@ export function HeroStudio({
 
   return (
     <section aria-label="Current Engineering Challenge" className="w-full">
-      <div className="forge-panel relative overflow-hidden rounded-2xl px-5 py-5 sm:px-8 sm:py-7 transition-colors before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-primary">
+      <div className="forge-panel relative overflow-hidden rounded-[1.75rem] px-5 py-6 sm:px-10 sm:py-9 transition-colors before:absolute before:inset-y-0 before:left-0 before:w-2 before:bg-primary after:absolute after:right-8 after:top-8 after:size-20 after:rounded-full after:border after:border-accent/50 after:content-['']">
         {/* Eyebrow & Metadata Header */}
         <div className="flex flex-wrap items-center justify-between gap-y-1 gap-x-3 text-xs border-b border-border/60 pb-2">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground font-medium">

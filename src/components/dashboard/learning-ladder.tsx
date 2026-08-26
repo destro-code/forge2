@@ -86,7 +86,7 @@ export function LearningLadder({
             return (
               <div
                 key={lesson.id}
-                className="py-3 px-3 sm:px-4 rounded-r rounded-l-none border-l-2 border-l-primary border-y border-r border-border bg-card dark:bg-card my-1 transition-colors"
+                className="forge-panel relative my-2 rounded-2xl border-l-4 border-l-primary bg-card px-4 py-4 sm:px-6 transition-colors"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0 flex-1">

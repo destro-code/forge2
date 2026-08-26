@@ -170,5 +170,114 @@
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--primary) 24%, transparent);
+  background: color-mix(in oklab, var(--primary) 38%, transparent);
+  color: var(--foreground);
+}
+
+/* THE NEW FORGE — expressive skill system, not a conventional course UI */
+:root {
+  --background: oklch(0.105 0.025 285);
+  --foreground: oklch(0.97 0.015 95);
+  --card: oklch(0.145 0.035 285);
+  --card-foreground: oklch(0.97 0.015 95);
+  --popover: oklch(0.16 0.04 285);
+  --popover-foreground: oklch(0.97 0.015 95);
+  --primary: oklch(0.78 0.27 325);
+  --primary-foreground: oklch(0.12 0.025 285);
+  --secondary: oklch(0.21 0.045 285);
+  --secondary-foreground: oklch(0.96 0.02 95);
+  --muted: oklch(0.18 0.035 285);
+  --muted-foreground: oklch(0.72 0.04 285);
+  --accent: oklch(0.82 0.22 125);
+  --accent-foreground: oklch(0.12 0.025 285);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.78 0.27 325);
+  --sidebar: oklch(0.08 0.025 285);
+  --sidebar-foreground: oklch(0.9 0.025 95);
+  --sidebar-primary: oklch(0.78 0.27 325);
+  --sidebar-primary-foreground: oklch(0.12 0.025 285);
+  --sidebar-accent: oklch(0.18 0.05 285);
+  --sidebar-accent-foreground: oklch(0.98 0.015 95);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.78 0.27 325);
+  --success: oklch(0.82 0.22 125);
+  --warning: oklch(0.83 0.19 85);
+  --destructive: oklch(0.72 0.23 25);
+  --shadow-card: 0 18px 50px -28px oklch(0.02 0.02 285 / 0.9);
+  --gradient-primary: linear-gradient(110deg, oklch(0.78 0.27 325), oklch(0.78 0.22 210));
+  --gradient-ember: radial-gradient(700px 280px at 80% 0%, oklch(0.78 0.27 325 / 18%), transparent 70%);
+}
+
+.light {
+  --background: oklch(0.965 0.025 95);
+  --foreground: oklch(0.18 0.035 285);
+  --card: oklch(0.995 0.01 95);
+  --card-foreground: oklch(0.18 0.035 285);
+  --popover: oklch(0.995 0.01 95);
+  --popover-foreground: oklch(0.18 0.035 285);
+  --primary: oklch(0.58 0.24 325);
+  --primary-foreground: oklch(0.99 0.01 95);
+  --secondary: oklch(0.92 0.035 285);
+  --secondary-foreground: oklch(0.2 0.035 285);
+  --muted: oklch(0.92 0.03 95);
+  --muted-foreground: oklch(0.43 0.04 285);
+  --accent: oklch(0.62 0.19 125);
+  --accent-foreground: oklch(0.98 0.01 95);
+  --border: oklch(0.2 0.04 285 / 14%);
+  --input: oklch(0.2 0.04 285 / 18%);
+  --ring: oklch(0.58 0.24 325);
+  --sidebar: oklch(0.18 0.035 285);
+  --sidebar-foreground: oklch(0.96 0.015 95);
+  --sidebar-primary: oklch(0.78 0.24 325);
+  --sidebar-primary-foreground: oklch(0.15 0.03 285);
+  --sidebar-accent: oklch(0.25 0.05 285);
+  --sidebar-accent-foreground: oklch(0.98 0.01 95);
+  --sidebar-border: oklch(1 0 0 / 12%);
+}
+
+body {
+  background-image: var(--gradient-ember), radial-gradient(circle at 15% 20%, oklch(0.82 0.22 125 / 5%) 1px, transparent 1px);
+  background-size: auto, 24px 24px;
+}
+
+.forge-grid {
+  background-image: linear-gradient(to right, oklch(1 0 0 / 3%) 1px, transparent 1px), linear-gradient(to bottom, oklch(1 0 0 / 3%) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.glass-panel,
+.forge-panel {
+  border-radius: 1.25rem !important;
+  border-color: color-mix(in oklab, var(--primary) 24%, var(--border)) !important;
+  box-shadow: var(--shadow-card);
+}
+
+[data-slot="sidebar-inner"] {
+  background: linear-gradient(180deg, var(--sidebar), color-mix(in oklab, var(--sidebar) 82%, var(--primary))) !important;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.045em;
+}
+
+.font-mono {
+  letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .forge-panel:hover,
+  [data-slot="card"]:hover {
+    transform: translateY(-2px);
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
