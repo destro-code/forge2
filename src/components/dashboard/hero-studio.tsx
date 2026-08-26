@@ -28,9 +28,9 @@ export function HeroStudio({
 
   return (
     <section aria-label="Current Engineering Challenge" className="w-full">
-      <div className="rounded-lg border border-border bg-card p-4 sm:p-5 shadow-2xs transition-colors">
+      <div className="rounded-lg border border-border bg-card px-4 py-3 sm:px-5 sm:py-3.5 shadow-2xs transition-colors">
         {/* Eyebrow & Metadata Header */}
-        <div className="flex flex-wrap items-center justify-between gap-y-1.5 gap-x-3 text-xs border-b border-border/60 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-y-1 gap-x-3 text-xs border-b border-border/60 pb-2">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
             <span className="text-foreground font-semibold">{eyebrowLabel}</span>
           </div>
@@ -47,8 +47,8 @@ export function HeroStudio({
         </div>
 
         {/* Focus Details & Action Row */}
-        <div className="mt-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1 min-w-0 max-w-2xl">
+        <div className="mt-2.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="space-y-0.5 min-w-0 max-w-2xl">
             <div className="text-[11px] font-mono uppercase tracking-wider text-primary font-medium">
               {isNewLearner ? "Ready to begin" : "Continue Learning"}
             </div>
@@ -61,9 +61,9 @@ export function HeroStudio({
           </div>
 
           {/* Action & Progress Stack */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3.5 shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-border/50">
             {/* Compact Progress Bar */}
-            <div className="flex sm:flex-col justify-between sm:justify-center gap-1 sm:min-w-[110px]">
+            <div className="flex sm:flex-col justify-between sm:justify-center gap-1 sm:min-w-[100px]">
               <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground gap-2">
                 <span>
                   {isNewLearner
@@ -96,9 +96,9 @@ export function HeroStudio({
                 to="/lesson/$lessonId"
                 params={{ lessonId: lesson.id }}
                 search={{ mode: "curriculum" }}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-mono font-medium text-primary hover:text-primary/80 transition-colors py-1 hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-mono font-medium text-primary hover:text-primary/80 transition-colors py-0.5 hover:underline"
               >
-                <span>{isNewLearner ? "Start first challenge" : "Resume challenge"}</span>
+                <span>{isNewLearner ? "Start first lesson" : "Resume lesson"}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>

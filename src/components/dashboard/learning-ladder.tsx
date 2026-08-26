@@ -86,7 +86,7 @@ export function LearningLadder({
             return (
               <div
                 key={lesson.id}
-                className="py-3 px-3 sm:px-4 rounded-r rounded-l-none border-l-2 sm:border-l-[3px] border-l-primary border-y border-r border-border bg-primary/[0.08] dark:bg-primary/10 my-1 transition-colors"
+                className="py-3 px-3 sm:px-4 rounded-r rounded-l-none border-l-2 border-l-primary border-y border-r border-border bg-card dark:bg-card my-1 transition-colors"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -104,7 +104,7 @@ export function LearningLadder({
                         >
                           {lesson.title}
                         </Link>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-primary/15 text-primary border border-primary/25 shrink-0">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 shrink-0">
                           Current lesson
                         </span>
                       </div>
@@ -118,7 +118,7 @@ export function LearningLadder({
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="shrink-0 p-1.5 rounded text-primary hover:text-foreground hover:bg-primary/15 transition-colors"
+                    className="shrink-0 p-1.5 rounded text-primary hover:text-foreground hover:bg-muted transition-colors"
                     title="Resume lesson"
                     aria-label="Resume lesson"
                   >
