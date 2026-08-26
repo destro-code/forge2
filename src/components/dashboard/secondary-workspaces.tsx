@@ -18,10 +18,8 @@ export function SecondaryWorkspaces({
   return (
     <section aria-label="Supporting Workspaces" className="flex flex-col gap-4 border-t border-border pt-6">
       <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-muted-foreground px-1">
-        <span>Supporting Workspaces</span>
-        <span className="text-[10px] text-muted-foreground/70 hidden sm:inline">
-          Practice & Review
-        </span>
+        <span className="forge-section-label">MOMENTUM</span>
+        <span className="forge-section-label">THIS WEEK</span>
       </div>
 
       {/* Supporting Workspace Register */}
