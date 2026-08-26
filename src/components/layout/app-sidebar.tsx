@@ -237,14 +237,14 @@ export function AppSidebar() {
       <SidebarHeader className="px-3 pb-2 pt-4">
         <Link
           to="/"
-          aria-label="Forge Frontend Academy Home"
+          aria-label="Forge Forge Console Home"
           className={cn(
             "group flex items-center rounded-xl border border-transparent py-2 transition hover:border-sidebar-border hover:bg-sidebar-accent/60",
             collapsed ? "justify-center px-0" : "gap-2.5 px-2",
           )}
         >
           <img
-            src="/forge-logo.png"
+            src="/forge-console-mark.png"
             alt="Forge"
             width={38}
             height={38}
@@ -256,7 +256,7 @@ export function AppSidebar() {
                 Forge
               </div>
               <div className="truncate text-xs font-medium text-muted-foreground/80">
-                Frontend Academy
+                Forge Console
               </div>
             </div>
           )}

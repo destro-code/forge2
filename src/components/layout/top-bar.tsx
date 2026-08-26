@@ -100,7 +100,7 @@ export function TopBar() {
           aria-label="Forge Home"
         >
           <img
-            src="/forge-logo.png"
+            src="/forge-console-mark.png"
             alt="Forge"
             width={24}
             height={24}

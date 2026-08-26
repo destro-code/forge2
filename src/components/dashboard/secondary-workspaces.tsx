@@ -18,20 +18,18 @@ export function SecondaryWorkspaces({
   return (
     <section aria-label="Supporting Workspaces" className="flex flex-col gap-4 border-t border-border pt-6">
       <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-muted-foreground px-1">
-        <span>Supporting Workspaces</span>
-        <span className="text-[10px] text-muted-foreground/70 hidden sm:inline">
-          Practice & Review
-        </span>
+        <span className="forge-section-label">MOMENTUM</span>
+        <span className="forge-section-label">THIS WEEK</span>
       </div>
 
       {/* Supporting Workspace Register */}
-      <div className="rounded-lg border border-border bg-card divide-y sm:divide-y-0 sm:divide-x divide-border grid grid-cols-1 sm:grid-cols-3 overflow-hidden text-xs shadow-2xs">
+      <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
         {/* Capstone Projects */}
         {activeProject ? (
           <Link
             to="/projects/$projectId"
             params={{ projectId: activeProject.id }}
-            className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-muted/40 transition-colors"
+            className="forge-panel group flex items-center justify-between gap-3 rounded-2xl p-4 transition-colors hover:border-primary/60 sm:px-5"
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="h-7 w-7 rounded bg-primary/10 text-primary grid place-items-center shrink-0">
@@ -51,7 +49,7 @@ export function SecondaryWorkspaces({
         ) : (
           <Link
             to="/projects"
-            className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-muted/40 transition-colors"
+            className="forge-panel group flex items-center justify-between gap-3 rounded-2xl p-4 transition-colors hover:border-primary/60 sm:px-5"
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="h-7 w-7 rounded bg-primary/10 text-primary grid place-items-center shrink-0">
@@ -71,7 +69,7 @@ export function SecondaryWorkspaces({
         {/* Flashcards */}
         <Link
           to="/flashcards"
-          className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-muted/40 transition-colors"
+          className="forge-panel group flex items-center justify-between gap-3 rounded-2xl p-4 transition-colors hover:border-primary/60 sm:px-5"
         >
           <div className="flex items-center gap-3 min-w-0">
             <div className="h-7 w-7 rounded bg-muted text-muted-foreground group-hover:text-foreground grid place-items-center shrink-0">
@@ -92,7 +90,7 @@ export function SecondaryWorkspaces({
         {/* Learning Stats */}
         <Link
           to="/analytics"
-          className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-muted/40 transition-colors"
+          className="forge-panel group flex items-center justify-between gap-3 rounded-2xl p-4 transition-colors hover:border-primary/60 sm:px-5"
         >
           <div className="flex items-center gap-3 min-w-0">
             <div className="h-7 w-7 rounded bg-muted text-muted-foreground group-hover:text-foreground grid place-items-center shrink-0">

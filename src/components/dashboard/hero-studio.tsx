@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Clock } from "lucide-react";
+import { ArrowUpRight, Clock, Code2, Sparkles } from "lucide-react";
 import type { Lesson, Module, Topic } from "@/lib/types";
 
 interface HeroStudioProps {
@@ -12,98 +12,42 @@ interface HeroStudioProps {
   isNewLearner?: boolean;
 }
 
-export function HeroStudio({
-  lesson,
-  module,
-  topic,
-  moduleLessonsCount = 1,
-  currentStepNumber = 1,
-  progressPercent = 0,
-  isNewLearner = false,
-}: HeroStudioProps) {
-  const moduleNumber = String(module?.order || 1).padStart(2, "0");
-  const moduleContext = topic?.title || module?.tags?.[0]?.toUpperCase() || "ORIENTATION";
-  const eyebrowLabel = `MODULE ${moduleNumber} · ${moduleContext}`;
-  const durationLabel = `${lesson.estimatedMinutes || 20}m practice`;
-
+export function HeroStudio({ lesson, module, moduleLessonsCount = 1, currentStepNumber = 1, progressPercent = 0, isNewLearner = false }: HeroStudioProps) {
+  const percent = Math.max(0, Math.min(100, progressPercent));
   return (
-    <section aria-label="Current Engineering Challenge" className="w-full">
-      <div className="forge-panel relative overflow-hidden rounded-2xl px-5 py-5 sm:px-8 sm:py-7 transition-colors before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-primary">
-        {/* Eyebrow & Metadata Header */}
-        <div className="flex flex-wrap items-center justify-between gap-y-1 gap-x-3 text-xs border-b border-border/60 pb-2">
-          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
-            <span className="text-foreground font-semibold">{eyebrowLabel}</span>
-          </div>
+    <section aria-label="Your learning forge" className="forge-journey">
+      <div className="forge-intro">
+        <div className="forge-kicker"><Sparkles aria-hidden="true" /> YOUR LEARNING FORGE</div>
+        <h1>Shape your <em>craft.</em></h1>
+        <p>Build fluency through deliberate practice. Every node is a skill you can make your own.</p>
+        <Link to="/playground" className="forge-text-action">Open playground <ArrowUpRight aria-hidden="true" /></Link>
+      </div>
 
-          <div className="flex items-center gap-2 font-mono text-[11px] text-muted-foreground shrink-0">
-            <span className="capitalize px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border/70 font-medium">
-              {lesson.difficulty || "Beginner"}
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {durationLabel}
-            </span>
-          </div>
+      <div className="forge-path-panel" aria-label="Learning path progress">
+        <div className="forge-path-heading">
+          <div><span>PATH / {module?.tags?.[0]?.toUpperCase() || "FRONTEND"}</span><h2>{module?.title || "The Web Forge"}</h2></div>
+          <div className="forge-path-percent"><strong>{percent}%</strong><i><b style={{ width: `${percent}%` }} /></i></div>
         </div>
-
-        {/* Focus Details & Action Row */}
-        <div className="mt-2.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="space-y-0.5 min-w-0 max-w-2xl">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-primary font-medium">
-              {isNewLearner ? "Ready to begin" : "Continue Learning"}
-            </div>
-            <h1 className="text-lg sm:text-xl font-serif font-semibold tracking-tight text-foreground truncate">
-              {lesson.title}
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
-              {lesson.description}
-            </p>
-          </div>
-
-          {/* Action & Progress Stack */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3.5 shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-border/50">
-            {/* Compact Progress Bar */}
-            <div className="flex sm:flex-col justify-between sm:justify-center gap-1 sm:min-w-[100px]">
-              <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground gap-2">
-                <span>
-                  {isNewLearner
-                    ? "00 / " + String(moduleLessonsCount).padStart(2, "0")
-                    : `${String(currentStepNumber).padStart(2, "0")} / ${String(moduleLessonsCount).padStart(2, "0")}`}
-                </span>
-                <span className="text-foreground font-medium">{progressPercent}%</span>
-              </div>
-              <div className="h-1.5 w-24 sm:w-full bg-muted rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary transition-all duration-300 rounded-full"
-                  style={{ width: `${Math.max(isNewLearner ? 0 : 6, progressPercent)}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {module && (
-                <Link
-                  to="/learn/modules/$moduleId"
-                  params={{ moduleId: module.id }}
-                  className="hidden lg:inline-flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <BookOpen className="h-3 w-3" />
-                  <span>Spec</span>
-                </Link>
-              )}
-
-              <Link
-                to="/lesson/$lessonId"
-                params={{ lessonId: lesson.id }}
-                search={{ mode: "curriculum" }}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-mono font-medium text-primary hover:text-primary/80 transition-colors py-0.5 hover:underline"
-              >
-                <span>{isNewLearner ? "Start first lesson" : "Resume lesson"}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </div>
+        <div className="forge-constellation">
+          <span className="forge-path-label">YOUR PATH <b>→</b></span>
+          <div className="forge-path-lines" aria-hidden="true"><i /><i /><i /><i /></div>
+          <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }} search={{ mode: "curriculum" }} className="forge-node forge-node-done" aria-label="Completed skill"><span>✓</span></Link>
+          <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }} search={{ mode: "curriculum" }} className="forge-node forge-node-done forge-node-two" aria-label="Completed skill"><span>✓</span></Link>
+          <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }} search={{ mode: "curriculum" }} className="forge-node forge-node-active" aria-label="Current skill"><Code2 aria-hidden="true" /></Link>
+          <span className="forge-node forge-node-locked forge-node-three" aria-label="Locked skill">⌁</span>
+          <span className="forge-node forge-node-locked forge-node-four" aria-label="Locked skill">⌁</span>
+          <div className="forge-legend"><span className="done-dot" /> Mastered <span className="active-dot" /> In progress <span className="locked-dot" /> Locked</div>
         </div>
+      </div>
+
+      <div className="forge-focus-panel">
+        <span className="forge-focus-kicker">CURRENT FOCUS <button type="button" aria-label="Dismiss current focus">×</button></span>
+        <div className="forge-focus-icon"><Code2 aria-hidden="true" /></div>
+        <h2>{lesson.title}</h2>
+        <p>{lesson.description || "Learn to design frontend systems that stay flexible as your product grows."}</p>
+        <div className="forge-focus-meta"><span><Clock aria-hidden="true" /> {lesson.estimatedMinutes || 20} min</span><span>⌁ {lesson.difficulty || "Intermediate"}</span></div>
+        <Link to="/lesson/$lessonId" params={{ lessonId: lesson.id }} search={{ mode: "curriculum" }} className="forge-primary-action">{isNewLearner ? "Begin challenge" : "Continue challenge"}<span>▶</span></Link>
+        <div className="forge-next"><span>Next up</span><strong>{moduleLessonsCount > currentStepNumber ? "The next skill in your path" : "Path complete"}</strong><span>⌑</span></div>
       </div>
     </section>
   );

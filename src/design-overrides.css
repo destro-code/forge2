@@ -170,5 +170,294 @@
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--primary) 24%, transparent);
+  background: color-mix(in oklab, var(--primary) 38%, transparent);
+  color: var(--foreground);
+}
+
+/* THE NEW FORGE — expressive skill system, not a conventional course UI */
+:root {
+  --background: oklch(0.105 0.025 285);
+  --foreground: oklch(0.97 0.015 95);
+  --card: oklch(0.145 0.035 285);
+  --card-foreground: oklch(0.97 0.015 95);
+  --popover: oklch(0.16 0.04 285);
+  --popover-foreground: oklch(0.97 0.015 95);
+  --primary: oklch(0.78 0.27 325);
+  --primary-foreground: oklch(0.12 0.025 285);
+  --secondary: oklch(0.21 0.045 285);
+  --secondary-foreground: oklch(0.96 0.02 95);
+  --muted: oklch(0.18 0.035 285);
+  --muted-foreground: oklch(0.72 0.04 285);
+  --accent: oklch(0.82 0.22 125);
+  --accent-foreground: oklch(0.12 0.025 285);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.78 0.27 325);
+  --sidebar: oklch(0.08 0.025 285);
+  --sidebar-foreground: oklch(0.9 0.025 95);
+  --sidebar-primary: oklch(0.78 0.27 325);
+  --sidebar-primary-foreground: oklch(0.12 0.025 285);
+  --sidebar-accent: oklch(0.18 0.05 285);
+  --sidebar-accent-foreground: oklch(0.98 0.015 95);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.78 0.27 325);
+  --success: oklch(0.82 0.22 125);
+  --warning: oklch(0.83 0.19 85);
+  --destructive: oklch(0.72 0.23 25);
+  --shadow-card: 0 18px 50px -28px oklch(0.02 0.02 285 / 0.9);
+  --gradient-primary: linear-gradient(110deg, oklch(0.78 0.27 325), oklch(0.78 0.22 210));
+  --gradient-ember: radial-gradient(700px 280px at 80% 0%, oklch(0.78 0.27 325 / 18%), transparent 70%);
+}
+
+.light {
+  --background: oklch(0.965 0.025 95);
+  --foreground: oklch(0.18 0.035 285);
+  --card: oklch(0.995 0.01 95);
+  --card-foreground: oklch(0.18 0.035 285);
+  --popover: oklch(0.995 0.01 95);
+  --popover-foreground: oklch(0.18 0.035 285);
+  --primary: oklch(0.58 0.24 325);
+  --primary-foreground: oklch(0.99 0.01 95);
+  --secondary: oklch(0.92 0.035 285);
+  --secondary-foreground: oklch(0.2 0.035 285);
+  --muted: oklch(0.92 0.03 95);
+  --muted-foreground: oklch(0.43 0.04 285);
+  --accent: oklch(0.62 0.19 125);
+  --accent-foreground: oklch(0.98 0.01 95);
+  --border: oklch(0.2 0.04 285 / 14%);
+  --input: oklch(0.2 0.04 285 / 18%);
+  --ring: oklch(0.58 0.24 325);
+  --sidebar: oklch(0.18 0.035 285);
+  --sidebar-foreground: oklch(0.96 0.015 95);
+  --sidebar-primary: oklch(0.78 0.24 325);
+  --sidebar-primary-foreground: oklch(0.15 0.03 285);
+  --sidebar-accent: oklch(0.25 0.05 285);
+  --sidebar-accent-foreground: oklch(0.98 0.01 95);
+  --sidebar-border: oklch(1 0 0 / 12%);
+}
+
+body {
+  background-image: var(--gradient-ember), radial-gradient(circle at 15% 20%, oklch(0.82 0.22 125 / 5%) 1px, transparent 1px);
+  background-size: auto, 24px 24px;
+}
+
+.forge-grid {
+  background-image: linear-gradient(to right, oklch(1 0 0 / 3%) 1px, transparent 1px), linear-gradient(to bottom, oklch(1 0 0 / 3%) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.glass-panel,
+.forge-panel {
+  border-radius: 1.25rem !important;
+  border-color: color-mix(in oklab, var(--primary) 24%, var(--border)) !important;
+  box-shadow: var(--shadow-card);
+}
+
+[data-slot="sidebar-inner"] {
+  background: linear-gradient(180deg, var(--sidebar), color-mix(in oklab, var(--sidebar) 82%, var(--primary))) !important;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.045em;
+}
+
+.font-mono {
+  letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .forge-panel:hover,
+  [data-slot="card"]:hover {
+    transform: translateY(-2px);
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Forge Console: a live instrument panel, not a course dashboard */
+:root {
+  --background: oklch(0.12 0.035 180);
+  --foreground: oklch(0.97 0.025 95);
+  --card: oklch(0.16 0.045 190);
+  --card-foreground: oklch(0.97 0.025 95);
+  --popover: oklch(0.145 0.045 190);
+  --popover-foreground: oklch(0.97 0.025 95);
+  --primary: oklch(0.88 0.23 112);
+  --primary-foreground: oklch(0.13 0.035 180);
+  --secondary: oklch(0.2 0.055 190);
+  --secondary-foreground: oklch(0.97 0.025 95);
+  --muted: oklch(0.19 0.045 190);
+  --muted-foreground: oklch(0.72 0.06 180);
+  --accent: oklch(0.78 0.17 205);
+  --accent-foreground: oklch(0.12 0.035 180);
+  --border: oklch(0.85 0.08 180 / 18%);
+  --input: oklch(0.85 0.08 180 / 22%);
+  --ring: oklch(0.88 0.23 112);
+  --sidebar: oklch(0.085 0.04 180);
+  --sidebar-foreground: oklch(0.9 0.04 180);
+  --sidebar-primary: oklch(0.88 0.23 112);
+  --sidebar-primary-foreground: oklch(0.12 0.035 180);
+  --sidebar-accent: oklch(0.18 0.06 190);
+  --sidebar-accent-foreground: oklch(0.98 0.02 95);
+  --sidebar-border: oklch(0.8 0.1 180 / 18%);
+  --sidebar-ring: oklch(0.88 0.23 112);
+  --destructive: oklch(0.74 0.19 45);
+  --success: oklch(0.88 0.23 112);
+  --warning: oklch(0.78 0.17 55);
+  --gradient-primary: linear-gradient(110deg, var(--primary), var(--accent));
+  --gradient-ember: radial-gradient(850px 320px at 80% -10%, oklch(0.78 0.17 205 / 18%), transparent 68%);
+  --shadow-card: 0 22px 70px -35px oklch(0 0 0 / 0.85);
+}
+
+.light {
+  --background: oklch(0.94 0.035 170);
+  --foreground: oklch(0.16 0.045 180);
+  --card: oklch(0.985 0.02 95);
+  --card-foreground: oklch(0.16 0.045 180);
+  --popover: oklch(0.985 0.02 95);
+  --popover-foreground: oklch(0.16 0.045 180);
+  --primary: oklch(0.61 0.19 112);
+  --primary-foreground: oklch(0.98 0.02 95);
+  --secondary: oklch(0.84 0.06 170);
+  --secondary-foreground: oklch(0.16 0.045 180);
+  --muted: oklch(0.88 0.045 170);
+  --muted-foreground: oklch(0.36 0.06 180);
+  --accent: oklch(0.58 0.16 205);
+  --accent-foreground: oklch(0.98 0.02 95);
+  --border: oklch(0.2 0.06 180 / 18%);
+  --input: oklch(0.2 0.06 180 / 22%);
+  --ring: oklch(0.61 0.19 112);
+  --sidebar: oklch(0.15 0.07 180);
+  --sidebar-foreground: oklch(0.95 0.025 95);
+  --sidebar-primary: oklch(0.82 0.2 112);
+  --sidebar-primary-foreground: oklch(0.15 0.04 180);
+  --sidebar-accent: oklch(0.23 0.08 190);
+  --sidebar-accent-foreground: oklch(0.98 0.02 95);
+  --sidebar-border: oklch(0.95 0.06 180 / 20%);
+  --sidebar-ring: oklch(0.82 0.2 112);
+  --gradient-ember: radial-gradient(850px 320px at 80% -10%, oklch(0.58 0.16 205 / 14%), transparent 68%);
+}
+
+body {
+  background-image: var(--gradient-ember), linear-gradient(135deg, var(--background) 0%, color-mix(in oklab, var(--background) 82%, var(--accent)) 100%);
+}
+
+[data-slot="sidebar-inner"] {
+  border-right: 1px solid var(--sidebar-border) !important;
+  background: var(--sidebar) !important;
+}
+
+[data-slot="sidebar-menu-button"] {
+  border-radius: 0.25rem !important;
+  border-left: 3px solid transparent;
+}
+
+[data-slot="sidebar-menu-button"][data-active="true"] {
+  border-left-color: var(--primary);
+  background: color-mix(in oklab, var(--primary) 16%, transparent) !important;
+  color: var(--primary) !important;
+}
+
+.glass-panel,
+.forge-panel,
+[data-slot="card"] {
+  border-radius: 0.55rem !important;
+  background: color-mix(in oklab, var(--card) 96%, transparent) !important;
+  box-shadow: var(--shadow-card);
+}
+
+.forge-grid {
+  background-image: linear-gradient(to right, oklch(0.9 0.08 180 / 5%) 1px, transparent 1px), linear-gradient(to bottom, oklch(0.9 0.08 180 / 5%) 1px, transparent 1px), var(--gradient-ember);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.forge-console-mark {
+  clip-path: polygon(0 0, 100% 0, 76% 24%, 100% 24%, 54% 100%, 0 100%, 24% 72%, 0 72%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .forge-console-mark { transition: transform 220ms ease, filter 220ms ease; }
+  .forge-console-mark:hover { transform: rotate(-4deg) scale(1.04); filter: saturate(1.25); }
+}
+
+.forge-console > section:first-child {
+  position: relative;
+  isolation: isolate;
+}
+
+.forge-console > section:first-child::before {
+  content: "LIVE WORKBENCH / SESSION 01";
+  display: block;
+  color: var(--accent);
+  font: 600 0.68rem/1 var(--font-mono);
+  letter-spacing: 0.16em;
+  margin-bottom: 0.8rem;
+}
+
+.forge-console > section:nth-child(2) {
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+.forge-console > section:nth-child(2) > div:first-child {
+  border: 0;
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+  padding: 0.85rem 1rem;
+  clip-path: polygon(0 0, 100% 0, 97% 100%, 0 100%);
+}
+
+.forge-console > section:nth-child(3) {
+  border-top-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+}
+
+.forge-journey { display: flex; flex-direction: column; gap: 2rem; }
+.forge-intro { padding: 2rem 0 1.5rem; }
+.forge-kicker, .forge-section-label, .forge-focus-kicker, .forge-path-heading > div > span {
+  color: var(--destructive); font: 600 .75rem/1.2 var(--font-mono); letter-spacing: .14em;
+}
+.forge-kicker { display:flex; align-items:center; gap:.65rem; }
+.forge-kicker svg { width:1.25rem; height:1.25rem; }
+.forge-intro h1 { margin: 2rem 0 1rem; max-width: 10ch; font: 500 clamp(3.4rem, 16vw, 7.5rem)/.88 var(--font-serif); letter-spacing: -.07em; }
+.forge-intro h1 em { color: var(--destructive); font-style:normal; }
+.forge-intro p { max-width: 42rem; color: var(--muted-foreground); font-size: clamp(1rem, 2vw, 1.25rem); line-height:1.45; }
+.forge-text-action { display:inline-flex; align-items:center; gap:.75rem; margin-top:2.3rem; padding-bottom:.8rem; border-bottom:2px solid var(--destructive); color:var(--foreground); font-weight:700; }
+.forge-text-action svg { width:1.2rem; }
+.forge-path-panel, .forge-focus-panel { border:1px solid var(--border); background:color-mix(in oklab, var(--card) 92%, transparent); }
+.forge-path-heading { display:flex; justify-content:space-between; gap:1rem; padding:1.5rem; border-bottom:1px solid var(--border); }
+.forge-path-heading h2 { margin-top:.8rem; font:500 clamp(1.8rem, 5vw, 3rem)/1 var(--font-serif); }
+.forge-path-percent { display:flex; flex-direction:column; align-items:flex-end; gap:.8rem; font-family:var(--font-mono); }
+.forge-path-percent i { display:block; width:7rem; height:.45rem; background:var(--muted); }
+.forge-path-percent b { display:block; height:100%; background:var(--destructive); }
+.forge-constellation { position:relative; min-height:25rem; overflow:hidden; background:repeating-linear-gradient(90deg, transparent 0 3px, color-mix(in oklab, var(--accent) 3%, transparent) 3px 4px); }
+.forge-path-label { position:absolute; top:3rem; left:2rem; color:var(--muted-foreground); font:600 .75rem var(--font-mono); letter-spacing:.12em; }
+.forge-path-label b { color:var(--destructive); font-size:1.1rem; }
+.forge-node { position:absolute; display:grid; place-items:center; width:4rem; height:4rem; border-radius:50%; border:2px solid var(--muted-foreground); color:var(--accent); background:var(--card); }
+.forge-node-done { left:10%; bottom:28%; }.forge-node-two { left:38%; bottom:38%; }.forge-node-active { left:52%; top:34%; width:5.8rem; height:5.8rem; color:var(--background); background:var(--destructive); border-color:var(--destructive); box-shadow:0 0 0 1rem color-mix(in oklab, var(--destructive) 15%, transparent); }.forge-node-three { right:25%; top:48%; }.forge-node-four { right:8%; top:20%; }
+.forge-path-lines { position:absolute; inset:0; }.forge-path-lines i { position:absolute; height:2px; border-top:2px dashed var(--muted-foreground); transform-origin:left; opacity:.7; }.forge-path-lines i:nth-child(1){left:17%;bottom:39%;width:26%;transform:rotate(35deg)}.forge-path-lines i:nth-child(2){left:43%;bottom:45%;width:22%;transform:rotate(-43deg)}.forge-path-lines i:nth-child(3){left:61%;top:53%;width:18%;transform:rotate(-28deg)}.forge-path-lines i:nth-child(4){left:59%;top:48%;width:27%;transform:rotate(-55deg)}
+.forge-legend { position:absolute; bottom:1.5rem; left:2rem; display:flex; flex-wrap:wrap; gap:1rem; color:var(--muted-foreground); font-size:.75rem; }.forge-legend span { width:.65rem; height:.65rem; border-radius:50%; display:inline-block; margin-right:-.6rem; }.done-dot{background:var(--accent)}.active-dot{background:var(--destructive)}.locked-dot{background:var(--muted-foreground)}
+.forge-focus-panel { position:relative; padding:2rem 2.5rem; overflow:hidden; background:color-mix(in oklab, var(--destructive) 5%, var(--card)); }.forge-focus-panel::after { content:""; position:absolute; right:-4rem; top:3rem; width:18rem; height:18rem; border-radius:50%; background:color-mix(in oklab, var(--destructive) 14%, transparent); pointer-events:none; }.forge-focus-kicker { display:flex; justify-content:space-between; }.forge-focus-kicker button { color:var(--muted-foreground); font-size:1.7rem; }.forge-focus-icon { display:grid; place-items:center; width:5rem; height:5rem; margin-top:2.7rem; border:1px solid var(--destructive); color:var(--destructive); background:color-mix(in oklab, var(--destructive) 8%, transparent); }.forge-focus-icon svg { width:2rem; height:2rem; }.forge-focus-panel h2 { position:relative; z-index:1; max-width:12ch; margin:2.3rem 0 1rem; font:500 clamp(2.7rem, 9vw, 5rem)/.9 var(--font-serif); }.forge-focus-panel p { position:relative; z-index:1; max-width:36rem; color:var(--muted-foreground); font-size:1rem; line-height:1.5; }.forge-focus-meta { display:flex; gap:2rem; margin:2rem 0; color:var(--muted-foreground); font:600 .8rem var(--font-mono); }.forge-focus-meta span { display:flex; align-items:center; gap:.5rem; }.forge-focus-meta svg { width:1.15rem; color:var(--destructive); }.forge-primary-action { position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; padding:1.15rem 1.5rem; background:var(--destructive); color:var(--primary-foreground); font-weight:800; }.forge-next { display:flex; justify-content:space-between; gap:1rem; margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border); color:var(--muted-foreground); }.forge-next strong { color:var(--foreground); }
+.forge-console > section:nth-child(3) .forge-panel { border-radius:0 !important; }
+@media (min-width: 768px) { .forge-intro { padding-top:4rem; }.forge-intro p { margin-left:8rem; }.forge-text-action { margin-left:8rem; }.forge-constellation { min-height:32rem; }.forge-focus-panel { max-width:48rem; margin-left:auto; } }
+
+
+@media (min-width: 1024px) {
+  .forge-console > section:first-child .forge-panel {
+    min-height: 18rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .forge-console > section:nth-child(2) {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
 }
