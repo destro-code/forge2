@@ -284,8 +284,8 @@ export function AppSidebar() {
             </div>
             <div className="mt-2 h-1 overflow-hidden rounded-full bg-sidebar-border">
               <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{ width: "72%", background: "var(--gradient-primary)" }}
+                className="h-full rounded-full bg-primary transition-all duration-500"
+                style={{ width: `${Math.min(100, Math.max(6, (progress.streakDays / 7) * 100))}%` }}
               />
             </div>
           </div>

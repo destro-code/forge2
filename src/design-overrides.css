@@ -1,124 +1,171 @@
-/* Forge product-wide visual system
-   Learning: spacious, calm, and editorial
-   Workspace: compact and technical
-   Achievement: celebratory without neon/glow
+/* Forge product-wide visual system — "The Forge"
+   Reference: deep near-black ink, warm paper serif typography,
+   signal orange as the single action color, muted slate surfaces,
+   thin hairline borders, restrained cyan/blue status accents,
+   and square / low-radius geometry.
 */
 
 :root {
-  /* Dark Mode: Sophisticated slate/graphite */
-  --background: oklch(0.145 0.012 250);
-  --foreground: oklch(0.95 0.01 80);
-  --card: oklch(0.18 0.014 250);
-  --card-foreground: oklch(0.95 0.01 80);
-  --popover: oklch(0.18 0.014 250);
-  --popover-foreground: oklch(0.95 0.01 80);
-  --primary: oklch(0.72 0.18 45);
-  --primary-foreground: oklch(0.14 0.02 40);
-  --primary-glow: var(--primary);
-  --secondary: oklch(0.22 0.014 250);
-  --secondary-foreground: oklch(0.92 0.01 80);
-  --muted: oklch(0.21 0.014 250);
-  --muted-foreground: oklch(0.68 0.016 250);
-  --accent: oklch(0.24 0.016 250);
-  --accent-foreground: oklch(0.95 0.01 80);
+  /* Squared, technical geometry */
+  --radius: 0.375rem;
+
+  /* Dark first — deep ink graphite */
+  --background: oklch(0.155 0.011 260);
+  --foreground: oklch(0.93 0.014 75);
+  --card: oklch(0.188 0.013 260);
+  --card-foreground: oklch(0.93 0.014 75);
+  --popover: oklch(0.185 0.013 260);
+  --popover-foreground: oklch(0.93 0.014 75);
+
+  /* Signal orange — the one action color */
+  --primary: oklch(0.7 0.2 46);
+  --primary-foreground: oklch(0.16 0.02 40);
+  --primary-glow: oklch(0.7 0.2 46);
+
+  --secondary: oklch(0.225 0.014 260);
+  --secondary-foreground: oklch(0.92 0.012 75);
+  --muted: oklch(0.215 0.013 260);
+  --muted-foreground: oklch(0.63 0.02 258);
+  --accent: oklch(0.25 0.016 260);
+  --accent-foreground: oklch(0.95 0.01 75);
+
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.72 0.18 45 / 60%);
-  --success: oklch(0.72 0.15 155);
-  --success-foreground: oklch(0.16 0.025 155);
-  --warning: oklch(0.78 0.14 85);
-  --warning-foreground: oklch(0.18 0.025 85);
-  --destructive: oklch(0.64 0.19 25);
+  --ring: oklch(0.7 0.2 46 / 55%);
+
+  /* Restrained status accents */
+  --success: oklch(0.74 0.13 165);
+  --success-foreground: oklch(0.15 0.02 165);
+  --warning: oklch(0.8 0.14 80);
+  --warning-foreground: oklch(0.18 0.025 80);
+  --destructive: oklch(0.63 0.2 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --sidebar: oklch(0.128 0.012 250);
-  --sidebar-foreground: oklch(0.9 0.012 250);
+  --info: oklch(0.72 0.11 235);
+  --info-foreground: oklch(0.14 0.02 235);
+
+  --sidebar: oklch(0.135 0.01 260);
+  --sidebar-foreground: oklch(0.88 0.012 260);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.2 0.014 250);
-  --sidebar-accent-foreground: oklch(0.95 0.01 80);
+  --sidebar-accent: oklch(0.21 0.014 260);
+  --sidebar-accent-foreground: oklch(0.95 0.01 75);
   --sidebar-border: oklch(1 0 0 / 7%);
   --sidebar-ring: var(--ring);
 
-  /* Learning mode */
-  --lesson-bg: oklch(0.145 0.012 250);
-  --lesson-surface: oklch(0.18 0.014 250);
-  --lesson-surface-elevated: oklch(0.21 0.016 250);
-  --lesson-surface-subtle: oklch(0.165 0.012 250);
-  --lesson-text-primary: oklch(0.95 0.01 80);
-  --lesson-text-secondary: oklch(0.83 0.014 80);
-  --lesson-text-muted: oklch(0.68 0.016 250);
+  --chart-1: oklch(0.7 0.2 46);
+  --chart-2: oklch(0.72 0.11 235);
+  --chart-3: oklch(0.74 0.13 165);
+  --chart-4: oklch(0.75 0.16 320);
+  --chart-5: oklch(0.8 0.14 80);
+
+  /* Warm ember surface used by the "current focus" panel */
+  --focus-surface: oklch(0.175 0.02 42);
+  --focus-border: oklch(0.4 0.08 45 / 45%);
+  --focus-field: radial-gradient(
+    120% 130% at 88% 18%,
+    oklch(0.55 0.16 45 / 26%),
+    transparent 60%
+  );
+
+  /* Learning mode — calm ink */
+  --lesson-bg: oklch(0.155 0.011 260);
+  --lesson-surface: oklch(0.188 0.013 260);
+  --lesson-surface-elevated: oklch(0.22 0.015 260);
+  --lesson-surface-subtle: oklch(0.17 0.012 260);
+  --lesson-text-primary: oklch(0.93 0.014 75);
+  --lesson-text-secondary: oklch(0.82 0.014 75);
+  --lesson-text-muted: oklch(0.63 0.02 258);
   --lesson-border: oklch(1 0 0 / 8%);
   --lesson-focus-ring: var(--primary);
   --lesson-accent: var(--primary);
   --lesson-accent-foreground: var(--primary-foreground);
+  --lesson-success-bg: oklch(0.74 0.13 165 / 12%);
+  --lesson-success-border: oklch(0.74 0.13 165 / 32%);
+  --lesson-success-text: oklch(0.78 0.12 165);
+  --lesson-error-bg: oklch(0.63 0.2 25 / 12%);
+  --lesson-error-border: oklch(0.63 0.2 25 / 32%);
+  --lesson-error-text: oklch(0.72 0.16 25);
+  --lesson-warning-bg: oklch(0.8 0.14 80 / 12%);
+  --lesson-warning-border: oklch(0.8 0.14 80 / 32%);
+  --lesson-warning-text: oklch(0.82 0.13 80);
 
   --gradient-primary: none;
   --gradient-surface: none;
   --gradient-ember: none;
-  --shadow-subtle: 0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1);
-  --shadow-card: 0 4px 16px -4px oklch(0 0 0 / 0.25);
+  --shadow-subtle: 0 1px 2px 0 oklch(0 0 0 / 0.3);
+  --shadow-card: 0 2px 10px -4px oklch(0 0 0 / 0.4);
   --shadow-glow: none;
 }
 
 .light {
   /* Warm Technical Paper foundation */
-  --background: #F6F3EE;
-  --foreground: #2C2A27;
-  --card: #FCFBF9;
-  --card-foreground: #2C2A27;
-  --popover: #FCFBF9;
-  --popover-foreground: #2C2A27;
-  --primary: #D35C37;
-  --primary-foreground: #FFFFFF;
-  --primary-glow: #D35C37;
-  --secondary: #EFECE6;
-  --secondary-foreground: #2C2A27;
-  --muted: #EFECE6;
-  --muted-foreground: #5C5852;
-  --accent: #EAE5DD;
-  --accent-foreground: #2C2A27;
-  --border: #E3DDD6;
-  --input: #E3DDD6;
-  --ring: #D35C37;
-  --sidebar: #F0EDE6;
-  --sidebar-foreground: #2C2A27;
-  --sidebar-primary: #D35C37;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E8E3DB;
-  --sidebar-accent-foreground: #2C2A27;
-  --sidebar-border: #E3DDD6;
-  --sidebar-ring: #D35C37;
+  --background: #f4f1ea;
+  --foreground: #22201c;
+  --card: #fcfbf8;
+  --card-foreground: #22201c;
+  --popover: #fcfbf8;
+  --popover-foreground: #22201c;
+  --primary: #d9541e;
+  --primary-foreground: #ffffff;
+  --primary-glow: #d9541e;
+  --secondary: #ebe7df;
+  --secondary-foreground: #22201c;
+  --muted: #ebe7df;
+  --muted-foreground: #5c584f;
+  --accent: #e6e0d6;
+  --accent-foreground: #22201c;
+  --border: #e0d9cf;
+  --input: #e0d9cf;
+  --ring: #d9541e;
 
-  --hero-surface: #FCFBF9;
-  --hero-border: #E7E2DA;
-  --text-primary: #2C2A27;
-  --text-secondary: #5C5852;
-  --text-muted: #9A948C;
-  --text-technical: #78746E;
-  --border-hairline: #E3DDD6;
-  --dock-divider: #E9E4DD;
-  --dock-text: #B0A89D;
-  --ember-primary: #D35C37;
-  --ember-dark: #B84B2A;
-  --active-wash: #FCF1E9;
+  --success: #1f7a52;
+  --success-foreground: #ffffff;
+  --warning: #b57a12;
+  --warning-foreground: #ffffff;
+  --destructive: #b8431f;
+  --destructive-foreground: #ffffff;
+  --info: #2f6e9e;
+  --info-foreground: #ffffff;
 
-  --lesson-bg: #F6F3EE;
-  --lesson-surface: #FCFBF9;
-  --lesson-surface-elevated: #FFFFFF;
-  --lesson-surface-subtle: #EFECE6;
-  --lesson-text-primary: #2C2A27;
-  --lesson-text-secondary: #5C5852;
-  --lesson-text-muted: #9A948C;
-  --lesson-border: #E3DDD6;
-  --lesson-focus-ring: #D35C37;
-  --lesson-accent: #D35C37;
-  --lesson-accent-foreground: #FFFFFF;
+  --sidebar: #efebe2;
+  --sidebar-foreground: #22201c;
+  --sidebar-primary: #d9541e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e6e0d6;
+  --sidebar-accent-foreground: #22201c;
+  --sidebar-border: #e0d9cf;
+  --sidebar-ring: #d9541e;
 
-  --shadow-subtle: 0 1px 2px 0 rgba(44, 42, 39, 0.03);
-  --shadow-card: 0 1px 3px 0 rgba(44, 42, 39, 0.04);
+  --focus-surface: #fbf1e9;
+  --focus-border: #f0c8ac;
+  --focus-field: radial-gradient(120% 130% at 88% 18%, rgba(217, 84, 30, 0.12), transparent 60%);
+
+  --lesson-bg: #f4f1ea;
+  --lesson-surface: #fcfbf8;
+  --lesson-surface-elevated: #ffffff;
+  --lesson-surface-subtle: #ebe7df;
+  --lesson-text-primary: #22201c;
+  --lesson-text-secondary: #5c584f;
+  --lesson-text-muted: #948d81;
+  --lesson-border: #e0d9cf;
+  --lesson-focus-ring: #d9541e;
+  --lesson-accent: #d9541e;
+  --lesson-accent-foreground: #ffffff;
+  --lesson-success-bg: #e6f3ec;
+  --lesson-success-border: #9ed4b8;
+  --lesson-success-text: #1f7a52;
+  --lesson-error-bg: #fbeae5;
+  --lesson-error-border: #f0a696;
+  --lesson-error-text: #b8431f;
+  --lesson-warning-bg: #fbf1de;
+  --lesson-warning-border: #f0cd8a;
+  --lesson-warning-text: #8c5c0a;
+
+  --shadow-subtle: 0 1px 2px 0 rgba(34, 32, 28, 0.04);
+  --shadow-card: 0 1px 3px 0 rgba(34, 32, 28, 0.05);
 }
 
-/* Restrained ember — no glowing gradients or neon borders */
+/* Restrained ember — no glowing gradients or neon borders on generic utilities */
 .ember-glow,
 .shadow-glow,
 .text-gradient-primary {
@@ -128,10 +175,22 @@
 }
 
 .glass-panel {
-  background: color-mix(in oklab, var(--card) 96%, transparent) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: color-mix(in oklab, var(--card) 92%, transparent) !important;
+  backdrop-filter: blur(12px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(120%) !important;
   border-color: var(--border) !important;
+}
+
+/* Warm ember field for the current-focus panel */
+.focus-field {
+  background-image: var(--focus-field);
+}
+
+/* The single active constellation node earns a controlled ember glow */
+.node-active-glow {
+  box-shadow:
+    0 0 0 4px color-mix(in oklab, var(--primary) 20%, transparent),
+    0 0 24px -2px color-mix(in oklab, var(--primary) 55%, transparent);
 }
 
 /* Smooth transition for interactive components */
@@ -170,5 +229,16 @@
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--primary) 24%, transparent);
+  background: color-mix(in oklab, var(--primary) 26%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

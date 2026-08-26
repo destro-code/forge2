@@ -1,13 +1,19 @@
 import { useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useProgress } from "@/lib/hooks/use-progress";
-import { useModules, useLessons, useProjects, useTopics } from "@/lib/hooks/use-content";
-import { getModuleProgress, getTopicProgress } from "@/lib/hooks/use-curriculum";
+import { useLessons, useAchievements, useLearningPaths } from "@/lib/hooks/use-content";
 import { useCurriculumResume } from "@/lib/utils/curriculum-order";
+import { evaluateAchievements } from "@/lib/utils/achievements";
 
-import { HeroStudio } from "@/components/dashboard/hero-studio";
-import { LearningLadder } from "@/components/dashboard/learning-ladder";
-import { SecondaryWorkspaces } from "@/components/dashboard/secondary-workspaces";
+import { JourneyIntro } from "@/components/dashboard/journey-intro";
+import {
+  PathConstellation,
+  type ConstellationNode,
+  type NodeStatus,
+} from "@/components/dashboard/path-constellation";
+import { CurrentFocus } from "@/components/dashboard/current-focus";
+import { MomentumPanel } from "@/components/dashboard/momentum-panel";
+import { RecentWins, type Win } from "@/components/dashboard/recent-wins";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,101 +22,119 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Your Forge learning studio — continuous curriculum progression and frontend mastery.",
+          "Your Forge learning journey — a vertically flowing path from your current focus to proof of work.",
       },
       { property: "og:title", content: "Dashboard · Forge" },
       {
         property: "og:description",
-        content: "Your precision engineering studio for frontend mastery.",
+        content: "Shape your craft through deliberate practice.",
       },
     ],
   }),
   component: Dashboard,
 });
 
+const TIER_RANK: Record<Win["tier"], number> = {
+  platinum: 4,
+  gold: 3,
+  silver: 2,
+  bronze: 1,
+};
+
 function Dashboard() {
   const progress = useProgress();
-  const modules = useModules();
   const lessons = useLessons();
-  const projects = useProjects();
-  const topics = useTopics();
+  const achievements = useAchievements();
+  const paths = useLearningPaths();
 
-  const { currentLesson: curriculumContinueLesson } = useCurriculumResume();
-  const continueLesson = curriculumContinueLesson || lessons[0];
-  const activeProject = projects[0];
-
-  const continueLessonModuleId =
-    continueLesson?.moduleId || topics.find((t) => t.id === continueLesson?.topicId)?.moduleId;
-
-  const currentModule = modules.find((m) => m.id === continueLessonModuleId) || modules[0];
-  const currentTopic = topics.find((t) => t.id === continueLesson?.topicId);
-
-  const currentModuleLessons = useMemo(() => {
-    if (!currentModule) return [];
-    const moduleTopics = topics.filter((t) => t.moduleId === currentModule.id);
-    const topicIdSet = new Set(moduleTopics.map((t) => t.id));
-
-    const modLessons = lessons.filter(
-      (l) => l.moduleId === currentModule.id || (l.topicId && topicIdSet.has(l.topicId)),
-    );
-
-    return [...modLessons].sort((a, b) => {
-      const topicA = moduleTopics.find((t) => t.id === a.topicId);
-      const topicB = moduleTopics.find((t) => t.id === b.topicId);
-      const topicOrderA = topicA?.order ?? 0;
-      const topicOrderB = topicB?.order ?? 0;
-      if (topicOrderA !== topicOrderB) {
-        return topicOrderA - topicOrderB;
-      }
-      return (a.order ?? 0) - (b.order ?? 0);
-    });
-  }, [currentModule, lessons, topics]);
-
-  const continueProgressPercent = continueLessonModuleId
-    ? getModuleProgress(continueLessonModuleId, progress.lessonsCompleted)
-    : continueLesson?.topicId
-      ? getTopicProgress(continueLesson.topicId, progress.lessonsCompleted)
-      : 0;
-
-  const currentStepNumber = Math.max(
-    1,
-    currentModuleLessons.findIndex((l) => l.id === continueLesson?.id) + 1,
-  );
+  const { currentLesson, orderedLessons, completedCount, totalLessons } = useCurriculumResume();
 
   const isNewLearner = progress.lessonsCompleted.length === 0;
 
+  // Path identity — the featured curriculum path.
+  const featuredPath = paths.find((p) => p.featured) || paths[0];
+  const pathPercent =
+    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+  // Constellation window around the active lesson.
+  const { nodes, nextLesson } = useMemo(() => {
+    if (orderedLessons.length === 0) {
+      return { nodes: [] as ConstellationNode[], nextLesson: undefined };
+    }
+    const activeIndex = Math.max(
+      0,
+      orderedLessons.findIndex((l) => l.id === currentLesson?.id),
+    );
+    const windowSize = 6;
+    const start = Math.min(
+      Math.max(0, activeIndex - 2),
+      Math.max(0, orderedLessons.length - windowSize),
+    );
+    const slice = orderedLessons.slice(start, start + windowSize);
+    const completed = new Set(progress.lessonsCompleted);
+
+    const built: ConstellationNode[] = slice.map((lesson) => {
+      const gi = orderedLessons.indexOf(lesson);
+      let status: NodeStatus;
+      if (gi === activeIndex) status = "active";
+      else if (completed.has(lesson.id)) status = "mastered";
+      else if (gi === activeIndex + 1) status = "available";
+      else if (gi > activeIndex + 1) status = "locked";
+      else status = "available";
+      return {
+        key: lesson.id,
+        lessonId: lesson.id,
+        title: lesson.title,
+        status,
+      };
+    });
+
+    return { nodes: built, nextLesson: orderedLessons[activeIndex + 1] };
+  }, [orderedLessons, currentLesson, progress.lessonsCompleted]);
+
+  // Sessions this week (distinct active days over the trailing 7 days).
+  const sessionsThisWeek = useMemo(() => {
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(today.getDate() - 6);
+    const startStr = start.toISOString().slice(0, 10);
+    return new Set((progress.activityDates || []).filter((d) => d.slice(0, 10) >= startStr)).size;
+  }, [progress.activityDates]);
+
+  // Recent wins — unlocked achievements, strongest tiers first.
+  const wins = useMemo<Win[]>(() => {
+    const evaluated = evaluateAchievements(achievements as never, progress, lessons);
+    return evaluated
+      .filter((a) => a.unlocked)
+      .sort((a, b) => TIER_RANK[b.tier] - TIER_RANK[a.tier])
+      .slice(0, 4)
+      .map((a) => ({ id: a.id, title: a.title, icon: a.icon, tier: a.tier }));
+  }, [achievements, progress, lessons]);
+
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-1 pb-16 pt-3 sm:px-4 lg:gap-10">
-      {/* 1. Primary Hero Focus Block */}
-      {continueLesson && (
-        <HeroStudio
-          lesson={continueLesson}
-          module={currentModule}
-          topic={currentTopic}
-          moduleLessonsCount={currentModuleLessons.length || 1}
-          currentStepNumber={currentStepNumber}
-          progressPercent={continueProgressPercent}
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 pb-16 pt-2 sm:gap-12">
+      <JourneyIntro isNewLearner={isNewLearner} />
+
+      {featuredPath && (
+        <PathConstellation
+          pathDomain="Frontend"
+          pathTitle={featuredPath.title}
+          percent={pathPercent}
+          nodes={nodes}
+        />
+      )}
+
+      {currentLesson && (
+        <CurrentFocus
+          lesson={currentLesson}
+          nextLesson={nextLesson}
           isNewLearner={isNewLearner}
         />
       )}
 
-      {/* 2. Primary Curriculum Roadmap */}
-      {currentModule && (
-        <LearningLadder
-          module={currentModule}
-          moduleLessons={currentModuleLessons}
-          completedLessonIds={progress.lessonsCompleted}
-          currentLessonId={continueLesson?.id}
-        />
-      )}
+      <MomentumPanel sessionsThisWeek={sessionsThisWeek} weeklyGoal={5} />
 
-      {/* 3. Supporting Workspaces */}
-      <SecondaryWorkspaces
-        activeProject={activeProject}
-        flashcardsDueCount={progress.flashcardStats?.dueCount || 0}
-        completedLessonsCount={progress.lessonsCompleted.length}
-        streakDays={progress.streakDays}
-      />
+      <RecentWins wins={wins} />
     </div>
   );
 }
