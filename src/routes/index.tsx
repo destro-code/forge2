@@ -80,7 +80,7 @@ function Dashboard() {
   const isNewLearner = progress.lessonsCompleted.length === 0;
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-1 pb-16 pt-3 sm:px-4 lg:gap-10">
+    <div className="forge-console mx-auto flex max-w-[1440px] flex-col gap-6 px-1 pb-16 pt-3 sm:px-5 lg:gap-8 lg:px-8">
       {/* 1. Primary Hero Focus Block */}
       {continueLesson && (
         <HeroStudio

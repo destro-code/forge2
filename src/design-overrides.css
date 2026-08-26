@@ -281,3 +281,153 @@ h1, h2, h3 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Forge Console: a live instrument panel, not a course dashboard */
+:root {
+  --background: oklch(0.12 0.035 180);
+  --foreground: oklch(0.97 0.025 95);
+  --card: oklch(0.16 0.045 190);
+  --card-foreground: oklch(0.97 0.025 95);
+  --popover: oklch(0.145 0.045 190);
+  --popover-foreground: oklch(0.97 0.025 95);
+  --primary: oklch(0.88 0.23 112);
+  --primary-foreground: oklch(0.13 0.035 180);
+  --secondary: oklch(0.2 0.055 190);
+  --secondary-foreground: oklch(0.97 0.025 95);
+  --muted: oklch(0.19 0.045 190);
+  --muted-foreground: oklch(0.72 0.06 180);
+  --accent: oklch(0.78 0.17 205);
+  --accent-foreground: oklch(0.12 0.035 180);
+  --border: oklch(0.85 0.08 180 / 18%);
+  --input: oklch(0.85 0.08 180 / 22%);
+  --ring: oklch(0.88 0.23 112);
+  --sidebar: oklch(0.085 0.04 180);
+  --sidebar-foreground: oklch(0.9 0.04 180);
+  --sidebar-primary: oklch(0.88 0.23 112);
+  --sidebar-primary-foreground: oklch(0.12 0.035 180);
+  --sidebar-accent: oklch(0.18 0.06 190);
+  --sidebar-accent-foreground: oklch(0.98 0.02 95);
+  --sidebar-border: oklch(0.8 0.1 180 / 18%);
+  --sidebar-ring: oklch(0.88 0.23 112);
+  --destructive: oklch(0.74 0.19 45);
+  --success: oklch(0.88 0.23 112);
+  --warning: oklch(0.78 0.17 55);
+  --gradient-primary: linear-gradient(110deg, var(--primary), var(--accent));
+  --gradient-ember: radial-gradient(850px 320px at 80% -10%, oklch(0.78 0.17 205 / 18%), transparent 68%);
+  --shadow-card: 0 22px 70px -35px oklch(0 0 0 / 0.85);
+}
+
+.light {
+  --background: oklch(0.94 0.035 170);
+  --foreground: oklch(0.16 0.045 180);
+  --card: oklch(0.985 0.02 95);
+  --card-foreground: oklch(0.16 0.045 180);
+  --popover: oklch(0.985 0.02 95);
+  --popover-foreground: oklch(0.16 0.045 180);
+  --primary: oklch(0.61 0.19 112);
+  --primary-foreground: oklch(0.98 0.02 95);
+  --secondary: oklch(0.84 0.06 170);
+  --secondary-foreground: oklch(0.16 0.045 180);
+  --muted: oklch(0.88 0.045 170);
+  --muted-foreground: oklch(0.36 0.06 180);
+  --accent: oklch(0.58 0.16 205);
+  --accent-foreground: oklch(0.98 0.02 95);
+  --border: oklch(0.2 0.06 180 / 18%);
+  --input: oklch(0.2 0.06 180 / 22%);
+  --ring: oklch(0.61 0.19 112);
+  --sidebar: oklch(0.15 0.07 180);
+  --sidebar-foreground: oklch(0.95 0.025 95);
+  --sidebar-primary: oklch(0.82 0.2 112);
+  --sidebar-primary-foreground: oklch(0.15 0.04 180);
+  --sidebar-accent: oklch(0.23 0.08 190);
+  --sidebar-accent-foreground: oklch(0.98 0.02 95);
+  --sidebar-border: oklch(0.95 0.06 180 / 20%);
+  --sidebar-ring: oklch(0.82 0.2 112);
+  --gradient-ember: radial-gradient(850px 320px at 80% -10%, oklch(0.58 0.16 205 / 14%), transparent 68%);
+}
+
+body {
+  background-image: var(--gradient-ember), linear-gradient(135deg, var(--background) 0%, color-mix(in oklab, var(--background) 82%, var(--accent)) 100%);
+}
+
+[data-slot="sidebar-inner"] {
+  border-right: 1px solid var(--sidebar-border) !important;
+  background: var(--sidebar) !important;
+}
+
+[data-slot="sidebar-menu-button"] {
+  border-radius: 0.25rem !important;
+  border-left: 3px solid transparent;
+}
+
+[data-slot="sidebar-menu-button"][data-active="true"] {
+  border-left-color: var(--primary);
+  background: color-mix(in oklab, var(--primary) 16%, transparent) !important;
+  color: var(--primary) !important;
+}
+
+.glass-panel,
+.forge-panel,
+[data-slot="card"] {
+  border-radius: 0.55rem !important;
+  background: color-mix(in oklab, var(--card) 96%, transparent) !important;
+  box-shadow: var(--shadow-card);
+}
+
+.forge-grid {
+  background-image: linear-gradient(to right, oklch(0.9 0.08 180 / 5%) 1px, transparent 1px), linear-gradient(to bottom, oklch(0.9 0.08 180 / 5%) 1px, transparent 1px), var(--gradient-ember);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.forge-console-mark {
+  clip-path: polygon(0 0, 100% 0, 76% 24%, 100% 24%, 54% 100%, 0 100%, 24% 72%, 0 72%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .forge-console-mark { transition: transform 220ms ease, filter 220ms ease; }
+  .forge-console-mark:hover { transform: rotate(-4deg) scale(1.04); filter: saturate(1.25); }
+}
+
+.forge-console > section:first-child {
+  position: relative;
+  isolation: isolate;
+}
+
+.forge-console > section:first-child::before {
+  content: "LIVE WORKBENCH / SESSION 01";
+  display: block;
+  color: var(--accent);
+  font: 600 0.68rem/1 var(--font-mono);
+  letter-spacing: 0.16em;
+  margin-bottom: 0.8rem;
+}
+
+.forge-console > section:nth-child(2) {
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+.forge-console > section:nth-child(2) > div:first-child {
+  border: 0;
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+  padding: 0.85rem 1rem;
+  clip-path: polygon(0 0, 100% 0, 97% 100%, 0 100%);
+}
+
+.forge-console > section:nth-child(3) {
+  border-top-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+}
+
+@media (min-width: 1024px) {
+  .forge-console > section:first-child .forge-panel {
+    min-height: 18rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .forge-console > section:nth-child(2) {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}

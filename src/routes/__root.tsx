@@ -81,11 +81,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Forge — Frontend Engineering Academy" },
+      { title: "Forge — The Frontend Skill Console" },
       {
         name: "description",
         content:
-          "Forge is a premium AI-powered frontend engineering academy that takes you from beginner to production-ready and interview-ready.",
+          "Forge is a live skill console for building, testing, and mastering frontend engineering in public practice.",
       },
       { property: "og:title", content: "Forge — Frontend Engineering Academy" },
       { property: "og:description", content: "Premium AI-powered frontend engineering academy." },
@@ -94,10 +94,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
-      { rel: "icon", href: "/forge-logo.svg", type: "image/svg+xml" },
-      { rel: "shortcut icon", href: "/favicon.png", type: "image/png" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "icon", href: "/forge-console-mark.png", type: "image/png" },
+      { rel: "shortcut icon", href: "/forge-console-mark.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/forge-console-mark.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
