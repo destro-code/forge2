@@ -159,4 +159,84 @@ describe("Interactive Code Flow & Validation UI", () => {
     });
     container.remove();
   });
+
+  it("failed validation shows structured Results, preserves submitted code, and allows return to Code", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const submittedCode = '<div class="card">My Custom Code</div>';
+
+    act(() => {
+      root.render(
+        <InteractiveCodeRenderer
+          activity={mockHtmlActivity}
+          state={{
+            status: "incorrect",
+            response: submittedCode,
+            hintsRevealed: 0,
+            attempts: 1,
+            startedAt: Date.now(),
+          }}
+          onResponse={() => {}}
+          onSubmit={() => {}}
+          onRetry={() => {}}
+          onContinue={() => {}}
+          onRevealHint={() => {}}
+        />,
+      );
+    });
+
+    // 1. Shows structured validation & results header
+    expect(container.textContent).toContain("Validation & Results");
+    expect(container.textContent).toContain("Requirements not met");
+    expect(container.textContent).toContain('div element has id="profile-card"');
+
+    // 2. Contains Return to Code mobile navigation button
+    const returnToCodeBtn = Array.from(container.querySelectorAll("button")).find((b) =>
+      b.textContent?.includes("Return to Code"),
+    );
+    expect(returnToCodeBtn).toBeDefined();
+
+    // 3. Click Return to Code tab button
+    act(() => {
+      returnToCodeBtn?.click();
+    });
+
+    // 4. Editor is active and preserves submitted code
+    const editorTextarea = container.querySelector("textarea") as HTMLTextAreaElement;
+    expect(editorTextarea).not.toBeNull();
+    expect(editorTextarea.value).toBe(submittedCode);
+
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
+  it("has exactly one primary action button in footer and no duplicate submit buttons in activity body", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    const firstLesson = canonicalProvider.getGoldenLessons()[0];
+    act(() => {
+      root.render(<CanonicalLessonPlayer lesson={firstLesson} onComplete={() => {}} />);
+    });
+
+    // Verify exactly one primary action button exists in player footer
+    const primaryButtons = Array.from(container.querySelectorAll("button")).filter(
+      (b) =>
+        b.textContent?.includes("Check Answer") ||
+        b.textContent?.includes("Submit") ||
+        b.textContent?.includes("Continue") ||
+        b.textContent?.includes("Try Again"),
+    );
+
+    expect(primaryButtons.length).toBe(1);
+
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
 });

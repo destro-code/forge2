@@ -57,8 +57,9 @@ export const lessonTheme = EditorView.theme(
       backgroundColor: "rgba(234, 88, 12, 0.03)",
     },
     ".cm-matchingBracket": {
-      backgroundColor: "rgba(234, 88, 12, 0.2)",
-      outline: "1.5px solid var(--lesson-accent, #ea580c)",
+      backgroundColor: "rgba(234, 88, 12, 0.12)",
+      outline: "none",
+      border: "none",
       borderRadius: "2px",
     },
     ".cm-nonmatchingBracket": {

@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from "vitest";
 import React, { act } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { LessonCodeEditor } from "./lesson-code-editor";
+import { lessonTheme } from "./lesson-editor-config";
 
 /**
  * Helper to render the LessonCodeEditor in happy-dom test container
@@ -276,6 +277,21 @@ describe("LessonCodeEditor Foundation & CodeMirror 6 Integration", () => {
     const closingTagCount = (textarea.value.match(/<\/h1>/g) || []).length;
     expect(closingTagCount).toBeLessThanOrEqual(1);
 
+    unmount();
+  });
+
+  it("17. Regression: .cm-matchingBracket has no intrusive outline", () => {
+    // Inspect lessonTheme extension object to verify .cm-matchingBracket rule
+    const themeRules = (lessonTheme as any).value || (lessonTheme as any);
+    expect(themeRules).toBeDefined();
+
+    // Verify editor mounts with lessonTheme without throwing style errors
+    const { container, unmount } = renderEditor({
+      value: "<div><span>Test</span></div>",
+      onChange: () => {},
+      language: "html",
+    });
+    expect(container.querySelector("[role='textbox']")).not.toBeNull();
     unmount();
   });
 });

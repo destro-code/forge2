@@ -146,7 +146,13 @@ export function InteractiveCodeRenderer({
     }
   }, [state.status, state.validationResult, runEvaluation]);
 
-  const hasExecuted = consoleOutput.length > 0 || testResults.length > 0;
+  const hasExecuted =
+    consoleOutput.length > 0 ||
+    testResults.length > 0 ||
+    state.status === "incorrect" ||
+    state.status === "failed" ||
+    state.status === "correct" ||
+    Boolean(state.validationResult);
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
 
   return (
@@ -277,6 +283,21 @@ export function InteractiveCodeRenderer({
           </div>
 
           <div className={cn("space-y-4", activeTab === "code" ? "hidden lg:block" : "block")}>
+            <div className="flex items-center justify-between pb-2 border-b border-lesson-border lg:hidden">
+              <div className="flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
+                <Terminal className="h-3.5 w-3.5" />
+                <span>Validation & Results</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setActiveTab("code")}
+                className="min-h-8 gap-1.5 text-xs text-lesson-text-secondary hover:text-lesson-text-primary"
+              >
+                <Code2 className="h-3.5 w-3.5" /> Return to Code
+              </Button>
+            </div>
+
             {hasExecuted ? (
               <>
                 <div

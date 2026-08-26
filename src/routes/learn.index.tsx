@@ -43,7 +43,7 @@ export const Route = createFileRoute("/learn/")({
 });
 
 function LearnIndexRoute() {
-  const { learningPaths, stats } = useCurriculum();
+  const { learningPaths, modules, stats } = useCurriculum();
   const paths = useLearningPaths();
   const { lessonsCompleted } = useProgress();
   const { currentLesson, orderedLessons, isReturningLearner } = useCurriculumResume();
@@ -124,7 +124,7 @@ function LearnIndexRoute() {
                     variant="secondary"
                     className="text-[10px] font-mono text-muted-foreground"
                   >
-                    {lessonsCompleted.length} of {orderedCurriculumLessons.length} Completed
+                    {lessonsCompleted.length} of {orderedLessons.length} Completed
                   </Badge>
                 )}
               </div>
