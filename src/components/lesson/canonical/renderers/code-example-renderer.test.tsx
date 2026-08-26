@@ -33,7 +33,7 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
     response: null,
   };
 
-  it("renders code example title, description, code lines, and anatomical callouts", () => {
+  it("renders stacked CODE -> BROWSER OUTPUT -> HOW IT WORKS for HTML examples", () => {
     const container = document.createElement("div");
     document.body.appendChild(container);
     let root: Root | null = null;
@@ -47,8 +47,11 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
 
     expect(container.textContent).toContain("HTML Fundamentals Study");
     expect(container.textContent).toContain("Examine how HTML structure creates webpage elements.");
+    expect(container.textContent).toContain("Code");
     expect(container.textContent).toContain("<h1>Hello World</h1>");
-    expect(container.textContent).toContain("Anatomical Code Callouts & Line Breakdown");
+    expect(container.textContent).toContain("Browser Output");
+    expect(container.querySelector("iframe")).not.toBeNull();
+    expect(container.textContent).toContain("How It Works");
     expect(container.textContent).toContain("Main heading element defining primary topic.");
 
     act(() => {
@@ -57,7 +60,22 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
     document.body.removeChild(container);
   });
 
-  it("toggles between Code, Preview, and Split view modes for HTML examples", () => {
+  it("does NOT render HTML Browser Output for non-HTML examples (e.g. JavaScript)", () => {
+    const jsActivity: CodeExampleActivity = {
+      id: "act-js-example",
+      type: "code-example",
+      intent: "understanding",
+      order: 1,
+      objectiveIds: ["obj-js"],
+      content: {
+        title: "JS Variables Study",
+        description: "Examine JS variable declarations.",
+        code: "const x = 42;\nconsole.log(x);",
+        language: "javascript",
+        annotations: [{ line: 1, comment: "Declares a constant variable named x." }],
+      },
+    };
+
     const container = document.createElement("div");
     document.body.appendChild(container);
     let root: Root | null = null;
@@ -65,24 +83,17 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
     act(() => {
       root = createRoot(container);
       root.render(
-        <CodeExampleRenderer activity={mockActivity} state={mockState} onContinue={vi.fn()} />,
+        <CodeExampleRenderer activity={jsActivity} state={mockState} onContinue={vi.fn()} />,
       );
     });
 
-    // Find Preview button
-    const previewBtn = Array.from(container.querySelectorAll("button")).find(
-      (b) => b.getAttribute("aria-label") === "View Preview",
-    );
-    expect(previewBtn).toBeDefined();
-
-    // Click Preview
-    act(() => {
-      previewBtn?.click();
-    });
-
-    // Verify rendered output preview container is displayed
-    expect(container.textContent).toContain("Rendered Output Preview");
-    expect(container.querySelector("iframe")).not.toBeNull();
+    expect(container.textContent).toContain("JS Variables Study");
+    expect(container.textContent).toContain("Code");
+    expect(container.textContent).toContain("const x = 42;");
+    expect(container.textContent).not.toContain("Browser Output");
+    expect(container.querySelector("iframe")).toBeNull();
+    expect(container.textContent).toContain("How It Works");
+    expect(container.textContent).toContain("Declares a constant variable named x.");
 
     act(() => {
       root?.unmount();

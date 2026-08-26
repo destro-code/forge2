@@ -249,13 +249,33 @@ describe("LessonCodeEditor Foundation & CodeMirror 6 Integration", () => {
 
   it("15. HTML/tag auto-completion unit behaviors are fully verified", () => {
     const { container, unmount } = renderEditor({
-      value: "<div>",
+      value: "<div></div>",
       onChange: () => {},
       language: "html",
     });
     // Confirms parser and environment do not crash or block compiling
     const textbox = container.querySelector("[role='textbox']");
     expect(textbox).not.toBeNull();
+    unmount();
+  });
+
+  it("16. Regression: HTML tag auto-closing produces at most one closing tag per opening tag", () => {
+    const onChangeSpy = vi.fn();
+    const { container, unmount } = renderEditor({
+      value: "<h1>",
+      onChange: onChangeSpy,
+      language: "html",
+    });
+    const textarea = container.querySelector("textarea") as HTMLTextAreaElement;
+
+    // Simulate inputting typed HTML content
+    setInputValue(textarea, "<h1></h1>");
+
+    // Must produce exactly <h1></h1>, not <h1></h1></h1>
+    expect(onChangeSpy).toHaveBeenLastCalledWith("<h1></h1>");
+    const closingTagCount = (textarea.value.match(/<\/h1>/g) || []).length;
+    expect(closingTagCount).toBeLessThanOrEqual(1);
+
     unmount();
   });
 });

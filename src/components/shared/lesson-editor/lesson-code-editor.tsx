@@ -14,11 +14,7 @@ import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
 import { javascript } from "@codemirror/lang-javascript";
 
-import {
-  lessonTheme,
-  syntaxHighlightingExtension,
-  autoCloseTagExtension,
-} from "./lesson-editor-config";
+import { lessonTheme, syntaxHighlightingExtension } from "./lesson-editor-config";
 import { cn } from "@/lib/utils";
 
 export interface LessonCodeEditorProps {
@@ -42,7 +38,7 @@ function getLanguageExtension(lang: string) {
   const normalized = (lang || "").toLowerCase();
   switch (normalized) {
     case "html":
-      return html();
+      return html({ autoCloseTags: true, matchClosingTags: true });
     case "css":
       return css();
     case "javascript":
@@ -56,7 +52,7 @@ function getLanguageExtension(lang: string) {
     case "tsx":
       return javascript({ jsx: true, typescript: true });
     default:
-      return html(); // Default to HTML
+      return html({ autoCloseTags: true, matchClosingTags: true }); // Default to HTML
   }
 }
 
@@ -89,7 +85,6 @@ export function LessonCodeEditor({
       extensions: [
         lessonTheme,
         syntaxHighlightingExtension,
-        autoCloseTagExtension,
         lineNumbers(),
         highlightActiveLine(),
         drawSelection(),

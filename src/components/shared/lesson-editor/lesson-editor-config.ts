@@ -66,6 +66,18 @@ export const lessonTheme = EditorView.theme(
       outline: "1.5px solid #ef4444",
       borderRadius: "2px",
     },
+    ".cm-matchingTag": {
+      backgroundColor: "rgba(234, 88, 12, 0.15)",
+      outline: "none",
+      border: "none",
+      borderRadius: "2px",
+    },
+    ".cm-nonmatchingTag": {
+      backgroundColor: "rgba(239, 68, 68, 0.15)",
+      outline: "none",
+      border: "none",
+      borderRadius: "2px",
+    },
   },
   { dark: true },
 );
@@ -100,66 +112,3 @@ export const lessonHighlightStyle = HighlightStyle.define([
 ]);
 
 export const syntaxHighlightingExtension = syntaxHighlighting(lessonHighlightStyle);
-
-/**
- * Natural Tag Completion Extension for HTML and JSX/TSX.
- * Automatically closes elements upon typing '>' with cursor positioned inside.
- */
-export const autoCloseTagExtension = EditorView.inputHandler.of((view, from, to, text) => {
-  if (text !== ">") return false;
-
-  const state = view.state;
-  const line = state.doc.lineAt(from);
-  const lineText = line.text;
-  const posInLine = from - line.from;
-
-  // Extract content up to the typed '>'
-  const textBefore = lineText.slice(0, posInLine);
-
-  // Skip self-closing tags (ending with a slash)
-  if (textBefore.trim().endsWith("/")) {
-    return false;
-  }
-
-  // Look back to match `<tag` or `<Component`
-  const match = textBefore.match(/<([A-Za-z0-9_-]+)(?:\s+[^>]*)?$/);
-
-  if (match) {
-    const tagName = match[1];
-
-    // Skip self-closing void elements
-    const voidElements = [
-      "img",
-      "input",
-      "br",
-      "hr",
-      "meta",
-      "link",
-      "source",
-      "embed",
-      "area",
-      "base",
-      "col",
-      "param",
-      "track",
-      "wbr",
-    ];
-    if (voidElements.includes(tagName.toLowerCase())) {
-      return false;
-    }
-
-    const closingTag = `</${tagName}>`;
-
-    // Dispatch the closing tag insert transaction on the next tick
-    // so CodeMirror inserts the typed '>' first
-    setTimeout(() => {
-      const currentHead = view.state.selection.main.head;
-      view.dispatch({
-        changes: { from: currentHead, insert: closingTag },
-        selection: { anchor: currentHead }, // keep selection cursor positioned inside
-      });
-    }, 0);
-  }
-
-  return false;
-});
