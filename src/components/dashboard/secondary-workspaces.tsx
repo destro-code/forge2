@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ArrowRight, Sparkles, BookMarked, BarChart3 } from "lucide-react";
 import type { Project } from "@/lib/types";
 
 interface SecondaryWorkspacesProps {
@@ -15,111 +16,98 @@ export function SecondaryWorkspaces({
   streakDays,
 }: SecondaryWorkspacesProps) {
   return (
-    <section
-      aria-label="Secondary Studio Workspaces"
-      className="pt-6 border-t border-[#E3DDD6] dark:border-border/40 space-y-3"
-    >
-      <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.08em] text-[#78746E] dark:text-muted-foreground/70 px-1">
-        <span>STUDIO WORKSPACES</span>
-        <span className="text-[10px] lowercase text-[#B0A89D] dark:text-muted-foreground/50 hidden sm:inline">
-          supporting workspaces
+    <section aria-label="Supporting Workspaces" className="pt-5 border-t border-border space-y-3">
+      <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-muted-foreground px-1">
+        <span>Supporting Workspaces</span>
+        <span className="text-[10px] text-muted-foreground/70 hidden sm:inline">
+          Practice & Review
         </span>
       </div>
 
-      {/* Technical Workspace Register Dock */}
-      <div className="rounded-[6px] border border-[#E9E4DD] dark:border-border/30 bg-[#FCFBF9] dark:bg-card/20 divide-y sm:divide-y-0 sm:divide-x divide-[#E9E4DD] dark:divide-border/40 grid grid-cols-1 sm:grid-cols-3 overflow-hidden text-xs">
-        {/* W1: Portfolio Labs */}
+      {/* Supporting Workspace Register */}
+      <div className="rounded-lg border border-border bg-card divide-y sm:divide-y-0 sm:divide-x divide-border grid grid-cols-1 sm:grid-cols-3 overflow-hidden text-xs shadow-2xs">
+        {/* Capstone Projects */}
         {activeProject ? (
           <Link
             to="/projects/$projectId"
             params={{ projectId: activeProject.id }}
-            className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-[#F6F3EE] dark:hover:bg-muted/40 transition-colors"
+            className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-muted/40 transition-colors"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <span className="font-mono text-xs font-semibold text-[#78746E] dark:text-muted-foreground shrink-0 w-6">
-                W1
-              </span>
+              <div className="h-7 w-7 rounded bg-primary/10 text-primary grid place-items-center shrink-0">
+                <Sparkles className="h-3.5 w-3.5" />
+              </div>
               <div className="min-w-0">
-                <div className="font-medium text-[#5C5852] truncate group-hover:text-[#2C2A27] dark:text-foreground/90 transition-colors">
-                  {activeProject.title}
+                <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                  Capstone Projects
                 </div>
-                <div className="text-[11px] text-[#B0A89D] dark:text-muted-foreground/70 font-mono truncate">
-                  Portfolio Lab
+                <div className="text-[11px] text-muted-foreground truncate">
+                  {activeProject.title}
                 </div>
               </div>
             </div>
-            <span className="font-mono text-[10px] text-[#78746E] dark:text-muted-foreground/60 shrink-0 font-medium">
-              [LAB]
-            </span>
+            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-foreground transition-colors shrink-0" />
           </Link>
         ) : (
           <Link
             to="/projects"
-            className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-[#F6F3EE] dark:hover:bg-muted/40 transition-colors"
+            className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-muted/40 transition-colors"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <span className="font-mono text-xs font-semibold text-[#78746E] dark:text-muted-foreground shrink-0 w-6">
-                W1
-              </span>
+              <div className="h-7 w-7 rounded bg-primary/10 text-primary grid place-items-center shrink-0">
+                <Sparkles className="h-3.5 w-3.5" />
+              </div>
               <div className="min-w-0">
-                <div className="font-medium text-[#5C5852] truncate group-hover:text-[#2C2A27] dark:text-foreground/90 transition-colors">
-                  Portfolio Projects
+                <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                  Capstone Projects
                 </div>
-                <div className="text-[11px] text-[#B0A89D] dark:text-muted-foreground/70 font-mono truncate">
-                  12 Capstone Labs
-                </div>
+                <div className="text-[11px] text-muted-foreground truncate">Portfolio Labs</div>
               </div>
             </div>
-            <span className="font-mono text-[10px] text-[#78746E] dark:text-muted-foreground/60 shrink-0 font-medium">
-              [LAB]
-            </span>
+            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-foreground transition-colors shrink-0" />
           </Link>
         )}
 
-        {/* W2: Spaced Recall */}
+        {/* Flashcards */}
         <Link
           to="/flashcards"
-          className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-[#F6F3EE] dark:hover:bg-muted/40 transition-colors"
+          className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-muted/40 transition-colors"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <span className="font-mono text-xs font-semibold text-[#78746E] dark:text-muted-foreground shrink-0 w-6">
-              W2
-            </span>
+            <div className="h-7 w-7 rounded bg-muted text-muted-foreground group-hover:text-foreground grid place-items-center shrink-0">
+              <BookMarked className="h-3.5 w-3.5" />
+            </div>
             <div className="min-w-0">
-              <div className="font-medium text-[#5C5852] truncate group-hover:text-[#2C2A27] dark:text-foreground/90 transition-colors">
-                Spaced Recall
+              <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                Flashcards
               </div>
-              <div className="text-[11px] text-[#B0A89D] dark:text-muted-foreground/70 font-mono truncate">
-                {flashcardsDueCount > 0 ? `${flashcardsDueCount} cards due` : "Retention active"}
+              <div className="text-[11px] text-muted-foreground truncate">
+                {flashcardsDueCount > 0 ? `${flashcardsDueCount} cards due` : "Active recall"}
               </div>
             </div>
           </div>
-          <span className="font-mono text-[10px] text-[#78746E] dark:text-muted-foreground/60 shrink-0 font-medium">
-            [SYNC]
-          </span>
+          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-foreground transition-colors shrink-0" />
         </Link>
 
-        {/* W3: Academy Analytics */}
+        {/* Learning Stats */}
         <Link
           to="/analytics"
-          className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-[#F6F3EE] dark:hover:bg-muted/40 transition-colors"
+          className="group flex items-center justify-between gap-3 p-3.5 sm:px-4 hover:bg-muted/40 transition-colors"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <span className="font-mono text-xs font-semibold text-[#78746E] dark:text-muted-foreground shrink-0 w-6">
-              W3
-            </span>
+            <div className="h-7 w-7 rounded bg-muted text-muted-foreground group-hover:text-foreground grid place-items-center shrink-0">
+              <BarChart3 className="h-3.5 w-3.5" />
+            </div>
             <div className="min-w-0">
-              <div className="font-medium text-[#5C5852] truncate group-hover:text-[#2C2A27] dark:text-foreground/90 transition-colors">
-                Academy Analytics
+              <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                Learning Stats
               </div>
-              <div className="text-[11px] text-[#B0A89D] dark:text-muted-foreground/70 font-mono truncate">
-                {completedLessonsCount} verified{streakDays > 0 ? ` · ${streakDays}d` : ""}
+              <div className="text-[11px] text-muted-foreground truncate">
+                {completedLessonsCount} verified{streakDays > 0 ? ` · ${streakDays}d streak` : ""}
               </div>
             </div>
           </div>
-          <span className="font-mono text-[10px] text-[#78746E] dark:text-muted-foreground/60 shrink-0 font-medium">
-            [METRICS]
-          </span>
+          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-foreground transition-colors shrink-0" />
         </Link>
       </div>
     </section>

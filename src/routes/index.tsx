@@ -8,7 +8,6 @@ import { useCurriculumResume } from "@/lib/utils/curriculum-order";
 import { HeroStudio } from "@/components/dashboard/hero-studio";
 import { LearningLadder } from "@/components/dashboard/learning-ladder";
 import { SecondaryWorkspaces } from "@/components/dashboard/secondary-workspaces";
-import { MobileStickyAction } from "@/components/dashboard/mobile-sticky-action";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -81,8 +80,8 @@ function Dashboard() {
   const isNewLearner = progress.lessonsCompleted.length === 0;
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-12 pt-2 px-2 sm:px-4">
-      {/* 1. Primary Hero Studio Monolith (Dominant Viewport Centerpiece) */}
+    <div className="space-y-6 max-w-5xl mx-auto pb-12 pt-2 px-2 sm:px-4">
+      {/* 1. Primary Hero Focus Block */}
       {continueLesson && (
         <HeroStudio
           lesson={continueLesson}
@@ -95,7 +94,7 @@ function Dashboard() {
         />
       )}
 
-      {/* 2. Frameless Learning Ladder (Structural Curriculum Progression) */}
+      {/* 2. Primary Curriculum Roadmap */}
       {currentModule && (
         <LearningLadder
           module={currentModule}
@@ -105,16 +104,13 @@ function Dashboard() {
         />
       )}
 
-      {/* 3. Quiet Secondary Studio Workspaces */}
+      {/* 3. Supporting Workspaces */}
       <SecondaryWorkspaces
         activeProject={activeProject}
         flashcardsDueCount={progress.flashcardStats?.dueCount || 0}
         completedLessonsCount={progress.lessonsCompleted.length}
         streakDays={progress.streakDays}
       />
-
-      {/* 4. Mobile Thumb-Accessible Sticky Action Bar */}
-      {continueLesson && <MobileStickyAction lesson={continueLesson} isNewLearner={isNewLearner} />}
     </div>
   );
 }

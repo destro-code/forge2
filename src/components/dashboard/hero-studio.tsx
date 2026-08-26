@@ -22,101 +22,96 @@ export function HeroStudio({
   progressPercent = 0,
   isNewLearner = false,
 }: HeroStudioProps) {
-  // Concise Technical Eyebrow (e.g. MODULE 01 · ORIENTATION)
   const moduleNumber = String(module?.order || 1).padStart(2, "0");
-  const moduleContext = module?.tags?.[0]?.toUpperCase() || "ORIENTATION";
+  const moduleContext = topic?.title || module?.tags?.[0]?.toUpperCase() || "ORIENTATION";
   const eyebrowLabel = `MODULE ${moduleNumber} · ${moduleContext}`;
-  const durationLabel = `${lesson.estimatedMinutes || 20} min practice`;
+  const durationLabel = `${lesson.estimatedMinutes || 20}m practice`;
 
   return (
-    <section aria-label="Current Engineering Challenge">
-      {/* Precision Architectural Studio Surface */}
-      <div className="relative rounded-lg border border-[#E7E2DA] dark:border-border/50 bg-[#FCFBF9] dark:bg-[#161514] p-5 sm:p-8 lg:p-9 shadow-2xs backdrop-blur-[1px]">
-        {/* Subtle Precision Top Hairline */}
-        <div className="absolute inset-x-5 sm:inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#E7E2DA] dark:via-border/50 to-transparent pointer-events-none" />
-
-        {/* Top Eyebrow Context */}
-        <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-3 text-xs">
-          <div className="flex items-center gap-2 font-mono text-[11px] sm:text-xs uppercase tracking-[0.06em]">
-            <span className="font-semibold text-[#2C2A27] dark:text-foreground/90">
-              {eyebrowLabel}
-            </span>
+    <section aria-label="Current Engineering Challenge" className="w-full">
+      <div className="rounded-lg border border-border bg-card p-4 sm:p-5 shadow-xs transition-colors">
+        {/* Eyebrow & Metadata Header */}
+        <div className="flex flex-wrap items-center justify-between gap-y-1.5 gap-x-3 text-xs border-b border-border/60 pb-3">
+          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+            <span className="text-foreground font-semibold">{eyebrowLabel}</span>
           </div>
 
-          <div className="flex items-center gap-2 font-mono text-[11px] sm:text-xs text-[#78746E] dark:text-muted-foreground shrink-0">
-            <span className="capitalize px-2 py-0.5 rounded-[3px] bg-[#EFECE6] dark:bg-muted/50 text-[11px] font-mono font-medium text-[#5C5852] dark:text-foreground/80 border border-[#E3DDD6] dark:border-border/30">
+          <div className="flex items-center gap-2 font-mono text-[11px] text-muted-foreground shrink-0">
+            <span className="capitalize px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border/70 font-medium">
               {lesson.difficulty || "Beginner"}
             </span>
-            <span className="inline-flex items-center gap-1 font-mono text-[11px] text-[#78746E] dark:text-muted-foreground/80">
-              <Clock className="h-3 w-3 text-[#78746E] dark:text-muted-foreground" />
+            <span className="inline-flex items-center gap-1">
+              <Clock className="h-3 w-3" />
               {durationLabel}
             </span>
           </div>
         </div>
 
-        {/* Dominant Headline & Purpose Description */}
-        <div className="mt-4 sm:mt-5 space-y-2 sm:space-y-2.5">
-          <h1 className="text-2xl sm:text-4xl lg:text-[40px] font-bold tracking-tight text-[#2C2A27] dark:text-foreground leading-[1.18] sm:leading-[1.14] max-w-4xl">
-            {lesson.title}
-          </h1>
-          <p className="text-sm sm:text-[17px] text-[#5C5852] dark:text-muted-foreground/90 leading-relaxed max-w-3xl">
-            {lesson.description}
-          </p>
-        </div>
-
-        {/* Action Floor */}
-        <div className="mt-6 sm:mt-7 pt-4 sm:pt-6 border-t border-[#E3DDD6] dark:border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-5">
-          {/* Module Progress Geometry */}
-          <div className="space-y-1.5 sm:space-y-2 min-w-[220px] max-w-sm">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-[#78746E] dark:text-muted-foreground/80">
-                {isNewLearner
-                  ? "Module Progress"
-                  : `Step ${String(currentStepNumber).padStart(2, "0")} of ${String(moduleLessonsCount).padStart(2, "0")} (${progressPercent}%)`}
-              </span>
-              <span className="text-[#2C2A27] dark:text-foreground font-medium">
-                {isNewLearner ? "Ready to start" : `${progressPercent}%`}
-              </span>
+        {/* Focus Details & Action Row */}
+        <div className="mt-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1 min-w-0 max-w-2xl">
+            <div className="text-[11px] font-mono uppercase tracking-wider text-primary font-medium">
+              {isNewLearner ? "Ready to begin" : "Continue Learning"}
             </div>
-            <div className="h-1.5 w-full bg-[#EFECE6] dark:bg-muted/60 rounded-[2px] overflow-hidden">
-              <div
-                className="h-full bg-[#D35C37] dark:bg-primary transition-all duration-500 rounded-[2px]"
-                style={{ width: `${Math.max(isNewLearner ? 0 : 6, progressPercent)}%` }}
-              />
-            </div>
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground truncate">
+              {lesson.title}
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
+              {lesson.description}
+            </p>
           </div>
 
-          {/* Primary Action Button & Spec Link */}
-          <div className="flex flex-wrap items-center gap-3">
-            {module && (
+          {/* Action & Progress Stack */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+            {/* Compact Progress Bar */}
+            <div className="flex sm:flex-col justify-between sm:justify-center gap-1 sm:min-w-[120px]">
+              <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground gap-2">
+                <span>
+                  {isNewLearner
+                    ? "00 / " + String(moduleLessonsCount).padStart(2, "0")
+                    : `${String(currentStepNumber).padStart(2, "0")} / ${String(moduleLessonsCount).padStart(2, "0")}`}
+                </span>
+                <span className="text-foreground font-medium">{progressPercent}%</span>
+              </div>
+              <div className="h-1.5 w-28 sm:w-full bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-300 rounded-full"
+                  style={{ width: `${Math.max(isNewLearner ? 0 : 6, progressPercent)}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {module && (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="hidden lg:inline-flex min-h-[40px] text-xs font-mono"
+                >
+                  <Link to="/learn/modules/$moduleId" params={{ moduleId: module.id }}>
+                    <BookOpen className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
+                    Spec
+                  </Link>
+                </Button>
+              )}
+
               <Button
                 asChild
-                variant="ghost"
-                size="sm"
-                className="hidden md:inline-flex h-11 text-xs text-[#5C5852] hover:text-[#2C2A27] dark:text-muted-foreground/90 dark:hover:text-foreground font-medium px-4 hover:bg-[#EFECE6] dark:hover:bg-muted/40 font-mono rounded-[4px]"
+                size="default"
+                className="min-h-[44px] px-5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs sm:text-sm gap-2 rounded shadow-2xs transition-colors shrink-0"
               >
-                <Link to="/learn/modules/$moduleId" params={{ moduleId: module.id }}>
-                  <BookOpen className="mr-1.5 h-3.5 w-3.5" />
-                  Module Spec
+                <Link
+                  to="/lesson/$lessonId"
+                  params={{ lessonId: lesson.id }}
+                  search={{ mode: "curriculum" }}
+                >
+                  <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+                  <span>{isNewLearner ? "Start First Lesson" : "Resume Lesson"}</span>
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-            )}
-
-            <Button
-              asChild
-              size="lg"
-              className="w-full sm:w-auto bg-[#D35C37] hover:bg-[#B84B2A] text-white active:scale-[0.985] font-semibold text-sm sm:text-base px-6 sm:px-9 h-11 sm:h-12 gap-2.5 rounded-[4px] shadow-2xs transition-all"
-            >
-              <Link
-                to="/lesson/$lessonId"
-                params={{ lessonId: lesson.id }}
-                search={{ mode: "curriculum" }}
-              >
-                <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
-                {isNewLearner ? "Start First Lesson" : "Continue Lesson"}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+            </div>
           </div>
         </div>
       </div>

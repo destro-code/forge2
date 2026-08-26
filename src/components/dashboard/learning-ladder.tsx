@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CheckCircle2, Play, ChevronRight, Clock, ArrowRight, Layers } from "lucide-react";
+import { CheckCircle2, ArrowRight, Layers } from "lucide-react";
 import type { Module, Lesson } from "@/lib/types";
 
 interface LearningLadderProps {
@@ -32,28 +32,28 @@ export function LearningLadder({
     : moduleLessons;
 
   return (
-    <section aria-label="Curriculum Progression Ladder" className="space-y-3.5 pt-2">
+    <section aria-label="Curriculum Progression Ladder" className="space-y-3 pt-2">
       {/* Section Header */}
-      <div className="flex flex-wrap items-baseline justify-between gap-y-1.5 gap-x-3 border-b border-[#E3DDD6] dark:border-border/50 pb-2.5 text-xs font-mono">
+      <div className="flex flex-wrap items-baseline justify-between gap-y-1.5 gap-x-3 border-b border-border pb-2.5 text-xs font-mono">
         <div className="min-w-0 flex items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#78746E] dark:text-muted-foreground/80 shrink-0">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shrink-0">
             MODULE ROADMAP
           </span>
-          <span className="text-[#E3DDD6] dark:text-border/80 shrink-0">·</span>
-          <span className="text-xs sm:text-sm font-semibold text-[#2C2A27] dark:text-foreground truncate">
+          <span className="text-border shrink-0">·</span>
+          <span className="text-xs sm:text-sm font-semibold text-foreground truncate">
             {module.title}
           </span>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[#78746E] dark:text-muted-foreground/70 text-[11px] hidden xs:inline">
+          <span className="text-muted-foreground text-[11px] hidden xs:inline">
             {String(completedCount).padStart(2, "0")}/{String(totalCount).padStart(2, "0")}{" "}
             COMPLETED
           </span>
           <Link
             to="/learn/modules/$moduleId"
             params={{ moduleId: module.id }}
-            className="text-[#78746E] hover:text-[#2C2A27] dark:text-muted-foreground/60 dark:hover:text-foreground inline-flex items-center gap-1 text-[11px] transition-colors"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-[11px] transition-colors"
           >
             <span>View Full Roadmap</span>
             <ArrowRight className="h-3 w-3" />
@@ -61,8 +61,8 @@ export function LearningLadder({
         </div>
       </div>
 
-      {/* The Frameless Sequence Ladder */}
-      <div className="divide-y divide-[#E3DDD6] dark:divide-border/40">
+      {/* The Flush Sequence Ladder */}
+      <div className="divide-y divide-border/60">
         {visibleLessons.map((lesson, idx) => {
           const isCompleted = completedLessonIds.includes(lesson.id);
           const isActive = lesson.id === currentLessonId || (!currentLessonId && idx === 0);
@@ -86,29 +86,29 @@ export function LearningLadder({
             return (
               <div
                 key={lesson.id}
-                className="py-3 px-3.5 sm:px-4 -mx-3.5 sm:-mx-4 rounded-r-[4px] rounded-l-[1px] border-l-[3px] border-l-[#C8441B] dark:border-l-[#C8441B] border-y border-r border-[#E0B99F]/60 bg-[#FCF1E9] dark:border-y-border/40 dark:border-r-border/40 dark:bg-primary/[0.055] my-1.5 transition-colors"
+                className="py-3 px-3 sm:px-4 rounded-r rounded-l-none border-l-2 sm:border-l-[3px] border-l-primary border-y border-r border-border bg-primary/[0.08] dark:bg-primary/10 my-1 transition-colors"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="font-mono text-xs text-[#B84B2A] dark:text-primary font-bold w-5 shrink-0 text-left">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <span className="font-mono text-xs text-primary font-bold w-5 shrink-0 text-left">
                       {formattedStep}
                     </span>
 
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Link
                           to="/lesson/$lessonId"
                           params={{ lessonId: lesson.id }}
                           search={{ mode: "curriculum" }}
-                          className="text-sm sm:text-base font-bold text-[#2C2A27] dark:text-foreground hover:underline truncate"
+                          className="text-sm sm:text-base font-semibold text-foreground hover:underline truncate"
                         >
                           {lesson.title}
                         </Link>
-                        <span className="px-1.5 py-0.5 rounded-[3px] text-[10px] font-mono font-semibold uppercase tracking-wider bg-[#D35C37]/15 text-[#D35C37] border border-[#D35C37]/30 shrink-0">
-                          ACTIVE FRONTIER
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-primary/15 text-primary border border-primary/25 shrink-0">
+                          Current lesson
                         </span>
                       </div>
-                      <p className="text-xs text-[#5C5852] dark:text-muted-foreground/90 line-clamp-1 mt-0.5 max-w-xl hidden sm:block">
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 max-w-xl hidden sm:block">
                         {lesson.description}
                       </p>
                     </div>
@@ -118,7 +118,7 @@ export function LearningLadder({
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#D35C37] hover:bg-[#B84B2A] text-white dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 font-semibold text-xs transition-all shadow-2xs active:scale-[0.98] font-mono"
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[36px] sm:min-h-[40px] rounded bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs transition-colors shadow-2xs font-mono"
                   >
                     <span>Resume</span>
                     <ArrowRight className="h-3 w-3" />
@@ -132,10 +132,10 @@ export function LearningLadder({
             return (
               <div
                 key={lesson.id}
-                className="py-2.5 sm:py-3 flex items-center justify-between gap-3 group transition-colors px-1"
+                className="py-2.5 sm:py-3 flex items-center justify-between gap-3 group transition-colors px-2 sm:px-3 rounded hover:bg-muted/30"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="font-mono text-xs text-[#78746E] dark:text-muted-foreground/60 w-5 shrink-0 text-left">
+                  <span className="font-mono text-xs text-muted-foreground w-5 shrink-0 text-left">
                     {formattedStep}
                   </span>
 
@@ -143,14 +143,14 @@ export function LearningLadder({
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="text-sm text-[#5C5852] hover:text-[#2C2A27] dark:text-foreground/80 dark:hover:text-foreground font-medium truncate"
+                    className="text-sm text-foreground/85 hover:text-foreground font-medium truncate"
                   >
                     {lesson.title}
                   </Link>
                 </div>
 
                 <div className="flex items-center gap-2.5 shrink-0">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#1E6E49] dark:text-emerald-400 font-medium flex items-center gap-1">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-success font-medium flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3" />
                     VERIFIED
                   </span>
@@ -158,7 +158,7 @@ export function LearningLadder({
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-[#78746E] hover:text-[#2C2A27] dark:text-muted-foreground dark:hover:text-foreground font-mono hidden sm:inline"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-muted-foreground hover:text-foreground font-mono hidden sm:inline"
                     title="Review lesson"
                   >
                     Review →
@@ -181,10 +181,10 @@ export function LearningLadder({
           return (
             <div
               key={lesson.id}
-              className="py-2.5 sm:py-3 flex items-center justify-between gap-3 transition-colors group px-1"
+              className="py-2.5 sm:py-3 flex items-center justify-between gap-3 transition-colors group px-2 sm:px-3 rounded hover:bg-muted/20"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <span className="font-mono text-xs text-[#625E56] dark:text-muted-foreground/45 w-5 shrink-0 text-left">
+                <span className="font-mono text-xs text-muted-foreground/60 w-5 shrink-0 text-left">
                   {formattedStep}
                 </span>
 
@@ -192,7 +192,7 @@ export function LearningLadder({
                   to="/lesson/$lessonId"
                   params={{ lessonId: lesson.id }}
                   search={{ mode: "curriculum" }}
-                  className="text-sm text-[#9A948C] group-hover:text-[#2C2A27] dark:text-muted-foreground/80 dark:group-hover:text-foreground font-medium truncate transition-colors"
+                  className="text-sm text-muted-foreground group-hover:text-foreground font-medium truncate transition-colors"
                 >
                   {lesson.title}
                 </Link>
@@ -200,19 +200,19 @@ export function LearningLadder({
 
               <div className="flex items-center gap-2.5 shrink-0">
                 {statusLabel === "LAB MILESTONE" ? (
-                  <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-[3px] bg-[#EFECE6] dark:bg-muted/50 border border-[#E3DDD6] dark:border-border/40 text-[#5C5852] dark:text-foreground/75 font-medium">
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-muted border border-border text-muted-foreground font-medium">
                     LAB MILESTONE // {lesson.estimatedMinutes || 20}m
                   </span>
                 ) : statusLabel === "ASSESSMENT" ? (
-                  <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-[3px] bg-[#EFECE6] dark:bg-muted/50 border border-[#E3DDD6] dark:border-border/40 text-[#5C5852] dark:text-foreground/75 font-medium">
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-muted border border-border text-muted-foreground font-medium">
                     ASSESSMENT
                   </span>
                 ) : statusLabel === "UP NEXT" ? (
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#78746E] dark:text-muted-foreground/75 font-medium">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-medium">
                     UP NEXT
                   </span>
                 ) : (
-                  <span className="text-[11px] font-mono text-[#9A948C] dark:text-muted-foreground/50">
+                  <span className="text-[11px] font-mono text-muted-foreground/70">
                     {lesson.estimatedMinutes}m
                   </span>
                 )}
@@ -227,7 +227,7 @@ export function LearningLadder({
         <div className="pt-2 text-center">
           <button
             onClick={() => setShowAllLessons(true)}
-            className="text-xs text-[#78746E] hover:text-[#2C2A27] dark:text-muted-foreground dark:hover:text-foreground font-mono inline-flex items-center gap-1.5 transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground font-mono inline-flex items-center gap-1.5 transition-colors"
           >
             <Layers className="h-3.5 w-3.5" />
             Show full module ({totalCount} lessons)

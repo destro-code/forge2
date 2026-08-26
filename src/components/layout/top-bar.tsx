@@ -47,6 +47,7 @@ const LABELS: Record<string, string> = {
 function useCrumbs() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const parts = path.split("/").filter(Boolean);
+  if (parts.length === 0) return [];
   const crumbs = [{ label: "Home", to: "/" as const }];
   let acc = "";
   parts.forEach((p) => {
@@ -107,40 +108,44 @@ export function TopBar() {
           />
         </Link>
 
-        {/* Desktop Breadcrumb Nav */}
-        <nav
-          aria-label="Breadcrumb"
-          className="hidden min-w-0 items-center gap-1.5 text-xs font-medium sm:flex max-w-xs md:max-w-md"
-        >
-          {crumbs.map((c, i) => (
-            <div key={c.to + i} className="flex min-w-0 items-center gap-1.5 shrink">
-              {i > 0 && <span className="text-muted-foreground/40 shrink-0">/</span>}
-              <Link
-                to={c.to}
-                className={
-                  i === crumbs.length - 1
-                    ? "truncate text-foreground font-semibold min-w-0"
-                    : "truncate text-muted-foreground/80 transition hover:text-foreground min-w-0"
-                }
-              >
-                {c.label}
-              </Link>
-            </div>
-          ))}
-        </nav>
+        {/* Desktop Breadcrumb Nav (hidden on root dashboard) */}
+        {crumbs.length > 0 && (
+          <nav
+            aria-label="Breadcrumb"
+            className="hidden min-w-0 items-center gap-1.5 text-xs font-medium sm:flex max-w-xs md:max-w-md"
+          >
+            {crumbs.map((c, i) => (
+              <div key={c.to + i} className="flex min-w-0 items-center gap-1.5 shrink">
+                {i > 0 && <span className="text-muted-foreground/40 shrink-0">/</span>}
+                <Link
+                  to={c.to}
+                  className={
+                    i === crumbs.length - 1
+                      ? "truncate text-foreground font-semibold min-w-0"
+                      : "truncate text-muted-foreground/80 transition hover:text-foreground min-w-0"
+                  }
+                >
+                  {c.label}
+                </Link>
+              </div>
+            ))}
+          </nav>
+        )}
 
-        {/* Mobile Contextual Indicator */}
-        <div className="flex min-w-0 items-center gap-1 text-xs font-medium sm:hidden">
-          {crumbs.length > 1 && (
-            <span className="text-muted-foreground/70 text-[11px] shrink-0 max-w-[80px] truncate">
-              {crumbs[crumbs.length - 2]?.label}
+        {/* Mobile Contextual Indicator (hidden on root dashboard) */}
+        {crumbs.length > 0 && (
+          <div className="flex min-w-0 items-center gap-1 text-xs font-medium sm:hidden">
+            {crumbs.length > 1 && (
+              <span className="text-muted-foreground/70 text-[11px] shrink-0 max-w-[80px] truncate">
+                {crumbs[crumbs.length - 2]?.label}
+              </span>
+            )}
+            {crumbs.length > 1 && <span className="text-muted-foreground/40 shrink-0">/</span>}
+            <span className="truncate font-semibold text-foreground max-w-[130px]">
+              {crumbs[crumbs.length - 1]?.label}
             </span>
-          )}
-          {crumbs.length > 1 && <span className="text-muted-foreground/40 shrink-0">/</span>}
-          <span className="truncate font-semibold text-foreground max-w-[130px]">
-            {crumbs[crumbs.length - 1]?.label}
-          </span>
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="ml-auto flex items-center gap-1.5 shrink-0">
