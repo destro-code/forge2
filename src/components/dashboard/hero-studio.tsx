@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { Play, ArrowRight, BookOpen, Clock } from "lucide-react";
+import { ArrowRight, BookOpen, Clock } from "lucide-react";
 import type { Lesson, Module, Topic } from "@/lib/types";
 
 interface HeroStudioProps {
@@ -29,7 +28,7 @@ export function HeroStudio({
 
   return (
     <section aria-label="Current Engineering Challenge" className="w-full">
-      <div className="rounded-lg border border-border bg-card p-4 sm:p-5 shadow-xs transition-colors">
+      <div className="rounded-lg border border-border bg-card p-4 sm:p-5 shadow-2xs transition-colors">
         {/* Eyebrow & Metadata Header */}
         <div className="flex flex-wrap items-center justify-between gap-y-1.5 gap-x-3 text-xs border-b border-border/60 pb-3">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
@@ -53,7 +52,7 @@ export function HeroStudio({
             <div className="text-[11px] font-mono uppercase tracking-wider text-primary font-medium">
               {isNewLearner ? "Ready to begin" : "Continue Learning"}
             </div>
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground truncate">
+            <h1 className="text-lg sm:text-xl font-serif font-semibold tracking-tight text-foreground truncate">
               {lesson.title}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
@@ -62,9 +61,9 @@ export function HeroStudio({
           </div>
 
           {/* Action & Progress Stack */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
             {/* Compact Progress Bar */}
-            <div className="flex sm:flex-col justify-between sm:justify-center gap-1 sm:min-w-[120px]">
+            <div className="flex sm:flex-col justify-between sm:justify-center gap-1 sm:min-w-[110px]">
               <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground gap-2">
                 <span>
                   {isNewLearner
@@ -73,7 +72,7 @@ export function HeroStudio({
                 </span>
                 <span className="text-foreground font-medium">{progressPercent}%</span>
               </div>
-              <div className="h-1.5 w-28 sm:w-full bg-muted rounded-full overflow-hidden">
+              <div className="h-1.5 w-24 sm:w-full bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary transition-all duration-300 rounded-full"
                   style={{ width: `${Math.max(isNewLearner ? 0 : 6, progressPercent)}%` }}
@@ -81,36 +80,27 @@ export function HeroStudio({
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {module && (
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="hidden lg:inline-flex min-h-[40px] text-xs font-mono"
+                <Link
+                  to="/learn/modules/$moduleId"
+                  params={{ moduleId: module.id }}
+                  className="hidden lg:inline-flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  <Link to="/learn/modules/$moduleId" params={{ moduleId: module.id }}>
-                    <BookOpen className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
-                    Spec
-                  </Link>
-                </Button>
+                  <BookOpen className="h-3 w-3" />
+                  <span>Spec</span>
+                </Link>
               )}
 
-              <Button
-                asChild
-                size="default"
-                className="min-h-[44px] px-5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs sm:text-sm gap-2 rounded shadow-2xs transition-colors shrink-0"
+              <Link
+                to="/lesson/$lessonId"
+                params={{ lessonId: lesson.id }}
+                search={{ mode: "curriculum" }}
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-mono font-medium text-primary hover:text-primary/80 transition-colors py-1 hover:underline"
               >
-                <Link
-                  to="/lesson/$lessonId"
-                  params={{ lessonId: lesson.id }}
-                  search={{ mode: "curriculum" }}
-                >
-                  <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
-                  <span>{isNewLearner ? "Start First Lesson" : "Resume Lesson"}</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
+                <span>{isNewLearner ? "Start first challenge" : "Resume challenge"}</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { CheckCircle2, ArrowRight, Layers } from "lucide-react";
+import { CheckCircle2, ChevronRight, ArrowRight, Layers } from "lucide-react";
 import type { Module, Lesson } from "@/lib/types";
 
 interface LearningLadderProps {
@@ -100,7 +100,7 @@ export function LearningLadder({
                           to="/lesson/$lessonId"
                           params={{ lessonId: lesson.id }}
                           search={{ mode: "curriculum" }}
-                          className="text-sm sm:text-base font-semibold text-foreground hover:underline truncate"
+                          className="text-sm sm:text-base font-serif font-semibold text-foreground hover:underline"
                         >
                           {lesson.title}
                         </Link>
@@ -118,10 +118,11 @@ export function LearningLadder({
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[36px] sm:min-h-[40px] rounded bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs transition-colors shadow-2xs font-mono"
+                    className="shrink-0 p-1.5 rounded text-primary hover:text-foreground hover:bg-primary/15 transition-colors"
+                    title="Resume lesson"
+                    aria-label="Resume lesson"
                   >
-                    <span>Resume</span>
-                    <ArrowRight className="h-3 w-3" />
+                    <ChevronRight className="h-5 w-5" />
                   </Link>
                 </div>
               </div>
@@ -134,7 +135,7 @@ export function LearningLadder({
                 key={lesson.id}
                 className="py-2.5 sm:py-3 flex items-center justify-between gap-3 group transition-colors px-2 sm:px-3 rounded hover:bg-muted/30"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="font-mono text-xs text-muted-foreground w-5 shrink-0 text-left">
                     {formattedStep}
                   </span>
@@ -143,7 +144,7 @@ export function LearningLadder({
                     to="/lesson/$lessonId"
                     params={{ lessonId: lesson.id }}
                     search={{ mode: "curriculum" }}
-                    className="text-sm text-foreground/85 hover:text-foreground font-medium truncate"
+                    className="text-sm text-foreground/85 hover:text-foreground font-serif font-normal"
                   >
                     {lesson.title}
                   </Link>
@@ -173,7 +174,7 @@ export function LearningLadder({
           if (isAssessment) {
             statusLabel = "ASSESSMENT";
           } else if (isMilestone) {
-            statusLabel = "LAB MILESTONE";
+            statusLabel = "Hands-on";
           } else if (isNext) {
             statusLabel = "UP NEXT";
           }
@@ -183,7 +184,7 @@ export function LearningLadder({
               key={lesson.id}
               className="py-2.5 sm:py-3 flex items-center justify-between gap-3 transition-colors group px-2 sm:px-3 rounded hover:bg-muted/20"
             >
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
                 <span className="font-mono text-xs text-muted-foreground/60 w-5 shrink-0 text-left">
                   {formattedStep}
                 </span>
@@ -192,16 +193,16 @@ export function LearningLadder({
                   to="/lesson/$lessonId"
                   params={{ lessonId: lesson.id }}
                   search={{ mode: "curriculum" }}
-                  className="text-sm text-muted-foreground group-hover:text-foreground font-medium truncate transition-colors"
+                  className="text-sm text-muted-foreground group-hover:text-foreground font-serif font-normal transition-colors"
                 >
                   {lesson.title}
                 </Link>
               </div>
 
               <div className="flex items-center gap-2.5 shrink-0">
-                {statusLabel === "LAB MILESTONE" ? (
+                {statusLabel === "Hands-on" ? (
                   <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-muted border border-border text-muted-foreground font-medium">
-                    LAB MILESTONE // {lesson.estimatedMinutes || 20}m
+                    Hands-on // {lesson.estimatedMinutes || 20}m
                   </span>
                 ) : statusLabel === "ASSESSMENT" ? (
                   <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-muted border border-border text-muted-foreground font-medium">
