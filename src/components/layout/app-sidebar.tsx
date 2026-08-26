@@ -234,12 +234,12 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar">
-      <SidebarHeader className="px-3 pt-3">
+      <SidebarHeader className="px-3 pb-2 pt-4">
         <Link
           to="/"
           aria-label="Forge Frontend Academy Home"
           className={cn(
-            "flex items-center rounded-lg py-1.5 transition hover:bg-sidebar-accent/60 group",
+            "group flex items-center rounded-xl border border-transparent py-2 transition hover:border-sidebar-border hover:bg-sidebar-accent/60",
             collapsed ? "justify-center px-0" : "gap-2.5 px-2",
           )}
         >
