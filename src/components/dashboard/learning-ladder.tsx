@@ -32,7 +32,7 @@ export function LearningLadder({
     : moduleLessons;
 
   return (
-    <section aria-label="Curriculum Progression Ladder" className="space-y-3 pt-2">
+    <section aria-label="Curriculum Progression Ladder" className="flex flex-col gap-4 pt-1">
       {/* Section Header */}
       <div className="flex flex-wrap items-baseline justify-between gap-y-1.5 gap-x-3 border-b border-border pb-2.5 text-xs font-mono">
         <div className="min-w-0 flex items-center gap-2">

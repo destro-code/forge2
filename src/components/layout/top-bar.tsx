@@ -89,7 +89,7 @@ export function TopBar() {
   const crumbs = useCrumbs();
 
   return (
-    <header className="glass-panel sticky top-0 z-30 flex h-14 items-center justify-between gap-2 border-b px-3 sm:px-4">
+    <header className="glass-panel sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b px-3 sm:px-6">
       <div className="flex items-center gap-2 min-w-0 shrink">
         <SidebarTrigger className="h-8 w-8 shrink-0" />
 

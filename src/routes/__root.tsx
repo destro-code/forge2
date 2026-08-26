@@ -139,7 +139,7 @@ function AppLayout() {
       >
         Skip to main content
       </a>
-      <div className="flex min-h-dvh w-full bg-background text-foreground">
+      <div className="forge-grid flex min-h-dvh w-full bg-background text-foreground">
         {!isLessonRoute && <AppSidebar />}
         <div className="relative flex min-w-0 flex-1 flex-col">
           {!isLessonRoute && <TopBar />}
