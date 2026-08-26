@@ -29,7 +29,7 @@ export function ActivityContainer({
     <div
       id={id || "canonical-activity-container"}
       className={cn(
-        "w-full mx-auto flex flex-col bg-lesson-surface border border-lesson-border rounded-xl shadow-xs overflow-visible sm:overflow-hidden transition-all text-lesson-text-primary",
+        "w-full mx-auto flex flex-col bg-lesson-surface border border-lesson-border rounded-xl shadow-xs overflow-visible transition-all text-lesson-text-primary",
         variantClasses[variant],
         className,
       )}

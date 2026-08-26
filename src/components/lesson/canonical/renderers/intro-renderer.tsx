@@ -14,7 +14,7 @@ export function IntroRenderer({
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="immersive">
-      <div className="overflow-hidden rounded-2xl border border-lesson-border bg-lesson-surface shadow-xs">
+      <div className="rounded-2xl border border-lesson-border bg-lesson-surface shadow-xs">
         <ActivityHeader activity={activity} />
 
         <div className="px-6 py-8 sm:px-10 sm:py-12 lg:px-14">

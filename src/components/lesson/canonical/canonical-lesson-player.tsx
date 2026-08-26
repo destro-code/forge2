@@ -267,7 +267,7 @@ export function CanonicalLessonPlayer({
 
       <main
         ref={scrollContainerRef}
-        className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 pb-32 sm:px-6 sm:pb-36 md:py-8 lg:px-8"
+        className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pt-6 pb-36 sm:px-6 sm:pt-6 sm:pb-40 md:pt-8 md:pb-40 lg:px-8"
       >
         <div className="mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start">
           {currentActivity ? (
