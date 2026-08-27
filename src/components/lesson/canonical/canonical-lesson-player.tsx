@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CanonicalLesson } from "@/lib/curriculum/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
-import { evaluateActivityValidation } from "./validation";
+import { evaluateActivityValidation, type ActivityResponse } from "./validation";
+import { mapSessionStatus } from "./runtime/use-activity-runtime";
 import type { ActivityCompletionEvent } from "./types";
 import {
   ActivityFeedback,
@@ -98,7 +99,10 @@ export function CanonicalLessonPlayer({
       }
     }
 
-    const valResult = evaluateActivityValidation(currentActivity, responseToEvaluate);
+    const valResult = evaluateActivityValidation(
+      currentActivity,
+      responseToEvaluate as ActivityResponse<CanonicalLesson["activities"][number]["type"]>,
+    );
     resolveEvaluation(valResult, currentActivity.id);
   }, [
     currentActivity,
@@ -190,21 +194,28 @@ export function CanonicalLessonPlayer({
     return state?.status || "idle";
   }, [currentActivity, getActivityState, currentActivityState]);
 
-  const isCorrect =
-    effectiveStatus === "passed" ||
-    effectiveStatus === "correct" ||
-    effectiveStatus === "completed";
-  const isIncorrect = effectiveStatus === "failed" || effectiveStatus === "incorrect";
-  const isSubmitted = effectiveStatus === "evaluating" || effectiveStatus === "submitted";
+  const isCorrect = effectiveStatus === "passed" || effectiveStatus === "completed";
+  const isIncorrect = effectiveStatus === "failed";
+  const isSubmitted = effectiveStatus === "evaluating";
 
   const isLastActivity = currentActivityIndex === totalActivities - 1;
 
   const progressPercent =
     totalActivities > 0 ? ((currentActivityIndex + 1) / totalActivities) * 100 : 0;
 
+  const feedbackVisible = currentActivityState
+    ? hasActivityFeedback({
+        status: mapSessionStatus(currentActivityState.status),
+        validationResult: currentActivityState.lastEvaluation,
+        hints: currentActivity?.feedback?.hints,
+        hintsRevealed: currentActivityState.hintsRevealed,
+      })
+    : false;
+
   return (
-    <div
-      className={cn(
+    <LessonLayoutProvider value={{ shellManagedWidth: true, shellManagedFeedback: true }}>
+      <div
+        className={cn(
         "flex h-full min-h-0 w-full flex-col overflow-hidden bg-lesson-bg text-lesson-text-primary",
         className,
       )}
@@ -311,6 +322,21 @@ export function CanonicalLessonPlayer({
         </div>
       </main>
 
+      {feedbackVisible && currentActivityState && currentActivity && (
+        <div className="shrink-0 border-t border-lesson-border bg-lesson-bg px-4 py-3 sm:px-6">
+          <div className="mx-auto w-full max-w-[1200px]">
+            <ActivityFeedback
+              slot="shell"
+              status={mapSessionStatus(currentActivityState.status)}
+              validationResult={currentActivityState.lastEvaluation}
+              hints={currentActivity.feedback?.hints}
+              hintsRevealed={currentActivityState.hintsRevealed}
+              explanation={currentActivity.feedback?.explanation}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Single, authoritative, stateful lesson action bar */}
       <footer className="shrink-0 border-t border-lesson-border bg-lesson-surface/95 backdrop-blur-sm px-4 py-3 sm:px-6 z-30 shadow-[0_-4px_16px_rgba(0,0,0,0.03)] pb-[calc(12px+env(safe-area-inset-bottom,0px))]">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
@@ -364,6 +390,7 @@ export function CanonicalLessonPlayer({
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </LessonLayoutProvider>
   );
 }

@@ -165,6 +165,29 @@ function ModuleHubRoute() {
   const isStarted = completedCount > 0;
   const progressPercent = getModuleProgress(moduleItem.id, lessonsCompleted);
 
+  // Empty modules are valid while curriculum content is being staged, but they
+  // should never render a dead lesson CTA or fabricated lesson metadata.
+  if (totalLessons === 0) {
+    return (
+      <div className="flex flex-col gap-6">
+        <Button asChild variant="outline" size="sm" className="gap-1.5 self-start">
+          <Link to="/learn/modules">
+            <ArrowLeft className="h-4 w-4" data-icon="inline-start" /> Back to Modules
+          </Link>
+        </Button>
+        <EmptyState
+          title="This module is being prepared"
+          description="There are no lessons available in this module yet. Choose another module to keep learning."
+          action={
+            <Button asChild>
+              <Link to="/learn/modules">Browse available modules</Link>
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
+
   // 5. Determine the active target lesson and primary CTA state
   let targetLesson = orderedModuleLessons[0];
   let ctaMode: "start" | "continue" | "review" = "start";

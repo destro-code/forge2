@@ -100,13 +100,20 @@ export function adaptLegacyLessonToCanonical(legacy: LegacyLesson): CanonicalLes
         flushExplanation();
         currentTitle = sec.text;
       } else if (sec.type === "paragraph") {
-        const pText = sec.text || sec.paragraph || "";
+        const pText = sec.text || "";
         if (pText.trim()) {
           currentExplanationTexts.push(pText);
         }
       } else if (sec.type === "callout") {
-        flushExplanation();
-        const calloutText = sec.text || sec.title || "Note";
+        const calloutText = sec.text?.trim();
+        // Keep a short callout with the explanation it qualifies. Splitting
+        // every note into its own screen was the main source of legacy pacing
+        // inflation and also produced empty NOTE panels.
+        if (!calloutText) continue;
+        if (currentExplanationTexts.length > 0 || currentTitle) {
+          currentExplanationTexts.push(`> ${calloutText}`);
+          continue;
+        }
         activities.push({
           id: `act-${legacy.id}-callout-${activities.length + 1}`,
           type: "explanation",

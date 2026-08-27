@@ -2,6 +2,7 @@ import { CheckCircle2, XCircle, Lightbulb, Sparkles } from "lucide-react";
 import type { ActivityInteractionStatus, ActivityValidationResult } from "../types";
 import type { ActivityHint } from "@/lib/curriculum/types";
 import { cn } from "@/lib/utils";
+import { useLessonLayout } from "./lesson-layout-context";
 
 export interface ActivityFeedbackProps {
   status: ActivityInteractionStatus;
@@ -93,6 +94,7 @@ export function ActivityFeedback({
     <div
       className={cn("flex flex-col gap-3.5 w-full", className)}
       data-testid="canonical-activity-feedback"
+      aria-live="polite"
     >
       {/* Active Hints */}
       {activeHints.length > 0 && (
