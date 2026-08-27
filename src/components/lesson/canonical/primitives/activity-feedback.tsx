@@ -10,6 +10,36 @@ export interface ActivityFeedbackProps {
   hintsRevealed?: number;
   explanation?: string;
   className?: string;
+  /**
+   * "inline" (default) is feedback rendered by a renderer in its own content
+   * flow. "shell" is the single authoritative region rendered by the lesson
+   * shell above the action bar. When the shell owns feedback, inline
+   * instances suppress themselves to avoid duplicate, off-screen panels.
+   */
+  slot?: "inline" | "shell";
+}
+
+/**
+ * Returns true when ActivityFeedback would render visible content.
+ *
+ * The lesson shell uses this to decide whether to reserve space for the
+ * feedback region, so an empty panel never pushes the activity around.
+ */
+export function hasActivityFeedback({
+  status,
+  validationResult,
+  hints,
+  hintsRevealed = 0,
+}: Pick<
+  ActivityFeedbackProps,
+  "status" | "validationResult" | "hints" | "hintsRevealed"
+>): boolean {
+  const isCorrect =
+    status === "correct" || (status === "completed" && validationResult?.isValid !== false);
+  const isIncorrect =
+    status === "incorrect" || (status === "submitted" && validationResult?.isValid === false);
+  const revealed = hints ? Math.min(hints.length, hintsRevealed) : 0;
+  return isCorrect || isIncorrect || revealed > 0;
 }
 
 export function ActivityFeedback({
@@ -19,7 +49,11 @@ export function ActivityFeedback({
   hintsRevealed = 0,
   explanation,
   className,
+  slot = "inline",
 }: ActivityFeedbackProps) {
+  const { shellManagedFeedback } = useLessonLayout();
+  const suppressed = shellManagedFeedback && slot !== "shell";
+
   const isCorrect =
     status === "correct" || (status === "completed" && validationResult?.isValid !== false);
   const isIncorrect =
@@ -53,8 +87,13 @@ export function ActivityFeedback({
     }
   }
 
+  if (!isCorrect && !isIncorrect && activeHints.length === 0) return null;
+
   return (
-    <div className={cn("flex flex-col gap-3.5 w-full", className)}>
+    <div
+      className={cn("flex flex-col gap-3.5 w-full", className)}
+      data-testid="canonical-activity-feedback"
+    >
       {/* Active Hints */}
       {activeHints.length > 0 && (
         <div className="flex flex-col gap-2">

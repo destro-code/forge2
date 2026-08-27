@@ -3,6 +3,11 @@ import type { CanonicalLesson } from "@/lib/curriculum/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
 import { evaluateActivityValidation } from "./validation";
 import type { ActivityCompletionEvent } from "./types";
+import {
+  ActivityFeedback,
+  hasActivityFeedback,
+} from "./primitives/activity-feedback";
+import { LessonLayoutProvider } from "./primitives/lesson-layout-context";
 import { useLessonSession } from "@/lib/learning-engine/use-lesson-session";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { Button } from "@/components/ui/button";
@@ -149,14 +154,25 @@ export function CanonicalLessonPlayer({
         return typeof activeResponse === "string" && activeResponse.length > 0;
       case "multi-select":
         return Array.isArray(activeResponse) && activeResponse.length > 0;
-      case "fill-blank":
+      case "fill-blank": {
+        // Every blank must actually be filled — an empty or partial response
+        // must never be submittable.
+        const blanks =
+          (currentActivity.content as { blanks?: unknown[] })?.blanks ?? [];
+        if (!Array.isArray(activeResponse)) return false;
+        if (blanks.length > 0 && activeResponse.length < blanks.length) return false;
         return (
-          typeof activeResponse === "object" &&
-          activeResponse !== null &&
-          Object.keys(activeResponse).length > 0
+          activeResponse.length > 0 &&
+          activeResponse.every((v) => typeof v === "string" && v.trim().length > 0)
         );
-      case "ordering":
-        return Array.isArray(activeResponse) && activeResponse.length > 0;
+      }
+      case "ordering": {
+        // The learner must have arranged the list themselves. Renderers no
+        // longer seed a default order, so an untouched activity has no
+        // response and cannot be submitted.
+        const items = (currentActivity.content as { items?: unknown[] })?.items ?? [];
+        return Array.isArray(activeResponse) && activeResponse.length === items.length;
+      }
       case "reflection":
         return typeof activeResponse === "string" && activeResponse.trim().length >= 10;
       case "interactive-code":
@@ -205,9 +221,11 @@ export function CanonicalLessonPlayer({
           </a>
 
           <div className="min-w-0 flex-1 text-center sm:px-8">
-            <p className="truncate text-xs font-medium text-lesson-text-muted">
-              Lesson {lesson.order}
-            </p>
+            {lesson.order != null && (
+              <p className="truncate text-xs font-medium text-lesson-text-muted">
+                Lesson {lesson.order}
+              </p>
+            )}
             <h1 className="truncate text-sm font-semibold sm:text-base">{lesson.title}</h1>
           </div>
 
@@ -244,7 +262,9 @@ export function CanonicalLessonPlayer({
                   type="button"
                   role="tab"
                   aria-selected={current}
-                  aria-label={`Activity ${index + 1}: ${activity.type}`}
+                  aria-label={`Activity ${index + 1} of ${totalActivities}${
+                    activity.title ? `: ${activity.title}` : ""
+                  }${done ? " (completed)" : ""}`}
                   onClick={() => goToActivity(index)}
                   className="group flex min-h-7 flex-1 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lesson-focus-ring"
                 >

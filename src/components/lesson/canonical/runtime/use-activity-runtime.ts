@@ -50,6 +50,72 @@ export interface ActivityRuntime<TResponse = unknown> {
 }
 
 /**
+ * Maps a Learning Engine session status onto the runtime interaction contract.
+ */
+export function mapSessionStatus(
+  sessionStatus: ActivitySessionState["status"],
+): ActivityInteractionStatus {
+  switch (sessionStatus) {
+    case "idle":
+      return "idle";
+    case "engaged":
+      return "active";
+    case "evaluating":
+      return "submitted";
+    case "passed":
+      return "correct";
+    case "failed":
+      return "incorrect";
+    case "retrying":
+      return "active";
+    case "completed":
+      return "completed";
+    default:
+      return "idle";
+  }
+}
+
+/**
+ * Derives the effective interaction state from Learning Engine session state,
+ * including misconception-enhanced diagnostic feedback.
+ *
+ * Exported so the lesson shell can render feedback from exactly the same
+ * derivation the renderers see, with no risk of the two drifting apart.
+ */
+export function deriveActivityInteractionState<TResponse = unknown>(
+  activityState: ActivitySessionState,
+  matchedMisconception?: MisconceptionMatchResult | null,
+): ActivityInteractionState<TResponse> {
+  const status = mapSessionStatus(activityState.status);
+
+  let validationResult = activityState.lastEvaluation
+    ? ({ ...activityState.lastEvaluation } as ActivityValidationResult)
+    : undefined;
+
+  if (matchedMisconception && validationResult && !validationResult.isValid) {
+    const enhancedFeedback = `${validationResult.feedbackMessage || ""}\n\n[Diagnostic Insight]: ${matchedMisconception.explanation}\n[Correction]: ${matchedMisconception.correction}`;
+    validationResult = {
+      ...validationResult,
+      feedbackMessage: enhancedFeedback,
+      details: {
+        ...validationResult.details,
+        misconception: matchedMisconception,
+      },
+    };
+  }
+
+  return {
+    status,
+    response: activityState.response as TResponse,
+    validationResult,
+    attempts: activityState.attempts,
+    hintsRevealed: activityState.hintsRevealed,
+    startedAt: activityState.startedAt,
+    submittedAt: activityState.evaluatedAt,
+  };
+}
+
+/**
  * Core Activity Runtime hook.
  *
  * Establishes the safe runtime lifecycle boundary between content,
@@ -100,58 +166,10 @@ export function useActivityRuntime<T extends CanonicalActivity>(
   // Derived effective interaction state mapping Engine State -> Runtime Contract
   const effectiveState: ActivityInteractionState<ActivityResponse<T["type"]>> = useMemo(() => {
     if (activityState) {
-      let status: ActivityInteractionStatus = "idle";
-      switch (activityState.status) {
-        case "idle":
-          status = "idle";
-          break;
-        case "engaged":
-          status = "active";
-          break;
-        case "evaluating":
-          status = "submitted";
-          break;
-        case "passed":
-          status = "correct";
-          break;
-        case "failed":
-          status = "incorrect";
-          break;
-        case "retrying":
-          status = "active";
-          break;
-        case "completed":
-          status = "completed";
-          break;
-        default:
-          status = "idle";
-      }
-
-      let validationResult = activityState.lastEvaluation
-        ? ({ ...activityState.lastEvaluation } as ActivityValidationResult)
-        : undefined;
-
-      if (matchedMisconception && validationResult && !validationResult.isValid) {
-        const enhancedFeedback = `${validationResult.feedbackMessage || ""}\n\n[Diagnostic Insight]: ${matchedMisconception.explanation}\n[Correction]: ${matchedMisconception.correction}`;
-        validationResult = {
-          ...validationResult,
-          feedbackMessage: enhancedFeedback,
-          details: {
-            ...validationResult.details,
-            misconception: matchedMisconception,
-          },
-        };
-      }
-
-      return {
-        status,
-        response: activityState.response as ActivityResponse<T["type"]>,
-        validationResult,
-        attempts: activityState.attempts,
-        hintsRevealed: activityState.hintsRevealed,
-        startedAt: activityState.startedAt,
-        submittedAt: activityState.evaluatedAt,
-      };
+      return deriveActivityInteractionState<ActivityResponse<T["type"]>>(
+        activityState,
+        matchedMisconception,
+      );
     }
     return localState;
   }, [activityState, matchedMisconception, localState]);
