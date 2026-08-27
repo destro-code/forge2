@@ -53,8 +53,7 @@ function Dashboard() {
 
   // Path identity — the featured curriculum path.
   const featuredPath = paths.find((p) => p.featured) || paths[0];
-  const pathPercent =
-    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+  const pathPercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
   // Constellation window around the active lesson.
   const { nodes, nextLesson } = useMemo(() => {
@@ -125,11 +124,7 @@ function Dashboard() {
       )}
 
       {currentLesson && (
-        <CurrentFocus
-          lesson={currentLesson}
-          nextLesson={nextLesson}
-          isNewLearner={isNewLearner}
-        />
+        <CurrentFocus lesson={currentLesson} nextLesson={nextLesson} isNewLearner={isNewLearner} />
       )}
 
       <MomentumPanel sessionsThisWeek={sessionsThisWeek} weeklyGoal={5} />

@@ -132,7 +132,11 @@ function LegendItem({ className, label }: { className: string; label: string }) 
   );
 }
 
-function ConstellationDot({ node }: { node: ConstellationNode & { pos: { x: number; y: number } } }) {
+function ConstellationDot({
+  node,
+}: {
+  node: ConstellationNode & { pos: { x: number; y: number } };
+}) {
   const isActive = node.status === "active";
   const isLocked = node.status === "locked";
   const isMastered = node.status === "mastered";
@@ -144,8 +148,7 @@ function ConstellationDot({ node }: { node: ConstellationNode & { pos: { x: numb
       className={cn(
         "grid place-items-center rounded-full border transition-colors",
         size,
-        isActive &&
-          "node-active-glow border-primary bg-primary text-primary-foreground",
+        isActive && "node-active-glow border-primary bg-primary text-primary-foreground",
         isMastered && "border-border bg-secondary text-muted-foreground",
         node.status === "available" &&
           "border-primary/40 bg-card text-foreground hover:border-primary hover:text-primary",

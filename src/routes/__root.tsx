@@ -21,7 +21,6 @@ import { KeyboardShortcutsModal } from "@/components/layout/keyboard-shortcuts-m
 import { Toaster } from "@/components/ui/sonner";
 import { useTheme } from "@/lib/hooks/use-theme";
 
-
 function NotFoundComponent() {
   return (
     <div className="grid min-h-dvh place-items-center bg-background px-4">
@@ -161,7 +160,6 @@ function AppLayout() {
         <CommandPalette />
         <KeyboardShortcutsModal />
         <Toaster />
-        <MobileConsole />
       </div>
     </SidebarProvider>
   );
