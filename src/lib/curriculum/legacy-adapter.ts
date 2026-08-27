@@ -174,6 +174,32 @@ export function adaptLegacyLessonToCanonical(legacy: LegacyLesson): CanonicalLes
       }
     }
     flushExplanation();
+
+    // Legacy content often alternates a heading and one short paragraph. Keep
+    // those teaching beats together when they still fit comfortably on one
+    // screen; this preserves headings while removing the one-sentence screen
+    // rhythm that made older lessons feel like a slide deck.
+    for (let i = 1; i < activities.length; i++) {
+      const previous = activities[i - 1];
+      const current = activities[i];
+      if (
+        previous.type === "explanation" &&
+        current.type === "explanation" &&
+        typeof previous.content.text === "string" &&
+        typeof current.content.text === "string"
+      ) {
+        const previousText = previous.content.text.trim();
+        const currentText = current.content.text.trim();
+        const combinedLength = previousText.length + currentText.length;
+        if (combinedLength <= 1200 && currentText.length <= 420) {
+          const currentTitle = current.content.title?.trim();
+          const heading = currentTitle ? `### ${currentTitle}\\n\\n` : "";
+          previous.content.text = `${previousText}\\n\\n${heading}${currentText}`;
+          activities.splice(i, 1);
+          i -= 1;
+        }
+      }
+    }
   }
 
   // 3. Exercises mapping
