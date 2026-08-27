@@ -1,0 +1,266 @@
+{
+  "id": "lesson-1-1-4",
+  "schemaVersion": "1.0.0",
+  "topicId": "links-images-and-paths",
+  "title": "Links, Images, and Paths",
+  "description": "Create links and images, distinguish relative from absolute paths, predict path resolution, diagnose broken links/images, and write effective alt text.",
+  "lessonType": "instruction",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 30,
+  "conceptIds": [
+    "concept-relative-absolute-paths",
+    "concept-image-alt-text-purpose"
+  ],
+  "skillIds": [
+    "skill-resolve-relative-paths",
+    "skill-diagnose-broken-link-or-image",
+    "skill-write-effective-alt-text"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-HTML-401",
+      "statement": "Create links with the anchor element and images with the img element using meaningful attributes.",
+      "conceptIds": [
+        "concept-image-alt-text-purpose"
+      ],
+      "skillIds": [],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-402",
+      "statement": "Distinguish relative paths from absolute URLs and predict how a relative path resolves from the current document's location.",
+      "conceptIds": [
+        "concept-relative-absolute-paths"
+      ],
+      "skillIds": [
+        "skill-resolve-relative-paths"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-403",
+      "statement": "Diagnose and correct a broken link or missing image caused by an incorrect path.",
+      "conceptIds": [
+        "concept-relative-absolute-paths"
+      ],
+      "skillIds": [
+        "skill-diagnose-broken-link-or-image"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-404",
+      "statement": "Decide whether an image is informative or decorative and write alt text accordingly.",
+      "conceptIds": [
+        "concept-image-alt-text-purpose"
+      ],
+      "skillIds": [
+        "skill-write-effective-alt-text"
+      ],
+      "priority": "secondary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": [
+      "lesson-1-1-3"
+    ],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-114-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": [
+        "OBJ-HTML-401"
+      ],
+      "content": {
+        "title": "Links, Images, and Paths",
+        "hook": "A broken image icon or a link to nowhere is usually a path problem, not a typo in the tag itself.",
+        "context": "This lesson connects HTML markup to the filesystem: where things actually live relative to each other.",
+        "goals": [
+          "Build links and images correctly",
+          "Understand relative vs. absolute paths",
+          "Diagnose a broken path",
+          "Write meaningful alt text"
+        ]
+      }
+    },
+    {
+      "id": "act-114-explanation",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": [
+        "OBJ-HTML-401",
+        "OBJ-HTML-402"
+      ],
+      "content": {
+        "title": "Where Things Actually Live",
+        "text": "The anchor element <a> creates a link using its href attribute; the img element embeds an image using its src attribute and describes it with alt. Both href and src can point somewhere in two different ways: an absolute URL fully specifies a location, protocol and domain included (like https://example.com/logo.png), while a relative path is resolved starting from the location of the current document \u2014 not from the site's root \u2014 unless it explicitly starts with a leading slash. If a page at /blog/post.html references an image with src=\"images/photo.jpg\", the browser looks for that image inside a folder called images sitting next to post.html, not next to the site's root.",
+        "callout": {
+          "variant": "info",
+          "text": "Moving an HTML file to a different folder can silently break every relative path inside it, because the starting point for resolution just changed."
+        },
+        "keyTakeaway": "A relative path is always resolved relative to the current document's own location."
+      }
+    },
+    {
+      "id": "act-114-output-prediction",
+      "type": "output-prediction",
+      "intent": "prediction",
+      "objectiveIds": [
+        "OBJ-HTML-402"
+      ],
+      "content": {
+        "prompt": "A file at `/site/pages/about.html` contains `<img src=\"assets/team.jpg\">`. Where will the browser look for that image?",
+        "code": "// File location: /site/pages/about.html\n<img src=\"assets/team.jpg\">",
+        "options": [
+          "/site/assets/team.jpg",
+          "/site/pages/assets/team.jpg",
+          "/assets/team.jpg",
+          "It will search the entire site for a file named team.jpg"
+        ],
+        "explanation": "Because the path has no leading slash, it resolves starting from about.html's own folder, /site/pages/, not from the site root."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "/site/pages/assets/team.jpg"
+      },
+      "feedback": {
+        "correct": "Right \u2014 relative paths start from the current document's folder.",
+        "incorrect": "Not quite \u2014 trace from where about.html itself lives, not from the site root."
+      }
+    },
+    {
+      "id": "act-114-debug-broken-link",
+      "type": "debug",
+      "intent": "debugging",
+      "objectiveIds": [
+        "OBJ-HTML-403"
+      ],
+      "content": {
+        "title": "Fix the Broken Image",
+        "prompt": "This page's image isn't showing up. The HTML file lives at /site/pages/about.html, and the actual image file lives at /site/assets/team.jpg. Find and fix the path.",
+        "buggyCode": "<img src=\"assets/team.jpg\" alt=\"Our team\">",
+        "language": "html",
+        "bugDescription": "The relative path 'assets/team.jpg' resolves relative to /site/pages/, so the browser looks for /site/pages/assets/team.jpg \u2014 which doesn't exist. The real file is one level up, at /site/assets/team.jpg.",
+        "fixRequirements": [
+          "The src should correctly point to /site/assets/team.jpg from about.html's location"
+        ],
+        "solutionCode": "<img src=\"../assets/team.jpg\" alt=\"Our team\">",
+        "hints": [
+          "Where does 'assets/team.jpg' resolve to from /site/pages/, and where does the real file actually live?",
+          "You may need to go up one directory level first."
+        ]
+      },
+      "validation": {
+        "type": "code-output",
+        "expectedOutput": "../assets/team.jpg",
+        "matchType": "contains"
+      },
+      "feedback": {
+        "correct": "Right \u2014 going up one level with ../ gets you from /site/pages/ to /site/, then into assets/.",
+        "incorrect": "Compare the HTML file's folder to the image's real folder \u2014 you need to step up one level first."
+      }
+    },
+    {
+      "id": "act-114-mc-alt-text",
+      "type": "multiple-choice",
+      "intent": "application",
+      "objectiveIds": [
+        "OBJ-HTML-404"
+      ],
+      "content": {
+        "question": "A page includes a small decorative swirl graphic that adds no information \u2014 it's purely visual flair. What should its alt attribute be?",
+        "options": [
+          {
+            "id": "opt-a",
+            "text": "alt=\"swirl.png\""
+          },
+          {
+            "id": "opt-b",
+            "text": "alt=\"decorative image\""
+          },
+          {
+            "id": "opt-c",
+            "text": "alt=\"\" (empty)"
+          },
+          {
+            "id": "opt-d",
+            "text": "Omit the alt attribute entirely"
+          }
+        ],
+        "explanation": "A purely decorative image should use an empty alt so screen readers skip it, rather than announcing a meaningless filename or description."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "opt-c"
+      },
+      "feedback": {
+        "correct": "Right \u2014 empty alt tells assistive technology there's nothing informative to announce.",
+        "incorrect": "Not quite \u2014 for purely decorative images, an empty alt (not a missing one) is the correct choice."
+      }
+    },
+    {
+      "id": "act-114-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-HTML-401",
+        "OBJ-HTML-402",
+        "OBJ-HTML-403",
+        "OBJ-HTML-404"
+      ],
+      "content": {
+        "title": "What You Should Take Away",
+        "takeaways": [
+          "Links use href; images use src and alt.",
+          "A relative path resolves from the current document's own location, not the site root.",
+          "Decorative images should use an empty alt; informative images need a real description."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": [
+      "act-114-intro",
+      "act-114-explanation",
+      "act-114-output-prediction",
+      "act-114-debug-broken-link",
+      "act-114-mc-alt-text",
+      "act-114-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-HTML-401",
+        "activityIds": [
+          "act-114-explanation"
+        ],
+        "requirement": "complete"
+      },
+      {
+        "objectiveId": "OBJ-HTML-402",
+        "activityIds": [
+          "act-114-output-prediction"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-403",
+        "activityIds": [
+          "act-114-debug-broken-link"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-404",
+        "activityIds": [
+          "act-114-mc-alt-text"
+        ],
+        "requirement": "success"
+      }
+    ]
+  }
+}

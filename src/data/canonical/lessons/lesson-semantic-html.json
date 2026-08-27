@@ -1,0 +1,303 @@
+{
+  "id": "lesson-1-1-7",
+  "schemaVersion": "1.0.0",
+  "topicId": "semantic-html",
+  "title": "Semantic HTML",
+  "description": "Understand what semantic HTML means, use meaningful elements instead of generic divs, refactor generic markup, and reason about what semantic structure does and doesn't guarantee for accessibility.",
+  "lessonType": "instruction",
+  "difficulty": "Intermediate",
+  "estimatedMinutes": 35,
+  "conceptIds": [
+    "concept-semantic-html-elements"
+  ],
+  "skillIds": [
+    "skill-select-semantic-elements",
+    "skill-refactor-to-semantic-html"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-HTML-701",
+      "statement": "Explain what semantic HTML means and identify appropriate uses for header, nav, main, article, section, footer, and aside.",
+      "conceptIds": [
+        "concept-semantic-html-elements"
+      ],
+      "skillIds": [
+        "skill-select-semantic-elements"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-702",
+      "statement": "Refactor a block of generic div-based markup into meaningful semantic HTML.",
+      "conceptIds": [
+        "concept-semantic-html-elements"
+      ],
+      "skillIds": [
+        "skill-refactor-to-semantic-html"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-703",
+      "statement": "Reason about what semantic structure does and does not guarantee for accessibility, navigation, and maintainability.",
+      "conceptIds": [
+        "concept-semantic-html-elements"
+      ],
+      "skillIds": [
+        "skill-refactor-to-semantic-html"
+      ],
+      "priority": "primary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": [
+      "lesson-1-1-6"
+    ],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-117-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": [
+        "OBJ-HTML-701"
+      ],
+      "content": {
+        "title": "Semantic HTML",
+        "hook": "You could build every page out of nothing but <div>. It would render fine \u2014 and it would mean nothing to anyone or anything that isn't looking at pixels.",
+        "context": "This lesson is about choosing elements that carry real meaning, and being honest about what that meaning does and doesn't buy you.",
+        "goals": [
+          "Choose the right semantic element for a region",
+          "Refactor generic markup into semantic HTML",
+          "Reason about what semantics do and don't guarantee"
+        ]
+      }
+    },
+    {
+      "id": "act-117-explanation",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": [
+        "OBJ-HTML-701"
+      ],
+      "content": {
+        "title": "Meaning Beats Generic Containers",
+        "text": "A <div> carries no meaning at all \u2014 it's a generic box. Semantic elements describe the role of the content they contain: <header> for introductory content, <nav> for major navigation links, <main> for the page's primary content (used once per page), <article> for self-contained content that could stand alone (like a blog post), <section> for a thematic grouping within a page, <footer> for closing/metadata content, and <aside> for content tangentially related to the main content, like a sidebar or a pull quote. Choosing these over generic divs gives assistive technology, search engines, and future developers real information about the page's structure.",
+        "callout": {
+          "variant": "info",
+          "text": "A quick test for <article> vs <section>: could this block of content be pulled out and make sense on its own (a blog post, a product card)? That's article. Is it just one themed part of a larger whole? That's section."
+        },
+        "keyTakeaway": "Semantic elements describe what content is; div describes nothing."
+      }
+    },
+    {
+      "id": "act-117-mc-semantic-choice",
+      "type": "multiple-choice",
+      "intent": "application",
+      "objectiveIds": [
+        "OBJ-HTML-701"
+      ],
+      "content": {
+        "question": "A page has a sidebar containing a short 'related articles' widget that isn't essential to understanding the main content. Which element fits best?",
+        "options": [
+          {
+            "id": "opt-a",
+            "text": "<main>"
+          },
+          {
+            "id": "opt-b",
+            "text": "<aside>"
+          },
+          {
+            "id": "opt-c",
+            "text": "<footer>"
+          },
+          {
+            "id": "opt-d",
+            "text": "<nav>"
+          }
+        ],
+        "explanation": "Content that's tangentially related to the main content but not essential to it \u2014 like a related-articles widget \u2014 is exactly what <aside> is for."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "opt-b"
+      },
+      "feedback": {
+        "correct": "Right \u2014 tangential, non-essential content is the textbook case for aside.",
+        "incorrect": "Not quite \u2014 think about whether this content is essential to the main point of the page or just related to it."
+      }
+    },
+    {
+      "id": "act-117-interactive-refactor",
+      "type": "interactive-code",
+      "intent": "modification",
+      "objectiveIds": [
+        "OBJ-HTML-702"
+      ],
+      "content": {
+        "title": "Refactor Generic Markup into Semantic HTML",
+        "prompt": "This blog post is built entirely from generic divs. Refactor it to use header, main, article, and footer where each is appropriate.",
+        "instructions": "Keep the same content and text, but replace the divs with the correct semantic elements.",
+        "language": "html",
+        "starterCode": "<div class=\"page-header\">\n  <h1>My Blog</h1>\n</div>\n<div class=\"content\">\n  <div class=\"post\">\n    <h2>Why I Learned to Debug</h2>\n    <p>Debugging taught me more than any tutorial did...</p>\n  </div>\n</div>\n<div class=\"page-footer\">\n  <p>&copy; 2026</p>\n</div>",
+        "solutionCode": "<header>\n  <h1>My Blog</h1>\n</header>\n<main>\n  <article>\n    <h2>Why I Learned to Debug</h2>\n    <p>Debugging taught me more than any tutorial did...</p>\n  </article>\n</main>\n<footer>\n  <p>&copy; 2026</p>\n</footer>",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Uses header instead of a generic page-header div",
+            "assertion": "document.querySelector('header') !== null"
+          },
+          {
+            "id": "t2",
+            "description": "Uses main for the page's primary content",
+            "assertion": "document.querySelector('main') !== null"
+          },
+          {
+            "id": "t3",
+            "description": "Uses article for the self-contained post",
+            "assertion": "document.querySelector('article') !== null"
+          },
+          {
+            "id": "t4",
+            "description": "Uses footer instead of a generic page-footer div",
+            "assertion": "document.querySelector('footer') !== null"
+          }
+        ]
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Uses header instead of a generic page-header div",
+            "assertion": "document.querySelector('header') !== null"
+          },
+          {
+            "id": "t2",
+            "description": "Uses main for the page's primary content",
+            "assertion": "document.querySelector('main') !== null"
+          },
+          {
+            "id": "t3",
+            "description": "Uses article for the self-contained post",
+            "assertion": "document.querySelector('article') !== null"
+          },
+          {
+            "id": "t4",
+            "description": "Uses footer instead of a generic page-footer div",
+            "assertion": "document.querySelector('footer') !== null"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "That's a genuinely semantic version of the same content.",
+        "incorrect": "Check that header, main, article, and footer each replaced the div that matches its role."
+      }
+    },
+    {
+      "id": "act-117-judgment-semantics",
+      "type": "judgment",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-HTML-703"
+      ],
+      "content": {
+        "title": "What Does Semantic HTML Actually Buy You?",
+        "prompt": "A teammate says: \"I refactored our whole app from divs to header/nav/main/article/footer, so it's accessible now.\" Is that claim true? Explain what semantic HTML actually does and does not guarantee for accessibility, navigation, and maintainability, and name at least two things beyond semantic markup that still need attention for the app to actually be accessible.",
+        "context": "Your teammate is treating 'I used the right tags' as equivalent to 'this app is accessible.' Your job is to give an accurate, complete picture rather than just confirming or denying the claim.",
+        "responsePlaceholder": "Explain what semantic markup does provide, what it doesn't cover on its own, and name concrete additional things that still matter...",
+        "modelAnswer": {
+          "summary": "The claim is partially true but overstated: semantic HTML is real, necessary progress \u2014 it gives screen readers, browsers, and future developers structural information that divs never could \u2014 but it is not sufficient on its own to make an app accessible.",
+          "detailedAnalysis": "What semantic HTML genuinely provides: screen reader users can jump directly between landmark regions (header, nav, main, footer) the way sighted users visually scan a page; search engines and browser extensions (like reader modes) can identify the real content of a page; and future developers get real information about a region's purpose instead of a wall of meaningless divs. That's a real, valuable improvement \u2014 it shouldn't be dismissed.\n\nWhat it does not cover: images still need meaningful alt text \u2014 a semantic <article> full of images with no alt text is still inaccessible to screen reader users. Form controls still need labels properly associated via for/id \u2014 wrapping a form in <main> doesn't fix an unlabeled input. Interactive elements (custom dropdowns, modals, tabs) still need correct keyboard operability and focus management \u2014 using <nav> for a menu doesn't make it operable by keyboard alone. Color contrast between text and background still needs to meet accessibility guidelines regardless of which tags wrap the text. And semantic elements can still be used incorrectly \u2014 nesting multiple <main> elements or using <article> for content that isn't actually self-contained defeats the purpose.\n\nThe honest framing: semantic HTML is a necessary foundation, not a finish line. It's the difference between a house having labeled rooms versus unlabeled ones \u2014 genuinely useful, but it doesn't mean the wiring, plumbing, and structural integrity are all fine too.",
+          "keyTradeoffs": [
+            "Semantic refactoring is comparatively cheap and high-value \u2014 it's usually a safe, mechanical-ish improvement with real payoff for screen reader navigation.",
+            "But it can create false confidence: 'we did the accessibility work' can quietly become the team's belief after a semantic pass, causing real remaining issues (labels, alt text, keyboard access, contrast) to go unaddressed.",
+            "A full accessibility effort needs a broader checklist (labels, alt text, keyboard operability, contrast, ARIA where truly needed) \u2014 semantic HTML is one line item on that checklist, not the whole list."
+          ]
+        },
+        "evaluationRubric": [
+          {
+            "id": "crit-acknowledges-real-benefit",
+            "label": "Acknowledges semantic HTML's real, genuine benefit",
+            "description": "States that semantic elements do provide real value for screen readers, search engines, and maintainability \u2014 doesn't dismiss the teammate's effort entirely."
+          },
+          {
+            "id": "crit-identifies-gap",
+            "label": "Correctly identifies that semantics alone are not sufficient",
+            "description": "States clearly that using semantic tags does not automatically make an app accessible."
+          },
+          {
+            "id": "crit-names-concrete-gaps",
+            "label": "Names at least two concrete additional accessibility concerns",
+            "description": "Names specific gaps such as alt text, label association, keyboard operability, or color contrast \u2014 not just a vague 'more work is needed.'"
+          },
+          {
+            "id": "crit-balanced-framing",
+            "label": "Gives a balanced, non-dismissive answer",
+            "description": "Neither fully endorses nor fully rejects the teammate's claim \u2014 gives an accurate, nuanced picture."
+          }
+        ],
+        "takeaways": [
+          "Semantic HTML is real progress for accessibility, not a checkbox that completes it.",
+          "Alt text, label association, keyboard operability, and color contrast all still need separate, deliberate attention.",
+          "\"We used the right tags\" and \"this is accessible\" are not the same claim."
+        ]
+      }
+    },
+    {
+      "id": "act-117-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-HTML-701",
+        "OBJ-HTML-702",
+        "OBJ-HTML-703"
+      ],
+      "content": {
+        "title": "What You Should Take Away",
+        "takeaways": [
+          "Semantic elements describe the role of their content; div describes nothing.",
+          "Refactoring generic markup into semantic HTML is a real, valuable improvement.",
+          "Semantic HTML is necessary but not sufficient for accessibility \u2014 alt text, label association, keyboard operability, and contrast all still matter."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": [
+      "act-117-intro",
+      "act-117-explanation",
+      "act-117-mc-semantic-choice",
+      "act-117-interactive-refactor",
+      "act-117-judgment-semantics",
+      "act-117-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-HTML-701",
+        "activityIds": [
+          "act-117-mc-semantic-choice"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-702",
+        "activityIds": [
+          "act-117-interactive-refactor"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-703",
+        "activityIds": [
+          "act-117-judgment-semantics"
+        ],
+        "requirement": "success"
+      }
+    ]
+  }
+}

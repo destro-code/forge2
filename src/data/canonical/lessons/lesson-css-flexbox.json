@@ -8,16 +8,15 @@
   "difficulty": "Beginner",
   "estimatedMinutes": 30,
   "conceptIds": [
-    "concept-flexbox-container-items",
-    "concept-flex-axes",
-    "concept-flex-alignment",
-    "concept-flex-direction",
-    "concept-flex-wrap"
+    "concept-flex-container",
+    "concept-flex-items",
+    "concept-main-cross-axes",
+    "concept-justify-align-distribution"
   ],
   "skillIds": [
-    "skill-configure-flex-container",
-    "skill-align-flex-items",
-    "skill-manipulate-flex-axes",
+    "skill-author-flexbox-rules",
+    "skill-implement-flexbox-alignments",
+    "skill-identify-flex-axes",
     "skill-build-responsive-nav"
   ],
   "objectives": [
@@ -25,39 +24,63 @@
       "id": "OBJ-CSS-301",
       "statement": "Understand flex containers, flex items, and the distinction between main and cross axes established by flex-direction.",
       "conceptIds": [
-        "concept-flexbox-container-items",
-        "concept-flex-axes",
-        "concept-flex-direction"
+        "concept-flex-container",
+        "concept-flex-items",
+        "concept-main-cross-axes"
       ],
-      "skillIds": ["skill-configure-flex-container", "skill-manipulate-flex-axes"],
+      "skillIds": [
+        "skill-author-flexbox-rules",
+        "skill-identify-flex-axes"
+      ],
       "priority": "primary"
     },
     {
       "id": "OBJ-CSS-302",
       "statement": "Distribute and align elements along main and cross axes using justify-content and align-items.",
-      "conceptIds": ["concept-flex-alignment", "concept-flex-axes"],
-      "skillIds": ["skill-align-flex-items"],
+      "conceptIds": [
+        "concept-justify-align-distribution",
+        "concept-main-cross-axes"
+      ],
+      "skillIds": [
+        "skill-implement-flexbox-alignments"
+      ],
       "priority": "primary"
     },
     {
       "id": "OBJ-CSS-303",
       "statement": "Implement responsive navigation bars and centered modal overlay layouts using standard Flexbox properties.",
-      "conceptIds": ["concept-flexbox-container-items", "concept-flex-alignment"],
-      "skillIds": ["skill-build-responsive-nav", "skill-align-flex-items"],
+      "conceptIds": [
+        "concept-flex-container",
+        "concept-flex-items",
+        "concept-justify-align-distribution"
+      ],
+      "skillIds": [
+        "skill-build-responsive-nav",
+        "skill-implement-flexbox-alignments"
+      ],
       "priority": "primary"
     }
   ],
   "prerequisites": {
-    "lessonIds": ["lesson-1-1-2"],
-    "conceptIds": ["concept-html-elements", "concept-css-box-model"],
-    "skillIds": ["skill-write-valid-html-markup"]
+    "lessonIds": [
+      "lesson-1-1-2"
+    ],
+    "conceptIds": [
+      "concept-html-elements",
+      "concept-css-box-model"
+    ],
+    "skillIds": [
+      "skill-write-valid-html-markup"
+    ]
   },
   "activities": [
     {
       "id": "act-127-intro",
       "type": "intro",
       "intent": "orientation",
-      "objectiveIds": ["OBJ-CSS-301"],
+      "objectiveIds": [
+        "OBJ-CSS-301"
+      ],
       "content": {
         "title": "Build a Layout with Flexbox",
         "hook": "Centering an element or building responsive navigation once required complex floats and table hacks. Flexbox introduced a predictable, one-dimensional layout model.",
@@ -74,7 +97,10 @@
       "id": "act-127-explanation",
       "type": "explanation",
       "intent": "understanding",
-      "objectiveIds": ["OBJ-CSS-301", "OBJ-CSS-302"],
+      "objectiveIds": [
+        "OBJ-CSS-301",
+        "OBJ-CSS-302"
+      ],
       "content": {
         "title": "Flexbox Architecture: Containers, Axes, and Alignment",
         "text": "When you declare display: flex on an element, it becomes a flex container and its direct children become flex items.\n\nFlexbox operates along two orthogonal axes:\n1. Main Axis: The primary direction items flow, governed by flex-direction (defaults to row, flowing left-to-right).\n2. Cross Axis: Perpendicular to the main axis (defaults to top-to-bottom in row mode).\n\nAlignment properties target specific axes:\n- justify-content aligns items along the MAIN axis (e.g., flex-start, center, flex-end, space-between, space-around, space-evenly).\n- align-items aligns items along the CROSS axis (e.g., stretch, center, flex-start, flex-end, baseline).",
@@ -89,7 +115,10 @@
       "id": "act-127-visual",
       "type": "visual",
       "intent": "understanding",
-      "objectiveIds": ["OBJ-CSS-301", "OBJ-CSS-302"],
+      "objectiveIds": [
+        "OBJ-CSS-301",
+        "OBJ-CSS-302"
+      ],
       "content": {
         "title": "Visualizing Flexbox Axes & Space Distribution",
         "visualType": "diagram",
@@ -105,7 +134,10 @@
       "id": "act-127-output-prediction",
       "type": "output-prediction",
       "intent": "retrieval",
-      "objectiveIds": ["OBJ-CSS-302", "OBJ-CSS-303"],
+      "objectiveIds": [
+        "OBJ-CSS-302",
+        "OBJ-CSS-303"
+      ],
       "content": {
         "prompt": "Predict the exact visual layout produced by the following CSS declarations applied to a navigation header container:",
         "language": "css",
@@ -148,7 +180,11 @@
       "id": "act-127-interactive-code",
       "type": "interactive-code",
       "intent": "application",
-      "objectiveIds": ["OBJ-CSS-301", "OBJ-CSS-302", "OBJ-CSS-303"],
+      "objectiveIds": [
+        "OBJ-CSS-301",
+        "OBJ-CSS-302",
+        "OBJ-CSS-303"
+      ],
       "content": {
         "title": "Interactive Flexbox Workshop: Build Navbar & Modal Overlay",
         "prompt": "Complete the two essential UI layout tasks in the CSS editor for the navbar and modal backdrop.",
@@ -250,7 +286,11 @@
       "id": "act-127-summary",
       "type": "summary",
       "intent": "reflection",
-      "objectiveIds": ["OBJ-CSS-301", "OBJ-CSS-302", "OBJ-CSS-303"],
+      "objectiveIds": [
+        "OBJ-CSS-301",
+        "OBJ-CSS-302",
+        "OBJ-CSS-303"
+      ],
       "content": {
         "title": "Flexbox Layout Mastery: Synthesis & Key Takeaways",
         "summary": "You have mastered 1-dimensional CSS layout mechanics using Flexbox.",
@@ -281,17 +321,25 @@
     "evidenceRequirements": [
       {
         "objectiveId": "OBJ-CSS-301",
-        "activityIds": ["act-127-interactive-code"],
+        "activityIds": [
+          "act-127-interactive-code"
+        ],
         "requirement": "success"
       },
       {
         "objectiveId": "OBJ-CSS-302",
-        "activityIds": ["act-127-output-prediction", "act-127-interactive-code"],
+        "activityIds": [
+          "act-127-output-prediction",
+          "act-127-interactive-code"
+        ],
         "requirement": "success"
       },
       {
         "objectiveId": "OBJ-CSS-303",
-        "activityIds": ["act-127-output-prediction", "act-127-interactive-code"],
+        "activityIds": [
+          "act-127-output-prediction",
+          "act-127-interactive-code"
+        ],
         "requirement": "success"
       }
     ]

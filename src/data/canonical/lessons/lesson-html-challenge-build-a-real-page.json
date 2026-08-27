@@ -1,0 +1,307 @@
+{
+  "id": "lesson-1-1-8",
+  "schemaVersion": "1.0.0",
+  "topicId": "html-challenge-build-a-real-page",
+  "title": "HTML Challenge: Build a Real Page",
+  "description": "Plan and build a complete HTML page combining headings, text, links, images, lists, a table, a form, and semantic elements into one coherent document.",
+  "lessonType": "challenge",
+  "difficulty": "Intermediate",
+  "estimatedMinutes": 35,
+  "conceptIds": [
+    "concept-html-document-structure",
+    "concept-nesting-hierarchy",
+    "concept-heading-hierarchy-semantics",
+    "concept-relative-absolute-paths",
+    "concept-list-semantics",
+    "concept-table-semantics",
+    "concept-form-controls-and-labels",
+    "concept-semantic-html-elements"
+  ],
+  "skillIds": [
+    "skill-plan-document-structure-before-authoring",
+    "skill-build-labeled-form",
+    "skill-build-semantic-table",
+    "skill-refactor-to-semantic-html",
+    "skill-audit-html-for-structural-mistakes"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-HTML-801",
+      "statement": "Plan the semantic structure of a complete HTML page from a requirements list before writing markup.",
+      "conceptIds": [
+        "concept-semantic-html-elements",
+        "concept-html-document-structure"
+      ],
+      "skillIds": [
+        "skill-plan-document-structure-before-authoring"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-802",
+      "statement": "Combine headings, paragraphs, links, images, lists, a table, a form, and semantic elements into one coherent, correctly nested document.",
+      "conceptIds": [
+        "concept-nesting-hierarchy",
+        "concept-list-semantics",
+        "concept-table-semantics",
+        "concept-form-controls-and-labels"
+      ],
+      "skillIds": [
+        "skill-build-labeled-form",
+        "skill-build-semantic-table",
+        "skill-refactor-to-semantic-html"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-803",
+      "statement": "Inspect a finished document for common structural, semantic, and accessibility mistakes, and explain the major structural decisions made.",
+      "conceptIds": [
+        "concept-heading-hierarchy-semantics",
+        "concept-relative-absolute-paths"
+      ],
+      "skillIds": [
+        "skill-audit-html-for-structural-mistakes"
+      ],
+      "priority": "primary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": [
+      "lesson-1-1-7"
+    ],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-118-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": [
+        "OBJ-HTML-801"
+      ],
+      "content": {
+        "title": "HTML Challenge: Build a Real Page",
+        "hook": "Every skill from this module so far has been isolated. Real pages need all of them at once, chosen correctly and combined into something coherent.",
+        "context": "This is the first lesson where you decide the structure yourself, from a requirements list rather than a worked example.",
+        "goals": [
+          "Plan a page's structure before writing markup",
+          "Combine every HTML skill from this module into one page",
+          "Find and explain your own structural decisions"
+        ]
+      }
+    },
+    {
+      "id": "act-118-explanation",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": [
+        "OBJ-HTML-801"
+      ],
+      "content": {
+        "title": "Plan Before You Build",
+        "text": "Before writing any markup for a real page, it helps to plan its semantic regions first: what's the header content, what's the main content, are there distinct articles or sections within it, is there a sidebar, what belongs in the footer? Once the regions are decided, the details \u2014 which parts are lists, which need a table, which need a form \u2014 follow naturally from what the content actually is, not from how you want it to look. This is the same planning habit professional developers use before writing a single line of a real feature.",
+        "callout": {
+          "variant": "tip",
+          "text": "A fast planning technique: sketch just the semantic skeleton (header/nav/main/article-or-section/aside/footer) as comments first, then fill in the details inside each region."
+        },
+        "keyTakeaway": "Decide the semantic regions first; let the content's meaning decide the specific elements inside each region."
+      }
+    },
+    {
+      "id": "act-118-interactive-build-page",
+      "type": "interactive-code",
+      "intent": "application",
+      "objectiveIds": [
+        "OBJ-HTML-802"
+      ],
+      "content": {
+        "title": "Build the Complete Page",
+        "prompt": "Build a 'Local Hiking Club' page with: a header containing the club name; a nav with at least two links; a main containing an article introducing the club, a table of three upcoming hikes (date and location columns), an unordered list of three things to bring, and a labeled sign-up form (name and email, with a submit button); and a footer with a copyright line.",
+        "instructions": "Use real semantic structure (header, nav, main, article, footer) rather than divs, a genuine table for the hikes, a genuine list for the checklist, and a properly labeled form.",
+        "language": "html",
+        "starterCode": "<!-- Plan your regions as comments first, then build them out -->\n",
+        "solutionCode": "<header>\n  <h1>Local Hiking Club</h1>\n</header>\n<nav>\n  <a href=\"#hikes\">Hikes</a>\n  <a href=\"#join\">Join</a>\n</nav>\n<main>\n  <article>\n    <h2>About Us</h2>\n    <p>We hike every weekend, rain or shine.</p>\n  </article>\n  <table>\n    <tr><th>Date</th><th>Location</th></tr>\n    <tr><td>June 3</td><td>Blue Ridge Trail</td></tr>\n    <tr><td>June 10</td><td>Eagle Peak</td></tr>\n    <tr><td>June 17</td><td>Cedar Falls</td></tr>\n  </table>\n  <ul>\n    <li>Water</li>\n    <li>Sturdy shoes</li>\n    <li>Sunscreen</li>\n  </ul>\n  <form id=\"join\">\n    <label for=\"name\">Name</label>\n    <input type=\"text\" id=\"name\" name=\"name\">\n    <label for=\"email\">Email</label>\n    <input type=\"email\" id=\"email\" name=\"email\">\n    <button type=\"submit\">Sign Up</button>\n  </form>\n</main>\n<footer>\n  <p>&copy; 2026 Local Hiking Club</p>\n</footer>",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Uses header, nav, main, and footer",
+            "assertion": "['header','nav','main','footer'].every(tag => document.querySelector(tag) !== null)"
+          },
+          {
+            "id": "t2",
+            "description": "Contains an article inside main",
+            "assertion": "document.querySelector('main article') !== null"
+          },
+          {
+            "id": "t3",
+            "description": "Contains a table with a header row",
+            "assertion": "document.querySelectorAll('table th').length === 2 && document.querySelectorAll('table tr').length >= 4"
+          },
+          {
+            "id": "t4",
+            "description": "Contains an unordered checklist",
+            "assertion": "document.querySelectorAll('ul li').length >= 3"
+          },
+          {
+            "id": "t5",
+            "description": "Contains a form with two associated labels and a submit control",
+            "assertion": "document.querySelectorAll('form label[for]').length === 2 && document.querySelector('form button[type=submit], form input[type=submit]') !== null"
+          }
+        ]
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Uses header, nav, main, and footer",
+            "assertion": "['header','nav','main','footer'].every(tag => document.querySelector(tag) !== null)"
+          },
+          {
+            "id": "t2",
+            "description": "Contains an article inside main",
+            "assertion": "document.querySelector('main article') !== null"
+          },
+          {
+            "id": "t3",
+            "description": "Contains a table with a header row",
+            "assertion": "document.querySelectorAll('table th').length === 2 && document.querySelectorAll('table tr').length >= 4"
+          },
+          {
+            "id": "t4",
+            "description": "Contains an unordered checklist",
+            "assertion": "document.querySelectorAll('ul li').length >= 3"
+          },
+          {
+            "id": "t5",
+            "description": "Contains a form with two associated labels and a submit control",
+            "assertion": "document.querySelectorAll('form label[for]').length === 2 && document.querySelector('form button[type=submit], form input[type=submit]') !== null"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "That's a coherent page combining every skill from this module correctly.",
+        "incorrect": "Check each region against the requirements: semantic landmarks, a real table, a real list, and a properly labeled form."
+      }
+    },
+    {
+      "id": "act-118-debug-review",
+      "type": "debug",
+      "intent": "debugging",
+      "objectiveIds": [
+        "OBJ-HTML-803"
+      ],
+      "content": {
+        "title": "Inspect a Similar Page for Mistakes",
+        "prompt": "This similar hiking-club page has three planted mistakes: a heading level that skips from h1 to h3, a form label with no for attribute, and an image with a relative path that doesn't account for the file being one folder deeper than the images folder. Find and fix all three.",
+        "buggyCode": "<header><h1>Trail Runners Club</h1></header>\n<main>\n  <article>\n    <h3>Weekly Meetups</h3>\n    <p>We meet every Saturday.</p>\n    <img src=\"images/trail.jpg\" alt=\"A forest trail\">\n  </article>\n  <form>\n    <label>Email</label>\n    <input type=\"email\" id=\"email\" name=\"email\">\n  </form>\n</main>\n<!-- File location: /site/pages/about.html \u2014 images actually live at /site/images/ -->",
+        "language": "html",
+        "bugDescription": "Three separate structural mistakes: the article heading skips from h1 to h3 instead of h2; the label has no for attribute matching the input's id; and the image path 'images/trail.jpg' resolves relative to /site/pages/, not to /site/, so it needs to go up one level.",
+        "fixRequirements": [
+          "Article heading should be h2, not h3",
+          "Label needs for=\"email\" to match the input's id",
+          "Image src should correctly resolve to /site/images/trail.jpg from /site/pages/about.html"
+        ],
+        "solutionCode": "<header><h1>Trail Runners Club</h1></header>\n<main>\n  <article>\n    <h2>Weekly Meetups</h2>\n    <p>We meet every Saturday.</p>\n    <img src=\"../images/trail.jpg\" alt=\"A forest trail\">\n  </article>\n  <form>\n    <label for=\"email\">Email</label>\n    <input type=\"email\" id=\"email\" name=\"email\">\n  </form>\n</main>",
+        "hints": [
+          "There are three separate mistakes here, not one \u2014 a heading level, a label association, and a path.",
+          "For the path, compare where about.html lives to where images/ actually lives."
+        ]
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Heading fixed to h2",
+            "assertion": "document.querySelector('h3') === null && document.querySelector('article h2') !== null"
+          },
+          {
+            "id": "t2",
+            "description": "Label associated via for",
+            "assertion": "document.querySelector('label[for=email]') !== null"
+          },
+          {
+            "id": "t3",
+            "description": "Image path corrected",
+            "assertion": "document.querySelector('img')?.getAttribute('src') === '../images/trail.jpg'"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "All three structural mistakes found and fixed.",
+        "incorrect": "Check all three: the heading level, the label association, and the image path \u2014 there are three separate mistakes to find."
+      }
+    },
+    {
+      "id": "act-118-reflection",
+      "type": "reflection",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-HTML-803"
+      ],
+      "content": {
+        "prompt": "Explain the major structural decisions you made while building your hiking club page: why you chose the semantic regions you did, why the hikes belonged in a table rather than a list, and why the checklist belonged in a list rather than a table.",
+        "guidelines": [
+          "Focus on why each choice matched the content's actual meaning, not just that it worked."
+        ],
+        "minCharacters": 60
+      }
+    },
+    {
+      "id": "act-118-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-HTML-801",
+        "OBJ-HTML-802",
+        "OBJ-HTML-803"
+      ],
+      "content": {
+        "title": "What You Should Take Away",
+        "takeaways": [
+          "Planning a page's semantic regions before writing markup makes the rest of the structure follow naturally.",
+          "A real page combines headings, text, links, images, lists, tables, and forms, chosen based on what each part of the content actually is.",
+          "Reviewing a finished page for structural and accessibility mistakes is itself a skill worth practicing deliberately."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": [
+      "act-118-intro",
+      "act-118-explanation",
+      "act-118-interactive-build-page",
+      "act-118-debug-review",
+      "act-118-reflection",
+      "act-118-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-HTML-801",
+        "activityIds": [
+          "act-118-reflection"
+        ],
+        "requirement": "complete"
+      },
+      {
+        "objectiveId": "OBJ-HTML-802",
+        "activityIds": [
+          "act-118-interactive-build-page"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-803",
+        "activityIds": [
+          "act-118-debug-review",
+          "act-118-reflection"
+        ],
+        "requirement": "complete"
+      }
+    ]
+  }
+}

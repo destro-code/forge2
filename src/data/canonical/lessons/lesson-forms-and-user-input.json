@@ -1,0 +1,275 @@
+{
+  "id": "lesson-1-1-6",
+  "schemaVersion": "1.0.0",
+  "topicId": "forms-and-user-input",
+  "title": "Forms and User Input",
+  "description": "Build a form with correctly labeled input controls, understand name vs. id, choose appropriate input types, and fix a label-association mistake.",
+  "lessonType": "instruction",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 35,
+  "conceptIds": [
+    "concept-form-controls-and-labels",
+    "concept-name-vs-id-attribute"
+  ],
+  "skillIds": [
+    "skill-build-labeled-form",
+    "skill-construct-element-attributes"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-HTML-601",
+      "statement": "Explain what an HTML form is used for and what the name attribute does compared to id.",
+      "conceptIds": [
+        "concept-name-vs-id-attribute"
+      ],
+      "skillIds": [],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-602",
+      "statement": "Build a form with labeled input controls, correctly associating each label to its control via matching for/id values, and include a submit control.",
+      "conceptIds": [
+        "concept-form-controls-and-labels"
+      ],
+      "skillIds": [
+        "skill-build-labeled-form",
+        "skill-construct-element-attributes"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-603",
+      "statement": "Identify and fix a basic form-structure or label-association mistake.",
+      "conceptIds": [
+        "concept-form-controls-and-labels"
+      ],
+      "skillIds": [
+        "skill-build-labeled-form"
+      ],
+      "priority": "primary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": [
+      "lesson-1-1-5"
+    ],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-116-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": [
+        "OBJ-HTML-601"
+      ],
+      "content": {
+        "title": "Forms and User Input",
+        "hook": "A form with unlabeled inputs works fine for you, because you can see the placeholder text. For a screen reader user, it's a wall of unlabeled boxes.",
+        "context": "Forms are how a page collects information \u2014 and label association is the single most common thing beginners get wrong.",
+        "goals": [
+          "Understand name vs. id",
+          "Build a form with correctly associated labels",
+          "Fix a label-association bug"
+        ]
+      }
+    },
+    {
+      "id": "act-116-explanation",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": [
+        "OBJ-HTML-601",
+        "OBJ-HTML-602"
+      ],
+      "content": {
+        "title": "Forms Collect Input \u2014 Labels Explain It",
+        "text": "A <form> collects user input through controls like <input>, <select>, and <textarea>. Every control needs an associated <label> so anyone \u2014 sighted or using a screen reader \u2014 knows what it's for. That association isn't automatic: it happens by setting the label's for attribute to match the control's id exactly. The id and name attributes look similar but do different jobs: id uniquely identifies an element on the page (used for label association, styling, or scripting), while name identifies the field when the form is submitted \u2014 it's the key a server actually receives. They are not interchangeable, and a control commonly needs both. A submit control (<button type=\"submit\"> or <input type=\"submit\">) triggers the form's submission.",
+        "callout": {
+          "variant": "warning",
+          "text": "Placing a label visually next to an input is not the same as associating it. Without a matching for/id pair, a screen reader has no reliable way to connect them."
+        },
+        "keyTakeaway": "id connects a label to its control; name is what the server sees when the form is submitted."
+      }
+    },
+    {
+      "id": "act-116-mc-name-vs-id",
+      "type": "multiple-choice",
+      "intent": "understanding",
+      "objectiveIds": [
+        "OBJ-HTML-601"
+      ],
+      "content": {
+        "question": "What is the key difference between an input's `id` and its `name`?",
+        "options": [
+          {
+            "id": "opt-a",
+            "text": "There is no difference \u2014 they're interchangeable."
+          },
+          {
+            "id": "opt-b",
+            "text": "`id` uniquely identifies the element on the page (e.g. for label association); `name` is the key sent to the server on submission."
+          },
+          {
+            "id": "opt-c",
+            "text": "`name` is only used for styling; `id` is only used for JavaScript."
+          },
+          {
+            "id": "opt-d",
+            "text": "`id` is required only on `<form>` itself, not on individual controls."
+          }
+        ],
+        "explanation": "id is about identifying the element in the page (including for label association); name is about what key/value pair the server receives when the form submits."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "opt-b"
+      },
+      "feedback": {
+        "correct": "Right \u2014 id is for identifying the element, name is for the submitted data.",
+        "incorrect": "Not quite \u2014 think about what a label needs to connect to versus what a server actually receives."
+      }
+    },
+    {
+      "id": "act-116-debug-label",
+      "type": "debug",
+      "intent": "debugging",
+      "objectiveIds": [
+        "OBJ-HTML-603"
+      ],
+      "content": {
+        "title": "Fix the Unassociated Label",
+        "prompt": "This form's label is placed right next to the input, but clicking the label text doesn't focus the input, and a screen reader won't announce the connection. Find and fix the mistake.",
+        "buggyCode": "<form>\n  <label>Email Address</label>\n  <input type=\"email\" id=\"email-field\" name=\"email\">\n  <button type=\"submit\">Sign Up</button>\n</form>",
+        "language": "html",
+        "bugDescription": "The label has no for attribute, so it isn't actually associated with the input despite sitting next to it visually.",
+        "fixRequirements": [
+          "The label's for attribute must match the input's id exactly (email-field)"
+        ],
+        "solutionCode": "<form>\n  <label for=\"email-field\">Email Address</label>\n  <input type=\"email\" id=\"email-field\" name=\"email\">\n  <button type=\"submit\">Sign Up</button>\n</form>",
+        "hints": [
+          "Look at the input's id value \u2014 the label needs a for attribute matching it exactly."
+        ]
+      },
+      "validation": {
+        "type": "code-output",
+        "expectedOutput": "for=\"email-field\"",
+        "matchType": "contains"
+      },
+      "feedback": {
+        "correct": "Right \u2014 now the label and input are genuinely associated, not just visually adjacent.",
+        "incorrect": "Check that the label's for value matches the input's id value exactly."
+      }
+    },
+    {
+      "id": "act-116-interactive-form",
+      "type": "interactive-code",
+      "intent": "application",
+      "objectiveIds": [
+        "OBJ-HTML-602"
+      ],
+      "content": {
+        "title": "Build a Labeled Signup Form",
+        "prompt": "Build a form with a labeled text input for 'Full Name', a labeled email input for 'Email', and a submit button labeled 'Sign Up'. Every label must be correctly associated with its input.",
+        "instructions": "Use matching for/id pairs, appropriate input types, and a submit control.",
+        "language": "html",
+        "starterCode": "<form>\n  <!-- your labeled inputs here -->\n</form>",
+        "solutionCode": "<form>\n  <label for=\"full-name\">Full Name</label>\n  <input type=\"text\" id=\"full-name\" name=\"fullName\">\n  <label for=\"email\">Email</label>\n  <input type=\"email\" id=\"email\" name=\"email\">\n  <button type=\"submit\">Sign Up</button>\n</form>",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Two labels present, each with a for attribute",
+            "assertion": "document.querySelectorAll('label[for]').length === 2"
+          },
+          {
+            "id": "t2",
+            "description": "Each label's for matches an existing input id",
+            "assertion": "[...document.querySelectorAll('label')].every(l => document.getElementById(l.getAttribute('for')))"
+          },
+          {
+            "id": "t3",
+            "description": "A submit control exists",
+            "assertion": "document.querySelector('button[type=submit], input[type=submit]') !== null"
+          }
+        ]
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Two labels present, each with a for attribute",
+            "assertion": "document.querySelectorAll('label[for]').length === 2"
+          },
+          {
+            "id": "t2",
+            "description": "Each label's for matches an existing input id",
+            "assertion": "[...document.querySelectorAll('label')].every(l => document.getElementById(l.getAttribute('for')))"
+          },
+          {
+            "id": "t3",
+            "description": "A submit control exists",
+            "assertion": "document.querySelector('button[type=submit], input[type=submit]') !== null"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "That's a properly labeled, accessible form.",
+        "incorrect": "Check that every label has a for value matching a real input id, and that a submit control exists."
+      }
+    },
+    {
+      "id": "act-116-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-HTML-601",
+        "OBJ-HTML-602",
+        "OBJ-HTML-603"
+      ],
+      "content": {
+        "title": "What You Should Take Away",
+        "takeaways": [
+          "Every form control needs a label explicitly associated via matching for/id values.",
+          "id identifies an element on the page; name is the key the server receives on submission \u2014 they aren't interchangeable.",
+          "Visual proximity between a label and a control is not the same as real association."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": [
+      "act-116-intro",
+      "act-116-explanation",
+      "act-116-mc-name-vs-id",
+      "act-116-debug-label",
+      "act-116-interactive-form",
+      "act-116-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-HTML-601",
+        "activityIds": [
+          "act-116-mc-name-vs-id"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-602",
+        "activityIds": [
+          "act-116-interactive-form"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-603",
+        "activityIds": [
+          "act-116-debug-label"
+        ],
+        "requirement": "success"
+      }
+    ]
+  }
+}

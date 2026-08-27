@@ -1,0 +1,245 @@
+{
+  "id": "lesson-1-1-9",
+  "schemaVersion": "1.0.0",
+  "topicId": "module-1-skill-check",
+  "title": "Module Skill Check: Course Details Page",
+  "description": "An independent, no-walkthrough proof task: build a complete Course Details page from a short requirements list alone, then diagnose and explain your own work without hints.",
+  "lessonType": "assessment",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 30,
+  "conceptIds": [
+    "concept-html-document-structure",
+    "concept-semantic-html-elements",
+    "concept-form-controls-and-labels",
+    "concept-table-semantics",
+    "concept-list-semantics"
+  ],
+  "skillIds": [
+    "skill-plan-document-structure-before-authoring",
+    "skill-audit-html-for-structural-mistakes",
+    "skill-build-labeled-form",
+    "skill-build-semantic-table",
+    "skill-refactor-to-semantic-html"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-HTML-901",
+      "statement": "Build a complete HTML page independently from a short requirements list, with no walkthrough, choosing elements based on content meaning without being told which tag to use.",
+      "conceptIds": [
+        "concept-html-document-structure",
+        "concept-semantic-html-elements",
+        "concept-form-controls-and-labels",
+        "concept-table-semantics",
+        "concept-list-semantics"
+      ],
+      "skillIds": [
+        "skill-plan-document-structure-before-authoring",
+        "skill-build-labeled-form",
+        "skill-build-semantic-table"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-902",
+      "statement": "Diagnose and fix structural or path problems in a finished page without hints, and explain in plain language why each major element was chosen.",
+      "conceptIds": [
+        "concept-semantic-html-elements"
+      ],
+      "skillIds": [
+        "skill-audit-html-for-structural-mistakes",
+        "skill-refactor-to-semantic-html"
+      ],
+      "priority": "primary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": [
+      "lesson-1-1-8"
+    ],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-119-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": [
+        "OBJ-HTML-901"
+      ],
+      "content": {
+        "title": "This Is the Real Test",
+        "hook": "You finished the capstone. This is different on purpose: no walkthrough, no staged checkpoints, no multiple choice \u2014 just a requirement list and a blank page.",
+        "context": "Success here \u2014 not lesson completion \u2014 is the real signal that Module 1's goal was met.",
+        "goals": [
+          "Build a complete page independently from a short requirement list",
+          "Diagnose and fix your own structural problems without hints",
+          "Explain your element choices in plain language"
+        ]
+      }
+    },
+    {
+      "id": "act-119-interactive-independent-build",
+      "type": "interactive-code",
+      "intent": "transfer",
+      "objectiveIds": [
+        "OBJ-HTML-901"
+      ],
+      "content": {
+        "title": "Course Details Page",
+        "prompt": "Build a \"Course Details\" page for a fictional course called Frontend Foundations. Requirements: a page title; a short course description; a table of the three module names and their durations; an unordered list of three prerequisites; and a labeled sign-up form (name and email, with a submit button). Choose the HTML elements yourself based on what each part of the content actually is \u2014 no element types are specified for you beyond what's implied by the content.",
+        "instructions": "No starter structure is provided beyond an empty body. Plan your regions before writing markup.",
+        "language": "html",
+        "starterCode": "<body>\n  <!-- Build the entire page yourself -->\n</body>",
+        "solutionCode": "<body>\n  <header>\n    <h1>Frontend Foundations</h1>\n  </header>\n  <main>\n    <article>\n      <p>A hands-on introduction to building real webpages with HTML.</p>\n    </article>\n    <table>\n      <tr><th>Module</th><th>Duration</th></tr>\n      <tr><td>HTML Basics</td><td>2 weeks</td></tr>\n      <tr><td>Forms & Semantics</td><td>1 week</td></tr>\n      <tr><td>Capstone Project</td><td>1 week</td></tr>\n    </table>\n    <ul>\n      <li>Basic computer literacy</li>\n      <li>A text editor</li>\n      <li>A web browser</li>\n    </ul>\n    <form>\n      <label for=\"name\">Name</label>\n      <input type=\"text\" id=\"name\" name=\"name\">\n      <label for=\"email\">Email</label>\n      <input type=\"email\" id=\"email\" name=\"email\">\n      <button type=\"submit\">Enroll</button>\n    </form>\n  </main>\n</body>",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Page has exactly one top-level heading",
+            "assertion": "document.querySelectorAll('h1').length === 1"
+          },
+          {
+            "id": "t2",
+            "description": "Contains a table with a header row and at least three module rows",
+            "assertion": "document.querySelectorAll('table th').length >= 2 && document.querySelectorAll('table tr').length >= 4"
+          },
+          {
+            "id": "t3",
+            "description": "Contains an unordered list with at least three prerequisites",
+            "assertion": "document.querySelectorAll('ul li').length >= 3"
+          },
+          {
+            "id": "t4",
+            "description": "Contains a form with two associated labels and a submit control",
+            "assertion": "document.querySelectorAll('form label[for]').length === 2 && document.querySelector('form button[type=submit], form input[type=submit]') !== null"
+          }
+        ]
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Page has exactly one top-level heading",
+            "assertion": "document.querySelectorAll('h1').length === 1"
+          },
+          {
+            "id": "t2",
+            "description": "Contains a table with a header row and at least three module rows",
+            "assertion": "document.querySelectorAll('table th').length >= 2 && document.querySelectorAll('table tr').length >= 4"
+          },
+          {
+            "id": "t3",
+            "description": "Contains an unordered list with at least three prerequisites",
+            "assertion": "document.querySelectorAll('ul li').length >= 3"
+          },
+          {
+            "id": "t4",
+            "description": "Contains a form with two associated labels and a submit control",
+            "assertion": "document.querySelectorAll('form label[for]').length === 2 && document.querySelector('form button[type=submit], form input[type=submit]') !== null"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "Built independently, with the right element chosen for each kind of content.",
+        "incorrect": "Check each requirement against what you built \u2014 a table for the schedule, a list for prerequisites, a labeled form for sign-up."
+      }
+    },
+    {
+      "id": "act-119-debug-self-check",
+      "type": "debug",
+      "intent": "transfer",
+      "objectiveIds": [
+        "OBJ-HTML-902"
+      ],
+      "content": {
+        "title": "Self-Check Without Hints",
+        "prompt": "Before checking any reference answer, review your own Course Details page against these questions, honestly: Does every form label have a matching for/id pair? Does your heading structure skip any levels? Would every image (if you added one) make sense to someone who can't see it? Below is a page with issues of exactly this kind planted in it \u2014 find and fix them without hints.",
+        "buggyCode": "<header><h1>Frontend Foundations</h1></header>\n<main>\n  <h3>Course Overview</h3>\n  <form>\n    <label>Name</label>\n    <input type=\"text\" id=\"student-name\" name=\"name\">\n  </form>\n</main>",
+        "language": "html",
+        "bugDescription": "The heading jumps from h1 to h3, skipping h2, and the label has no for attribute matching the input's id.",
+        "fixRequirements": [
+          "Heading should be h2, not h3",
+          "Label needs for=\"student-name\" to match the input's id"
+        ],
+        "solutionCode": "<header><h1>Frontend Foundations</h1></header>\n<main>\n  <h2>Course Overview</h2>\n  <form>\n    <label for=\"student-name\">Name</label>\n    <input type=\"text\" id=\"student-name\" name=\"name\">\n  </form>\n</main>",
+        "hints": []
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Heading fixed to h2",
+            "assertion": "document.querySelector('h3') === null && document.querySelector('main h2') !== null"
+          },
+          {
+            "id": "t2",
+            "description": "Label associated via for",
+            "assertion": "document.querySelector('label[for=student-name]') !== null"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "Both issues found and corrected without hints \u2014 that's the actual skill being checked here.",
+        "incorrect": "Look again at the heading level and the label \u2014 both have the same kinds of issues covered earlier in this module."
+      }
+    },
+    {
+      "id": "act-119-reflection",
+      "type": "reflection",
+      "intent": "assessment",
+      "objectiveIds": [
+        "OBJ-HTML-902"
+      ],
+      "content": {
+        "prompt": "Explain, in plain language, why you chose each major element on your Course Details page \u2014 the table, the list, and the form \u2014 and which one took the most thought to decide.",
+        "guidelines": [
+          "Answer as if explaining your reasoning to someone reviewing your work, not just describing what the page contains."
+        ],
+        "minCharacters": 60
+      }
+    },
+    {
+      "id": "act-119-completion",
+      "type": "completion",
+      "intent": "assessment",
+      "objectiveIds": [
+        "OBJ-HTML-901",
+        "OBJ-HTML-902"
+      ],
+      "content": {
+        "title": "Module 1 Complete",
+        "message": "You didn't finish this module by viewing eight lessons. You finished it by building a page, independently, from a short requirement list.",
+        "congratulations": "That's the actual signal Module 1 was aiming for \u2014 on to Module 1-2 next."
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": [
+      "act-119-intro",
+      "act-119-interactive-independent-build",
+      "act-119-debug-self-check",
+      "act-119-reflection",
+      "act-119-completion"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-HTML-901",
+        "activityIds": [
+          "act-119-interactive-independent-build"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-902",
+        "activityIds": [
+          "act-119-debug-self-check",
+          "act-119-reflection"
+        ],
+        "requirement": "complete"
+      }
+    ]
+  }
+}

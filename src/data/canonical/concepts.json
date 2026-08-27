@@ -5,17 +5,30 @@
     "definition": "Frontend development encompasses all presentation, interaction, accessibility, and client-side logic executing inside user agents (browsers), distinct from server-side storage and business processing.",
     "topicId": "what-is-frontend-development",
     "prerequisiteConceptIds": [],
-    "relatedConceptIds": ["concept-web-platform-trio", "concept-client-server-split"],
-    "misconceptionIds": ["misc-frontend-is-just-ui-styling"]
+    "relatedConceptIds": [
+      "concept-web-platform-trio",
+      "concept-client-server-split"
+    ],
+    "misconceptionIds": [
+      "misc-frontend-is-just-ui-styling"
+    ]
   },
   {
     "id": "concept-web-platform-trio",
     "title": "Web Platform Foundations (HTML, CSS, JS)",
     "definition": "The separation of concerns between structure/meaning (HTML), visual styling/layout (CSS), and client runtime behavior (JavaScript).",
     "topicId": "what-is-frontend-development",
-    "prerequisiteConceptIds": ["concept-frontend-definition"],
-    "relatedConceptIds": ["concept-html-elements", "concept-css-box-model", "concept-triad-roles"],
-    "misconceptionIds": ["misc-js-replaces-html"]
+    "prerequisiteConceptIds": [
+      "concept-frontend-definition"
+    ],
+    "relatedConceptIds": [
+      "concept-html-elements",
+      "concept-css-box-model",
+      "concept-triad-roles"
+    ],
+    "misconceptionIds": [
+      "misc-js-replaces-html"
+    ]
   },
   {
     "id": "concept-web-architecture",
@@ -23,132 +36,222 @@
     "definition": "The distributed network architecture of the web where client user agents request, parse, render, and execute static and dynamic web assets hosted on remote servers.",
     "topicId": "what-is-frontend-development",
     "prerequisiteConceptIds": [],
-    "relatedConceptIds": ["concept-client-server-split", "concept-triad-roles"],
-    "misconceptionIds": ["misc-websites-static-only"]
+    "relatedConceptIds": [
+      "concept-client-server-split",
+      "concept-triad-roles"
+    ],
+    "misconceptionIds": [
+      "misc-websites-static-only"
+    ]
   },
   {
     "id": "concept-client-server-split",
     "title": "Client-Server Split & Browser Runtime",
     "definition": "The clear structural separation between client-side execution (browser rendering engine, DOM, JavaScript runtime) and server-side processing (databases, server APIs, persistent storage).",
     "topicId": "what-is-frontend-development",
-    "prerequisiteConceptIds": ["concept-web-architecture"],
-    "relatedConceptIds": ["concept-frontend-definition", "concept-triad-roles"],
-    "misconceptionIds": ["misc-frontend-direct-database"]
+    "prerequisiteConceptIds": [
+      "concept-web-architecture"
+    ],
+    "relatedConceptIds": [
+      "concept-frontend-definition",
+      "concept-triad-roles"
+    ],
+    "misconceptionIds": [
+      "misc-frontend-direct-database"
+    ]
   },
   {
     "id": "concept-triad-roles",
     "title": "The Frontend Triad (HTML, CSS, JavaScript Roles)",
     "definition": "The three foundational pillars of frontend engineering: HTML defines semantics and document structure, CSS defines visual styling and layout, and JavaScript defines interactive runtime behavior.",
     "topicId": "what-is-frontend-development",
-    "prerequisiteConceptIds": ["concept-web-architecture", "concept-client-server-split"],
+    "prerequisiteConceptIds": [
+      "concept-web-architecture",
+      "concept-client-server-split"
+    ],
     "relatedConceptIds": [
       "concept-html-elements",
       "concept-css-flexbox-layout",
       "concept-js-functions"
     ],
-    "misconceptionIds": ["misc-triad-interchangeable", "misc-js-replaces-html"]
+    "misconceptionIds": [
+      "misc-triad-interchangeable",
+      "misc-js-replaces-html"
+    ]
   },
   {
     "id": "concept-html-elements",
     "title": "HTML Elements, Tags & Attributes",
     "definition": "HTML elements represent distinct document nodes consisting of an opening tag, optional attributes providing metadata, content, and a closing tag.",
     "topicId": "elements-tags-attributes",
-    "prerequisiteConceptIds": ["concept-web-platform-trio"],
-    "relatedConceptIds": ["concept-html-element-anatomy", "concept-opening-closing-tags"],
-    "misconceptionIds": ["misc-all-tags-need-closing-tags"]
+    "prerequisiteConceptIds": [
+      "concept-web-platform-trio"
+    ],
+    "relatedConceptIds": [
+      "concept-html-element-anatomy",
+      "concept-opening-closing-tags"
+    ],
+    "misconceptionIds": [
+      "misc-all-tags-need-closing-tags"
+    ]
   },
   {
     "id": "concept-html-element-anatomy",
     "title": "HTML Element Anatomy",
     "definition": "The syntactic structure of an HTML element, consisting of an opening tag with element name and optional attributes, inner text or child node content, and a closing tag.",
     "topicId": "elements-tags-attributes",
-    "prerequisiteConceptIds": ["concept-triad-roles"],
-    "relatedConceptIds": ["concept-opening-closing-tags", "concept-attributes-key-value"],
-    "misconceptionIds": ["misc-element-tag-identical"]
+    "prerequisiteConceptIds": [
+      "concept-triad-roles"
+    ],
+    "relatedConceptIds": [
+      "concept-opening-closing-tags",
+      "concept-attributes-key-value"
+    ],
+    "misconceptionIds": [
+      "misc-element-tag-identical"
+    ]
   },
   {
     "id": "concept-opening-closing-tags",
     "title": "Opening vs Closing Tags & Void Elements",
     "definition": "Opening tags begin an element and house attributes; closing tags finalize container elements with a forward slash. Void elements (such as <img> and <input>) cannot have content and never have closing tags.",
     "topicId": "elements-tags-attributes",
-    "prerequisiteConceptIds": ["concept-html-element-anatomy"],
-    "relatedConceptIds": ["concept-attributes-key-value", "concept-nesting-hierarchy"],
-    "misconceptionIds": ["misc-attributes-in-closing-tags", "misc-all-tags-need-closing-tags"]
+    "prerequisiteConceptIds": [
+      "concept-html-element-anatomy"
+    ],
+    "relatedConceptIds": [
+      "concept-attributes-key-value",
+      "concept-nesting-hierarchy"
+    ],
+    "misconceptionIds": [
+      "misc-attributes-in-closing-tags",
+      "misc-all-tags-need-closing-tags"
+    ]
   },
   {
     "id": "concept-attributes-key-value",
     "title": "HTML Attributes & Key-Value Configuration",
     "definition": "Name-value pairs placed inside an element's opening tag that modify behavior, provide metadata, link external resources, or assign styling classes and identifiers.",
     "topicId": "elements-tags-attributes",
-    "prerequisiteConceptIds": ["concept-html-element-anatomy"],
-    "relatedConceptIds": ["concept-opening-closing-tags", "concept-nesting-hierarchy"],
-    "misconceptionIds": ["misc-attribute-quotes-optional"]
+    "prerequisiteConceptIds": [
+      "concept-html-element-anatomy"
+    ],
+    "relatedConceptIds": [
+      "concept-opening-closing-tags",
+      "concept-nesting-hierarchy"
+    ],
+    "misconceptionIds": [
+      "misc-attribute-quotes-optional"
+    ]
   },
   {
     "id": "concept-nesting-hierarchy",
     "title": "Document Tree Hierarchy & Element Nesting",
     "definition": "The recursive parent-child tree structure of the Document Object Model (DOM) requiring elements to close in the reverse order of opening without improper cross-boundary overlapping.",
     "topicId": "elements-tags-attributes",
-    "prerequisiteConceptIds": ["concept-opening-closing-tags"],
-    "relatedConceptIds": ["concept-html-element-anatomy"],
-    "misconceptionIds": ["misc-html-tags-overlap"]
+    "prerequisiteConceptIds": [
+      "concept-opening-closing-tags"
+    ],
+    "relatedConceptIds": [
+      "concept-html-element-anatomy"
+    ],
+    "misconceptionIds": [
+      "misc-html-tags-overlap"
+    ]
   },
   {
     "id": "concept-css-box-model",
     "title": "CSS Box Model",
     "definition": "The rectangular box geometry encompassing every rendered DOM element, consisting of content, padding, border, and margin areas.",
     "topicId": "flexbox-layout",
-    "prerequisiteConceptIds": ["concept-web-platform-trio"],
-    "relatedConceptIds": ["concept-css-flexbox-layout"],
-    "misconceptionIds": ["misc-padding-vs-margin"]
+    "prerequisiteConceptIds": [
+      "concept-web-platform-trio"
+    ],
+    "relatedConceptIds": [
+      "concept-css-flexbox-layout"
+    ],
+    "misconceptionIds": [
+      "misc-padding-vs-margin"
+    ]
   },
   {
     "id": "concept-css-flexbox-layout",
     "title": "CSS Flexible Box Layout (Flexbox)",
     "definition": "A 1-dimensional layout model providing directional alignment, distribution of space, and flexible item sizing along main and cross axes.",
     "topicId": "flexbox-layout",
-    "prerequisiteConceptIds": ["concept-css-box-model"],
+    "prerequisiteConceptIds": [
+      "concept-css-box-model"
+    ],
     "relatedConceptIds": [
       "concept-flex-container",
       "concept-flex-items",
       "concept-main-cross-axes"
     ],
-    "misconceptionIds": ["misc-justify-vs-align-items"]
+    "misconceptionIds": [
+      "misc-justify-vs-align-items"
+    ]
   },
   {
     "id": "concept-flex-container",
     "title": "Flex Container Formatting Context",
     "definition": "An element with display: flex applied that establishes a flex formatting context, transforming its immediate direct children into flex items.",
     "topicId": "flexbox-layout",
-    "prerequisiteConceptIds": ["concept-css-box-model"],
-    "relatedConceptIds": ["concept-flex-items", "concept-main-cross-axes"],
-    "misconceptionIds": ["misc-display-flex-applies-to-all-descendants"]
+    "prerequisiteConceptIds": [
+      "concept-css-box-model"
+    ],
+    "relatedConceptIds": [
+      "concept-flex-items",
+      "concept-main-cross-axes"
+    ],
+    "misconceptionIds": [
+      "misc-display-flex-applies-to-all-descendants"
+    ]
   },
   {
     "id": "concept-flex-items",
     "title": "Flex Items & Flow Behavior",
     "definition": "The immediate direct child elements of a flex container that participate in flex layout calculations, alignment, and distribution.",
     "topicId": "flexbox-layout",
-    "prerequisiteConceptIds": ["concept-flex-container"],
-    "relatedConceptIds": ["concept-main-cross-axes", "concept-justify-align-distribution"],
-    "misconceptionIds": ["misc-display-flex-applies-to-all-descendants"]
+    "prerequisiteConceptIds": [
+      "concept-flex-container"
+    ],
+    "relatedConceptIds": [
+      "concept-main-cross-axes",
+      "concept-justify-align-distribution"
+    ],
+    "misconceptionIds": [
+      "misc-display-flex-applies-to-all-descendants"
+    ]
   },
   {
     "id": "concept-main-cross-axes",
     "title": "Main vs Cross Axis Dynamics",
     "definition": "The two perpendicular axes established by flex-direction: the main axis along which items flow and justify-content operates, and the cross axis along which align-items operates.",
     "topicId": "flexbox-layout",
-    "prerequisiteConceptIds": ["concept-flex-container"],
-    "relatedConceptIds": ["concept-justify-align-distribution", "concept-flex-items"],
-    "misconceptionIds": ["misc-justify-vs-align-items", "misc-align-items-centers-horizontally"]
+    "prerequisiteConceptIds": [
+      "concept-flex-container"
+    ],
+    "relatedConceptIds": [
+      "concept-justify-align-distribution",
+      "concept-flex-items"
+    ],
+    "misconceptionIds": [
+      "misc-justify-vs-align-items",
+      "misc-align-items-centers-horizontally"
+    ]
   },
   {
     "id": "concept-justify-align-distribution",
     "title": "Flex Space Distribution & Alignment",
     "definition": "The use of justify-content (main axis distribution) and align-items (cross axis alignment) along with the gap property to space and align flex items without hardcoded margins.",
     "topicId": "flexbox-layout",
-    "prerequisiteConceptIds": ["concept-main-cross-axes"],
-    "relatedConceptIds": ["concept-flex-container", "concept-flex-items"],
+    "prerequisiteConceptIds": [
+      "concept-main-cross-axes"
+    ],
+    "relatedConceptIds": [
+      "concept-flex-container",
+      "concept-flex-items"
+    ],
     "misconceptionIds": [
       "misc-justify-moves-individual-items",
       "misc-flexbox-requires-hardcoded-margins"
@@ -159,98 +262,364 @@
     "title": "JavaScript Functions & Execution Scope",
     "definition": "First-class callable objects in JavaScript that encapsulate reusable computation, create local variable scope, and can be passed as values or returned from other functions.",
     "topicId": "javascript-functions",
-    "prerequisiteConceptIds": ["concept-web-platform-trio"],
-    "relatedConceptIds": ["concept-function-return-value", "concept-console-log-side-effects"],
-    "misconceptionIds": ["misc-return-vs-console-log"]
+    "prerequisiteConceptIds": [
+      "concept-web-platform-trio"
+    ],
+    "relatedConceptIds": [
+      "concept-function-return-value",
+      "concept-console-log-side-effects"
+    ],
+    "misconceptionIds": [
+      "misc-return-vs-console-log"
+    ]
   },
   {
     "id": "concept-function-return-value",
     "title": "Function Return Values & Output Channels",
     "definition": "The explicit data value delivered back to the caller of a function via the return statement, which terminates function execution immediately.",
     "topicId": "javascript-functions",
-    "prerequisiteConceptIds": ["concept-js-functions"],
+    "prerequisiteConceptIds": [
+      "concept-js-functions"
+    ],
     "relatedConceptIds": [
       "concept-caller-expression-substitution",
       "concept-console-log-side-effects"
     ],
-    "misconceptionIds": ["misc-return-vs-console-log", "misc-code-after-return-executes"]
+    "misconceptionIds": [
+      "misc-return-vs-console-log",
+      "misc-code-after-return-executes"
+    ]
   },
   {
     "id": "concept-console-log-side-effects",
     "title": "console.log vs Return Values",
     "definition": "console.log() is an I/O side effect intended for developer diagnostic inspection in DevTools; it does not supply data back to the calling expression or assign values to variables.",
     "topicId": "javascript-functions",
-    "prerequisiteConceptIds": ["concept-js-functions"],
-    "relatedConceptIds": ["concept-function-return-value"],
-    "misconceptionIds": ["misc-console-log-returns-value", "misc-return-vs-console-log"]
+    "prerequisiteConceptIds": [
+      "concept-js-functions"
+    ],
+    "relatedConceptIds": [
+      "concept-function-return-value"
+    ],
+    "misconceptionIds": [
+      "misc-console-log-returns-value",
+      "misc-return-vs-console-log"
+    ]
   },
   {
     "id": "concept-caller-expression-substitution",
     "title": "Call Expression Value Substitution",
     "definition": "When a function finishes execution, its call expression in code (e.g. calculateTotal(10, 2)) is evaluated and substituted with the function's returned value.",
     "topicId": "javascript-functions",
-    "prerequisiteConceptIds": ["concept-function-return-value"],
-    "relatedConceptIds": ["concept-undefined-default-return"],
-    "misconceptionIds": ["misc-functions-auto-return-last-var"]
+    "prerequisiteConceptIds": [
+      "concept-function-return-value"
+    ],
+    "relatedConceptIds": [
+      "concept-undefined-default-return"
+    ],
+    "misconceptionIds": [
+      "misc-functions-auto-return-last-var"
+    ]
   },
   {
     "id": "concept-undefined-default-return",
     "title": "Implicit undefined Return Behavior",
     "definition": "In JavaScript, any function that finishes executing without encountering an explicit return statement with a value implicitly returns undefined.",
     "topicId": "javascript-functions",
-    "prerequisiteConceptIds": ["concept-function-return-value"],
-    "relatedConceptIds": ["concept-caller-expression-substitution"],
-    "misconceptionIds": ["misc-functions-auto-return-last-var"]
+    "prerequisiteConceptIds": [
+      "concept-function-return-value"
+    ],
+    "relatedConceptIds": [
+      "concept-caller-expression-substitution"
+    ],
+    "misconceptionIds": [
+      "misc-functions-auto-return-last-var"
+    ]
   },
   {
     "id": "concept-debugging-workflow",
     "title": "Systematic Frontend Debugging",
     "definition": "A disciplined, hypothesis-driven workflow for diagnosing defects using browser DevTools, console logs, breakpoint inspection, and DOM state verification.",
     "topicId": "debugging-strategies",
-    "prerequisiteConceptIds": ["concept-web-platform-trio", "concept-html-elements"],
+    "prerequisiteConceptIds": [
+      "concept-web-platform-trio",
+      "concept-html-elements"
+    ],
     "relatedConceptIds": [
       "concept-syntax-error-vs-runtime-error",
       "concept-dom-element-resolution"
     ],
-    "misconceptionIds": ["misc-random-code-tweaking"]
+    "misconceptionIds": [
+      "misc-random-code-tweaking"
+    ]
   },
   {
     "id": "concept-syntax-error-vs-runtime-error",
     "title": "Syntax Errors vs Runtime Exceptions vs Logic Bugs",
     "definition": "Syntax errors prevent code parsing; runtime exceptions halt execution during runtime (e.g. TypeError); logic bugs allow code to run but produce incorrect visual or behavioral results.",
     "topicId": "debugging-strategies",
-    "prerequisiteConceptIds": ["concept-debugging-workflow"],
-    "relatedConceptIds": ["concept-dom-element-resolution", "concept-event-listener-binding"],
-    "misconceptionIds": ["misc-css-typos-always-show-errors"]
+    "prerequisiteConceptIds": [
+      "concept-debugging-workflow"
+    ],
+    "relatedConceptIds": [
+      "concept-dom-element-resolution",
+      "concept-event-listener-binding"
+    ],
+    "misconceptionIds": [
+      "misc-css-typos-always-show-errors"
+    ]
   },
   {
     "id": "concept-dom-element-resolution",
     "title": "DOM Element Query Resolution & Null Checking",
     "definition": "Resolving DOM nodes with document.querySelector; if a selector matches no element, it returns null, causing downstream property access or listener attachments to throw runtime TypeErrors.",
     "topicId": "debugging-strategies",
-    "prerequisiteConceptIds": ["concept-html-elements", "concept-debugging-workflow"],
+    "prerequisiteConceptIds": [
+      "concept-html-elements",
+      "concept-debugging-workflow"
+    ],
     "relatedConceptIds": [
       "concept-event-listener-binding",
       "concept-syntax-error-vs-runtime-error"
     ],
-    "misconceptionIds": ["misc-null-addeventlistener-broken-js"]
+    "misconceptionIds": [
+      "misc-null-addeventlistener-broken-js"
+    ]
   },
   {
     "id": "concept-event-listener-binding",
     "title": "Event Listener Binding & Handler Lifecycle",
     "definition": "Registering callback functions to user interaction events (click, submit, input) on valid DOM element references so user actions trigger state and UI updates.",
     "topicId": "debugging-strategies",
-    "prerequisiteConceptIds": ["concept-dom-element-resolution", "concept-js-functions"],
-    "relatedConceptIds": ["concept-debugging-workflow"],
-    "misconceptionIds": ["misc-click-failure-always-js-logic"]
+    "prerequisiteConceptIds": [
+      "concept-dom-element-resolution",
+      "concept-js-functions"
+    ],
+    "relatedConceptIds": [
+      "concept-debugging-workflow"
+    ],
+    "misconceptionIds": [
+      "misc-click-failure-always-js-logic"
+    ]
   },
   {
     "id": "concept-style-attribute-typos",
     "title": "CSS Selector & Property Invalidation",
     "definition": "Browsers silently discard invalid CSS property names, misspelled values, or mismatched selectors without throwing JavaScript console errors, requiring computed style DevTools inspection.",
     "topicId": "debugging-strategies",
-    "prerequisiteConceptIds": ["concept-css-box-model", "concept-debugging-workflow"],
-    "relatedConceptIds": ["concept-syntax-error-vs-runtime-error"],
-    "misconceptionIds": ["misc-css-typos-always-show-errors"]
+    "prerequisiteConceptIds": [
+      "concept-css-box-model",
+      "concept-debugging-workflow"
+    ],
+    "relatedConceptIds": [
+      "concept-syntax-error-vs-runtime-error"
+    ],
+    "misconceptionIds": [
+      "misc-css-typos-always-show-errors"
+    ]
+  },
+  {
+    "id": "concept-request-lifecycle-stages",
+    "title": "Request Lifecycle Stages",
+    "definition": "A network request passes through distinct stages before a page can use its data: DNS resolution (hostname to IP address), connection establishment (TCP/TLS), the server processing the request, and the response returning to the client. Each stage can fail independently and each failure looks different to the client.",
+    "topicId": "understanding-network-requests",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": [
+      "concept-network-panel-evidence",
+      "concept-failure-locus-diagnosis"
+    ],
+    "misconceptionIds": [
+      "misc-all-network-failures-look-the-same"
+    ]
+  },
+  {
+    "id": "concept-network-panel-evidence",
+    "title": "Network Panel as Diagnostic Evidence",
+    "definition": "The browser's Network panel records timing and status for each stage of a request (e.g. DNS lookup time, connection time, waiting/TTFB, content download), giving direct evidence about which stage failed instead of requiring the developer to guess from user-visible symptoms alone.",
+    "topicId": "understanding-network-requests",
+    "prerequisiteConceptIds": [
+      "concept-request-lifecycle-stages"
+    ],
+    "relatedConceptIds": [
+      "concept-failure-locus-diagnosis"
+    ],
+    "misconceptionIds": []
+  },
+  {
+    "id": "concept-failure-locus-diagnosis",
+    "title": "Failure Locus Diagnosis",
+    "definition": "Different failure points in the request lifecycle demand different fixes: a DNS resolution failure means the hostname itself could not be resolved (nothing was ever reached), while a successful DNS resolution followed by a server timeout means the server was reachable but did not respond in time (the problem is on the server side, not the network path to it). Treating these as the same problem leads to fixing the wrong layer.",
+    "topicId": "understanding-network-requests",
+    "prerequisiteConceptIds": [
+      "concept-request-lifecycle-stages",
+      "concept-network-panel-evidence"
+    ],
+    "relatedConceptIds": [],
+    "misconceptionIds": [
+      "misc-all-network-failures-look-the-same",
+      "misc-timeout-means-no-connection"
+    ]
+  },
+  {
+    "id": "concept-request-response-model",
+    "title": "Request/Response Model",
+    "definition": "The foundational web communication model: the browser (client) sends a request for a resource or operation, and the server sends back a response. Loading a webpage means communicating with a server, not opening a local file.",
+    "topicId": "how-the-web-works",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": [
+      "concept-request-lifecycle-stages"
+    ],
+    "misconceptionIds": [
+      "misc-browser-opens-local-file"
+    ]
+  },
+  {
+    "id": "concept-dns-resolution-basics",
+    "title": "DNS Resolution (Basics)",
+    "definition": "The high-level sequence from clicking a link to seeing a page: DNS lookup (resolving a domain name to address information) happens before the browser can send an HTTP request, which is followed by the server's response and the browser's rendering.",
+    "topicId": "what-happens-when-you-click-a-link",
+    "prerequisiteConceptIds": [
+      "concept-request-response-model"
+    ],
+    "relatedConceptIds": [
+      "concept-request-lifecycle-stages",
+      "concept-network-panel-evidence"
+    ],
+    "misconceptionIds": [
+      "misc-dns-renders-page"
+    ]
+  },
+  {
+    "id": "concept-client-server-responsibility",
+    "title": "Client/Server Responsibility Split",
+    "definition": "The browser (client) renders the interface, runs browser-side JavaScript, and handles user interaction. The server handles trusted application work and durable data \u2014 authentication, authorization, business rules, persistence. Important security and persistence decisions cannot rely only on browser-side code, because users can inspect and modify anything running in their own browser.",
+    "topicId": "browser-server-and-client",
+    "prerequisiteConceptIds": [
+      "concept-request-response-model"
+    ],
+    "relatedConceptIds": [],
+    "misconceptionIds": [
+      "misc-client-side-authorization-is-sufficient"
+    ]
+  },
+  {
+    "id": "concept-forge-learning-loop",
+    "title": "Forge's Learn / Practice / Grow Loop",
+    "definition": "Understanding a concept and being able to perform the skill it describes are different things. Forge separates Learn (explanation), Practice (application through hands-on exercises), and Grow (feedback and progress tracking) because reading a lesson is not the same as mastering it.",
+    "topicId": "how-forge-works",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": [],
+    "misconceptionIds": [
+      "misc-reading-equals-mastery"
+    ]
+  },
+  {
+    "id": "concept-html-document-structure",
+    "title": "HTML Document Structure",
+    "topicId": "html-the-structure-of-the-web",
+    "definition": "HTML describes the structure and meaning of content, not its visual styling. Every HTML document needs a minimal skeleton: an <html> root, a <head> containing document metadata, and a <body> containing the visible content.",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": [
+      "concept-html-element-anatomy"
+    ],
+    "misconceptionIds": [
+      "misc-html-is-for-visual-styling"
+    ]
+  },
+  {
+    "id": "concept-heading-hierarchy-semantics",
+    "title": "Heading Hierarchy Semantics",
+    "topicId": "headings-paragraphs-and-text",
+    "definition": "Heading levels (h1-h6) express the logical structure of a document's content, not the desired visual size of text. Skipping levels or choosing a heading based on how large it looks breaks the document's outline for screen readers and other tools that rely on heading structure.",
+    "prerequisiteConceptIds": [
+      "concept-html-document-structure"
+    ],
+    "relatedConceptIds": [
+      "concept-nesting-hierarchy"
+    ],
+    "misconceptionIds": [
+      "misc-heading-level-for-visual-size"
+    ]
+  },
+  {
+    "id": "concept-relative-absolute-paths",
+    "title": "Relative vs. Absolute Paths",
+    "topicId": "links-images-and-paths",
+    "definition": "An absolute URL fully specifies a resource's location including protocol and domain. A relative path is resolved starting from the location of the current document, not from the site's root or the server's root, unless it explicitly begins with a leading slash.",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": [],
+    "misconceptionIds": [
+      "misc-relative-path-resolves-from-root"
+    ]
+  },
+  {
+    "id": "concept-image-alt-text-purpose",
+    "title": "Purpose of Image Alt Text",
+    "topicId": "links-images-and-paths",
+    "definition": "The alt attribute on an image should describe the image's informative content for anyone who cannot see it. Purely decorative images should use an empty alt (alt=\"\") so assistive technology skips them, rather than a filename or a meaningless placeholder.",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": [],
+    "misconceptionIds": []
+  },
+  {
+    "id": "concept-list-semantics",
+    "title": "List Semantics: Ordered vs. Unordered",
+    "topicId": "lists-and-tables",
+    "definition": "An ordered list (<ol>) should be used when the sequence of items is meaningful (steps, rankings); an unordered list (<ul>) should be used when the items form a set with no required order. The choice communicates meaning to both readers and assistive technology.",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": [
+      "concept-nesting-hierarchy"
+    ],
+    "misconceptionIds": []
+  },
+  {
+    "id": "concept-table-semantics",
+    "title": "Table Semantics vs. Layout",
+    "topicId": "lists-and-tables",
+    "definition": "The <table> element (with <tr>, <th>, <td>) exists to represent genuinely tabular data with row/column relationships. Using tables to control the visual layout of a page (rather than to represent real tabular data) is a well-known anti-pattern that breaks accessibility and responsive design.",
+    "prerequisiteConceptIds": [],
+    "relatedConceptIds": [],
+    "misconceptionIds": [
+      "misc-tables-for-page-layout"
+    ]
+  },
+  {
+    "id": "concept-form-controls-and-labels",
+    "title": "Form Controls and Label Association",
+    "topicId": "forms-and-user-input",
+    "definition": "A form collects user input through controls such as <input>, and every control needs an associated <label> so users (including assistive technology users) know what it's for. Association happens by matching the label's for attribute to the control's id.",
+    "prerequisiteConceptIds": [
+      "concept-attributes-key-value"
+    ],
+    "relatedConceptIds": [
+      "concept-name-vs-id-attribute"
+    ],
+    "misconceptionIds": [
+      "misc-label-association-not-required"
+    ]
+  },
+  {
+    "id": "concept-name-vs-id-attribute",
+    "title": "The name vs. id Attribute Distinction",
+    "topicId": "forms-and-user-input",
+    "definition": "The id attribute uniquely identifies an element on the page (used for label association, styling, and scripting). The name attribute identifies a form control's value when the form is submitted, and is what a server-side handler actually receives as the field's key. They serve different purposes and are not interchangeable.",
+    "prerequisiteConceptIds": [
+      "concept-attributes-key-value"
+    ],
+    "relatedConceptIds": [],
+    "misconceptionIds": []
+  },
+  {
+    "id": "concept-semantic-html-elements",
+    "title": "Semantic HTML Elements",
+    "topicId": "semantic-html",
+    "definition": "Semantic elements (header, nav, main, article, section, footer, aside) describe the meaning and role of the content they contain, unlike a generic <div>, which carries no meaning at all. Semantic structure helps assistive technology, search engines, and future maintainers understand a page's regions, but choosing the right element is only part of building an accessible page.",
+    "prerequisiteConceptIds": [
+      "concept-html-document-structure"
+    ],
+    "relatedConceptIds": [],
+    "misconceptionIds": [
+      "misc-semantic-html-guarantees-accessibility"
+    ]
   }
 ]

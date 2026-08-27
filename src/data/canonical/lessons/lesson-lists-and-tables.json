@@ -1,0 +1,285 @@
+{
+  "id": "lesson-1-1-5",
+  "schemaVersion": "1.0.0",
+  "topicId": "lists-and-tables",
+  "title": "Lists and Tables",
+  "description": "Choose between ordered and unordered lists based on meaning, build nested lists, and build a genuine table without misusing tables for layout.",
+  "lessonType": "instruction",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 30,
+  "conceptIds": [
+    "concept-list-semantics",
+    "concept-table-semantics"
+  ],
+  "skillIds": [
+    "skill-write-valid-html-markup",
+    "skill-build-semantic-table"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-HTML-501",
+      "statement": "Choose between unordered and ordered lists based on the meaning and order of the content, and build correctly nested list structures.",
+      "conceptIds": [
+        "concept-list-semantics"
+      ],
+      "skillIds": [
+        "skill-write-valid-html-markup"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-502",
+      "statement": "Identify the purpose of table, tr, th, and td, and build a simple table representing genuine tabular data.",
+      "conceptIds": [
+        "concept-table-semantics"
+      ],
+      "skillIds": [
+        "skill-build-semantic-table"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-503",
+      "statement": "Distinguish tabular data from page layout and explain why tables should not be used as a layout system.",
+      "conceptIds": [
+        "concept-table-semantics"
+      ],
+      "skillIds": [],
+      "priority": "secondary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": [
+      "lesson-1-1-4"
+    ],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-115-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": [
+        "OBJ-HTML-501"
+      ],
+      "content": {
+        "title": "Lists and Tables",
+        "hook": "In the early 2000s, entire websites were built using tables as an invisible grid to position content. It worked visually, and it broke almost everything else.",
+        "context": "This lesson is about choosing the right element for what content actually is, not what layout you want.",
+        "goals": [
+          "Choose ul vs ol correctly",
+          "Build a real data table",
+          "Explain why tables shouldn't be used for layout"
+        ]
+      }
+    },
+    {
+      "id": "act-115-explanation",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": [
+        "OBJ-HTML-501",
+        "OBJ-HTML-502"
+      ],
+      "content": {
+        "title": "Lists and Tables Represent Real Relationships",
+        "text": "Use an ordered list (<ol>) when the sequence of items actually matters \u2014 steps in a recipe, rankings. Use an unordered list (<ul>) when the items form a set with no required order \u2014 a list of ingredients, features, or links. Lists can nest: a <li> can contain its own <ul> or <ol> to represent a sub-list. A table (<table>) exists to represent genuinely tabular data \u2014 information with real row/column relationships, like a schedule or a price comparison. Inside a table, <tr> marks a row, <th> marks a header cell, and <td> marks an ordinary data cell.",
+        "callout": {
+          "variant": "warning",
+          "text": "If you're using a table because you want two things to sit side by side visually \u2014 not because the content has row/column relationships \u2014 that's a layout job for CSS, not a job for <table>."
+        },
+        "keyTakeaway": "Choose ul/ol based on whether order matters; choose table only for content that's genuinely tabular."
+      }
+    },
+    {
+      "id": "act-115-mc-list-choice",
+      "type": "multiple-choice",
+      "intent": "application",
+      "objectiveIds": [
+        "OBJ-HTML-501"
+      ],
+      "content": {
+        "question": "You're marking up the steps to assemble a bookshelf, where doing them out of order would break the assembly. Which list type fits?",
+        "options": [
+          {
+            "id": "opt-a",
+            "text": "<ul> \u2014 an unordered list"
+          },
+          {
+            "id": "opt-b",
+            "text": "<ol> \u2014 an ordered list"
+          },
+          {
+            "id": "opt-c",
+            "text": "<table> \u2014 since there are multiple steps"
+          },
+          {
+            "id": "opt-d",
+            "text": "It doesn't matter which list type you choose"
+          }
+        ],
+        "explanation": "Because the sequence is meaningful \u2014 doing the steps out of order breaks the process \u2014 this is a case for an ordered list."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "opt-b"
+      },
+      "feedback": {
+        "correct": "Right \u2014 sequence-dependent steps belong in an ordered list.",
+        "incorrect": "Not quite \u2014 ask whether doing the items in a different order would change the outcome."
+      }
+    },
+    {
+      "id": "act-115-interactive-table",
+      "type": "interactive-code",
+      "intent": "application",
+      "objectiveIds": [
+        "OBJ-HTML-502"
+      ],
+      "content": {
+        "title": "Build a Real Data Table",
+        "prompt": "Build a table listing three programming languages and their release years, with a header row containing 'Language' and 'Year Released'.",
+        "instructions": "Use table, tr, th (for the header row), and td (for the data rows).",
+        "language": "html",
+        "starterCode": "<table>\n  <!-- your rows here -->\n</table>",
+        "solutionCode": "<table>\n  <tr>\n    <th>Language</th>\n    <th>Year Released</th>\n  </tr>\n  <tr>\n    <td>Python</td>\n    <td>1991</td>\n  </tr>\n  <tr>\n    <td>JavaScript</td>\n    <td>1995</td>\n  </tr>\n  <tr>\n    <td>Rust</td>\n    <td>2010</td>\n  </tr>\n</table>",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Table contains a header row with two th cells",
+            "assertion": "document.querySelectorAll('th').length === 2"
+          },
+          {
+            "id": "t2",
+            "description": "Table contains at least three data rows",
+            "assertion": "document.querySelectorAll('tr').length >= 4"
+          },
+          {
+            "id": "t3",
+            "description": "Data cells use td",
+            "assertion": "document.querySelectorAll('td').length >= 6"
+          }
+        ]
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "t1",
+            "description": "Table contains a header row with two th cells",
+            "assertion": "document.querySelectorAll('th').length === 2"
+          },
+          {
+            "id": "t2",
+            "description": "Table contains at least three data rows",
+            "assertion": "document.querySelectorAll('tr').length >= 4"
+          },
+          {
+            "id": "t3",
+            "description": "Data cells use td",
+            "assertion": "document.querySelectorAll('td').length >= 6"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "That's a genuine data table with a proper header row.",
+        "incorrect": "Check that you have a header row of th cells and at least three td-based data rows."
+      }
+    },
+    {
+      "id": "act-115-multiselect-table-use",
+      "type": "multi-select",
+      "intent": "recognition",
+      "objectiveIds": [
+        "OBJ-HTML-503"
+      ],
+      "content": {
+        "question": "Which of these are appropriate uses of an HTML table? (Select all that apply)",
+        "options": [
+          {
+            "id": "opt-a",
+            "text": "A weekly class schedule with days as columns and time slots as rows"
+          },
+          {
+            "id": "opt-b",
+            "text": "Positioning a logo, a nav menu, and a search box side by side on a page"
+          },
+          {
+            "id": "opt-c",
+            "text": "A price comparison chart across three subscription plans"
+          },
+          {
+            "id": "opt-d",
+            "text": "Arranging three unrelated promotional banners in a row purely for visual layout"
+          }
+        ],
+        "explanation": "A class schedule and a price comparison both have genuine row/column data relationships, which is exactly what tables are for. Positioning unrelated content side by side is a layout task that belongs to CSS, not <table>."
+      },
+      "validation": {
+        "type": "multi-match",
+        "expected": [
+          "opt-a",
+          "opt-c"
+        ],
+        "ignoreOrder": true
+      },
+      "feedback": {
+        "correct": "Right \u2014 genuine tabular data belongs in a table; visual positioning doesn't.",
+        "incorrect": "Ask which options actually have row/column data relationships versus which are just visual arrangement."
+      }
+    },
+    {
+      "id": "act-115-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-HTML-501",
+        "OBJ-HTML-502",
+        "OBJ-HTML-503"
+      ],
+      "content": {
+        "title": "What You Should Take Away",
+        "takeaways": [
+          "Choose <ol> when sequence matters, <ul> when it doesn't.",
+          "Tables exist to represent genuine tabular data via tr/th/td, not to control visual layout.",
+          "Using tables for layout is a well-known anti-pattern that breaks accessibility and responsiveness."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": [
+      "act-115-intro",
+      "act-115-explanation",
+      "act-115-mc-list-choice",
+      "act-115-interactive-table",
+      "act-115-multiselect-table-use",
+      "act-115-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-HTML-501",
+        "activityIds": [
+          "act-115-mc-list-choice"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-502",
+        "activityIds": [
+          "act-115-interactive-table"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-503",
+        "activityIds": [
+          "act-115-multiselect-table-use"
+        ],
+        "requirement": "success"
+      }
+    ]
+  }
+}

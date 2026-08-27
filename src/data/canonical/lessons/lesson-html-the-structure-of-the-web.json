@@ -1,0 +1,254 @@
+{
+  "id": "lesson-1-1-1",
+  "schemaVersion": "1.0.0",
+  "topicId": "html-the-structure-of-the-web",
+  "title": "HTML: The Structure of the Web",
+  "description": "Learn what HTML is for, build the minimal html/head/body skeleton every page needs, and understand element nesting as parent/child relationships.",
+  "lessonType": "instruction",
+  "difficulty": "Beginner",
+  "estimatedMinutes": 20,
+  "conceptIds": [
+    "concept-html-document-structure",
+    "concept-html-element-anatomy",
+    "concept-nesting-hierarchy"
+  ],
+  "skillIds": [
+    "skill-build-basic-html-document",
+    "skill-parse-element-syntax"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-HTML-101",
+      "statement": "Explain what HTML is for: describing structure and meaning, not visual styling.",
+      "conceptIds": [
+        "concept-html-document-structure"
+      ],
+      "skillIds": [],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-102",
+      "statement": "Build a basic HTML document containing html, head, and body, including a heading and a paragraph.",
+      "conceptIds": [
+        "concept-html-document-structure"
+      ],
+      "skillIds": [
+        "skill-build-basic-html-document"
+      ],
+      "priority": "primary"
+    },
+    {
+      "id": "OBJ-HTML-103",
+      "statement": "Identify an HTML element in a short snippet and name the parent/child relationship in a small nested structure.",
+      "conceptIds": [
+        "concept-html-element-anatomy",
+        "concept-nesting-hierarchy"
+      ],
+      "skillIds": [
+        "skill-parse-element-syntax"
+      ],
+      "priority": "secondary"
+    }
+  ],
+  "prerequisites": {
+    "lessonIds": [
+      "lesson-0-1-5"
+    ],
+    "conceptIds": [],
+    "skillIds": []
+  },
+  "activities": [
+    {
+      "id": "act-111-intro",
+      "type": "intro",
+      "intent": "orientation",
+      "objectiveIds": [
+        "OBJ-HTML-101"
+      ],
+      "content": {
+        "title": "HTML: The Structure of the Web",
+        "hook": "Every webpage you've ever visited is built on the same skeleton. Once you can see that skeleton, you can build one yourself.",
+        "context": "This is the first hands-on HTML lesson in the module \u2014 everything after this builds on the html/head/body structure introduced here.",
+        "goals": [
+          "Explain what HTML is for",
+          "Build a minimal valid HTML document",
+          "Identify elements and nesting in a short snippet"
+        ]
+      }
+    },
+    {
+      "id": "act-111-explanation",
+      "type": "explanation",
+      "intent": "understanding",
+      "objectiveIds": [
+        "OBJ-HTML-101",
+        "OBJ-HTML-102"
+      ],
+      "content": {
+        "title": "HTML Describes Structure, Not Appearance",
+        "text": "HTML (HyperText Markup Language) describes the structure and meaning of content on a page \u2014 headings, paragraphs, lists, images \u2014 not how that content looks. How things look is CSS's job, which comes later. Every HTML document needs a minimal skeleton: an <html> element as the root, a <head> containing metadata about the document (like its title), and a <body> containing everything the user actually sees. Inside the body, elements can contain other elements \u2014 this is called nesting, and it creates a parent/child relationship: the containing element is the parent, and the elements inside it are children.",
+        "callout": {
+          "variant": "info",
+          "text": "A tiny valid document: <html><head><title>My Page</title></head><body><h1>Hello</h1><p>Welcome.</p></body></html> \u2014 html is the parent of head and body; body is the parent of h1 and p."
+        },
+        "keyTakeaway": "html > head + body is the skeleton every page starts from; everything else nests inside body."
+      }
+    },
+    {
+      "id": "act-111-mc-identify-element",
+      "type": "multiple-choice",
+      "intent": "retrieval",
+      "objectiveIds": [
+        "OBJ-HTML-103"
+      ],
+      "content": {
+        "question": "In `<p>Welcome to <strong>Forge</strong>.</p>`, what is the parent of the `<strong>` element?",
+        "options": [
+          {
+            "id": "opt-a",
+            "text": "The `<body>` element"
+          },
+          {
+            "id": "opt-b",
+            "text": "The `<p>` element"
+          },
+          {
+            "id": "opt-c",
+            "text": "The `<html>` element"
+          },
+          {
+            "id": "opt-d",
+            "text": "The text \"Welcome to\""
+          }
+        ],
+        "explanation": "`<strong>` is nested directly inside `<p>`, so `<p>` is its parent \u2014 even though `<p>` might itself be nested inside `<body>`."
+      },
+      "validation": {
+        "type": "exact-match",
+        "expected": "opt-b"
+      },
+      "feedback": {
+        "correct": "Right \u2014 the immediate containing element is the parent.",
+        "incorrect": "Not quite \u2014 look at what directly contains `<strong>`, not what contains that."
+      }
+    },
+    {
+      "id": "act-111-interactive-build",
+      "type": "interactive-code",
+      "intent": "application",
+      "objectiveIds": [
+        "OBJ-HTML-102"
+      ],
+      "content": {
+        "title": "Build a Tiny Page",
+        "language": "html",
+        "starterCode": "<!-- Write your html, head, and body here -->\n",
+        "solutionCode": "<html>\n  <head>\n    <title>My First Page</title>\n  </head>\n  <body>\n    <h1>My First Page</h1>\n    <p>I'm learning HTML.</p>\n  </body>\n</html>",
+        "testCases": [
+          {
+            "id": "test-1",
+            "description": "Document contains an <html> element",
+            "assertion": "document.querySelector('html') !== null"
+          },
+          {
+            "id": "test-2",
+            "description": "Document contains a <head> and a <body>",
+            "assertion": "document.querySelector('head') !== null && document.querySelector('body') !== null"
+          },
+          {
+            "id": "test-3",
+            "description": "Body contains a heading with the correct text",
+            "assertion": "document.querySelector('h1')?.textContent.includes('My First Page')"
+          },
+          {
+            "id": "test-4",
+            "description": "Body contains a paragraph with the correct text",
+            "assertion": "document.querySelector('p')?.textContent.includes(\"learning HTML\")"
+          }
+        ],
+        "prompt": "Build a minimal valid HTML document with a heading that says \"My First Page\" and a paragraph that says \"I'm learning HTML.\"",
+        "instructions": "Use html, head, and body, then add an h1 and a p inside body."
+      },
+      "validation": {
+        "type": "tests",
+        "testCases": [
+          {
+            "id": "test-1",
+            "description": "Document contains an <html> element",
+            "assertion": "document.querySelector('html') !== null"
+          },
+          {
+            "id": "test-2",
+            "description": "Document contains a <head> and a <body>",
+            "assertion": "document.querySelector('head') !== null && document.querySelector('body') !== null"
+          },
+          {
+            "id": "test-3",
+            "description": "Body contains a heading with the correct text",
+            "assertion": "document.querySelector('h1')?.textContent.includes('My First Page')"
+          },
+          {
+            "id": "test-4",
+            "description": "Body contains a paragraph with the correct text",
+            "assertion": "document.querySelector('p')?.textContent.includes(\"learning HTML\")"
+          }
+        ]
+      },
+      "feedback": {
+        "correct": "That's a complete, valid HTML skeleton with real content in it.",
+        "incorrect": "Check that you have html, head, and body, plus an h1 and a p with the right text."
+      }
+    },
+    {
+      "id": "act-111-summary",
+      "type": "summary",
+      "intent": "reflection",
+      "objectiveIds": [
+        "OBJ-HTML-101",
+        "OBJ-HTML-102",
+        "OBJ-HTML-103"
+      ],
+      "content": {
+        "title": "What You Should Take Away",
+        "takeaways": [
+          "HTML describes structure and meaning, not visual appearance \u2014 that's CSS's job.",
+          "Every document needs the html > head + body skeleton.",
+          "Elements can nest inside other elements, forming parent/child relationships."
+        ]
+      }
+    }
+  ],
+  "completion": {
+    "requiredActivityIds": [
+      "act-111-intro",
+      "act-111-explanation",
+      "act-111-mc-identify-element",
+      "act-111-interactive-build",
+      "act-111-summary"
+    ],
+    "minimumScore": 100,
+    "evidenceRequirements": [
+      {
+        "objectiveId": "OBJ-HTML-101",
+        "activityIds": [
+          "act-111-explanation"
+        ],
+        "requirement": "complete"
+      },
+      {
+        "objectiveId": "OBJ-HTML-102",
+        "activityIds": [
+          "act-111-interactive-build"
+        ],
+        "requirement": "success"
+      },
+      {
+        "objectiveId": "OBJ-HTML-103",
+        "activityIds": [
+          "act-111-mc-identify-element"
+        ],
+        "requirement": "complete"
+      }
+    ]
+  }
+}

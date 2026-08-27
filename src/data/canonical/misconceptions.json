@@ -48,7 +48,9 @@
     "title": "Websites Are Purely Static Documents",
     "description": "Belief that web pages only load once as inert text documents and cannot execute dynamic applications in the browser.",
     "conceptId": "concept-web-architecture",
-    "indicators": ["Thinking all updates require a full page refresh from the server"],
+    "indicators": [
+      "Thinking all updates require a full page refresh from the server"
+    ],
     "correction": "Modern web applications run rich client-side code that dynamically updates the DOM, handles events, and synchronizes data asynchronously."
   },
   {
@@ -56,7 +58,9 @@
     "title": "All HTML Tags Must Have Closing Tags",
     "description": "Belief that void elements like <img>, <input>, and <br> require separate </image> or </input> closing tags.",
     "conceptId": "concept-html-elements",
-    "indicators": ["Writing <img></img> or <br></br> in standard HTML5"],
+    "indicators": [
+      "Writing <img></img> or <br></br> in standard HTML5"
+    ],
     "correction": "Void elements are self-contained and forbidden from having closing tags or inner content in standard HTML5. In standard HTML5, void elements never have closing tags."
   },
   {
@@ -64,7 +68,9 @@
     "title": "Attributes Belong in Closing Tags",
     "description": "Belief that attributes like class, id, or src can or should be repeated inside the closing tag </tag>.",
     "conceptId": "concept-opening-closing-tags",
-    "indicators": ["Writing </a href='url'> or </div class='box'>"],
+    "indicators": [
+      "Writing </a href='url'> or </div class='box'>"
+    ],
     "correction": "Attributes configure an element and must ONLY appear in the opening tag. Closing tags only contain the element name preceded by a slash (e.g. </a>)."
   },
   {
@@ -72,7 +78,9 @@
     "title": "Element and Tag Are Identical Terms",
     "description": "Confusing the opening/closing tags with the entire DOM element node that encompasses tags, attributes, and inner content.",
     "conceptId": "concept-html-element-anatomy",
-    "indicators": ["Referring to an entire paragraph node as just 'the <p> tag'"],
+    "indicators": [
+      "Referring to an entire paragraph node as just 'the <p> tag'"
+    ],
     "correction": "A tag is the markup syntax used to denote boundaries (<p> and </p>), while an element is the complete component including opening tag, attributes, content, and closing tag."
   },
   {
@@ -80,7 +88,10 @@
     "title": "Attribute Quotes Are Interchangeable with Spaces",
     "description": "Belief that multi-word attribute values do not require quotes (e.g. class=btn primary instead of class='btn primary').",
     "conceptId": "concept-attributes-key-value",
-    "indicators": ["Writing class=btn primary", "Omitting quotes on URLs containing parameters"],
+    "indicators": [
+      "Writing class=btn primary",
+      "Omitting quotes on URLs containing parameters"
+    ],
     "correction": "Without quotes, spaces delimit separate attributes, turning 'primary' into an unintended boolean attribute rather than part of the class value."
   },
   {
@@ -88,7 +99,9 @@
     "title": "HTML Tags Can Overlap Arbitrarily",
     "description": "Belief that elements can open and close out of hierarchical order, such as <p><b>Hello</p></b>.",
     "conceptId": "concept-nesting-hierarchy",
-    "indicators": ["Opening child before parent and closing parent before child"],
+    "indicators": [
+      "Opening child before parent and closing parent before child"
+    ],
     "correction": "HTML elements form a strict hierarchical tree: the most recently opened element must be closed before its parent element can close."
   },
   {
@@ -107,7 +120,9 @@
     "title": "justify-content Always Aligns Horizontally",
     "description": "Assuming justify-content is always horizontal, regardless of flex-direction.",
     "conceptId": "concept-css-flexbox-layout",
-    "indicators": ["Expecting align-items to align horizontally in column layout"],
+    "indicators": [
+      "Expecting align-items to align horizontally in column layout"
+    ],
     "correction": "justify-content aligns along the MAIN axis (horizontal in row, vertical in column); align-items aligns along the CROSS axis."
   },
   {
@@ -176,7 +191,9 @@
     "title": "Functions Auto-Return the Last Defined Variable",
     "description": "Believing JavaScript works like some languages where the last evaluated expression is automatically returned without a return keyword.",
     "conceptId": "concept-undefined-default-return",
-    "indicators": ["Defining let sum = a + b inside a function and omitting return sum"],
+    "indicators": [
+      "Defining let sum = a + b inside a function and omitting return sum"
+    ],
     "correction": "In JavaScript standard functions, if there is no explicit return statement, the function execution finishes and evaluates to undefined."
   },
   {
@@ -184,7 +201,9 @@
     "title": "Code After return Continues to Run",
     "description": "Believing statements written below a return statement inside a function block will still execute.",
     "conceptId": "concept-function-return-value",
-    "indicators": ["Writing cleanup or logging code directly below return x"],
+    "indicators": [
+      "Writing cleanup or logging code directly below return x"
+    ],
     "correction": "The return statement immediately halts function execution and exits the function frame; subsequent code is unreachable."
   },
   {
@@ -212,7 +231,9 @@
     "title": "CSS Typos Throw Visible Console Errors",
     "description": "Believing misspelled CSS property names (like displau: flex or colr: red) will trigger error logs in the JavaScript console.",
     "conceptId": "concept-style-attribute-typos",
-    "indicators": ["Checking only the JS console when CSS layout fails to apply"],
+    "indicators": [
+      "Checking only the JS console when CSS layout fails to apply"
+    ],
     "correction": "Browsers follow CSS fault tolerance rules and silently ignore unrecognized properties without throwing runtime exceptions."
   },
   {
@@ -220,7 +241,141 @@
     "title": "Cannot read properties of null Means Corrupt JS",
     "description": "Thinking 'Cannot read properties of null (reading addEventListener)' means the browser's JavaScript engine is broken.",
     "conceptId": "concept-dom-element-resolution",
-    "indicators": ["Believing addEventListener is missing from the browser API"],
+    "indicators": [
+      "Believing addEventListener is missing from the browser API"
+    ],
     "correction": "This error means document.querySelector returned null because the element selector ID/class did not match any element in the HTML DOM."
+  },
+  {
+    "id": "misc-all-network-failures-look-the-same",
+    "title": "\"The Request Failed\" Is a Single Diagnosis",
+    "description": "Treating any failed network request as one undifferentiated problem (\"the API is down\") rather than identifying which lifecycle stage actually failed.",
+    "conceptId": "concept-failure-locus-diagnosis",
+    "indicators": [
+      "Describing unrelated failures (bad hostname, slow server, dropped connection) with the same explanation",
+      "Proposing a fix before checking which stage the Network panel shows as failed"
+    ],
+    "correction": "Different stages fail for different reasons and need different fixes: DNS failure means the hostname could not be resolved at all; a timeout after successful DNS means the server was reached but didn't respond in time."
+  },
+  {
+    "id": "misc-timeout-means-no-connection",
+    "title": "A Timeout Means Nothing Was Reached",
+    "description": "Believing that a request timeout implies the same thing as a DNS resolution failure \u2014 that the client never made contact with anything.",
+    "conceptId": "concept-failure-locus-diagnosis",
+    "indicators": [
+      "Treating 'timeout' and 'DNS_PROBE_FINISHED_NXDOMAIN' as interchangeable errors",
+      "Assuming a timeout means a typo in the URL rather than a slow or unresponsive server"
+    ],
+    "correction": "A timeout after successful DNS resolution means the client found the server's address and attempted a connection \u2014 the server was reachable but failed to respond in time. This points to server-side load, a hung process, or a network path issue between client and server, not a naming problem."
+  },
+  {
+    "id": "misc-browser-opens-local-file",
+    "title": "The Browser Just Opens a Local File",
+    "description": "Believing a webpage is retrieved the way a local file is opened, rather than understanding that loading a page requires a request/response conversation with a server.",
+    "conceptId": "concept-request-response-model",
+    "indicators": [
+      "Describing page loads without mentioning a server or a request",
+      "Confusing 'the browser has the page' with 'the browser fetched the page from somewhere'"
+    ],
+    "correction": "The browser is a client that sends a request to a server; the server responds. Nothing is opened locally the way a file on disk would be."
+  },
+  {
+    "id": "misc-dns-renders-page",
+    "title": "DNS Renders or Stores the Webpage",
+    "description": "Believing DNS is responsible for rendering the page or storing its HTML, rather than understanding DNS only resolves a domain name to address information.",
+    "conceptId": "concept-dns-resolution-basics",
+    "indicators": [
+      "Saying DNS 'builds' or 'shows' the page",
+      "Conflating DNS resolution with the HTTP request/response that follows it"
+    ],
+    "correction": "DNS's job ends once it resolves a domain name into address information the browser can use to connect. The actual HTTP request, server response, and rendering all happen afterward, as separate steps."
+  },
+  {
+    "id": "misc-client-side-authorization-is-sufficient",
+    "title": "Client-Side Checks Are Enough for Security",
+    "description": "Believing that hiding a button or checking a condition in browser-side JavaScript is sufficient to enforce an authorization rule.",
+    "conceptId": "concept-client-server-responsibility",
+    "indicators": [
+      "Relying only on hiding UI elements to prevent unauthorized actions",
+      "Assuming users cannot bypass browser-side logic"
+    ],
+    "correction": "Users can inspect and modify anything running in their own browser, including JavaScript logic and network requests. Any rule that must actually hold \u2014 authorization, ownership, payment amounts \u2014 must be enforced by the server, not just reflected in the client UI."
+  },
+  {
+    "id": "misc-reading-equals-mastery",
+    "title": "Reading a Lesson Means You've Mastered It",
+    "description": "Believing that finishing the reading portion of a lesson is equivalent to being able to perform the skill it teaches.",
+    "conceptId": "concept-forge-learning-loop",
+    "indicators": [
+      "Skipping practice because the explanation 'made sense'",
+      "Treating lesson completion as the finish line rather than the practice/verification that follows it"
+    ],
+    "correction": "Understanding an explanation and being able to reproduce the skill under new conditions are different things. Practice and verification exist because reading is necessary but not sufficient for mastery."
+  },
+  {
+    "id": "misc-html-is-for-visual-styling",
+    "title": "HTML Controls Visual Styling",
+    "conceptId": "concept-html-document-structure",
+    "description": "Believing HTML is responsible for how a page looks (colors, fonts, spacing) rather than its structure and meaning.",
+    "indicators": [
+      "Describing an HTML element choice in terms of appearance rather than meaning",
+      "Expecting a heading tag alone to look a specific way without CSS"
+    ],
+    "correction": "HTML describes structure and meaning; visual presentation is CSS's job. An element should be chosen for what it means, not for how it currently happens to look."
+  },
+  {
+    "id": "misc-heading-level-for-visual-size",
+    "title": "Choosing Headings by Visual Size",
+    "conceptId": "concept-heading-hierarchy-semantics",
+    "description": "Selecting a heading level (e.g. h4 instead of h2) because it produces the desired font size, rather than because it reflects the content's actual position in the document's logical hierarchy.",
+    "indicators": [
+      "Skipping heading levels to get a smaller/larger default size",
+      "Using multiple h1s or jumping from h2 to h4 for visual reasons"
+    ],
+    "correction": "Heading levels should reflect logical document structure. If a heading looks the wrong size, that's a CSS problem to fix with CSS \u2014 not a reason to pick a different heading level."
+  },
+  {
+    "id": "misc-relative-path-resolves-from-root",
+    "title": "Relative Paths Always Resolve from the Site Root",
+    "conceptId": "concept-relative-absolute-paths",
+    "description": "Assuming a relative path is always resolved from the website's root folder or the server's root, rather than from the location of the current document.",
+    "indicators": [
+      "Writing the same relative path in files at different folder depths and expecting both to work",
+      "Confusion when a link works on one page but breaks on another"
+    ],
+    "correction": "A relative path (without a leading slash) resolves starting from the current document's own location, not from the site root. The same relative path can point to different resources depending on which file references it."
+  },
+  {
+    "id": "misc-tables-for-page-layout",
+    "title": "Tables Are a Layout System",
+    "conceptId": "concept-table-semantics",
+    "description": "Using an HTML table to arrange unrelated page content into a visual grid, rather than to represent genuine tabular data.",
+    "indicators": [
+      "Using table/tr/td purely to position content side-by-side",
+      "No actual row/column data relationship in the content being arranged"
+    ],
+    "correction": "Tables should represent genuine tabular data with real row/column relationships. Page layout should be handled with CSS (e.g. Flexbox or Grid), not tables \u2014 using tables for layout breaks accessibility and responsive behavior."
+  },
+  {
+    "id": "misc-label-association-not-required",
+    "title": "Label Association Is Optional",
+    "conceptId": "concept-form-controls-and-labels",
+    "description": "Believing that placing a label near an input visually is sufficient, without actually associating it via matching for/id attributes.",
+    "indicators": [
+      "Label and input placed next to each other with no for/id link",
+      "Assuming visual proximity guarantees accessibility"
+    ],
+    "correction": "A label must be explicitly associated with its control via a matching for/id pair (or by wrapping the control). Visual proximity alone does not create that association, and screen reader users depend on it."
+  },
+  {
+    "id": "misc-semantic-html-guarantees-accessibility",
+    "title": "Semantic HTML Alone Guarantees Accessibility",
+    "conceptId": "concept-semantic-html-elements",
+    "description": "Believing that using semantic elements (header, nav, main, etc.) is sufficient by itself to make a page fully accessible.",
+    "indicators": [
+      "Treating 'I used semantic tags' as a complete accessibility checklist",
+      "No consideration of alt text, label association, color contrast, or keyboard navigation alongside semantic structure"
+    ],
+    "correction": "Semantic HTML is an important foundation for accessibility, but it is not sufficient on its own. Alt text, label association, keyboard operability, and color contrast all still need separate attention."
   }
 ]

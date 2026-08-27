@@ -12,6 +12,14 @@ import lessonCssFlexbox from "../../data/canonical/lessons/lesson-css-flexbox.js
 import lessonJsFunctions from "../../data/canonical/lessons/lesson-javascript-functions.json";
 import lessonFixBrokenPage from "../../data/canonical/lessons/lesson-fix-the-broken-page.json";
 import lessonUnderstandingNetworkRequests from "../../data/canonical/lessons/lesson-understanding-network-requests.json";
+import lessonHtmlTheStructureOfTheWeb from "../../data/canonical/lessons/lesson-html-the-structure-of-the-web.json";
+import lessonHeadingsParagraphsAndText from "../../data/canonical/lessons/lesson-headings-paragraphs-and-text.json";
+import lessonLinksImagesAndPaths from "../../data/canonical/lessons/lesson-links-images-and-paths.json";
+import lessonListsAndTables from "../../data/canonical/lessons/lesson-lists-and-tables.json";
+import lessonFormsAndUserInput from "../../data/canonical/lessons/lesson-forms-and-user-input.json";
+import lessonSemanticHtml from "../../data/canonical/lessons/lesson-semantic-html.json";
+import lessonHtmlChallengeBuildARealPage from "../../data/canonical/lessons/lesson-html-challenge-build-a-real-page.json";
+import lessonModule1SkillCheck from "../../data/canonical/lessons/lesson-module-1-skill-check.json";
 
 import legacyLessonsData from "../../data/lessons.json";
 import legacyModulesData from "../../data/modules.json";
@@ -246,6 +254,14 @@ export class CanonicalProvider implements ContentProvider {
         lessonJsFunctions,
         lessonFixBrokenPage,
         lessonUnderstandingNetworkRequests,
+        lessonHtmlTheStructureOfTheWeb,
+        lessonHeadingsParagraphsAndText,
+        lessonLinksImagesAndPaths,
+        lessonListsAndTables,
+        lessonFormsAndUserInput,
+        lessonSemanticHtml,
+        lessonHtmlChallengeBuildARealPage,
+        lessonModule1SkillCheck,
       ];
 
       rawGoldenLessons.forEach((raw) => {
@@ -280,41 +296,6 @@ export class CanonicalProvider implements ContentProvider {
             `Legacy lesson validation failed for: ${legacy.id}`,
             err,
           );
-        }
-      });
-
-      // Ensure all lessons reference a registered topic (synthesize fallback topics for legacy lessons if needed)
-      this.lessons.forEach((les) => {
-        if (!this.topicsById.has(les.topicId)) {
-          const formattedTitle = les.topicId
-            .split("-")
-            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(" ");
-          const match = les.id.match(/^lesson-(\d+-\d+)/);
-          let derivedModuleId =
-            (les as any).moduleId || (match ? `module-${match[1]}` : "module-0-1");
-          if (!this.modulesById.has(derivedModuleId)) {
-            if (derivedModuleId.startsWith("module-1-5")) derivedModuleId = "module-0-2";
-            else if (this.modulesById.has("module-0-1")) derivedModuleId = "module-0-1";
-            else derivedModuleId = this.modules[0]?.id || "module-0-1";
-          }
-          const fallbackTopic: CanonicalTopic = {
-            id: les.topicId,
-            moduleId: derivedModuleId,
-            title: formattedTitle,
-            description: `Topic for ${formattedTitle}`,
-            order: 99,
-            conceptIds: [],
-            skillIds: [],
-            lessonIds: [],
-          };
-          checkAndRegisterId(fallbackTopic.id, "CanonicalTopic (Synthesized)");
-          this.topicsById.set(fallbackTopic.id, fallbackTopic);
-          this.topics.push(fallbackTopic);
-          const parentMod = this.modulesById.get(fallbackTopic.moduleId);
-          if (parentMod && !parentMod.topicIds.includes(fallbackTopic.id)) {
-            parentMod.topicIds.push(fallbackTopic.id);
-          }
         }
       });
 
