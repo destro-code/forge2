@@ -27,15 +27,28 @@ export function ExplanationRenderer({
 
           <div className="space-y-5 text-base leading-8 text-lesson-text-secondary sm:text-[17px]">
             {text.split("\n\n").map((para, idx) => {
-              const lines = para.split("\n").map((line) => line.trim());
-              const isBulletList = lines.length > 0 && lines.every((line) => line.startsWith("•"));
+              const lines = para
+                .split("\n")
+                .map((line) => line.trim())
+                .filter(Boolean);
+              // Legacy lessons sometimes stored bullets inline. Normalize both
+              // newline-delimited and inline bullet content into a real list.
+              const bulletItems = lines.flatMap((line) =>
+                line
+                  .split(/\s*•\s*/)
+                  .map((item) => item.trim())
+                  .filter(Boolean),
+              );
+              const isBulletList =
+                bulletItems.length > 1 &&
+                lines.every((line) => line.startsWith("•") || line.includes("•"));
 
               if (isBulletList) {
                 return (
                   <ul key={idx} className="flex flex-col gap-2 pl-5" role="list">
-                    {lines.map((line) => (
-                      <li key={line} className="pl-1 marker:text-lesson-accent">
-                        {line.slice(1).trim()}
+                    {bulletItems.map((line, itemIndex) => (
+                      <li key={`${idx}-${itemIndex}`} className="pl-1 marker:text-lesson-accent">
+                        {line}
                       </li>
                     ))}
                   </ul>
