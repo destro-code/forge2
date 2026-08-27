@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CanonicalLesson } from "@/lib/curriculum/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
 import { evaluateActivityValidation, type ActivityResponse } from "./validation";
-import { mapSessionStatus } from "./runtime/use-activity-runtime";
+import { deriveActivityInteractionState, mapSessionStatus } from "./runtime/use-activity-runtime";
 import type { ActivityCompletionEvent } from "./types";
 import { ActivityFeedback, hasActivityFeedback } from "./primitives/activity-feedback";
 import { LessonLayoutProvider } from "./primitives/lesson-layout-context";
@@ -199,12 +199,17 @@ export function CanonicalLessonPlayer({
   const progressPercent =
     totalActivities > 0 ? ((currentActivityIndex + 1) / totalActivities) * 100 : 0;
 
-  const feedbackVisible = currentActivityState
+  const shellInteractionState = useMemo(() => {
+    if (!currentActivityState) return undefined;
+    return deriveActivityInteractionState(currentActivityState, matchedMisconception);
+  }, [currentActivityState, matchedMisconception]);
+
+  const feedbackVisible = shellInteractionState
     ? hasActivityFeedback({
-        status: mapSessionStatus(currentActivityState.status),
-        validationResult: currentActivityState.lastEvaluation,
+        status: shellInteractionState.status,
+        validationResult: shellInteractionState.validationResult,
         hints: currentActivity?.feedback?.hints,
-        hintsRevealed: currentActivityState.hintsRevealed,
+        hintsRevealed: shellInteractionState.hintsRevealed,
       })
     : false;
 
@@ -318,15 +323,15 @@ export function CanonicalLessonPlayer({
           </div>
         </main>
 
-        {feedbackVisible && currentActivityState && currentActivity && (
+        {feedbackVisible && currentActivity && shellInteractionState && (
           <div className="shrink-0 border-t border-lesson-border bg-lesson-bg px-4 py-3 sm:px-6">
             <div className="mx-auto w-full max-w-[1200px]">
               <ActivityFeedback
                 slot="shell"
-                status={mapSessionStatus(currentActivityState.status)}
-                validationResult={currentActivityState.lastEvaluation}
+                status={shellInteractionState.status}
+                validationResult={shellInteractionState.validationResult}
                 hints={currentActivity.feedback?.hints}
-                hintsRevealed={currentActivityState.hintsRevealed}
+                hintsRevealed={shellInteractionState.hintsRevealed}
                 explanation={currentActivity.feedback?.explanation}
               />
             </div>
