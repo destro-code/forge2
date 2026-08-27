@@ -98,9 +98,10 @@ export function MultipleChoiceRenderer({
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col text-sm leading-6 text-lesson-text-primary sm:text-base">
                   <span>{option.text}</span>
-                  {isSubmitted && isSelected && isIncorrect && option.hint && (
+                  {isSubmitted && isSelected && isIncorrect && (
                     <span className="mt-1 text-xs leading-5 text-lesson-text-muted">
-                      {option.hint}
+                      {option.hint ||
+                        "This choice does not match the concept being tested. Compare it with the explanation below, then try again."}
                     </span>
                   )}
                 </span>
