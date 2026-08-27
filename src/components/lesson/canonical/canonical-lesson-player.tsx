@@ -9,7 +9,7 @@ import { LessonLayoutProvider } from "./primitives/lesson-layout-context";
 import { useLessonSession } from "@/lib/learning-engine/use-lesson-session";
 import { useProgress } from "@/lib/hooks/use-progress";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, CheckCircle2, Check, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle2, Check, RotateCcw, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CanonicalLessonPlayerProps {
@@ -301,7 +301,33 @@ export function CanonicalLessonPlayer({
           ref={scrollContainerRef}
           className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pt-6 pb-36 sm:px-6 sm:pt-6 sm:pb-40 md:pt-8 md:pb-40 lg:px-8"
         >
-          <div className="mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start">
+          <div className="mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start gap-5">
+            <section
+              aria-labelledby="lesson-learning-target"
+              className="rounded-lg border border-lesson-border bg-lesson-surface-subtle/45 px-4 py-3 sm:px-5"
+            >
+              <div className="flex items-start gap-3">
+                <Target className="mt-0.5 h-4 w-4 shrink-0 text-lesson-accent" aria-hidden="true" />
+                <div className="min-w-0">
+                  <h2
+                    id="lesson-learning-target"
+                    className="text-xs font-semibold uppercase tracking-wide text-lesson-text-muted"
+                  >
+                    By the end of this lesson
+                  </h2>
+                  <ul className="mt-1.5 space-y-1 text-sm leading-6 text-lesson-text-secondary">
+                    {lesson.objectives.slice(0, 3).map((objective) => (
+                      <li key={objective.id} className="flex gap-2">
+                        <span aria-hidden="true" className="text-lesson-accent">
+                          •
+                        </span>
+                        <span>{objective.statement}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </section>
             {currentActivity ? (
               <CanonicalActivityView
                 key={currentActivity.id}
