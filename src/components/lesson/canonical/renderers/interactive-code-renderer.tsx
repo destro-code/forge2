@@ -36,7 +36,10 @@ export function InteractiveCodeRenderer({
     activity.content.prompt ||
     (activity as any).prompt ||
     (activity as any).description ||
-    "";
+    "Use the lesson concept in the editor, then run the checks to confirm your implementation.";
+  const successReinforcement =
+    activity.feedback?.explanation ||
+    "You demonstrated the lesson concept by producing code that satisfies each requirement.";
   const currentCode = typeof state.response === "string" ? state.response : starterCode;
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -217,10 +220,11 @@ export function InteractiveCodeRenderer({
               </div>
             ) : null}
             {testCases && testCases.length > 0 && (
-              <div className="space-y-2 pt-2 border-t border-lesson-border/60">
+              <div className="space-y-2 border-t border-lesson-border/60 pt-2">
                 <p className="text-xs font-semibold uppercase tracking-wider text-lesson-text-muted">
-                  Requirements
+                  Success looks like
                 </p>
+
                 <div className="space-y-1.5">
                   {testCases.map((tc, idx) => (
                     <div
@@ -329,7 +333,7 @@ export function InteractiveCodeRenderer({
                       {allTestsPassed
                         ? activity.feedback?.correct || "Your solution passed all validation tests."
                         : activity.feedback?.incorrect ||
-                          "Review the failing requirements below and adjust your code."}
+                          "Start with the failed check below: inspect that part of your code, make one focused change, then try again."}
                     </p>
                   </div>
                 </div>
@@ -407,6 +411,18 @@ export function InteractiveCodeRenderer({
         hints={resolvedHints}
         hintsRevealed={state.hintsRevealed}
       />
+      {isCorrect && (
+        <div className="flex items-start gap-3 rounded-lg border border-lesson-success-border/70 bg-lesson-success-bg/60 px-4 py-3 text-sm text-lesson-success-text">
+          <BookOpen className="mt-0.5 h-4 w-4 shrink-0" />
+          <div className="min-w-0">
+            <p className="font-semibold">Concept reinforced</p>
+            <p className="mt-1 text-xs leading-relaxed opacity-90">{successReinforcement}</p>
+            <p className="mt-2 text-xs font-semibold">
+              Continue the lesson when you&apos;re ready.
+            </p>
+          </div>
+        </div>
+      )}
       <ActivityActions
         status={state.status}
         onSubmit={onSubmit}
