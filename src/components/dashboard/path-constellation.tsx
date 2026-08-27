@@ -65,17 +65,39 @@ export function PathConstellation({
           const isActive = node.status === "active";
           const content = (
             <span className="flex items-center gap-3 rounded-md border border-border/70 bg-background/40 px-3 py-3 text-left transition-colors hover:border-primary/50">
-              <span className={cn("grid size-7 shrink-0 place-items-center rounded-full border text-xs", isMastered && "bg-secondary text-muted-foreground", isActive && "border-primary bg-primary text-primary-foreground", !isMastered && !isActive && "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "grid size-7 shrink-0 place-items-center rounded-full border text-xs",
+                  isMastered && "bg-secondary text-muted-foreground",
+                  isActive && "border-primary bg-primary text-primary-foreground",
+                  !isMastered && !isActive && "text-muted-foreground",
+                )}
+              >
                 {isMastered ? <Check aria-hidden="true" /> : index + 1}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-medium text-foreground">{node.title}</span>
-                <span className="block text-xs text-muted-foreground">{isMastered ? "Completed" : isActive ? "Current focus" : "Up next"}</span>
+                <span className="block truncate text-sm font-medium text-foreground">
+                  {node.title}
+                </span>
+                <span className="block text-xs text-muted-foreground">
+                  {isMastered ? "Completed" : isActive ? "Current focus" : "Up next"}
+                </span>
               </span>
               {!isMastered && <ArrowRight aria-hidden="true" />}
             </span>
           );
-          return isMastered ? <div key={node.key}>{content}</div> : <Link key={node.key} to="/lesson/$lessonId" params={{ lessonId: node.lessonId }} search={{ mode: "curriculum" }}>{content}</Link>;
+          return isMastered ? (
+            <div key={node.key}>{content}</div>
+          ) : (
+            <Link
+              key={node.key}
+              to="/lesson/$lessonId"
+              params={{ lessonId: node.lessonId }}
+              search={{ mode: "curriculum" }}
+            >
+              {content}
+            </Link>
+          );
         })}
       </div>
     </section>

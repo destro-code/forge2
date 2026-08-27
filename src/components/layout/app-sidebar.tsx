@@ -19,26 +19,17 @@ import {
   Layers,
   FolderKanban,
   Bug,
-  MessagesSquare,
   Sparkles,
   Terminal,
   ListChecks,
-  Zap,
   Bookmark,
   Library,
-  FileText,
   LineChart,
   Trophy,
-  BarChart3,
-  Calendar,
-  Award,
   Settings,
-  Info,
   Flame,
-  Blocks,
   BookOpenText,
   FolderTree,
-  PenTool,
   Brain,
 } from "lucide-react";
 import { useProgress } from "@/lib/hooks/use-progress";
@@ -64,29 +55,21 @@ const practiceItems: Item[] = [
   { title: "Quizzes", to: "/quizzes", icon: ListChecks, tier: "core" },
   { title: "Debug Lab", to: "/debug-lab", icon: Bug, tier: "core" },
   { title: "Code Playground", to: "/playground", icon: Terminal, tier: "core" },
-  { title: "Interview Academy", to: "/interview", icon: MessagesSquare, tier: "core" },
   { title: "Projects", to: "/projects", icon: FolderKanban, tier: "secondary" },
-  { title: "Flashcards", to: "/flashcards", icon: Blocks, tier: "secondary" },
-  { title: "Daily Challenges", to: "/challenges", icon: Zap, tier: "secondary" },
-  { title: "Whiteboard Mode", to: "/whiteboard", icon: PenTool, tier: "secondary" },
 ];
 
 const progressItems: Item[] = [
-  { title: "Progress Dashboard", to: "/progress", icon: LineChart, tier: "core" },
+  { title: "Progress", to: "/progress", icon: LineChart, tier: "core" },
   { title: "Skill Mastery", to: "/mastery", icon: Brain, tier: "core" },
-  { title: "Analytics Engine", to: "/analytics", icon: BarChart3, tier: "core" },
-  { title: "Achievements", to: "/achievements", icon: Trophy, tier: "core" },
-  { title: "Certificates", to: "/certificates", icon: Award, tier: "secondary" },
+  { title: "Achievements", to: "/achievements", icon: Trophy, tier: "secondary" },
 ];
 
 const supportItems: Item[] = [{ title: "AI Mentor", to: "/mentor", icon: Sparkles, tier: "core" }];
 
 const utilityItems: Item[] = [
   { title: "Journal", to: "/journal", icon: BookOpenText, tier: "utility" },
-  { title: "Schedule", to: "/calendar", icon: Calendar, tier: "utility" },
   { title: "Bookmarks", to: "/bookmarks", icon: Bookmark, tier: "utility" },
   { title: "Resources", to: "/resources", icon: Library, tier: "utility" },
-  { title: "Docs", to: "/docs", icon: FileText, tier: "utility" },
   { title: "Settings", to: "/settings", icon: Settings, tier: "utility" },
 ];
 

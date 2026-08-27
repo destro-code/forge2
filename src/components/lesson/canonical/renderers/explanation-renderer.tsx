@@ -26,9 +26,24 @@ export function ExplanationRenderer({
           )}
 
           <div className="space-y-5 text-base leading-8 text-lesson-text-secondary sm:text-[17px]">
-            {text.split("\n\n").map((para, idx) => (
-              <p key={idx}>{para}</p>
-            ))}
+            {text.split("\n\n").map((para, idx) => {
+              const lines = para.split("\n").map((line) => line.trim());
+              const isBulletList = lines.length > 0 && lines.every((line) => line.startsWith("•"));
+
+              if (isBulletList) {
+                return (
+                  <ul key={idx} className="flex flex-col gap-2 pl-5" role="list">
+                    {lines.map((line) => (
+                      <li key={line} className="pl-1 marker:text-lesson-accent">
+                        {line.slice(1).trim()}
+                      </li>
+                    ))}
+                  </ul>
+                );
+              }
+
+              return <p key={idx}>{para}</p>;
+            })}
           </div>
 
           {callout && (

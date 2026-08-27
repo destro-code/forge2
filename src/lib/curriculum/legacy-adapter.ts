@@ -100,7 +100,7 @@ export function adaptLegacyLessonToCanonical(legacy: LegacyLesson): CanonicalLes
         flushExplanation();
         currentTitle = sec.text;
       } else if (sec.type === "paragraph") {
-        const pText = sec.text || "";
+        const pText = (sec.text || "").replace(/\s+•\s+/g, "\n• ");
         if (pText.trim()) {
           currentExplanationTexts.push(pText);
         }
