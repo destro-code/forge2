@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Activity, Code2, Lock, Play, X, Zap } from "lucide-react";
+import { Activity, ArrowRight, Code2, Play, X, Zap } from "lucide-react";
 import type { Lesson } from "@/lib/types";
 
 interface CurrentFocusProps {
@@ -65,7 +65,7 @@ export function CurrentFocus({ lesson, nextLesson, isNewLearner = false }: Curre
         search={{ mode: "curriculum" }}
         className="relative mt-6 flex w-full items-center justify-between gap-3 rounded-md bg-primary px-5 py-3.5 font-mono text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
       >
-        <span>{isNewLearner ? "Start challenge" : "Continue challenge"}</span>
+        <span>{isNewLearner ? "Start lesson" : "Continue lesson"}</span>
         <Play className="h-4 w-4 fill-current" aria-hidden="true" />
       </Link>
 
@@ -77,7 +77,7 @@ export function CurrentFocus({ lesson, nextLesson, isNewLearner = false }: Curre
             </span>
             <span className="truncate font-medium text-foreground">{nextLesson.title}</span>
           </div>
-          <Lock className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
         </div>
       )}
     </section>

@@ -96,8 +96,13 @@ export function MultipleChoiceRenderer({
                 >
                   {String.fromCharCode(65 + idx)}
                 </span>
-                <span className="min-w-0 flex-1 text-sm leading-6 text-lesson-text-primary sm:text-base">
-                  {option.text}
+                <span className="flex min-w-0 flex-1 flex-col text-sm leading-6 text-lesson-text-primary sm:text-base">
+                  <span>{option.text}</span>
+                  {isSubmitted && isSelected && isIncorrect && option.hint && (
+                    <span className="mt-1 text-xs leading-5 text-lesson-text-muted">
+                      {option.hint}
+                    </span>
+                  )}
                 </span>
                 {isSubmitted && isSelected && isCorrect && (
                   <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />

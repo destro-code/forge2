@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Check, Code2, Lock } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type NodeStatus = "mastered" | "active" | "available" | "locked";
@@ -18,28 +18,12 @@ interface PathConstellationProps {
   nodes: ConstellationNode[];
 }
 
-/* Fixed zig-zag coordinates (percent of the plotting box) that read as a rising,
-   dipping path — the active node sits high near the center. */
-const POSITIONS: { x: number; y: number }[] = [
-  { x: 13, y: 80 },
-  { x: 30, y: 58 },
-  { x: 44, y: 74 },
-  { x: 58, y: 40 },
-  { x: 78, y: 60 },
-  { x: 90, y: 30 },
-];
-
 export function PathConstellation({
   pathDomain,
   pathTitle,
   percent,
   nodes,
 }: PathConstellationProps) {
-  const plotted = nodes.slice(0, POSITIONS.length).map((node, i) => ({
-    ...node,
-    pos: POSITIONS[i],
-  }));
-
   return (
     <section
       aria-label="Your path"
@@ -72,52 +56,27 @@ export function PathConstellation({
         </div>
       </div>
 
-      {/* Constellation */}
-      <div className="relative mt-4 px-5 pb-4 sm:px-6">
-        <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground/70">
-          Your path <span aria-hidden="true">→</span>
+      <div className="mt-5 flex flex-col gap-2 px-5 pb-5 sm:px-6">
+        <div className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground/70">
+          Next steps
         </div>
-
-        <div className="relative h-52 w-full sm:h-60">
-          {/* Connector lines */}
-          <svg
-            className="absolute inset-0 h-full w-full"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            {plotted.slice(1).map((node, i) => {
-              const prev = plotted[i].pos;
-              const cur = node.pos;
-              return (
-                <line
-                  key={node.key}
-                  x1={prev.x}
-                  y1={prev.y}
-                  x2={cur.x}
-                  y2={cur.y}
-                  stroke="currentColor"
-                  className="text-border"
-                  strokeWidth={0.5}
-                  strokeDasharray="2 2"
-                  vectorEffect="non-scaling-stroke"
-                />
-              );
-            })}
-          </svg>
-
-          {/* Nodes */}
-          {plotted.map((node) => (
-            <ConstellationDot key={node.key} node={node} />
-          ))}
-        </div>
-
-        {/* Legend */}
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border/60 pt-3 font-mono text-[11px] text-muted-foreground">
-          <LegendItem className="bg-muted-foreground/60" label="Mastered" />
-          <LegendItem className="bg-primary" label="In progress" />
-          <LegendItem className="bg-muted-foreground/30" label="Locked" />
-        </div>
+        {nodes.slice(0, 4).map((node, index) => {
+          const isMastered = node.status === "mastered";
+          const isActive = node.status === "active";
+          const content = (
+            <span className="flex items-center gap-3 rounded-md border border-border/70 bg-background/40 px-3 py-3 text-left transition-colors hover:border-primary/50">
+              <span className={cn("grid size-7 shrink-0 place-items-center rounded-full border text-xs", isMastered && "bg-secondary text-muted-foreground", isActive && "border-primary bg-primary text-primary-foreground", !isMastered && !isActive && "text-muted-foreground")}>
+                {isMastered ? <Check aria-hidden="true" /> : index + 1}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-medium text-foreground">{node.title}</span>
+                <span className="block text-xs text-muted-foreground">{isMastered ? "Completed" : isActive ? "Current focus" : "Up next"}</span>
+              </span>
+              {!isMastered && <ArrowRight aria-hidden="true" />}
+            </span>
+          );
+          return isMastered ? <div key={node.key}>{content}</div> : <Link key={node.key} to="/lesson/$lessonId" params={{ lessonId: node.lessonId }} search={{ mode: "curriculum" }}>{content}</Link>;
+        })}
       </div>
     </section>
   );

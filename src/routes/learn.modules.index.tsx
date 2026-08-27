@@ -96,6 +96,8 @@ function ModulesRoute() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => {
             const category = categories.find((c) => c.id === m.categoryId);
+            const actualTopics = topics.filter((topic) => topic.moduleId === m.id);
+            const actualLessons = lessons.filter((lesson) => lesson.moduleId === m.id);
             const moduleProgressPercent = getModuleProgress(m.id, lessonsCompleted);
 
             return (
@@ -131,11 +133,11 @@ function ModulesRoute() {
                     <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
                       <span className="flex items-center gap-1">
                         <FolderTree className="h-3.5 w-3.5 text-primary" />
-                        {m.topicCount} Chapters
+                        {actualTopics.length} Chapters
                       </span>
                       <span className="flex items-center gap-1">
                         <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
-                        {m.lessonCount} Lessons
+                        {actualLessons.length} Lessons
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5 text-amber-400" />~{m.estimatedHours}h

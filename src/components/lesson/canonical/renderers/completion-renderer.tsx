@@ -37,8 +37,21 @@ export function CompletionRenderer({
           )}
         </div>
 
+        <div className="mt-9 grid w-full max-w-2xl gap-3 text-left sm:grid-cols-3">
+          {[
+            ["Review", "Revisit any activity you want to strengthen."],
+            ["Apply", "Use the idea in a small project or code exercise."],
+            ["Continue", "Build momentum with the next lesson in your path."],
+          ].map(([label, description]) => (
+            <div key={label} className="rounded-xl bg-lesson-surface-subtle px-4 py-3">
+              <p className="text-xs font-semibold text-lesson-accent">{label}</p>
+              <p className="mt-1 text-sm leading-5 text-lesson-text-secondary">{description}</p>
+            </div>
+          ))}
+        </div>
+
         {badgeId && (
-          <div className="mt-9 flex w-full max-w-md items-center gap-4 rounded-xl bg-lesson-surface-subtle px-5 py-4 text-left">
+          <div className="mt-5 flex w-full max-w-md items-center gap-4 rounded-xl bg-lesson-surface-subtle px-5 py-4 text-left">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-lesson-accent/10 text-lesson-accent">
               <Award className="h-5 w-5" />
             </div>
