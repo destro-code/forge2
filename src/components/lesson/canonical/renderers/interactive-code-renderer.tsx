@@ -157,6 +157,10 @@ export function InteractiveCodeRenderer({
     state.status === "correct" ||
     Boolean(state.validationResult);
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
+  const isCssExercise = language.toLowerCase() === "css";
+  const cssPreviewDocument = isCssExercise
+    ? `<!doctype html><html><head><meta charset="utf-8"><style>\n${currentCode}\n.preview-shell{font-family:ui-monospace,monospace;background:#111827;color:#f8fafc;min-height:100%;padding:20px;box-sizing:border-box}.preview-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#94a3b8;margin:0 0 14px}.navbar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#1f2937;border:1px solid #475569;border-radius:10px;padding:12px 14px;margin-bottom:18px}.brand{font-weight:700}.nav-links{display:flex;gap:10px;list-style:none;padding:0;margin:0}.nav-links a{color:#cbd5e1;text-decoration:none}.modal-backdrop{display:flex;align-items:center;justify-content:center;min-height:150px;background:rgba(15,23,42,.82);border-radius:10px;padding:16px}.modal{background:#f8fafc;color:#111827;border-radius:8px;padding:16px;max-width:220px;width:100%}.modal h2{font-size:15px;margin:0 0 6px}.modal p{font-size:12px;margin:0}</style></head><body style="margin:0"><main class="preview-shell"><p class="preview-label">Live layout preview</p><nav class="navbar"><span class="brand">Forge</span><ul class="nav-links"><li><a href="#">Learn</a></li><li><a href="#">Build</a></li></ul></nav><section class="modal-backdrop"><div class="modal"><h2>Focused practice</h2><p>Your CSS is shaping this layout.</p></div></section></main></body></html>`
+    : "";
 
   const handleReset = useCallback(() => {
     setConsoleOutput([]);
@@ -283,6 +287,28 @@ export function InteractiveCodeRenderer({
               aria-label="Lesson code editor"
               id={`lesson-code-editor-${activity.id}`}
             />
+
+            {isCssExercise && (
+              <div className="space-y-2 rounded-xl border border-lesson-border bg-lesson-surface-subtle/30 p-3 sm:p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold text-lesson-text-primary">See your CSS</p>
+                    <p className="mt-1 text-[11px] leading-relaxed text-lesson-text-muted">
+                      This preview updates as you edit. Use it to connect each rule to the layout.
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full border border-lesson-border px-2 py-1 text-[10px] font-mono text-lesson-text-muted">
+                    live
+                  </span>
+                </div>
+                <iframe
+                  title="Live CSS layout preview"
+                  srcDoc={cssPreviewDocument}
+                  sandbox=""
+                  className="h-64 w-full rounded-lg border border-lesson-border bg-slate-950 sm:h-72"
+                />
+              </div>
+            )}
 
             {isCorrect && (
               <div className="flex items-center gap-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2.5 text-xs text-emerald-800 dark:text-emerald-300">
