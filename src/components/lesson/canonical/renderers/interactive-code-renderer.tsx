@@ -155,6 +155,14 @@ export function InteractiveCodeRenderer({
     Boolean(state.validationResult);
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
 
+  const handleReset = useCallback(() => {
+    setConsoleOutput([]);
+    setTestResults([]);
+    setActiveTab("code");
+    onRetry?.();
+    onResponse(starterCode);
+  }, [onRetry, onResponse, starterCode]);
+
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
       <ActivityHeader
@@ -254,7 +262,7 @@ export function InteractiveCodeRenderer({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onResponse(starterCode)}
+                onClick={handleReset}
                 disabled={readOnly || isCorrect}
                 className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
               >
