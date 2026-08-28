@@ -13,6 +13,8 @@ import { useProgress } from "@/lib/hooks/use-progress";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, CheckCircle2, Check, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { movementForActivityType, movementVars } from "./lesson-movements";
+import { MovementRail, MovementBadge } from "./movement-rail";
 
 export interface CanonicalLessonPlayerProps {
   lesson: CanonicalLesson;
@@ -202,6 +204,9 @@ export function CanonicalLessonPlayer({
   const progressPercent =
     totalActivities > 0 ? ((currentActivityIndex + 1) / totalActivities) * 100 : 0;
 
+  const movement = movementForActivityType(currentActivity?.type ?? "explanation");
+  const railNodes = activities.map((a) => ({ id: a.id, type: a.type, title: a.title }));
+
   return (
     <div
       className={cn(
@@ -209,87 +214,55 @@ export function CanonicalLessonPlayer({
         className,
       )}
       data-testid="canonical-lesson-player"
+      style={movementVars(movement)}
     >
-      <header className="shrink-0 border-b border-lesson-border bg-lesson-bg px-4 py-3 sm:px-6">
-        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4">
+      <header className="relative z-20 shrink-0 border-b border-lesson-border bg-lesson-bg/80 px-4 py-3 backdrop-blur-sm sm:px-6">
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4">
           <a
             href="/learn"
-            className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-sm font-medium text-lesson-text-secondary transition-colors hover:bg-lesson-surface-subtle hover:text-lesson-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lesson-focus-ring"
+            className="inline-flex min-h-9 items-center gap-1 rounded-lg px-2 text-sm font-medium text-lesson-text-secondary transition-colors hover:bg-lesson-surface-subtle hover:text-lesson-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lesson-focus-ring"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Back to learning</span>
+            <span className="hidden sm:inline">Leave</span>
           </a>
 
-          <div className="min-w-0 flex-1 text-center sm:px-8">
-            {lesson.order != null && (
-              <p className="truncate text-xs font-medium text-lesson-text-muted">
-                Lesson {lesson.order}
-              </p>
-            )}
-            <h1 className="truncate text-sm font-semibold sm:text-base">{lesson.title}</h1>
-          </div>
+          <MovementBadge movement={movement} />
 
-          <div className="shrink-0 text-right">
-            <p className="text-xs font-medium text-lesson-text-muted">Progress</p>
-            <p className="font-mono text-xs font-semibold text-lesson-text-secondary">
-              {currentActivityIndex + 1} / {totalActivities}
+          <div className="hidden min-w-0 flex-1 flex-col items-end text-right sm:flex">
+            <p className="truncate text-xs font-medium text-lesson-text-muted">{lesson.title}</p>
+            <p className="font-mono text-[11px] font-semibold text-lesson-text-secondary">
+              {currentActivityIndex + 1}
+              <span className="text-lesson-text-muted"> / {totalActivities}</span>
             </p>
           </div>
         </div>
 
-        <div className="mx-auto mt-3 max-w-[1400px]">
-          <div className="flex items-center justify-between gap-3 text-[11px] font-medium text-lesson-text-muted sm:hidden">
-            <span>Activity {currentActivityIndex + 1}</span>
-            <span>{Math.round(progressPercent)}%</span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-lesson-surface-subtle">
-            <div
-              className="h-full rounded-full bg-lesson-accent transition-[width] duration-300"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <div
-            className="mt-2 hidden items-center gap-1 md:flex"
-            role="tablist"
-            aria-label="Lesson activities"
-          >
-            {activities.map((activity, index) => {
-              const current = index === currentActivityIndex;
-              const done = session.completedActivityIds.includes(activity.id);
-              return (
-                <button
-                  key={activity.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={current}
-                  aria-label={`Activity ${index + 1} of ${totalActivities}${
-                    activity.title ? `: ${activity.title}` : ""
-                  }${done ? " (completed)" : ""}`}
-                  onClick={() => goToActivity(index)}
-                  className="group flex min-h-7 flex-1 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lesson-focus-ring"
-                >
-                  <span
-                    className={cn(
-                      "h-1.5 w-full rounded-full transition-colors",
-                      current
-                        ? "bg-lesson-accent"
-                        : done
-                          ? "bg-emerald-500/80"
-                          : "bg-lesson-surface-subtle group-hover:bg-lesson-text-muted/30",
-                    )}
-                  />
-                </button>
-              );
-            })}
-          </div>
+        <div className="mx-auto mt-3 max-w-[1200px]">
+          <MovementRail
+            nodes={railNodes}
+            currentIndex={currentActivityIndex}
+            completedIds={session.completedActivityIds}
+            onSelect={goToActivity}
+          />
         </div>
       </header>
 
       <main
         ref={scrollContainerRef}
-        className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pt-6 pb-36 sm:px-6 sm:pt-6 sm:pb-40 md:pt-8 md:pb-40 lg:px-8"
+        className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pt-8 pb-36 sm:px-6 sm:pt-10 sm:pb-40 md:pb-40 lg:px-8"
       >
-        <div className="mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start">
+        {/* Ambient movement backdrop — a meaningful signal of the current
+            movement's energy, not decoration. Shifts hue and intensity as the
+            learner moves between orienting, forging, proving, reflecting. */}
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[420px] transition-opacity duration-700"
+          style={{
+            background:
+              "radial-gradient(900px 380px at 50% -8%, var(--m-glow), transparent 70%)",
+          }}
+        />
+        <div className="relative z-10 mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start">
           {currentActivity ? (
             <CanonicalActivityView
               key={currentActivity.id}
@@ -334,9 +307,10 @@ export function CanonicalLessonPlayer({
               <Button
                 onClick={handleActivityContinue}
                 disabled={!currentActivity}
-                className="min-h-11 gap-2 px-6 text-sm font-semibold rounded-md bg-lesson-accent text-lesson-accent-foreground hover:bg-lesson-accent/90 focus-visible:ring-2 focus-visible:ring-lesson-focus-ring shadow-xs"
+                style={{ backgroundColor: "var(--m-accent)", color: "var(--lesson-bg)" }}
+                className="min-h-11 gap-2 rounded-lg px-6 text-sm font-semibold shadow-[0_6px_20px_var(--m-glow)] transition-transform hover:-translate-y-px hover:brightness-105 focus-visible:ring-2 focus-visible:ring-[var(--m-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-lesson-surface"
               >
-                <span>{isLastActivity ? "Complete Lesson" : "Continue"}</span>
+                <span>{isLastActivity ? "Set the skill" : "Continue"}</span>
                 {isLastActivity ? (
                   <CheckCircle2 className="h-4 w-4 shrink-0" />
                 ) : (
@@ -346,7 +320,7 @@ export function CanonicalLessonPlayer({
             ) : isIncorrect ? (
               <Button
                 onClick={handleRetry}
-                className="min-h-11 gap-2 px-6 text-sm font-semibold rounded-md bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-2 focus-visible:ring-rose-500 shadow-xs"
+                className="min-h-11 gap-2 px-6 text-sm font-semibold rounded-lg bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-2 focus-visible:ring-rose-500 shadow-xs"
               >
                 <RotateCcw className="h-4 w-4 shrink-0" />
                 <span>Try Again</span>
@@ -355,10 +329,11 @@ export function CanonicalLessonPlayer({
               <Button
                 onClick={handleSubmit}
                 disabled={!canSubmit || isSubmitted}
-                className="min-h-11 gap-2 px-6 text-sm font-semibold rounded-md bg-lesson-accent text-lesson-accent-foreground hover:bg-lesson-accent/90 disabled:opacity-45 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-lesson-focus-ring shadow-xs"
+                style={{ backgroundColor: "var(--m-accent)", color: "var(--lesson-bg)" }}
+                className="min-h-11 gap-2 rounded-lg px-6 text-sm font-semibold shadow-[0_6px_20px_var(--m-glow)] transition-transform hover:-translate-y-px hover:brightness-105 disabled:opacity-40 disabled:shadow-none disabled:hover:translate-y-0 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--m-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-lesson-surface"
               >
                 <Check className="h-4 w-4 shrink-0" />
-                <span>{isSubmitted ? "Evaluating…" : "Check Answer"}</span>
+                <span>{isSubmitted ? "Evaluating…" : "Check answer"}</span>
               </Button>
             )}
           </div>
