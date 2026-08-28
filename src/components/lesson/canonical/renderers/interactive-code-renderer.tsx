@@ -228,6 +228,19 @@ export function InteractiveCodeRenderer({
                   {isRunning ? "Running…" : "Run"}
                 </Button>
                 <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setActiveTab("results");
+                    runEvaluation(true);
+                  }}
+                  disabled={readOnly || isCorrect || isRunning || !currentCode}
+                  className="min-h-9 gap-1.5 text-xs"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Check
+                </Button>
+                <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onResponse(starterCode)}
@@ -292,7 +305,22 @@ export function InteractiveCodeRenderer({
               </Button>
             </div>
 
-            {hasExecuted ? (
+            <div>
+              <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
+                <Terminal className="h-3.5 w-3.5" /> Console
+              </div>
+              {consoleOutput.length > 0 ? (
+                <pre className="max-h-48 overflow-auto rounded-xl border border-lesson-border bg-zinc-950 p-4 font-mono text-xs leading-6 text-zinc-100">
+                  {consoleOutput.join("\n")}
+                </pre>
+              ) : (
+                <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-lesson-border px-6 text-center text-sm text-lesson-text-muted">
+                  Run the code to see console output.
+                </div>
+              )}
+            </div>
+
+            {hasExecuted && (testResults.length > 0 || runtimeResult || !isConsoleOnly) ? (
               <>
                 <div
                   className={cn(
@@ -367,27 +395,8 @@ export function InteractiveCodeRenderer({
                     </div>
                   )}
 
-                {consoleOutput.length > 0 && (
-                  <div>
-                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
-                      <Terminal className="h-3.5 w-3.5" /> Console
-                    </div>
-                    <pre className="max-h-40 overflow-auto rounded-xl bg-zinc-950 p-4 font-mono text-xs leading-6 text-zinc-100 border border-zinc-800">
-                      {consoleOutput.join("\n")}
-                    </pre>
-                  </div>
-                )}
               </>
-            ) : (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
-                  <Terminal className="h-3.5 w-3.5" /> Console
-                </div>
-                <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-lesson-border px-6 text-center text-sm text-lesson-text-muted">
-                  Run the code to see console output.
-                </div>
-              </div>
-            )}
+            ) : null}
           </div>
         </section>
       </div>
