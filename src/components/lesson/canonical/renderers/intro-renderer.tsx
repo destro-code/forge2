@@ -1,72 +1,121 @@
 import type { IntroActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
 import { ActivityContainer } from "../primitives/activity-container";
-import { ActivityHeader } from "../primitives/activity-header";
-import { ActivityActions } from "../primitives/activity-actions";
-import { Target, Compass } from "lucide-react";
+import { MovementScene, MovementEyebrow } from "../primitives/movement-scene";
+import { ArrowUpRight } from "lucide-react";
 
-export function IntroRenderer({
-  activity,
-  state,
-  onContinue,
-}: ActivityRendererProps<IntroActivity>) {
+/**
+ * IntroRenderer — the trailhead of the journey (Orient).
+ *
+ * Establishes context and creates curiosity: a large movement identity, the
+ * hook as an emotional lead, an optional "scene" brief, and goals framed as
+ * forward-looking outcomes the learner is about to earn. Goals use accent
+ * glyph markers rather than numbers — they are parallel outcomes, not a
+ * sequence.
+ */
+export function IntroRenderer({ activity }: ActivityRendererProps<IntroActivity>) {
   const { title, hook, context, goals } = activity.content;
+
+  const contextBlocks = context
+    ? context
+        .split("\n\n")
+        .map((b) => b.trim())
+        .filter(Boolean)
+    : [];
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="immersive">
-      <div className="rounded-2xl border border-lesson-border bg-lesson-surface shadow-xs">
-        <ActivityHeader activity={activity} />
+      <MovementScene className="mx-auto w-full max-w-3xl">
+        <div className="flex flex-col gap-9 py-2 sm:py-6">
+          {/* Opening identity */}
+          <MovementEyebrow type={activity.type} />
 
-        <div className="px-6 py-8 sm:px-10 sm:py-12 lg:px-14">
-          <div className="max-w-3xl space-y-5">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold text-lesson-accent">
-              <Compass className="h-4 w-4" />
-              <span>Begin this lesson</span>
-            </div>
-            <h2 className="text-3xl font-bold leading-tight tracking-tight text-lesson-text-primary sm:text-4xl lg:text-5xl">
+          {/* Title + hook */}
+          <div className="space-y-5">
+            <h1 className="text-3xl font-bold leading-[1.08] tracking-tight text-balance text-lesson-text-primary sm:text-4xl lg:text-[2.75rem]">
               {title}
-            </h2>
-            <p className="max-w-2xl text-base leading-7 text-lesson-text-secondary sm:text-lg sm:leading-8">
+            </h1>
+            <p className="max-w-2xl text-lg leading-relaxed text-pretty text-lesson-text-secondary">
               {hook}
             </p>
           </div>
 
-          {context && (
-            <div className="mt-8 max-w-3xl rounded-xl bg-lesson-surface-subtle px-5 py-4 text-sm leading-6 text-lesson-text-secondary">
-              {context}
-            </div>
+          {/* The scene — orienting context */}
+          {contextBlocks.length > 0 && (
+            <section
+              aria-label="Lesson context"
+              className="rounded-2xl border border-lesson-border bg-lesson-surface/60 p-5 sm:p-6"
+            >
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-lesson-text-muted">
+                Set the scene
+              </p>
+              <div className="space-y-4">
+                {contextBlocks.map((block, i) => {
+                  const lines = block.split("\n").map((l) => l.trim());
+                  const bullets = lines.filter((l) => l.startsWith("•"));
+                  // A block written as bullet points renders as a spatial list;
+                  // anything else stays as calm prose.
+                  if (bullets.length > 0 && bullets.length === lines.filter(Boolean).length) {
+                    return (
+                      <ul key={i} className="space-y-2.5">
+                        {bullets.map((b, j) => (
+                          <li key={j} className="flex items-start gap-3">
+                            <span
+                              aria-hidden
+                              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: "var(--m-accent)" }}
+                            />
+                            <span className="text-[15px] leading-relaxed text-lesson-text-secondary">
+                              {b.replace(/^•\s*/, "")}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    );
+                  }
+                  return (
+                    <p key={i} className="text-[15px] leading-relaxed text-lesson-text-secondary">
+                      {block}
+                    </p>
+                  );
+                })}
+              </div>
+            </section>
           )}
 
+          {/* Forward-looking outcomes — anticipation, not a checklist */}
           {goals && goals.length > 0 && (
-            <div className="mt-10 max-w-3xl">
-              <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-lesson-text-primary">
-                <Target className="h-4 w-4 text-lesson-accent" />
-                <span>By the end of this lesson</span>
-              </div>
-              <ul className="space-y-2">
+            <div>
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-lesson-text-muted">
+                By the end, you&apos;ll be able to
+              </p>
+              <ul className="space-y-2.5">
                 {goals.map((goal, idx) => (
                   <li
                     key={idx}
-                    className="flex items-start gap-3 rounded-lg px-3 py-3 text-sm leading-6 text-lesson-text-secondary"
+                    className="flex items-start gap-3 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both duration-500"
+                    style={{ animationDelay: `${150 + idx * 90}ms` }}
                   >
-                    <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-lesson-border text-[10px] font-semibold text-lesson-text-muted">
-                      {idx + 1}
+                    <span
+                      aria-hidden
+                      className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md"
+                      style={{
+                        backgroundColor: "var(--m-accent-soft)",
+                        color: "var(--m-accent)",
+                      }}
+                    >
+                      <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.5} />
                     </span>
-                    <span>{goal}</span>
+                    <span className="text-[15px] leading-relaxed text-lesson-text-primary">
+                      {goal}
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
         </div>
-
-        <ActivityActions
-          status={state.status}
-          isInteractive={false}
-          onContinue={onContinue}
-          continueLabel="Start learning"
-        />
-      </div>
+      </MovementScene>
     </ActivityContainer>
   );
 }
