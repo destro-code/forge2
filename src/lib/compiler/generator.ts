@@ -210,7 +210,7 @@ export function generateOutput(
         if (stackEl) stackEl.textContent = stack || '';
 
         const fullLog = type + (file ? ' [' + file + ']' : '') + (line ? ' Line ' + line + ':' + col : '') + ': ' + message;
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: fullLog }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: fullLog, workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'error', msg: fullLog }, '*');
         window.parent.postMessage({
           type: 'PLAYGROUND_BUILD_ERROR',
@@ -502,7 +502,7 @@ export function generateOutput(
               htmlToRender = bodyMatch ? bodyMatch[1] : htmlFile.code;
             }
             container.innerHTML = htmlToRender;
-          } else if (container && container.children.length === 0) {
+          } else if (container && container.children.length === 0 && FILES.some(function(f) { return f.name.endsWith('.html') || f.language === 'html'; })) {
             container.innerHTML = '<div style="padding: 14px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; font-family: system-ui, sans-serif;">' +
               '<h3 id="title" style="margin: 0 0 10px 0; font-size: 14px; color: #58a6ff;">Interactive DOM Sandbox</h3>' +
               '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">' +

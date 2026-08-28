@@ -42,6 +42,8 @@ export function InteractiveCodeRenderer({
     (activity as any).description ||
     "";
   const currentCode = typeof state.response === "string" ? state.response : starterCode;
+  const outputMode = language === "javascript" || language === "typescript" ? "console" : "dom-preview";
+  const isConsoleOnly = outputMode === "console";
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [testResults, setTestResults] = useState<Array<{ description: string; passed: boolean; error?: string }>>([]);
@@ -237,15 +239,23 @@ export function InteractiveCodeRenderer({
               </div>
             </div>
 
-  <div className="border-b border-lesson-border bg-lesson-surface-subtle/20 p-3">
-  <iframe
-  ref={iframeRef}
-  title={CANONICAL_IFRAME_TITLE}
-  sandbox="allow-scripts allow-modals"
-  className="h-48 w-full rounded-md border border-lesson-border bg-background"
-  aria-label="Sandboxed activity preview"
-  />
+  <div className={cn(
+    "border-b border-lesson-border bg-lesson-surface-subtle/20 p-3",
+    isConsoleOnly && "sr-only",
+  )}>
+    <iframe
+      ref={iframeRef}
+      title={CANONICAL_IFRAME_TITLE}
+      sandbox="allow-scripts allow-modals"
+      className="h-48 w-full rounded-md border border-lesson-border bg-background"
+      aria-label={isConsoleOnly ? "Secure JavaScript execution sandbox" : "Sandboxed activity preview"}
+    />
   </div>
+  {isConsoleOnly && (
+    <div className="border-b border-lesson-border bg-lesson-surface-subtle/20 px-3 py-2 text-xs text-lesson-text-muted">
+      JavaScript runs in a secure sandbox. Use Run to view console output.
+    </div>
+  )}
   <LessonCodeEditor
   value={currentCode}
               language={language || "javascript"}
@@ -369,8 +379,13 @@ export function InteractiveCodeRenderer({
                 )}
               </>
             ) : (
-              <div className="flex min-h-64 items-center justify-center rounded-xl border border-dashed border-lesson-border px-6 text-center text-sm text-lesson-text-muted">
-                Run the code to see results.
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
+                  <Terminal className="h-3.5 w-3.5" /> Console
+                </div>
+                <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-lesson-border px-6 text-center text-sm text-lesson-text-muted">
+                  Run the code to see console output.
+                </div>
               </div>
             )}
           </div>
