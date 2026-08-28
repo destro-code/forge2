@@ -520,7 +520,15 @@ export function generateOutput(
             return f.name === DEFAULT_ENTRY_NAME || f.name === 'App.js' || f.name === 'main.js' || f.name === 'index.js' || f.name === 'script.js' || f.name.endsWith('.js') || f.name.endsWith('.ts');
           });
           if (jsEntry && !jsEntry.name.endsWith('.json') && !jsEntry.name.endsWith('.html')) {
-            requireModule('./' + jsEntry.name, 'root');
+            if (RUNTIME === 'vanilla-dom' && jsEntry.language === 'javascript') {
+              // Execute canonical JavaScript as a classic script so function declarations
+              // are visible to the iframe validation runner in the same global realm.
+              const scriptEl = document.createElement('script');
+              scriptEl.textContent = jsEntry.code + '\n//# sourceURL=' + jsEntry.name;
+              document.head.appendChild(scriptEl);
+            } else {
+              requireModule('./' + jsEntry.name, 'root');
+            }
           }
 
           if (!window.__hasInitError) {

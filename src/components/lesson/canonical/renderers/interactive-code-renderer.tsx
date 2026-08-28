@@ -61,7 +61,7 @@ export function InteractiveCodeRenderer({
     const revision = ++revisionRef.current;
     try {
       const report = compileCanonicalRuntime(activity, currentCode, revision);
-      const request = createCanonicalValidationRequest(activity, revision);
+      const request = createCanonicalValidationRequest(activity, revision, currentCode);
       pendingRequestRef.current = request.requestId;
       const host = new SandboxRuntimeHost({ iframe, workspaceRevision: revision, onMessage: (event) => {
         if (isPlaygroundReady(event.data)) {
