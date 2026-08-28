@@ -34,8 +34,8 @@ const SLOT_META: Record<
  * the preview frame. Structure alone looks raw; add CSS and it takes shape;
  * add JS and it responds. Understanding by manipulation, not by paragraph.
  */
-export function LayerStack({ data }: { data: LayerStackData }) {
-  const layers = data.layers;
+export function LayerStack({ config }: { config: LayerStackData }) {
+  const layers = config.layers;
   const [enabled, setEnabled] = useState<Record<LayerSlot, boolean>>({
     html: true,
     css: false,
@@ -185,7 +185,7 @@ export function LayerStack({ data }: { data: LayerStackData }) {
             ? "All three layers working together — a real page."
             : enabled.html && !enabled.css
               ? "Structure only. HTML gives meaning, not looks."
-              : data.previewLabel ?? "Toggle layers to see each file's job."}
+              : config.previewLabel ?? "Toggle layers to see each file's job."}
         </p>
       </div>
     </div>

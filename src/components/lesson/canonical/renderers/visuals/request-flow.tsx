@@ -23,8 +23,8 @@ export interface RequestFlowData {
  * boundary is doing the work at each stage. Prediction-friendly: they can
  * guess what happens next before revealing it.
  */
-export function RequestFlow({ data }: { data: RequestFlowData }) {
-  const steps = data.steps;
+export function RequestFlow({ config }: { config: RequestFlowData }) {
+  const steps = config.steps;
   const [step, setStep] = useState(0);
   const current = steps[step];
   const atEnd = step === steps.length - 1;
