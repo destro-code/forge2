@@ -339,7 +339,9 @@ export function useLessonSession(lesson: CanonicalLesson, options: UseLessonSess
     (activityId?: string) => {
       const targetId = getTargetActivityId(activityId);
       const current = sessionRef.current;
-      const next = completeSessionActivity(current, targetId, Date.now(), lesson);
+      // Direct completion is retained for legacy/non-validation activities and test harnesses.
+      // Validated activities complete through resolveActivityEvaluation after a passing check.
+      const next = completeSessionActivity(current, targetId, Date.now());
       updateSessionAndTokens(next, evidenceTokensRef.current);
     },
     [getTargetActivityId, updateSessionAndTokens],
