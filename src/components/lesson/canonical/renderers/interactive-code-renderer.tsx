@@ -56,7 +56,7 @@ export function InteractiveCodeRenderer({
   const resolvedHints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (resolvedHints?.length || 0) - state.hintsRevealed;
 
-  const runEvaluation = useCallback((runChecks = true) => {
+  const runEvaluation = useCallback(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
     setIsRunning(true);
@@ -66,8 +66,8 @@ export function InteractiveCodeRenderer({
     const revision = ++revisionRef.current;
     try {
       const report = compileCanonicalRuntime(activity, currentCode, revision);
-      const request = runChecks ? createCanonicalValidationRequest(activity, revision, currentCode) : null;
-      pendingRequestRef.current = request?.requestId ?? null;
+      const request = createCanonicalValidationRequest(activity, revision, currentCode);
+      pendingRequestRef.current = request.requestId;
       const host = new SandboxRuntimeHost({ iframe, workspaceRevision: revision, onMessage: (event) => {
         if (isPlaygroundConsoleMessage(event.data)) {
           setConsoleOutput((previous) => [...previous, `[${event.data.level}] ${event.data.message}`].slice(-50));
@@ -215,24 +215,11 @@ export function InteractiveCodeRenderer({
               </div>
               <div className="flex items-center gap-2">
                 <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => {
-                    setActiveTab("results");
-                    runEvaluation(false);
-                  }}
-                  disabled={readOnly || isCorrect || isRunning || !currentCode}
-                  className="min-h-9 gap-1.5 text-xs"
-                >
-                  <Terminal className="h-3.5 w-3.5" />
-                  {isRunning ? "Running…" : "Run"}
-                </Button>
-                <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
                     setActiveTab("results");
-                    runEvaluation(true);
+                    runEvaluation();
                   }}
                   disabled={readOnly || isCorrect || isRunning || !currentCode}
                   className="min-h-9 gap-1.5 text-xs"
@@ -266,7 +253,7 @@ export function InteractiveCodeRenderer({
   </div>
   {isConsoleOnly && (
     <div className="border-b border-lesson-border bg-lesson-surface-subtle/20 px-3 py-2 text-xs text-lesson-text-muted">
-      JavaScript runs in a secure sandbox. Use Run to view console output.
+      JavaScript runs in a secure sandbox. Use Check to execute and view console output.
     </div>
   )}
   <LessonCodeEditor
