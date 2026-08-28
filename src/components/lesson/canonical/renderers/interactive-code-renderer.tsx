@@ -1,4 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { compileCanonicalRuntime, createCanonicalValidationRequest, mapCanonicalValidation, CANONICAL_IFRAME_TITLE } from "@/lib/compiler/canonical-runtime-service";
+import { SandboxRuntimeHost } from "@/lib/compiler/sandbox-runtime-host";
+import { isPlaygroundReady, isPlaygroundBuildError, isPlaygroundValidateResponse } from "@/lib/types/validation-messages";
+import type { ActivityValidationResult } from "../types";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
 import { parseCssRules } from "../validation";
@@ -30,7 +34,7 @@ export function InteractiveCodeRenderer({
   readOnly,
 }: ActivityRendererProps<InteractiveCodeActivity, string>) {
   const { starterCode, language, testCases } = activity.content;
-  const taskTitle = activity.content.title || activity.title || "Interactive Code Challenge";
+  const taskTitle = activity.content.title || "Interactive Code Challenge";
   const taskInstructions =
     activity.content.instructions ||
     activity.content.prompt ||
@@ -40,118 +44,63 @@ export function InteractiveCodeRenderer({
   const currentCode = typeof state.response === "string" ? state.response : starterCode;
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [testResults, setTestResults] = useState<
-    Array<{ description: string; passed: boolean; error?: string }>
-  >([]);
+  const [testResults, setTestResults] = useState<Array<{ description: string; passed: boolean; error?: string }>>([]);
+  const [runtimeResult, setRuntimeResult] = useState<ActivityValidationResult | undefined>();
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const revisionRef = useRef(0);
+  const pendingRequestRef = useRef<string | null>(null);
   const isCorrect = state.status === "correct" || state.status === "completed";
   const resolvedHints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (resolvedHints?.length || 0) - state.hintsRevealed;
 
   const runEvaluation = useCallback(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
     setIsRunning(true);
-    const logs: string[] = [];
-    let testsPassed = true;
-    const results: Array<{ description: string; passed: boolean; error?: string }> = [];
-    const customConsole = {
-      log: (...args: any[]) => logs.push(args.map(String).join(" ")),
-      error: (...args: any[]) => logs.push("[ERROR] " + args.map(String).join(" ")),
-      warn: (...args: any[]) => logs.push("[WARN] " + args.map(String).join(" ")),
-      info: (...args: any[]) => logs.push("[INFO] " + args.map(String).join(" ")),
-    };
+    const revision = ++revisionRef.current;
     try {
-      if (language === "html") {
-        if (typeof DOMParser !== "undefined") {
-          const doc = new DOMParser().parseFromString(currentCode, "text/html");
-          for (const test of testCases || []) {
-            try {
-              if (test.assertion) {
-                const testFn = new Function(
-                  "doc",
-                  "document",
-                  "code",
-                  `return (${test.assertion});`,
-                );
-                const passed = Boolean(testFn(doc, doc, currentCode));
-                results.push({ description: test.description, passed });
-                if (!passed) testsPassed = false;
-              } else results.push({ description: test.description, passed: true });
-            } catch (err: any) {
-              results.push({ description: test.description, passed: false, error: err.message });
-              testsPassed = false;
-            }
-          }
+      const report = compileCanonicalRuntime(activity, currentCode, revision);
+      iframe.srcdoc = report.outputHtml;
+      const request = createCanonicalValidationRequest(activity, revision);
+      pendingRequestRef.current = request.requestId;
+      const host = new SandboxRuntimeHost({ iframe, workspaceRevision: revision, onMessage: (event) => {
+        if (isPlaygroundReady(event.data)) {
+          iframe.contentWindow?.postMessage(request, "*");
         }
-      } else if (language === "javascript" || language === "typescript") {
-        new Function("console", currentCode)(customConsole);
-        for (const test of testCases || []) {
-          try {
-            if (test.assertion) {
-              const testFn = new Function("console", `${currentCode}\nreturn (${test.assertion});`);
-              const passed = Boolean(testFn(customConsole));
-              results.push({ description: test.description, passed });
-              if (!passed) testsPassed = false;
-            } else results.push({ description: test.description, passed: true });
-          } catch (err: any) {
-            results.push({ description: test.description, passed: false, error: err.message });
-            testsPassed = false;
-          }
+        if (isPlaygroundValidateResponse(event.data) && event.data.requestId === pendingRequestRef.current) {
+          const result = mapCanonicalValidation(event.data.report);
+          setRuntimeResult(result);
+          setTestResults(event.data.report.results.map((item) => ({ description: item.description, passed: item.status === "passed", error: item.errorMessage })));
+          setActiveTab(result.isValid ? "code" : "results");
+          setIsRunning(false);
+          host.dispose();
         }
-      } else if (language === "css") {
-        const rules = parseCssRules(currentCode);
-        for (const test of testCases || []) {
-          try {
-            if (test.assertion) {
-              const passed = Boolean(
-                new Function("rules", "code", `return (${test.assertion});`)(rules, currentCode),
-              );
-              results.push({ description: test.description, passed });
-              if (!passed) testsPassed = false;
-            } else results.push({ description: test.description, passed: true });
-          } catch (err: any) {
-            results.push({ description: test.description, passed: false, error: err.message });
-            testsPassed = false;
-          }
+        if (isPlaygroundBuildError(event.data)) {
+          setConsoleOutput([event.data.message]);
+          setActiveTab("results");
+          setIsRunning(false);
+          host.dispose();
         }
-      }
-      setConsoleOutput(logs);
-      setTestResults(results);
-      if (!testsPassed) {
-        setActiveTab("results");
-      } else {
-        setActiveTab("code");
-      }
-    } catch (err: any) {
-      setConsoleOutput([...logs, `Runtime Error: ${err.message}`]);
-      setTestResults([]);
-      testsPassed = false;
+      }});
+      host.mount();
+    } catch (error) {
+      setConsoleOutput([error instanceof Error ? error.message : "Runtime error"]);
       setActiveTab("results");
-    } finally {
       setIsRunning(false);
     }
-  }, [currentCode, language, testCases]);
+  }, [activity, currentCode]);
 
   useEffect(() => {
-    if (
-      state.status === "evaluating" ||
-      state.status === "correct" ||
-      state.status === "incorrect" ||
-      state.status === "failed" ||
-      state.status === "passed" ||
-      state.status === "completed"
-    ) {
-      runEvaluation();
-    } else if (state.status === "idle") {
-      setActiveTab("code");
-    }
+    if (state.status === "submitted" || state.status === "correct" || state.status === "incorrect" || state.status === "completed") runEvaluation();
+    else if (state.status === "idle") setActiveTab("code");
   }, [state.status, state.validationResult, runEvaluation]);
 
   const hasExecuted =
     consoleOutput.length > 0 ||
     testResults.length > 0 ||
     state.status === "incorrect" ||
-    state.status === "failed" ||
-    state.status === "correct" ||
+      state.status === "correct" ||
     Boolean(state.validationResult);
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
 
@@ -262,8 +211,17 @@ export function InteractiveCodeRenderer({
               </Button>
             </div>
 
-            <LessonCodeEditor
-              value={currentCode}
+  <div className="border-b border-lesson-border bg-lesson-surface-subtle/20 p-3">
+  <iframe
+  ref={iframeRef}
+  title={CANONICAL_IFRAME_TITLE}
+  sandbox="allow-scripts allow-modals"
+  className="h-48 w-full rounded-md border border-lesson-border bg-background"
+  aria-label="Sandboxed activity preview"
+  />
+  </div>
+  <LessonCodeEditor
+  value={currentCode}
               language={language || "javascript"}
               onChange={(value) => onResponse(value || "")}
               readOnly={readOnly || isCorrect}
