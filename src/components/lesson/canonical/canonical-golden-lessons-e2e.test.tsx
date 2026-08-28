@@ -64,7 +64,8 @@ function advanceActivity(container: HTMLElement) {
       b.textContent?.includes("Start Learning") ||
       b.textContent?.includes("Continue") ||
       b.textContent?.includes("Complete Lesson") ||
-      b.textContent?.includes("Proceed to Completion"),
+      b.textContent?.includes("Proceed to Completion") ||
+      b.textContent?.includes("Set the skill"),
   );
   if (!btn) {
     const allLabels = buttons.map((b) => b.textContent?.trim()).join(" | ");
@@ -728,9 +729,9 @@ function isAdult(age) {
       // Header should show 1 / 7
       expect(player.container.textContent).toContain("1 / 7");
 
-      // Click activity 4 indicator in progress ribbon
+      // Click activity 4 indicator in the movement rail (one tab per activity)
       const ribbonButtons = Array.from(
-        player.container.querySelectorAll("header button[aria-label^='Activity ']"),
+        player.container.querySelectorAll("header button[role='tab']"),
       );
       expect(ribbonButtons.length).toBe(7);
 
@@ -752,7 +753,7 @@ function isAdult(age) {
 
       // Jump to activity 2 (act-025-debug-html)
       const ribbonButtons = Array.from(
-        player.container.querySelectorAll("header button[aria-label^='Activity ']"),
+        player.container.querySelectorAll("header button[role='tab']"),
       );
       act(() => {
         (ribbonButtons[1] as HTMLButtonElement).click();
