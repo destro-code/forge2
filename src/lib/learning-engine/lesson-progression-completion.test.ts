@@ -321,8 +321,11 @@ describe("Phase 4.2: Authoritative Lesson Progression & Completion Engine", () =
         "act-5-summary",
       ]);
       expect(check.reasons).toBeDefined();
-      expect(check.reasons!.length).toBe(3);
+      expect(check.reasons!.length).toBe(4);
       expect(check.reasons![0]).toContain("act-2-mcq");
+      expect(check.reasons).toContain(
+        "Minimum score of 80% cannot be verified without scored activities",
+      );
 
       // Attempting to complete throws error
       expect(() => completeLessonSession(session, sampleLesson)).toThrow(
