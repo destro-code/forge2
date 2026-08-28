@@ -195,6 +195,16 @@ export interface VisualActivityContent {
   visualType: "diagram" | "flowchart" | "comparison" | "hierarchy" | "custom";
   description?: string;
   visualData?: Record<string, unknown>;
+  /**
+   * Optional interactive model. When present, the visual renderer mounts the
+   * registered interactive component (see renderers/visuals) so the learner
+   * can manipulate the concept directly instead of reading a static figure.
+   */
+  interactive?: {
+    kind: string;
+    config?: Record<string, unknown>;
+    caption?: string;
+  };
 }
 
 export interface VisualActivity {
