@@ -5,6 +5,67 @@ import type { SessionPersistencePort } from "./persistence-port";
  * Storage key prefix for lesson sessions.
  */
 const STORAGE_PREFIX = "forge:session:";
+const SESSION_STATUSES = new Set(["not-started", "in-progress", "completed"]);
+const ACTIVITY_STATUSES = new Set([
+  "idle",
+  "engaged",
+  "evaluating",
+  "passed",
+  "failed",
+  "retrying",
+  "completed",
+]);
+
+function isFiniteTimestamp(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isValidPersistedSession(value: unknown): value is LessonSessionState {
+  if (!value || typeof value !== "object") return false;
+  const session = value as Partial<LessonSessionState>;
+  if (
+    typeof session.sessionId !== "string" ||
+    session.sessionId.length === 0 ||
+    typeof session.lessonId !== "string" ||
+    session.lessonId.length === 0 ||
+    !SESSION_STATUSES.has(session.status ?? "") ||
+    !Array.isArray(session.activityOrder) ||
+    session.activityOrder.length === 0 ||
+    !Array.isArray(session.completedActivityIds) ||
+    !session.activities ||
+    typeof session.activities !== "object" ||
+    typeof session.currentActivityId !== "string" ||
+    !Number.isInteger(session.currentActivityIndex) ||
+    session.currentActivityIndex < 0 ||
+    session.currentActivityIndex >= session.activityOrder.length ||
+    session.totalActivities !== session.activityOrder.length ||
+    !isFiniteTimestamp(session.startedAt) ||
+    !isFiniteTimestamp(session.lastActiveAt)
+  ) {
+    return false;
+  }
+
+  const order = session.activityOrder;
+  if (new Set(order).size !== order.length || !order.includes(session.currentActivityId)) return false;
+  if (session.status === "completed" && !isFiniteTimestamp(session.completedAt)) return false;
+  if (session.completedActivityIds.some((id) => !order.includes(id))) return false;
+
+  const activityMap = session.activities as Record<string, Partial<LessonSessionState["activities"][string]>>;
+  if (Object.keys(activityMap).length !== order.length) return false;
+  return order.every((activityId) => {
+    const activity = activityMap[activityId];
+    return Boolean(
+      activity &&
+        activity.activityId === activityId &&
+        ACTIVITY_STATUSES.has(activity.status ?? "") &&
+        Number.isInteger(activity.attempts) &&
+        activity.attempts >= 0 &&
+        Number.isInteger(activity.hintsRevealed) &&
+        activity.hintsRevealed >= 0 &&
+        isFiniteTimestamp(activity.startedAt),
+    );
+  });
+}
 
 /**
  * Browser LocalStorage Persistence Adapter for the Learning Experience Engine.
@@ -85,8 +146,8 @@ export class LocalStorageSessionPersistenceAdapter implements SessionPersistence
       const raw = window.localStorage.getItem(key);
       if (!raw) return null;
 
-      const parsed = JSON.parse(raw) as LessonSessionState;
-      if (!parsed || typeof parsed !== "object" || !parsed.sessionId || !parsed.lessonId) {
+      const parsed: unknown = JSON.parse(raw);
+      if (!isValidPersistedSession(parsed) || parsed.lessonId !== lessonId) {
         return null;
       }
 
@@ -143,8 +204,8 @@ export class LocalStorageSessionPersistenceAdapter implements SessionPersistence
           const raw = window.localStorage.getItem(key);
           if (raw) {
             try {
-              const parsed = JSON.parse(raw) as LessonSessionState;
-              if (parsed && parsed.sessionId && parsed.lessonId) {
+              const parsed: unknown = JSON.parse(raw);
+              if (isValidPersistedSession(parsed)) {
                 sessions.push(this.cloneSession(parsed));
               }
             } catch {

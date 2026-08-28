@@ -268,7 +268,7 @@ export function useLessonSession(lesson: CanonicalLesson, options: UseLessonSess
 
       if (evaluation.isValid) {
         isPassed = true;
-        next = completeSessionActivity(next, targetId);
+        next = completeSessionActivity(next, targetId, Date.now(), lesson);
 
         if (targetActivity) {
           newEvidence = generateEvidenceTokens({
@@ -339,7 +339,7 @@ export function useLessonSession(lesson: CanonicalLesson, options: UseLessonSess
     (activityId?: string) => {
       const targetId = getTargetActivityId(activityId);
       const current = sessionRef.current;
-      const next = completeSessionActivity(current, targetId);
+      const next = completeSessionActivity(current, targetId, Date.now(), lesson);
       updateSessionAndTokens(next, evidenceTokensRef.current);
     },
     [getTargetActivityId, updateSessionAndTokens],

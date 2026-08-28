@@ -315,6 +315,9 @@ describe("Phase 4.1: Learning Engine Lesson State Contract & Lifecycle", () => {
       session = startLessonSession(session, 1050);
 
       for (const act of lesson.activities) {
+        if (act.validation) {
+          session = resolveActivityEvaluation(session, act.id, { isValid: true, score: 100 }, 1150);
+        }
         session = completeSessionActivity(session, act.id, 1200);
       }
 
@@ -333,6 +336,9 @@ describe("Phase 4.1: Learning Engine Lesson State Contract & Lifecycle", () => {
       session = startLessonSession(session, 1050);
 
       for (const act of lesson.activities) {
+        if (act.validation) {
+          session = resolveActivityEvaluation(session, act.id, { isValid: true, score: 100 }, 1150);
+        }
         session = completeSessionActivity(session, act.id, 1200);
       }
 
@@ -351,6 +357,9 @@ describe("Phase 4.1: Learning Engine Lesson State Contract & Lifecycle", () => {
       session = startLessonSession(session, 1050);
 
       for (const act of lesson.activities) {
+        if (act.validation) {
+          session = resolveActivityEvaluation(session, act.id, { isValid: true, score: 100 }, 1150);
+        }
         session = completeSessionActivity(session, act.id, 1200);
       }
 
@@ -369,6 +378,9 @@ describe("Phase 4.1: Learning Engine Lesson State Contract & Lifecycle", () => {
       session = startLessonSession(session, 1050);
 
       for (const act of lesson.activities) {
+        if (act.validation) {
+          session = resolveActivityEvaluation(session, act.id, { isValid: true, score: 100 }, 1150);
+        }
         session = completeSessionActivity(session, act.id, 1200);
       }
 
@@ -387,6 +399,9 @@ describe("Phase 4.1: Learning Engine Lesson State Contract & Lifecycle", () => {
       session = startLessonSession(session, 1050);
 
       for (const act of lesson.activities) {
+        if (act.validation) {
+          session = resolveActivityEvaluation(session, act.id, { isValid: true, score: 100 }, 1150);
+        }
         session = completeSessionActivity(session, act.id, 1200);
       }
 

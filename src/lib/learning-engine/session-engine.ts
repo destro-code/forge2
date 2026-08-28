@@ -64,11 +64,7 @@ export function startLessonSession(
   timestamp: number = Date.now(),
 ): LessonSessionState {
   if (session.status === "completed") {
-    throw new InvalidStateTransitionError(
-      session.status,
-      "START_SESSION",
-      "Cannot start a session that has already been completed.",
-    );
+    return session;
   }
 
   if (session.status === "in-progress") {
@@ -230,9 +226,27 @@ export function revealSessionActivityHint(
 export function completeSessionActivity(
   session: LessonSessionState,
   activityId: string,
-  timestamp: number = Date.now(),
+  timestampOrLesson: number | CanonicalLesson = Date.now(),
+  lesson?: CanonicalLesson,
 ): LessonSessionState {
+  const timestamp = typeof timestampOrLesson === "number" ? timestampOrLesson : Date.now();
+  const lessonContext = typeof timestampOrLesson === "number" ? lesson : timestampOrLesson;
   const activity = getActivityOrThrow(session, activityId);
+
+  if (lessonContext) {
+    const lessonActivity = lessonContext.activities.find((candidate) => candidate.id === activityId);
+    if (!lessonActivity) {
+      throw new Error(`Activity "${activityId}" does not belong to lesson "${lessonContext.id}".`);
+    }
+    if (lessonActivity.validation && activity.status !== "passed" && activity.status !== "completed") {
+      throw new InvalidStateTransitionError(
+        activity.status,
+        "COMPLETE_ACTIVITY",
+        "Cannot complete an activity with validation before it passes evaluation.",
+      );
+    }
+  }
+
   const updatedActivity = transitionActivityState(
     activity,
     { type: "COMPLETE_ACTIVITY", timestamp },
@@ -411,7 +425,11 @@ export function checkLessonCompletion(
         if (!actState || !session.completedActivityIds.includes(actId)) return false;
         if (req.requirement === "complete") return true;
         if (req.requirement === "success") {
-          return actState.lastEvaluation ? actState.lastEvaluation.isValid : true;
+          const activity = lesson.activities.find((candidate) => candidate.id === actId);
+          if (activity?.validation) {
+            return actState.lastEvaluation?.isValid === true;
+          }
+          return true;
         }
         if (req.requirement === "minimum-score") {
           const score =
@@ -440,7 +458,11 @@ export function checkLessonCompletion(
         scoredCount++;
       }
     }
-    if (scoredCount > 0) {
+    if (scoredCount === 0) {
+      reasons.push(
+        `Minimum score of ${lesson.completion.minimumScore}% cannot be verified without scored activities`,
+      );
+    } else {
       const averageScore = Math.round(totalScore / scoredCount);
       if (averageScore < lesson.completion.minimumScore) {
         reasons.push(
