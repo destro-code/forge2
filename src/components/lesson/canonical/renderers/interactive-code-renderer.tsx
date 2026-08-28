@@ -61,7 +61,6 @@ export function InteractiveCodeRenderer({
     const revision = ++revisionRef.current;
     try {
       const report = compileCanonicalRuntime(activity, currentCode, revision);
-      iframe.srcdoc = report.outputHtml;
       const request = createCanonicalValidationRequest(activity, revision);
       pendingRequestRef.current = request.requestId;
       const host = new SandboxRuntimeHost({ iframe, workspaceRevision: revision, onMessage: (event) => {
@@ -83,7 +82,10 @@ export function InteractiveCodeRenderer({
           host.dispose();
         }
       }});
+      // Register the listener before assigning srcdoc so fast runtimes cannot
+      // emit PLAYGROUND_READY before the host is listening.
       host.mount();
+      iframe.srcdoc = report.outputHtml;
     } catch (error) {
       setConsoleOutput([error instanceof Error ? error.message : "Runtime error"]);
       setActiveTab("results");
@@ -200,15 +202,30 @@ export function InteractiveCodeRenderer({
                 <Code2 className="h-4 w-4 shrink-0" />
                 <span className="font-mono">{language || "javascript"}</span>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onResponse(starterCode)}
-                disabled={readOnly || isCorrect}
-                className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
-              >
-                <RotateCcw className="h-3.5 w-3.5" /> Reset Code
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setActiveTab("results");
+                    runEvaluation();
+                  }}
+                  disabled={readOnly || isCorrect || isRunning || !currentCode}
+                  className="min-h-9 gap-1.5 text-xs"
+                >
+                  <Terminal className="h-3.5 w-3.5" />
+                  {isRunning ? "Running…" : "Run & Check"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onResponse(starterCode)}
+                  disabled={readOnly || isCorrect}
+                  className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" /> Reset Code
+                </Button>
+              </div>
             </div>
 
   <div className="border-b border-lesson-border bg-lesson-surface-subtle/20 p-3">

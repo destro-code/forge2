@@ -55,7 +55,7 @@ function toAssertion(activity: InteractiveCodeActivity, test: { id?: string; des
 }
 
 export function createCanonicalValidationSpec(activity: InteractiveCodeActivity): ExerciseValidationSpec {
-  const runtime = activity.content.language === "css" || activity.content.language === "html" ? "html-css" : "vanilla-dom";
+  const runtime = activity.content.language === "css" ? "html-css" : "vanilla-dom";
   return { exerciseId: activity.id, runtime, assertions: (activity.content.testCases ?? []).map((test, index) => toAssertion(activity, test, index)) };
 }
 
