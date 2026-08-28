@@ -333,7 +333,7 @@ export function CanonicalLessonPlayer({
                 className="min-h-11 gap-2 rounded-lg px-6 text-sm font-semibold shadow-[0_6px_20px_var(--m-glow)] transition-transform hover:-translate-y-px hover:brightness-105 disabled:opacity-40 disabled:shadow-none disabled:hover:translate-y-0 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--m-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-lesson-surface"
               >
                 <Check className="h-4 w-4 shrink-0" />
-                <span>{isSubmitted ? "Evaluating…" : "Check answer"}</span>
+                <span>{isSubmitted ? "Evaluating…" : "Check Answer"}</span>
               </Button>
             )}
           </div>
