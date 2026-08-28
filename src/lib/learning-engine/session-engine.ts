@@ -414,13 +414,17 @@ export function checkLessonCompletion(
     }
   }
 
-  // 2. Evaluate evidence requirements if declared
+  // 2. Evaluate evidence requirements if declared. A missing required activity
+  // already explains why completion is blocked; avoid duplicating that same
+  // activity as a second evidence failure until it has been completed.
   if (
     lesson.completion?.evidenceRequirements &&
     lesson.completion.evidenceRequirements.length > 0
   ) {
     for (const req of lesson.completion.evidenceRequirements) {
+      if (req.activityIds.every((actId) => missingRequired.includes(actId))) continue;
       const isSatisfied = req.activityIds.some((actId) => {
+        if (missingRequired.includes(actId)) return false;
         const actState = session.activities[actId];
         if (!actState || !session.completedActivityIds.includes(actId)) return false;
         if (req.requirement === "complete") return true;

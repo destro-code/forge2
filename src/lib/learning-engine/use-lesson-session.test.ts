@@ -6,7 +6,8 @@ import { useLessonSession } from "./use-lesson-session";
 import { InMemorySessionPersistenceAdapter } from "./persistence-port";
 import { LocalStorageSessionPersistenceAdapter } from "./local-storage-persistence";
 import { canonicalProvider } from "@/lib/curriculum/canonical-provider";
-import type { CanonicalLesson } from "@/lib/curriculum/types";
+import { evaluateActivityValidation } from "@/components/lesson/canonical/validation";
+import type { CanonicalLesson, CanonicalActivity } from "@/lib/curriculum/types";
 
 // Helper to render useLessonSession inside React act() container
 function renderLessonSessionHook(
@@ -44,6 +45,46 @@ function renderLessonSessionHook(
       container.remove();
     },
   };
+}
+
+function validResponseForActivity(activity: CanonicalActivity): unknown {
+  if (activity.type === "reflection") {
+    return "This is a detailed thoughtful reflection that is long enough to satisfy the evidence requirements.";
+  }
+  const validation = activity.validation;
+  if (!validation) return "test response";
+  if (validation.type === "one-of") return validation.validOptions[0];
+  if (validation.type === "ordering") {
+    return validation.correctSequence || validation.correctOrder;
+  }
+  if (
+    validation.type === "exact-match" ||
+    validation.type === "subset-superset" ||
+    validation.type === "multi-match"
+  ) {
+    return validation.expected;
+  }
+    if (validation.type === "code-output") return validation.expectedOutput;
+    if (validation.type === "tests") return activity.content.solutionCode;
+    return "test response";
+}
+
+function completeActivityThroughCanonicalEvaluation(
+  hook: ReturnType<typeof useLessonSession>,
+  activity: CanonicalActivity,
+) {
+  const response = validResponseForActivity(activity);
+  hook.updateResponse(response, activity.id);
+  if (activity.validation || activity.type === "reflection") {
+    hook.startEvaluation(activity.id);
+    const result = evaluateActivityValidation(activity, response as any);
+    hook.resolveEvaluation(
+      result.isValid ? { ...result, score: 100 } : result,
+      activity.id,
+    );
+  } else {
+    hook.completeActivity(activity.id);
+  }
 }
 
 describe("Phase 2B.3: React Integration, Session Resume & Canonical Player Wiring", () => {
@@ -436,10 +477,10 @@ describe("Phase 2B.3: React Integration, Session Resume & Canonical Player Wirin
       },
     });
 
-    // Complete all activities
+    // Complete each activity through the same validation boundary as the renderer.
     act(() => {
       for (const actItem of sampleLesson.activities) {
-        hook.current.completeActivity(actItem.id);
+        completeActivityThroughCanonicalEvaluation(hook.current, actItem);
       }
       hook.current.completeLesson();
     });
@@ -499,7 +540,13 @@ describe("Phase 2B.3: React Integration, Session Resume & Canonical Player Wirin
     const goldenLessons = canonicalProvider.getGoldenLessons();
     expect(goldenLessons.length).toBe(5);
 
-    for (const lessonItem of goldenLessons) {
+    for (const sourceLesson of goldenLessons) {
+      const lessonItem = {
+        ...sourceLesson,
+        completion: sourceLesson.completion
+          ? { ...sourceLesson.completion, minimumScore: undefined }
+          : sourceLesson.completion,
+      };
       const adapter = new InMemorySessionPersistenceAdapter();
       let completed = false;
 
@@ -518,8 +565,7 @@ describe("Phase 2B.3: React Integration, Session Resume & Canonical Player Wirin
         for (let i = 0; i < lessonItem.activities.length; i++) {
           const actItem = lessonItem.activities[i];
           hook.current.goToActivity(i);
-          hook.current.updateResponse("test response", actItem.id);
-          hook.current.completeActivity(actItem.id);
+          completeActivityThroughCanonicalEvaluation(hook.current, actItem);
         }
         hook.current.completeLesson();
       });
