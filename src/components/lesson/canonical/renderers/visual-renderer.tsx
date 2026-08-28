@@ -14,6 +14,9 @@ export function VisualRenderer({
 }: ActivityRendererProps<VisualActivity>) {
   const { title, visualType, description, visualData, interactive } = activity.content;
 
+  console.log("[v0] VisualRenderer activity.content:", activity.content);
+  console.log("[v0] VisualRenderer interactive block:", interactive);
+
   const Interactive = getInteractiveVisual(interactive?.kind);
 
   const layers =

@@ -111,6 +111,44 @@
               "analogy": "The Kitchen & Storage Vault: where secret recipes are executed and ingredients are securely stored."
             }
           ]
+        },
+        "interactive": {
+          "kind": "request-flow",
+          "config": {
+            "steps": [
+              {
+                "label": "User Action",
+                "side": "client",
+                "detail": "You click a link or submit a form. This local event, on your device, is the trigger for everything that follows — nothing has left the browser yet."
+              },
+              {
+                "label": "Browser Request",
+                "side": "network",
+                "detail": "The browser packages what you did into an HTTP request and sends it out across the network toward the server that owns the address."
+              },
+              {
+                "label": "Remote Server",
+                "side": "server",
+                "detail": "The server receives the request, runs the application's business logic, checks a database like PostgreSQL, and decides what to send back."
+              },
+              {
+                "label": "HTTP Response",
+                "side": "network",
+                "detail": "The server sends HTML, CSS, JavaScript, and data back down the same network path — this time travelling in the opposite direction."
+              },
+              {
+                "label": "DOM & CSSOM Parsing",
+                "side": "client",
+                "detail": "Back on your device, the browser parses the HTML into the DOM and the CSS into the CSSOM — the structural models it renders from."
+              },
+              {
+                "label": "Interactive Rendered Page",
+                "side": "client",
+                "detail": "Pixels hit the screen and event listeners attach. Now you can click, scroll, and type again — the loop is ready to start over."
+              }
+            ]
+          },
+          "caption": "Step through the request yourself and watch which side of the boundary — client, network, or server — is doing the work at each moment."
         }
       }
     },
