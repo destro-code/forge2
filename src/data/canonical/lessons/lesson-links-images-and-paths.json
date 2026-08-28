@@ -115,6 +115,7 @@
       "content": {
         "prompt": "A file at `/site/pages/about.html` contains `<img src=\"assets/team.jpg\">`. Where will the browser look for that image?",
         "code": "// File location: /site/pages/about.html\n<img src=\"assets/team.jpg\">",
+        "language": "html",
         "options": [
           "/site/assets/team.jpg",
           "/site/pages/assets/team.jpg",

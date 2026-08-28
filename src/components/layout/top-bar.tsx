@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Bell, Command, Flame, Moon, Search, Sun } from "lucide-react";
+import { Bell, Command, Flame, MoreHorizontal, Moon, Search, Sun } from "lucide-react";
 import { useCommandPalette } from "@/lib/hooks/use-command-palette";
 import { useTheme } from "@/lib/hooks/use-theme";
 import { useProgress } from "@/lib/hooks/use-progress";
@@ -96,10 +96,21 @@ export function TopBar() {
       <div className="flex min-w-0 shrink items-center gap-2">
         <SidebarTrigger className="h-9 w-9 shrink-0 text-muted-foreground" />
 
+        <Link
+          to="/"
+          aria-label="Forge home"
+          className="flex h-11 shrink-0 items-center gap-2 rounded-md px-1 font-mono text-sm font-bold tracking-[0.12em] text-foreground transition hover:text-primary sm:hidden"
+        >
+          <span className="grid size-7 place-items-center rounded border border-primary/50 bg-primary/10 text-primary">
+            F
+          </span>
+          <span>FORGE</span>
+        </Link>
+
         {isDashboard ? (
           <nav
             aria-label="Breadcrumb"
-            className="flex min-w-0 items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em]"
+            className="hidden min-w-0 items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] sm:flex"
           >
             <span className="shrink-0 text-muted-foreground">Workspace</span>
             <span className="shrink-0 text-border" aria-hidden="true">
@@ -108,43 +119,30 @@ export function TopBar() {
             <span className="truncate font-semibold text-foreground">Forge</span>
           </nav>
         ) : (
-          <>
-            {/* Desktop breadcrumb trail */}
-            <nav
-              aria-label="Breadcrumb"
-              className="hidden min-w-0 max-w-xs items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] sm:flex md:max-w-md"
-            >
-              {crumbs.map((c, i) => (
-                <div key={c.to + i} className="flex min-w-0 shrink items-center gap-1.5">
-                  {i > 0 && (
-                    <span className="shrink-0 text-border" aria-hidden="true">
-                      /
-                    </span>
-                  )}
-                  <Link
-                    to={c.to}
-                    className={
-                      i === crumbs.length - 1
-                        ? "min-w-0 truncate font-semibold text-foreground"
-                        : "min-w-0 truncate text-muted-foreground transition hover:text-foreground"
-                    }
-                  >
-                    {c.label}
-                  </Link>
-                </div>
-              ))}
-            </nav>
-
-            {/* Mobile contextual indicator */}
-            <div className="flex min-w-0 items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] sm:hidden">
-              <span className="shrink-0 text-border" aria-hidden="true">
-                /
-              </span>
-              <span className="max-w-[150px] truncate font-semibold text-foreground">
-                {crumbs[crumbs.length - 1]?.label}
-              </span>
-            </div>
-          </>
+          <nav
+            aria-label="Breadcrumb"
+            className="hidden min-w-0 max-w-xs items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] sm:flex md:max-w-md"
+          >
+            {crumbs.map((c, i) => (
+              <div key={c.to + i} className="flex min-w-0 shrink items-center gap-1.5">
+                {i > 0 && (
+                  <span className="shrink-0 text-border" aria-hidden="true">
+                    /
+                  </span>
+                )}
+                <Link
+                  to={c.to}
+                  className={
+                    i === crumbs.length - 1
+                      ? "min-w-0 truncate font-semibold text-foreground"
+                      : "min-w-0 truncate text-muted-foreground transition hover:text-foreground"
+                  }
+                >
+                  {c.label}
+                </Link>
+              </div>
+            ))}
+          </nav>
         )}
       </div>
 
@@ -176,7 +174,7 @@ export function TopBar() {
         <Link
           to="/progress"
           aria-label={`Learning streak: ${streakDays} days`}
-          className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-muted/20 px-2.5 font-mono text-xs font-semibold text-foreground transition hover:border-primary/40 hover:bg-primary/10"
+          className="hidden h-9 items-center gap-1.5 rounded-md border border-border bg-muted/20 px-2.5 font-mono text-xs font-semibold text-foreground transition hover:border-primary/40 hover:bg-primary/10 sm:inline-flex"
         >
           <Flame className="h-4 w-4 text-primary" aria-hidden="true" />
           <span className="tabular-nums">{streakDays}</span>
@@ -230,9 +228,61 @@ export function TopBar() {
           </kbd>
         </Button>
 
-        <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={toggle}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hidden sm:inline-flex"
+          aria-label="Toggle theme"
+          onClick={toggle}
+        >
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="sm:hidden"
+              aria-label="More workspace options"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>Workspace tools</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to="/progress">
+                <Flame data-icon="inline-start" />
+                {`Learning streak · ${streakDays} days`}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={toggle}>
+              {theme === "dark" ? (
+                <Sun data-icon="inline-start" />
+              ) : (
+                <Moon data-icon="inline-start" />
+              )}
+              {theme === "dark" ? "Use light theme" : "Use dark theme"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                window.dispatchEvent(new KeyboardEvent("keydown", { key: "?" }));
+              }}
+            >
+              <kbd className="mr-2 inline-grid size-5 place-items-center rounded border border-border bg-muted/40 font-mono text-[10px] font-bold">
+                ?
+              </kbd>
+              Keyboard shortcuts
+            </DropdownMenuItem>
+            {!isDashboard && (
+              <DropdownMenuItem asChild>
+                <Link to={crumbs[crumbs.length - 1]?.to ?? "/"}>Current lesson</Link>
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
