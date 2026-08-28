@@ -88,7 +88,7 @@ export function VisualRenderer({
                   <div className="flex min-h-[76px] flex-1 items-start gap-3 rounded-xl border border-lesson-border bg-lesson-bg/40 p-4">
                     <span
                       className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-mono text-xs font-bold"
-                      style={{ backgroundColor: "var(--m-soft)", color: "var(--m-accent)" }}
+                      style={{ backgroundColor: "var(--m-accent-soft)", color: "var(--m-accent)" }}
                     >
                       {idx + 1}
                     </span>
@@ -111,7 +111,7 @@ export function VisualRenderer({
           >
             <div
               className="flex h-11 w-11 items-center justify-center rounded-xl"
-              style={{ backgroundColor: "var(--m-soft)", color: "var(--m-accent)" }}
+              style={{ backgroundColor: "var(--m-accent-soft)", color: "var(--m-accent)" }}
             >
               <Layers className="h-5 w-5" />
             </div>
