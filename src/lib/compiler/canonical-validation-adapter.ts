@@ -19,7 +19,12 @@ export function validationReportToActivityResult(
 
   return {
     isValid,
-    score: report.totalRequired === 0 ? (isValid ? 1 : 0) : report.passedCount / report.totalRequired,
+    score:
+      report.totalRequired === 0
+        ? isValid
+          ? 100
+          : 0
+        : Math.round((report.passedCount / report.totalRequired) * 100),
     feedbackMessage: isValid
       ? "All required validation checks passed."
       : failed.map((result) => result.errorMessage || result.description).join(" ") || "Validation failed.",

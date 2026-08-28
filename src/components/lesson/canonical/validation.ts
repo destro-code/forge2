@@ -111,7 +111,7 @@ export function validateJudgmentStep(step: unknown): { isValid: boolean; errors:
   };
 }
 
-export function evaluateActivityValidation<T extends CanonicalActivity>(
+function evaluateActivityValidationResult<T extends CanonicalActivity>(
   activity: T,
   response: ActivityResponse<T["type"]>,
 ): ActivityValidationResult {
@@ -399,4 +399,16 @@ export function evaluateActivityValidation<T extends CanonicalActivity>(
         feedbackMessage: feedback?.correct || "Completed.",
       };
   }
+}
+
+/**
+ * Adds the canonical percentage score expected by lesson completion rules.
+ * Legacy validators only reported validity; a successful validation is a full score.
+ */
+export function evaluateActivityValidation<T extends CanonicalActivity>(
+  activity: T,
+  response: ActivityResponse<T["type"]>,
+): ActivityValidationResult {
+  const result = evaluateActivityValidationResult(activity, response);
+  return result.score === undefined && result.isValid ? { ...result, score: 100 } : result;
 }
