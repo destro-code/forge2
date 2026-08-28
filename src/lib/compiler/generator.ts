@@ -176,22 +176,22 @@ export function generateOutput(
 
       console.log = function(...args) {
         origLog.apply(console, args);
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'log', message: formatArgs(args) }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'log', message: formatArgs(args), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'log', msg: formatArgs(args) }, '*');
       };
       console.info = function(...args) {
         origInfo.apply(console, args);
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'info', message: formatArgs(args) }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'info', message: formatArgs(args), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'info', msg: formatArgs(args) }, '*');
       };
       console.warn = function(...args) {
         origWarn.apply(console, args);
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'warn', message: formatArgs(args) }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'warn', message: formatArgs(args), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'warn', msg: formatArgs(args) }, '*');
       };
       console.error = function(...args) {
         origError.apply(console, args);
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: formatArgs(args) }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: formatArgs(args), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'error', msg: formatArgs(args) }, '*');
       };
 

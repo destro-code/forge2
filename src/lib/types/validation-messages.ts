@@ -71,6 +71,24 @@ export interface PlaygroundReadyMessage {
 /**
  * Message sent from playground iframe to parent when compilation or runtime initialization fails.
  */
+export interface PlaygroundConsoleMessage {
+  type: "PLAYGROUND_CONSOLE";
+  level: "log" | "info" | "warn" | "error";
+  message: string;
+  workspaceRevision?: number;
+}
+
+export function isPlaygroundConsoleMessage(data: unknown): data is PlaygroundConsoleMessage {
+  if (!data || typeof data !== "object") return false;
+  const msg = data as Record<string, unknown>;
+  return (
+    msg.type === "PLAYGROUND_CONSOLE" &&
+    (msg.level === "log" || msg.level === "info" || msg.level === "warn" || msg.level === "error") &&
+    typeof msg.message === "string" &&
+    (msg.workspaceRevision === undefined || typeof msg.workspaceRevision === "number")
+  );
+}
+
 export interface PlaygroundBuildErrorMessage {
   type: "PLAYGROUND_BUILD_ERROR";
   message: string;

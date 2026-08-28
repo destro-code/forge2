@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { compileCanonicalRuntime, createCanonicalValidationRequest, mapCanonicalValidation, CANONICAL_IFRAME_TITLE } from "@/lib/compiler/canonical-runtime-service";
 import { SandboxRuntimeHost } from "@/lib/compiler/sandbox-runtime-host";
-import { isPlaygroundReady, isPlaygroundBuildError, isPlaygroundValidateResponse } from "@/lib/types/validation-messages";
+import { isPlaygroundReady, isPlaygroundBuildError, isPlaygroundConsoleMessage, isPlaygroundValidateResponse } from "@/lib/types/validation-messages";
 import type { ActivityValidationResult } from "../types";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
@@ -54,18 +54,27 @@ export function InteractiveCodeRenderer({
   const resolvedHints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (resolvedHints?.length || 0) - state.hintsRevealed;
 
-  const runEvaluation = useCallback(() => {
+  const runEvaluation = useCallback((runChecks = true) => {
     const iframe = iframeRef.current;
     if (!iframe) return;
     setIsRunning(true);
+    setConsoleOutput([]);
+    setTestResults([]);
+    setRuntimeResult(undefined);
     const revision = ++revisionRef.current;
     try {
       const report = compileCanonicalRuntime(activity, currentCode, revision);
-      const request = createCanonicalValidationRequest(activity, revision, currentCode);
-      pendingRequestRef.current = request.requestId;
+      const request = runChecks ? createCanonicalValidationRequest(activity, revision, currentCode) : null;
+      pendingRequestRef.current = request?.requestId ?? null;
       const host = new SandboxRuntimeHost({ iframe, workspaceRevision: revision, onMessage: (event) => {
+        if (isPlaygroundConsoleMessage(event.data)) {
+          setConsoleOutput((previous) => [...previous, `[${event.data.level}] ${event.data.message}`].slice(-50));
+          setActiveTab("results");
+          return;
+        }
         if (isPlaygroundReady(event.data)) {
-          iframe.contentWindow?.postMessage(request, "*");
+          if (request) iframe.contentWindow?.postMessage(request, "*");
+          else setIsRunning(false);
         }
         if (isPlaygroundValidateResponse(event.data) && event.data.requestId === pendingRequestRef.current) {
           const result = mapCanonicalValidation(event.data.report);
@@ -208,13 +217,13 @@ export function InteractiveCodeRenderer({
                   size="sm"
                   onClick={() => {
                     setActiveTab("results");
-                    runEvaluation();
+                    runEvaluation(false);
                   }}
                   disabled={readOnly || isCorrect || isRunning || !currentCode}
                   className="min-h-9 gap-1.5 text-xs"
                 >
                   <Terminal className="h-3.5 w-3.5" />
-                  {isRunning ? "Running…" : "Run & Check"}
+                  {isRunning ? "Running…" : "Run"}
                 </Button>
                 <Button
                   variant="ghost"
