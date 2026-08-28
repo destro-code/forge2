@@ -524,7 +524,7 @@ export function generateOutput(
               // Execute canonical JavaScript as a classic script so function declarations
               // are visible to the iframe validation runner in the same global realm.
               const scriptEl = document.createElement('script');
-              scriptEl.textContent = jsEntry.code + '\n//# sourceURL=' + jsEntry.name;
+              scriptEl.textContent = jsEntry.code + '\\n//# sourceURL=' + jsEntry.name;
               document.head.appendChild(scriptEl);
             } else {
               requireModule('./' + jsEntry.name, 'root');
