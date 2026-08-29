@@ -1,6 +1,7 @@
 import { runCompilerPipeline } from "./pipeline";
 import { createCanonicalRuntimeManifest, type CanonicalRuntimeActivity } from "./canonical-code-runtime";
 import { validationReportToActivityResult, createRuntimeErrorReport } from "./canonical-validation-adapter";
+import { resolveActivityExperience, type ResolvedExperience } from "@/lib/curriculum/experience";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ExerciseValidationSpec, ValidationReport } from "@/lib/types/validation";
 import type { PlaygroundValidateRequestMessage } from "@/lib/types/validation-messages";
@@ -8,23 +9,57 @@ import type { PlaygroundValidateRequestMessage } from "@/lib/types/validation-me
 export const CANONICAL_IFRAME_TITLE = "Forge Canonical Activity Preview";
 export const CANONICAL_RUNTIME_TIMEOUT_MS = 7000;
 
+/**
+ * Turns a resolved, validated `ActivityExperience` into the
+ * `CanonicalRuntimeActivity` shape `createCanonicalRuntimeManifest` (in
+ * canonical-code-runtime.ts) expects. This is the runtime-manifest
+ * boundary: no `language === "..."` branching lives here — that inference
+ * now lives exactly once, in `resolveActivityExperience`.
+ */
+function buildRuntimeActivityFromExperience(
+  activityId: string,
+  title: string | undefined,
+  { experience }: ResolvedExperience,
+): CanonicalRuntimeActivity {
+  switch (experience.kind) {
+    case "markup":
+      return { id: activityId, runtime: "html", source: experience.editor.starterSource, title };
+    case "css":
+      return {
+        id: activityId,
+        runtime: "html-css",
+        source: experience.editor.starterSource,
+        fixture: experience.environment.htmlFixture,
+        title,
+      };
+    case "javascript":
+    case "debug": {
+      const htmlFixture = experience.environment?.htmlFixture;
+      if (htmlFixture) {
+        return {
+          id: activityId,
+          runtime: "html-javascript",
+          source: experience.editor.starterSource,
+          fixture: htmlFixture,
+          title,
+        };
+      }
+      return { id: activityId, runtime: "javascript", source: experience.editor.starterSource, title };
+    }
+  }
+}
+
 export function createCanonicalRuntimeActivity(
   activity: InteractiveCodeActivity,
   source: string,
 ): CanonicalRuntimeActivity {
-  if (activity.content.language === "html") {
-    return { id: activity.id, runtime: "html", source, title: activity.content.title };
-  }
-  if (activity.content.language === "css") {
-    return {
-      id: activity.id,
-      runtime: "html-css",
-      source,
-      fixture: `<nav class="navbar"><span>Forge</span><span>Lessons</span></nav><div class="modal-backdrop"><div class="modal">Modal</div></div>`,
-      title: activity.content.title,
-    };
-  }
-  return { id: activity.id, runtime: "javascript", source, title: activity.content.title };
+  const resolved = resolveActivityExperience({
+    id: activity.id,
+    type: activity.type,
+    experience: activity.experience,
+    content: { ...activity.content, starterCode: source },
+  });
+  return buildRuntimeActivityFromExperience(activity.id, activity.content.title, resolved);
 }
 
 export function compileCanonicalRuntime(

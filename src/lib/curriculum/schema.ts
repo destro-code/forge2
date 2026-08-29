@@ -10,6 +10,7 @@ import type {
   CanonicalLevel,
   Academy,
 } from "./types";
+import { activityExperienceSchema } from "./experience";
 
 // ---------------------------------------------------------------------------
 // Enums & Primitive Schemas
@@ -347,7 +348,9 @@ export const interactiveCodeActivitySchema = z.object({
         }),
       )
       .optional(),
+    htmlFixture: z.string().optional(),
   }),
+  experience: activityExperienceSchema.optional(),
 });
 
 export const debugActivitySchema = z.object({
@@ -381,7 +384,9 @@ export const debugActivitySchema = z.object({
         }),
       )
       .optional(),
+    htmlFixture: z.string().optional(),
   }),
+  experience: activityExperienceSchema.optional(),
 });
 
 export const reflectionActivitySchema = z.object({
