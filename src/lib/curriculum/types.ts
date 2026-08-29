@@ -3,6 +3,8 @@
  * Defines the content model separating content semantics from presentation and state.
  */
 
+import type { ActivityExperience } from "./experience";
+
 export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
 
 export type LessonType =
@@ -353,6 +355,14 @@ export interface InteractiveCodeActivityContent {
     assertion?: string;
     testCode?: string;
   }>;
+  /**
+   * Curriculum-owned HTML environment for runtimes that render learner
+   * source against a fixture (e.g. CSS activities, or JavaScript/debug
+   * activities that manipulate the DOM). Optional — when absent, the
+   * experience resolver falls back to a default fixture for CSS, or to no
+   * fixture (console-only) for JavaScript. See src/lib/curriculum/experience.ts.
+   */
+  htmlFixture?: string;
 }
 
 export interface InteractiveCodeActivity {
@@ -361,6 +371,13 @@ export interface InteractiveCodeActivity {
   intent: ActivityIntent;
   objectiveIds: string[];
   content: InteractiveCodeActivityContent;
+  /**
+   * Explicit executable-experience declaration. Optional this session —
+   * when absent, `resolveActivityExperience` infers one from
+   * `content.language` for backward compatibility. See
+   * src/lib/curriculum/experience.ts.
+   */
+  experience?: ActivityExperience;
   validation?: ActivityValidationConfig;
   feedback?: ActivityFeedback;
   evidence?: ActivityEvidenceConfig;
@@ -383,6 +400,8 @@ export interface DebugActivityContent {
     assertion?: string;
     testCode?: string;
   }>;
+  /** See InteractiveCodeActivityContent.htmlFixture. */
+  htmlFixture?: string;
 }
 
 export interface DebugActivity {
@@ -391,6 +410,8 @@ export interface DebugActivity {
   intent: ActivityIntent;
   objectiveIds: string[];
   content: DebugActivityContent;
+  /** See InteractiveCodeActivity.experience. */
+  experience?: ActivityExperience;
   validation?: ActivityValidationConfig;
   feedback?: ActivityFeedback;
   evidence?: ActivityEvidenceConfig;
