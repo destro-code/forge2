@@ -119,14 +119,6 @@ function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: str
     const reactKey = Object.keys(input).find(
       (k) => k.startsWith("__reactProps$") || k.startsWith("__reactEvents$"),
     );
-    console.log(
-      "[Test setInputValue] input found:",
-      input.getAttribute("data-testid") || input.tagName,
-      "reactKey:",
-      reactKey,
-      "value:",
-      value,
-    );
     if (reactKey) {
       const props = (input as any)[reactKey];
       if (props?.onChange) {

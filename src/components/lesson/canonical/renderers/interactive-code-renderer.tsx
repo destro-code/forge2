@@ -50,6 +50,7 @@ export function InteractiveCodeRenderer({
   const [runtimeResult, setRuntimeResult] = useState<ActivityValidationResult | undefined>();
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const hostRef = useRef<SandboxRuntimeHost | null>(null);
   const revisionRef = useRef(0);
   const pendingRequestRef = useRef<string | null>(null);
   const isCorrect = state.status === "correct" || state.status === "completed";
@@ -59,6 +60,9 @@ export function InteractiveCodeRenderer({
   const runEvaluation = useCallback((validate = true) => {
     const iframe = iframeRef.current;
     if (!iframe) return;
+    hostRef.current?.dispose();
+    hostRef.current = null;
+    pendingRequestRef.current = null;
     setIsRunning(true);
     setConsoleOutput([]);
     setTestResults([]);
@@ -96,6 +100,7 @@ export function InteractiveCodeRenderer({
           host.dispose();
         }
       }});
+      hostRef.current = host;
       // Register the listener before assigning srcdoc so fast runtimes cannot
       // emit PLAYGROUND_READY before the host is listening.
       host.mount();
@@ -106,6 +111,15 @@ export function InteractiveCodeRenderer({
       setIsRunning(false);
     }
   }, [activity, currentCode]);
+
+  useEffect(() => {
+    return () => {
+      revisionRef.current += 1;
+      pendingRequestRef.current = null;
+      hostRef.current?.dispose();
+      hostRef.current = null;
+    };
+  }, [activity.id]);
 
   useEffect(() => {
     if (state.status === "submitted" || state.status === "correct" || state.status === "incorrect" || state.status === "completed") runEvaluation();
@@ -248,7 +262,18 @@ export function InteractiveCodeRenderer({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => onResponse(starterCode)}
+                  onClick={() => {
+                    revisionRef.current += 1;
+                    pendingRequestRef.current = null;
+                    hostRef.current?.dispose();
+                    hostRef.current = null;
+                    setIsRunning(false);
+                    setConsoleOutput([]);
+                    setTestResults([]);
+                    setRuntimeResult(undefined);
+                    setActiveTab("code");
+                    onResponse(starterCode);
+                  }}
                   disabled={readOnly || isCorrect}
                   className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
                 >

@@ -27,8 +27,8 @@ function createFakeIframe(contentWindow: object) {
   } as unknown as HTMLIFrameElement;
 }
 
-function message(source: object, workspaceRevision: number): MessageEvent {
-  return { source, data: { workspaceRevision } } as unknown as MessageEvent;
+function message(source: object, workspaceRevision: number, type = "PLAYGROUND_CONSOLE"): MessageEvent {
+  return { source, data: { type, workspaceRevision, level: "log", message: "current" } } as unknown as MessageEvent;
 }
 
 describe("SandboxRuntimeHost", () => {
@@ -53,7 +53,8 @@ describe("SandboxRuntimeHost", () => {
     target.dispatchEvent(message(unrelatedWindow, 2));
     target.dispatchEvent(message(activeWindow, 1));
     target.dispatchEvent(message(activeWindow, 2));
-    expect(onMessage).toHaveBeenCalledTimes(1);
+    target.dispatchEvent(message(activeWindow, 2, "PLAYGROUND_VALIDATE_RESPONSE"));
+    expect(onMessage).toHaveBeenCalledTimes(2);
     host.dispose(target as unknown as Window);
   });
 
