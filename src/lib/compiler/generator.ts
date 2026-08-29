@@ -252,6 +252,14 @@ export function generateOutput(
       if (newFiles) {
         FILES = newFiles;
       }
+      // Atomically tear down the previous app before compiling the new revision.
+      // This prevents old React effects, DOM listeners, and module state from leaking.
+      if (window.__reactRoot && typeof window.__reactRoot.unmount === 'function') {
+        window.__reactRoot.unmount();
+      }
+      window.__reactRoot = null;
+      const previousRoot = document.getElementById('root');
+      if (previousRoot) previousRoot.replaceChildren();
       if (!startTime) startTime = Date.now();
 
       const isReact = RUNTIME === 'react';
@@ -270,7 +278,7 @@ export function generateOutput(
 
         if (missing.length > 0) {
           if (Date.now() - startTime < 3500) {
-            setTimeout(function() { runCompilerAndExecute(newFiles, startTime); }, 50);
+            setTimeout(function() { runCompilerAndExecute(newFiles, startTime, revision); }, 50);
             return;
           } else {
             console.error('[Forge Preview] React runtime could not be loaded');
