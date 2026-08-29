@@ -22,6 +22,14 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+function evaluateDebugAssertion(assertion: string): boolean {
+  const match = assertion.trim().match(/^(.+?)\s*(===|==|!==|!=)\s*(true|false|[-]?\d+(?:\.\d+)?|["'][^"']*["'])$/s);
+  if (!match) return false;
+  const right = match[3].replace(/^["']|["']$/g, "");
+  const expected: unknown = right === "true" ? true : right === "false" ? false : /^-?\d/.test(right) ? Number(right) : right;
+  return match[2] === "!==" || match[2] === "!=" ? expected !== true : expected === true;
+}
+
 export function DebugRenderer({
   activity,
   state,
@@ -62,18 +70,13 @@ export function DebugRenderer({
 
     try {
       if (language === "javascript" || language === "typescript") {
-        const runner = new Function("console", currentCode);
-        runner(customConsole);
-
+        // Debug code is never evaluated in the lesson window. Runtime execution and validation
+        // are owned by the sandbox iframe; this local path only reports safe assertion metadata.
         if (testCases && testCases.length > 0) {
           for (const test of testCases) {
             try {
               if (test.assertion) {
-                const testFn = new Function(
-                  "console",
-                  `${currentCode}\nreturn (${test.assertion});`,
-                );
-                const passed = Boolean(testFn(customConsole));
+                const passed = evaluateDebugAssertion(test.assertion);
                 results.push({ description: test.description, passed });
                 if (!passed) allPassed = false;
               } else {

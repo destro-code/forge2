@@ -1,4 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { compileCanonicalRuntime, createCanonicalValidationRequest, mapCanonicalValidation, CANONICAL_IFRAME_TITLE } from "@/lib/compiler/canonical-runtime-service";
+import { SandboxRuntimeHost } from "@/lib/compiler/sandbox-runtime-host";
+import { isPlaygroundReady, isPlaygroundBuildError, isPlaygroundConsoleMessage, isPlaygroundValidateResponse } from "@/lib/types/validation-messages";
+import type { ActivityValidationResult } from "../types";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
 import { parseCssRules } from "../validation";
@@ -30,7 +34,7 @@ export function InteractiveCodeRenderer({
   readOnly,
 }: ActivityRendererProps<InteractiveCodeActivity, string>) {
   const { starterCode, language, testCases } = activity.content;
-  const taskTitle = activity.content.title || activity.title || "Interactive Code Challenge";
+  const taskTitle = activity.content.title || "Interactive Code Challenge";
   const taskInstructions =
     activity.content.instructions ||
     activity.content.prompt ||
@@ -38,120 +42,95 @@ export function InteractiveCodeRenderer({
     (activity as any).description ||
     "";
   const currentCode = typeof state.response === "string" ? state.response : starterCode;
+  const outputMode = language === "javascript" || language === "typescript" ? "console" : "dom-preview";
+  const isConsoleOnly = outputMode === "console";
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [testResults, setTestResults] = useState<
-    Array<{ description: string; passed: boolean; error?: string }>
-  >([]);
+  const [testResults, setTestResults] = useState<Array<{ description: string; passed: boolean; error?: string }>>([]);
+  const [runtimeResult, setRuntimeResult] = useState<ActivityValidationResult | undefined>();
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const hostRef = useRef<SandboxRuntimeHost | null>(null);
+  const revisionRef = useRef(0);
+  const pendingRequestRef = useRef<string | null>(null);
   const isCorrect = state.status === "correct" || state.status === "completed";
   const resolvedHints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (resolvedHints?.length || 0) - state.hintsRevealed;
 
-  const runEvaluation = useCallback(() => {
+  const runEvaluation = useCallback((validate = true) => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    hostRef.current?.dispose();
+    hostRef.current = null;
+    pendingRequestRef.current = null;
     setIsRunning(true);
-    const logs: string[] = [];
-    let testsPassed = true;
-    const results: Array<{ description: string; passed: boolean; error?: string }> = [];
-    const customConsole = {
-      log: (...args: any[]) => logs.push(args.map(String).join(" ")),
-      error: (...args: any[]) => logs.push("[ERROR] " + args.map(String).join(" ")),
-      warn: (...args: any[]) => logs.push("[WARN] " + args.map(String).join(" ")),
-      info: (...args: any[]) => logs.push("[INFO] " + args.map(String).join(" ")),
-    };
+    setConsoleOutput([]);
+    setTestResults([]);
+    setRuntimeResult(undefined);
+    const revision = ++revisionRef.current;
     try {
-      if (language === "html") {
-        if (typeof DOMParser !== "undefined") {
-          const doc = new DOMParser().parseFromString(currentCode, "text/html");
-          for (const test of testCases || []) {
-            try {
-              if (test.assertion) {
-                const testFn = new Function(
-                  "doc",
-                  "document",
-                  "code",
-                  `return (${test.assertion});`,
-                );
-                const passed = Boolean(testFn(doc, doc, currentCode));
-                results.push({ description: test.description, passed });
-                if (!passed) testsPassed = false;
-              } else results.push({ description: test.description, passed: true });
-            } catch (err: any) {
-              results.push({ description: test.description, passed: false, error: err.message });
-              testsPassed = false;
-            }
+      const report = compileCanonicalRuntime(activity, currentCode, revision);
+      const request = validate ? createCanonicalValidationRequest(activity, revision, currentCode) : null;
+      pendingRequestRef.current = request?.requestId ?? null;
+      const host = new SandboxRuntimeHost({ iframe, workspaceRevision: revision, onMessage: (event) => {
+        if (isPlaygroundConsoleMessage(event.data)) {
+          setConsoleOutput((previous) => [...previous, `[${event.data.level}] ${event.data.message}`].slice(-50));
+          setActiveTab("results");
+          return;
+        }
+        if (isPlaygroundReady(event.data)) {
+          if (request) iframe.contentWindow?.postMessage(request, "*");
+          else {
+            setIsRunning(false);
+            host.dispose();
           }
         }
-      } else if (language === "javascript" || language === "typescript") {
-        new Function("console", currentCode)(customConsole);
-        for (const test of testCases || []) {
-          try {
-            if (test.assertion) {
-              const testFn = new Function("console", `${currentCode}\nreturn (${test.assertion});`);
-              const passed = Boolean(testFn(customConsole));
-              results.push({ description: test.description, passed });
-              if (!passed) testsPassed = false;
-            } else results.push({ description: test.description, passed: true });
-          } catch (err: any) {
-            results.push({ description: test.description, passed: false, error: err.message });
-            testsPassed = false;
-          }
+        if (isPlaygroundValidateResponse(event.data) && event.data.requestId === pendingRequestRef.current) {
+          const result = mapCanonicalValidation(event.data.report);
+          setRuntimeResult(result);
+          setTestResults(event.data.report.results.map((item) => ({ description: item.description, passed: item.status === "passed", error: item.errorMessage })));
+          setActiveTab(result.isValid ? "code" : "results");
+          setIsRunning(false);
+          host.dispose();
         }
-      } else if (language === "css") {
-        const rules = parseCssRules(currentCode);
-        for (const test of testCases || []) {
-          try {
-            if (test.assertion) {
-              const passed = Boolean(
-                new Function("rules", "code", `return (${test.assertion});`)(rules, currentCode),
-              );
-              results.push({ description: test.description, passed });
-              if (!passed) testsPassed = false;
-            } else results.push({ description: test.description, passed: true });
-          } catch (err: any) {
-            results.push({ description: test.description, passed: false, error: err.message });
-            testsPassed = false;
-          }
+        if (isPlaygroundBuildError(event.data)) {
+          setConsoleOutput([event.data.message]);
+          setActiveTab("results");
+          setIsRunning(false);
+          host.dispose();
         }
-      }
-      setConsoleOutput(logs);
-      setTestResults(results);
-      if (!testsPassed) {
-        setActiveTab("results");
-      } else {
-        setActiveTab("code");
-      }
-    } catch (err: any) {
-      setConsoleOutput([...logs, `Runtime Error: ${err.message}`]);
-      setTestResults([]);
-      testsPassed = false;
+      }});
+      hostRef.current = host;
+      // Register the listener before assigning srcdoc so fast runtimes cannot
+      // emit PLAYGROUND_READY before the host is listening.
+      host.mount();
+      iframe.srcdoc = report.outputHtml;
+    } catch (error) {
+      setConsoleOutput([error instanceof Error ? error.message : "Runtime error"]);
       setActiveTab("results");
-    } finally {
       setIsRunning(false);
     }
-  }, [currentCode, language, testCases]);
+  }, [activity, currentCode]);
 
   useEffect(() => {
-    if (
-      state.status === "evaluating" ||
-      state.status === "correct" ||
-      state.status === "incorrect" ||
-      state.status === "failed" ||
-      state.status === "passed" ||
-      state.status === "completed"
-    ) {
-      runEvaluation();
-    } else if (state.status === "idle") {
-      setActiveTab("code");
-    }
+    return () => {
+      revisionRef.current += 1;
+      pendingRequestRef.current = null;
+      hostRef.current?.dispose();
+      hostRef.current = null;
+    };
+  }, [activity.id]);
+
+  useEffect(() => {
+    if (state.status === "submitted" || state.status === "correct" || state.status === "incorrect" || state.status === "completed") runEvaluation();
+    else if (state.status === "idle") setActiveTab("code");
   }, [state.status, state.validationResult, runEvaluation]);
 
   const hasExecuted =
     consoleOutput.length > 0 ||
     testResults.length > 0 ||
     state.status === "incorrect" ||
-    state.status === "failed" ||
-    state.status === "correct" ||
+      state.status === "correct" ||
     Boolean(state.validationResult);
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
 
@@ -251,19 +230,77 @@ export function InteractiveCodeRenderer({
                 <Code2 className="h-4 w-4 shrink-0" />
                 <span className="font-mono">{language || "javascript"}</span>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onResponse(starterCode)}
-                disabled={readOnly || isCorrect}
-                className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
-              >
-                <RotateCcw className="h-3.5 w-3.5" /> Reset Code
-              </Button>
+              <div className="flex items-center gap-2">
+                {!isConsoleOnly && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setActiveTab("code");
+                      runEvaluation(false);
+                    }}
+                    disabled={readOnly || isCorrect || isRunning || !currentCode}
+                    className="min-h-9 gap-1.5 text-xs"
+                  >
+                    <Terminal className="h-3.5 w-3.5" />
+                    {isRunning ? "Running…" : "Run"}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setActiveTab("results");
+                    runEvaluation();
+                  }}
+                  disabled={readOnly || isCorrect || isRunning || !currentCode}
+                  className="min-h-9 gap-1.5 text-xs"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Check
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    revisionRef.current += 1;
+                    pendingRequestRef.current = null;
+                    hostRef.current?.dispose();
+                    hostRef.current = null;
+                    setIsRunning(false);
+                    setConsoleOutput([]);
+                    setTestResults([]);
+                    setRuntimeResult(undefined);
+                    setActiveTab("code");
+                    onResponse(starterCode);
+                  }}
+                  disabled={readOnly || isCorrect}
+                  className="min-h-9 gap-1.5 text-xs text-lesson-text-secondary"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" /> Reset Code
+                </Button>
+              </div>
             </div>
 
-            <LessonCodeEditor
-              value={currentCode}
+  <div className={cn(
+    "border-b border-lesson-border bg-lesson-surface-subtle/20 p-3",
+    isConsoleOnly && "sr-only",
+  )}>
+    <iframe
+      ref={iframeRef}
+      title={CANONICAL_IFRAME_TITLE}
+      sandbox="allow-scripts allow-modals"
+      className="h-48 w-full rounded-md border border-lesson-border bg-background"
+      aria-label={isConsoleOnly ? "Secure JavaScript execution sandbox" : "Sandboxed activity preview"}
+    />
+  </div>
+  {isConsoleOnly && (
+    <div className="border-b border-lesson-border bg-lesson-surface-subtle/20 px-3 py-2 text-xs text-lesson-text-muted">
+      JavaScript runs in a secure sandbox. Use Check to execute and view console output.
+    </div>
+  )}
+  <LessonCodeEditor
+  value={currentCode}
               language={language || "javascript"}
               onChange={(value) => onResponse(value || "")}
               readOnly={readOnly || isCorrect}
@@ -298,7 +335,22 @@ export function InteractiveCodeRenderer({
               </Button>
             </div>
 
-            {hasExecuted ? (
+            <div>
+              <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
+                <Terminal className="h-3.5 w-3.5" /> Console
+              </div>
+              {consoleOutput.length > 0 ? (
+                <pre className="max-h-48 overflow-auto rounded-xl border border-lesson-border bg-zinc-950 p-4 font-mono text-xs leading-6 text-zinc-100">
+                  {consoleOutput.join("\n")}
+                </pre>
+              ) : (
+                <div className="flex min-h-32 items-center justify-center rounded-xl border border-dashed border-lesson-border px-6 text-center text-sm text-lesson-text-muted">
+                  Run the code to see console output.
+                </div>
+              )}
+            </div>
+
+            {hasExecuted && (testResults.length > 0 || runtimeResult || !isConsoleOnly) ? (
               <>
                 <div
                   className={cn(
@@ -373,22 +425,8 @@ export function InteractiveCodeRenderer({
                     </div>
                   )}
 
-                {consoleOutput.length > 0 && (
-                  <div>
-                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-lesson-text-muted">
-                      <Terminal className="h-3.5 w-3.5" /> Console
-                    </div>
-                    <pre className="max-h-40 overflow-auto rounded-xl bg-zinc-950 p-4 font-mono text-xs leading-6 text-zinc-100 border border-zinc-800">
-                      {consoleOutput.join("\n")}
-                    </pre>
-                  </div>
-                )}
               </>
-            ) : (
-              <div className="flex min-h-64 items-center justify-center rounded-xl border border-dashed border-lesson-border px-6 text-center text-sm text-lesson-text-muted">
-                Run the code to see results.
-              </div>
-            )}
+            ) : null}
           </div>
         </section>
       </div>

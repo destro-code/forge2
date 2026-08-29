@@ -176,22 +176,22 @@ export function generateOutput(
 
       console.log = function(...args) {
         origLog.apply(console, args);
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'log', message: formatArgs(args) }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'log', message: formatArgs(args), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'log', msg: formatArgs(args) }, '*');
       };
       console.info = function(...args) {
         origInfo.apply(console, args);
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'info', message: formatArgs(args) }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'info', message: formatArgs(args), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'info', msg: formatArgs(args) }, '*');
       };
       console.warn = function(...args) {
         origWarn.apply(console, args);
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'warn', message: formatArgs(args) }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'warn', message: formatArgs(args), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'warn', msg: formatArgs(args) }, '*');
       };
       console.error = function(...args) {
         origError.apply(console, args);
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: formatArgs(args) }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: formatArgs(args), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'error', msg: formatArgs(args) }, '*');
       };
 
@@ -210,7 +210,7 @@ export function generateOutput(
         if (stackEl) stackEl.textContent = stack || '';
 
         const fullLog = type + (file ? ' [' + file + ']' : '') + (line ? ' Line ' + line + ':' + col : '') + ': ' + message;
-        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: fullLog }, '*');
+        window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', level: 'error', message: fullLog, workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.parent.postMessage({ type: 'SANDBOX_LOG', level: 'error', msg: fullLog }, '*');
         window.parent.postMessage({
           type: 'PLAYGROUND_BUILD_ERROR',
@@ -252,6 +252,14 @@ export function generateOutput(
       if (newFiles) {
         FILES = newFiles;
       }
+      // Atomically tear down the previous app before compiling the new revision.
+      // This prevents old React effects, DOM listeners, and module state from leaking.
+      if (window.__reactRoot && typeof window.__reactRoot.unmount === 'function') {
+        window.__reactRoot.unmount();
+      }
+      window.__reactRoot = null;
+      const previousRoot = document.getElementById('root');
+      if (previousRoot) previousRoot.replaceChildren();
       if (!startTime) startTime = Date.now();
 
       const isReact = RUNTIME === 'react';
@@ -270,7 +278,7 @@ export function generateOutput(
 
         if (missing.length > 0) {
           if (Date.now() - startTime < 3500) {
-            setTimeout(function() { runCompilerAndExecute(newFiles, startTime); }, 50);
+            setTimeout(function() { runCompilerAndExecute(newFiles, startTime, revision); }, 50);
             return;
           } else {
             console.error('[Forge Preview] React runtime could not be loaded');
@@ -502,7 +510,7 @@ export function generateOutput(
               htmlToRender = bodyMatch ? bodyMatch[1] : htmlFile.code;
             }
             container.innerHTML = htmlToRender;
-          } else if (container && container.children.length === 0) {
+          } else if (container && container.children.length === 0 && FILES.some(function(f) { return f.name.endsWith('.html') || f.language === 'html'; })) {
             container.innerHTML = '<div style="padding: 14px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; font-family: system-ui, sans-serif;">' +
               '<h3 id="title" style="margin: 0 0 10px 0; font-size: 14px; color: #58a6ff;">Interactive DOM Sandbox</h3>' +
               '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">' +
@@ -520,7 +528,15 @@ export function generateOutput(
             return f.name === DEFAULT_ENTRY_NAME || f.name === 'App.js' || f.name === 'main.js' || f.name === 'index.js' || f.name === 'script.js' || f.name.endsWith('.js') || f.name.endsWith('.ts');
           });
           if (jsEntry && !jsEntry.name.endsWith('.json') && !jsEntry.name.endsWith('.html')) {
-            requireModule('./' + jsEntry.name, 'root');
+            if (RUNTIME === 'vanilla-dom' && jsEntry.language === 'javascript') {
+              // Execute canonical JavaScript as a classic script so function declarations
+              // are visible to the iframe validation runner in the same global realm.
+              const scriptEl = document.createElement('script');
+              scriptEl.textContent = jsEntry.code + '\\n//# sourceURL=' + jsEntry.name;
+              document.head.appendChild(scriptEl);
+            } else {
+              requireModule('./' + jsEntry.name, 'root');
+            }
           }
 
           if (!window.__hasInitError) {

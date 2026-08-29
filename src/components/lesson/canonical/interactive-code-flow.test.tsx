@@ -40,6 +40,51 @@ const mockHtmlActivity: InteractiveCodeActivity = {
 };
 
 describe("Interactive Code Flow & Validation UI", () => {
+  it("exposes Run for HTML and keeps JavaScript on Check-only execution", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    act(() => {
+      root.render(
+        <InteractiveCodeRenderer
+          activity={mockHtmlActivity}
+          state={{ status: "idle", response: mockHtmlActivity.content.starterCode, hintsRevealed: 0, attempts: 0, startedAt: Date.now() }}
+          onResponse={() => {}}
+          onSubmit={() => {}}
+          onRetry={() => {}}
+          onContinue={() => {}}
+          onRevealHint={() => {}}
+        />,
+      );
+    });
+    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Run")).toBe(true);
+    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Check")).toBe(true);
+    root.unmount();
+    container.remove();
+
+    const javascriptContainer = document.createElement("div");
+    document.body.appendChild(javascriptContainer);
+    const javascriptRoot = createRoot(javascriptContainer);
+    const javascriptActivity = { ...mockHtmlActivity, id: "act-test-javascript", content: { ...mockHtmlActivity.content, language: "javascript" as const, starterCode: "console.log('hello')" } };
+    act(() => {
+      javascriptRoot.render(
+        <InteractiveCodeRenderer
+          activity={javascriptActivity}
+          state={{ status: "idle", response: javascriptActivity.content.starterCode, hintsRevealed: 0, attempts: 0, startedAt: Date.now() }}
+          onResponse={() => {}}
+          onSubmit={() => {}}
+          onRetry={() => {}}
+          onContinue={() => {}}
+          onRevealHint={() => {}}
+        />,
+      );
+    });
+    expect(Array.from(javascriptContainer.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Run")).toBe(false);
+    expect(Array.from(javascriptContainer.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Check")).toBe(true);
+    javascriptRoot.unmount();
+    javascriptContainer.remove();
+  });
+
   it("keeps editor mounted and preserves code on success", () => {
     const container = document.createElement("div");
     document.body.appendChild(container);

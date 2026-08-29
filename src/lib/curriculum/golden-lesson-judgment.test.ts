@@ -13,6 +13,8 @@ import {
   startLessonSession,
   engageSessionActivity,
   completeSessionActivity,
+  startActivityEvaluation,
+  resolveActivityEvaluation,
   nextSessionActivity,
   checkLessonCompletion,
   completeLessonSession,
@@ -242,6 +244,40 @@ describe("Phase 2E — Golden Judgment Certification (lesson-1-4-4): Understandi
   });
 
   describe("5. End-to-End Learning Engine Progression & Completion Lifecycle", () => {
+    function buildFullyCompletedSession(score?: number) {
+      let session = startLessonSession(createLessonSession(lesson, "score-regression-user"));
+      for (const activity of lesson.activities) {
+        if (activity.id === judgmentActivity.id && score !== undefined) {
+          session = engageSessionActivity(session, activity.id, "A sufficiently detailed judgment response that explains the evidence and next investigation.");
+          session = startActivityEvaluation(session, activity.id);
+          session = resolveActivityEvaluation(session, activity.id, {
+            isValid: true,
+            score,
+            feedbackMessage: score === 100 ? "Correct" : "Needs more evidence",
+          });
+        }
+        session = completeSessionActivity(session, activity.id);
+      }
+      return session;
+    }
+
+    it("requires a scored evaluation for a 100% minimum-score lesson", () => {
+      const check = checkLessonCompletion(buildFullyCompletedSession(), lesson);
+      expect(check.canComplete).toBe(false);
+      expect(check.reasons).toContain("Minimum score of 100% cannot be verified without scored activities");
+    });
+
+    it("completes when the judgment activity records a successful score of 100", () => {
+      const check = checkLessonCompletion(buildFullyCompletedSession(100), lesson);
+      expect(check.canComplete).toBe(true);
+    });
+
+    it("rejects a judgment score below the 100% minimum", () => {
+      const check = checkLessonCompletion(buildFullyCompletedSession(99), lesson);
+      expect(check.canComplete).toBe(false);
+      expect(check.reasons?.some((reason) => reason.includes("Minimum score of 100% not met"))).toBe(true);
+    });
+
     it("progresses through all 5 activities including judgment, records evidence, and achieves lesson completion", () => {
       const userId = "learner-user-net401";
 
@@ -286,6 +322,14 @@ describe("Phase 2E — Golden Judgment Certification (lesson-1-4-4): Understandi
         charCount: 300,
       };
       session = engageSessionActivity(session, "act-144-judgment-diagnose", judgmentResponse);
+      const judgmentResult = evaluateActivityValidation(judgmentActivity, judgmentResponse);
+      expect(judgmentResult.isValid).toBe(true);
+      session = startActivityEvaluation(session, "act-144-judgment-diagnose");
+      session = resolveActivityEvaluation(
+        session,
+        "act-144-judgment-diagnose",
+        { ...judgmentResult, score: 100 },
+      );
       session = completeSessionActivity(session, "act-144-judgment-diagnose");
       session = nextSessionActivity(session, lesson);
       expect(session.currentActivityId).toBe("act-144-summary");

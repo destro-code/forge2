@@ -272,15 +272,16 @@ describe("Phase 2B.1: Headless Lesson Session Engine", () => {
         const act = goldenLesson.activities[i];
         expect(session.currentActivityId).toBe(act.id);
 
-        if (act.type === "multiple-choice" || act.type === "ordering") {
-          session = engageSessionActivity(session, act.id, "sample-answer", 1100 + i * 100);
-          session = resolveActivityEvaluation(
-            session,
-            act.id,
-            { isValid: true, feedbackMessage: "Correct" },
-            1150 + i * 100,
-          );
-        }
+  if (act.validation) {
+  session = engageSessionActivity(session, act.id, "sample-answer", 1100 + i * 100);
+  session = startActivityEvaluation(session, act.id, 1125 + i * 100);
+  session = resolveActivityEvaluation(
+  session,
+  act.id,
+  { isValid: true, score: 100, feedbackMessage: "Correct" },
+  1150 + i * 100,
+  );
+  }
 
         session = completeSessionActivity(session, act.id, 1200 + i * 100);
 

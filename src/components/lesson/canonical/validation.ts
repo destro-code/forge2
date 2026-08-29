@@ -44,6 +44,32 @@ export function parseCssRules(cssText: string): Record<string, Record<string, st
   return result;
 }
 
+function parseLiteral(value: string): unknown {
+  const trimmed = value.trim();
+  if (trimmed === "true") return true;
+  if (trimmed === "false") return false;
+  if (trimmed === "null") return null;
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
+  if ((trimmed.startsWith("\"") && trimmed.endsWith("\"")) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+    return trimmed.slice(1, -1);
+  }
+  return undefined;
+}
+
+function evaluateSafeAssertion(assertion: string, scope: Record<string, unknown>): boolean {
+  const match = assertion.trim().match(/^([\w.$\[\]"']+)\s*(===|==|!==|!=)\s*(.+)$/s);
+  if (!match) return false;
+  const leftPath = match[1].replace(/["']/g, "").split(".");
+  let left: unknown = scope;
+  for (const segment of leftPath) {
+    if (left && typeof left === "object") left = (left as Record<string, unknown>)[segment];
+    else return false;
+  }
+  const right = parseLiteral(match[3]);
+  if (right === undefined) return false;
+  return match[2] === "!==" || match[2] === "!=" ? left !== right : left === right;
+}
+
 export type ActivityResponse<T extends CanonicalActivity["type"]> = T extends "multiple-choice"
   ? string
   : T extends "multi-select"
@@ -111,7 +137,7 @@ export function validateJudgmentStep(step: unknown): { isValid: boolean; errors:
   };
 }
 
-export function evaluateActivityValidation<T extends CanonicalActivity>(
+function evaluateActivityValidationResult<T extends CanonicalActivity>(
   activity: T,
   response: ActivityResponse<T["type"]>,
 ): ActivityValidationResult {
@@ -337,13 +363,8 @@ export function evaluateActivityValidation<T extends CanonicalActivity>(
                 const doc = parser.parseFromString(response, "text/html");
                 const allPassed = testCases.every((t) => {
                   if (!t.assertion) return true;
-                  const testFn = new Function(
-                    "doc",
-                    "document",
-                    "code",
-                    `return (${t.assertion});`,
-                  );
-                  return Boolean(testFn(doc, doc, response));
+                  const selectorMatch = t.assertion.match(/querySelector\(['"]([^'"]+)['"]\)/);
+                  return selectorMatch ? Boolean(doc.querySelector(selectorMatch[1])) : false;
                 });
                 return {
                   isValid: allPassed,
@@ -355,10 +376,7 @@ export function evaluateActivityValidation<T extends CanonicalActivity>(
             } else if (lang === "javascript" || lang === "typescript") {
               const allPassed = testCases.every((t) => {
                 if (!t.assertion) return true;
-                const testFn = new Function("console", `${response}\nreturn (${t.assertion});`);
-                return Boolean(
-                  testFn({ log: () => {}, error: () => {}, warn: () => {}, info: () => {} }),
-                );
+                return evaluateSafeAssertion(t.assertion, {});
               });
               return {
                 isValid: allPassed,
@@ -370,8 +388,9 @@ export function evaluateActivityValidation<T extends CanonicalActivity>(
               const rules = parseCssRules(response);
               const allPassed = testCases.every((t) => {
                 if (!t.assertion) return true;
-                const testFn = new Function("rules", "code", `return (${t.assertion});`);
-                return Boolean(testFn(rules, response));
+                const rulesMatch = t.assertion.match(/^rules\[['"]([^'"]+)['"]\](?:\?\.)?\[['"]([^'"]+)['"]\]\s*===\s*['"]([^'"]+)['"]$/);
+                if (!rulesMatch) return false;
+                return rules[rulesMatch[1]]?.[rulesMatch[2]] === rulesMatch[3].toLowerCase();
               });
               return {
                 isValid: allPassed,
@@ -399,4 +418,16 @@ export function evaluateActivityValidation<T extends CanonicalActivity>(
         feedbackMessage: feedback?.correct || "Completed.",
       };
   }
+}
+
+/**
+ * Adds the canonical percentage score expected by lesson completion rules.
+ * Legacy validators only reported validity; a successful validation is a full score.
+ */
+export function evaluateActivityValidation<T extends CanonicalActivity>(
+  activity: T,
+  response: ActivityResponse<T["type"]>,
+): ActivityValidationResult {
+  const result = evaluateActivityValidationResult(activity, response);
+  return result.score === undefined && result.isValid ? { ...result, score: 100 } : result;
 }

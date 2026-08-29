@@ -220,6 +220,13 @@ export const visualActivitySchema = z.object({
     visualType: z.enum(["diagram", "flowchart", "comparison", "hierarchy", "custom"]),
     description: z.string().optional(),
     visualData: z.record(z.unknown()).optional(),
+    interactive: z
+      .object({
+        kind: z.string().min(1),
+        config: z.record(z.unknown()).optional(),
+        caption: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 

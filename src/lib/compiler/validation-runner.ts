@@ -350,13 +350,55 @@ export const VALIDATION_RUNNER_SCRIPT = `
     }
   }
 
+  function executeAction(action) {
+    if (!action || typeof action.selector !== 'string' || !action.selector) {
+      throw new Error('Validation action requires a CSS selector.');
+    }
+    var element = document.querySelector(action.selector);
+    if (!element) {
+      throw new Error('Validation action target not found: ' + action.selector);
+    }
+    if (action.type === 'click') {
+      element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+      return;
+    }
+    if (action.type === 'submit') {
+      if (typeof element.requestSubmit === 'function') element.requestSubmit();
+      else element.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      return;
+    }
+    if (action.type === 'setValue') {
+      element.value = String(action.value == null ? '' : action.value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+      element.dispatchEvent(new Event('change', { bubbles: true }));
+      return;
+    }
+    throw new Error('Unsupported validation action: ' + action.type);
+  }
+
   function executeValidationSpec(requestId, exerciseId, spec, workspaceRevision) {
     var assertions = (spec && spec.assertions) ? spec.assertions : [];
+    var actions = (spec && Array.isArray(spec.actions)) ? spec.actions : [];
     var stopOnFirstFailure = !!(spec && spec.stopOnFirstFailure);
     var results = [];
     var passedRequiredCount = 0;
     var totalRequired = 0;
     var hasRequiredFailure = false;
+
+    try {
+      for (var actionIndex = 0; actionIndex < actions.length; actionIndex++) {
+        executeAction(actions[actionIndex]);
+      }
+    } catch (actionError) {
+      results.push({
+        assertionId: 'runtime-action-error',
+        description: 'Runtime action failed',
+        status: 'failed',
+        errorMessage: actionError && actionError.message ? actionError.message : String(actionError),
+        durationMs: 0
+      });
+      hasRequiredFailure = true;
+    }
 
     // Calculate total required upfront
     for (var a = 0; a < assertions.length; a++) {

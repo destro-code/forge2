@@ -6,6 +6,11 @@ import type { PlaygroundRuntime } from "./playground";
 export type ValidationStrategy =
   "dom_query" | "computed_style" | "js_evaluation" | "console_match" | "source_ast_check";
 
+export type ValidationAction =
+  | { type: "click"; selector: string }
+  | { type: "submit"; selector: string }
+  | { type: "setValue"; selector: string; value: string };
+
 /**
  * Status of an individual validation assertion execution.
  */
@@ -131,6 +136,7 @@ export interface ExerciseValidationSpec {
   exerciseId: string;
   runtime: PlaygroundRuntime;
   assertions: ValidationAssertion[];
+  actions?: ValidationAction[];
   stopOnFirstFailure?: boolean;
 }
 
