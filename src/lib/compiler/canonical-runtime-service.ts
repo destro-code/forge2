@@ -2,12 +2,37 @@ import { runCompilerPipeline } from "./pipeline";
 import { createCanonicalRuntimeManifest, type CanonicalRuntimeActivity } from "./canonical-code-runtime";
 import { validationReportToActivityResult, createRuntimeErrorReport } from "./canonical-validation-adapter";
 import { resolveActivityExperience, type ResolvedExperience } from "@/lib/curriculum/experience";
-import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ExerciseValidationSpec, ValidationReport } from "@/lib/types/validation";
 import type { PlaygroundValidateRequestMessage } from "@/lib/types/validation-messages";
 
 export const CANONICAL_IFRAME_TITLE = "Forge Canonical Activity Preview";
 export const CANONICAL_RUNTIME_TIMEOUT_MS = 7000;
+
+/**
+ * Structural shape the functions below actually need. Both
+ * `InteractiveCodeActivity` and `DebugActivity` satisfy this — the
+ * Experience Controller (used by both `interactive-code` and `debug`
+ * renderers) calls these with whichever activity it was given, so these
+ * functions are not pinned to `InteractiveCodeActivity` specifically.
+ */
+export interface RuntimeSourceActivity {
+  id: string;
+  type: string;
+  experience?: unknown;
+  content: {
+    title?: string;
+    language?: string;
+    starterCode?: string;
+    buggyCode?: string;
+    htmlFixture?: string;
+    testCases?: Array<{ id?: string; description: string; assertion?: string }>;
+  };
+}
+
+/** The activity's own source field name — `debug` activities author `buggyCode`, everything else `starterCode`. */
+function sourceFieldFor(activity: RuntimeSourceActivity): "starterCode" | "buggyCode" {
+  return activity.type === "debug" ? "buggyCode" : "starterCode";
+}
 
 /**
  * Turns a resolved, validated `ActivityExperience` into the
@@ -50,20 +75,25 @@ function buildRuntimeActivityFromExperience(
 }
 
 export function createCanonicalRuntimeActivity(
-  activity: InteractiveCodeActivity,
+  activity: RuntimeSourceActivity,
   source: string,
 ): CanonicalRuntimeActivity {
   const resolved = resolveActivityExperience({
     id: activity.id,
     type: activity.type,
     experience: activity.experience,
-    content: { ...activity.content, starterCode: source },
+    // Write the learner's current source into whichever field this
+    // activity type authors its source under (`buggyCode` for `debug`,
+    // `starterCode` otherwise) so the resolved experience always reflects
+    // what the learner is looking at right now, not the original curriculum
+    // starter/buggy code.
+    content: { ...activity.content, [sourceFieldFor(activity)]: source },
   });
   return buildRuntimeActivityFromExperience(activity.id, activity.content.title, resolved);
 }
 
 export function compileCanonicalRuntime(
-  activity: InteractiveCodeActivity,
+  activity: RuntimeSourceActivity,
   source: string,
   workspaceRevision: number,
 ) {
@@ -76,7 +106,7 @@ export function compileCanonicalRuntime(
   });
 }
 
-function toAssertion(activity: InteractiveCodeActivity, test: { id?: string; description: string; assertion?: string }, index: number) {
+function toAssertion(activity: RuntimeSourceActivity, test: { id?: string; description: string; assertion?: string }, index: number) {
   const base = { id: test.id ?? `test-${index}`, description: test.description, failureMessage: test.description };
   if (activity.content.language === "html") {
     const selector = test.assertion?.match(/querySelector\(['\"]([^'\"]+)/)?.[1] ?? "body";
@@ -95,7 +125,10 @@ function toAssertion(activity: InteractiveCodeActivity, test: { id?: string; des
   return { ...base, strategy: "js_evaluation" as const, expected: { expression: jsMatch?.[1]?.trim() ?? test.assertion ?? "false", expectedValue } };
 }
 
-export function createCanonicalValidationSpec(activity: InteractiveCodeActivity, source = activity.content.starterCode): ExerciseValidationSpec {
+export function createCanonicalValidationSpec(
+  activity: RuntimeSourceActivity,
+  source: string = activity.content[sourceFieldFor(activity)] ?? "",
+): ExerciseValidationSpec {
   const runtime = activity.content.language === "css" ? "html-css" : "vanilla-dom";
   const assertions = (activity.content.testCases ?? []).map((test, index) => toAssertion(activity, test, index));
   const hasSelectorChallenge = activity.content.language === "html" && /getElementById\(['\"](?:wrong-button-id|submit-btn)['\"]\)/.test(source) && source.includes('id="submit-btn"');
@@ -105,7 +138,11 @@ export function createCanonicalValidationSpec(activity: InteractiveCodeActivity,
   return { exerciseId: activity.id, runtime, assertions, ...(hasSelectorChallenge ? { actions: [{ type: "click" as const, selector: "#submit-btn" }] } : {}) };
 }
 
-export function createCanonicalValidationRequest(activity: InteractiveCodeActivity, revision: number, source = activity.content.starterCode): PlaygroundValidateRequestMessage {
+export function createCanonicalValidationRequest(
+  activity: RuntimeSourceActivity,
+  revision: number,
+  source: string = activity.content[sourceFieldFor(activity)] ?? "",
+): PlaygroundValidateRequestMessage {
   return { type: "PLAYGROUND_VALIDATE_REQUEST", requestId: `canonical-${activity.id}-${revision}-${Date.now()}`, exerciseId: activity.id, validationSpec: createCanonicalValidationSpec(activity, source), workspaceRevision: revision };
 }
 
