@@ -39,6 +39,7 @@ import { Route as AssessmentPathIdRouteImport } from './routes/assessment.$pathI
 import { Route as CertificateCertificateIdRouteImport } from './routes/certificate.$certificateId'
 import { Route as DebugLabIndexRouteImport } from './routes/debug-lab.index'
 import { Route as DebugLabBugIdRouteImport } from './routes/debug-lab.$bugId'
+import { Route as DevLessonExperienceDemoRouteImport } from './routes/dev.lesson-experience-demo'
 import { Route as InterviewSessionRouteImport } from './routes/interview.session'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnLessonsRouteImport } from './routes/learn.lessons'
@@ -204,6 +205,11 @@ const DebugLabBugIdRoute = DebugLabBugIdRouteImport.update({
   path: '/$bugId',
   getParentRoute: () => DebugLabRoute,
 } as any)
+const DevLessonExperienceDemoRoute = DevLessonExperienceDemoRouteImport.update({
+  id: '/dev/lesson-experience-demo',
+  path: '/dev/lesson-experience-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InterviewSessionRoute = InterviewSessionRouteImport.update({
   id: '/session',
   path: '/session',
@@ -300,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/assessment/$pathId': typeof AssessmentPathIdRoute
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
   '/interview/session': typeof InterviewSessionRoute
   '/learn/lessons': typeof LearnLessonsRoute
   '/learn/paths': typeof LearnPathsRoute
@@ -341,6 +348,7 @@ export interface FileRoutesByTo {
   '/assessment/$pathId': typeof AssessmentPathIdRoute
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
   '/interview/session': typeof InterviewSessionRoute
   '/learn/lessons': typeof LearnLessonsRoute
   '/learn/paths': typeof LearnPathsRoute
@@ -387,6 +395,7 @@ export interface FileRoutesById {
   '/assessment/$pathId': typeof AssessmentPathIdRoute
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
   '/interview/session': typeof InterviewSessionRoute
   '/learn/lessons': typeof LearnLessonsRoute
   '/learn/paths': typeof LearnPathsRoute
@@ -434,6 +443,7 @@ export interface FileRouteTypes {
     | '/assessment/$pathId'
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
+    | '/dev/lesson-experience-demo'
     | '/interview/session'
     | '/learn/lessons'
     | '/learn/paths'
@@ -475,6 +485,7 @@ export interface FileRouteTypes {
     | '/assessment/$pathId'
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
+    | '/dev/lesson-experience-demo'
     | '/interview/session'
     | '/learn/lessons'
     | '/learn/paths'
@@ -520,6 +531,7 @@ export interface FileRouteTypes {
     | '/assessment/$pathId'
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
+    | '/dev/lesson-experience-demo'
     | '/interview/session'
     | '/learn/lessons'
     | '/learn/paths'
@@ -565,6 +577,7 @@ export interface RootRouteChildren {
   WhiteboardRoute: typeof WhiteboardRoute
   AssessmentPathIdRoute: typeof AssessmentPathIdRoute
   CertificateCertificateIdRoute: typeof CertificateCertificateIdRoute
+  DevLessonExperienceDemoRoute: typeof DevLessonExperienceDemoRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
 }
 
@@ -780,6 +793,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DebugLabBugIdRouteImport
       parentRoute: typeof DebugLabRoute
     }
+    '/dev/lesson-experience-demo': {
+      id: '/dev/lesson-experience-demo'
+      path: '/dev/lesson-experience-demo'
+      fullPath: '/dev/lesson-experience-demo'
+      preLoaderRoute: typeof DevLessonExperienceDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/interview/session': {
       id: '/interview/session'
       path: '/session'
@@ -978,6 +998,7 @@ const rootRouteChildren: RootRouteChildren = {
   WhiteboardRoute: WhiteboardRoute,
   AssessmentPathIdRoute: AssessmentPathIdRoute,
   CertificateCertificateIdRoute: CertificateCertificateIdRoute,
+  DevLessonExperienceDemoRoute: DevLessonExperienceDemoRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
 }
 export const routeTree = rootRouteImport
