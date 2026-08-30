@@ -1,3 +1,4 @@
+import { assertValidLessonExperienceDefinition } from "./definition-validator";
 import type {
   ExperienceResponse,
   ExperienceRuntimeState,
@@ -33,6 +34,7 @@ export function createLessonExperienceState(
   definition: LessonExperienceDefinition,
   now: number = Date.now(),
 ): LessonExperienceState {
+  assertValidLessonExperienceDefinition(definition);
   const order = definition.experiences.map((experience) => experience.id);
   const experienceState: Record<string, ExperienceRuntimeState> = {};
   for (const experience of definition.experiences) {

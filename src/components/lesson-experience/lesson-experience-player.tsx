@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -27,12 +27,27 @@ import { ChallengeRenderer } from "./renderers/challenge-renderer";
 import { ExplanationRenderer } from "./renderers/explanation-renderer";
 import { MasteryCheckRenderer } from "./renderers/mastery-check-renderer";
 
-interface LessonExperiencePlayerProps {
+export interface LessonExperiencePlayerProps {
   definition: LessonExperienceDefinition;
+  onStateChange?: (state: ReturnType<typeof createLessonExperienceState>) => void;
+  resetKey?: string;
 }
 
-export function LessonExperiencePlayer({ definition }: LessonExperiencePlayerProps) {
+export function LessonExperiencePlayer({
+  definition,
+  onStateChange,
+  resetKey,
+}: LessonExperiencePlayerProps) {
   const [state, setState] = useState(() => createLessonExperienceState(definition));
+
+  useEffect(() => {
+    onStateChange?.(state);
+  }, [onStateChange, state]);
+
+  useEffect(() => {
+    if (resetKey === undefined) return;
+    setState(createLessonExperienceState(definition));
+  }, [definition, resetKey]);
   const experience = getCurrentExperience(definition, state);
   const runtime = experience ? getRuntimeState(state, experience.id) : undefined;
   const progress = getProgress(state);
