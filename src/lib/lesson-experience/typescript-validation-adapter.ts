@@ -46,7 +46,9 @@ export function validateTypeScriptRun(
         ["type-diagnostic"],
       );
     }
-    const actual = result.inferredTypes[item.expression];
+    const actual =
+      result.typeQueries.find((query) => query.variable === item.expression)?.type ??
+      result.inferredTypes[item.expression];
     return assertion(
       item,
       actual === item.expected,

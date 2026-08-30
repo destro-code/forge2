@@ -15,6 +15,7 @@ export interface TypeScriptRunRequest {
   emit?: boolean;
   timeoutMs?: number;
   queryVariables?: readonly string[];
+  queryExpressions?: readonly string[];
 }
 
 export interface TypeScriptDiagnosticLocation {
@@ -56,6 +57,7 @@ export interface TypeScriptRunResult {
   diagnostics: readonly TypeScriptDiagnostic[];
   emitted: string | null;
   inferredTypes: Readonly<Record<string, string>>;
+  typeQueries: readonly TypeScriptTypeQuery[];
   evidence: EvidenceEnvelope;
 }
 
@@ -142,22 +144,32 @@ function collectTypeQueries(
   program: ts.Program,
   sourceFile: ts.SourceFile,
   inferredTypes: Readonly<Record<string, string>>,
+  expressions: readonly string[] = [],
 ): TypeScriptTypeQuery[] {
+  const checker = program.getTypeChecker();
   const queries: TypeScriptTypeQuery[] = [];
-  for (const [variable, type] of Object.entries(inferredTypes)) {
-    const declaration = sourceFile.statements
-      .flatMap((statement) =>
-        ts.isVariableStatement(statement) ? [...statement.declarationList.declarations] : [],
-      )
-      .find((item) => ts.isIdentifier(item.name) && item.name.text === variable);
-    const position = declaration
-      ? sourceFile.getLineAndCharacterOfPosition(declaration.getStart())
-      : undefined;
+  const requested = expressions.length > 0 ? expressions : Object.keys(inferredTypes);
+  for (const expression of requested) {
+    let match: ts.Node | undefined;
+    function visit(node: ts.Node) {
+      if (!match && ts.isIdentifier(node) && node.text === expression) match = node;
+      ts.forEachChild(node, visit);
+    }
+    visit(sourceFile);
+    if (!match) {
+      queries.push({ variable: expression, type: null });
+      continue;
+    }
+    const position = sourceFile.getLineAndCharacterOfPosition(match.getStart(sourceFile));
     queries.push({
-      variable,
-      type,
-      line: position ? position.line + 1 : undefined,
-      character: position ? position.character + 1 : undefined,
+      variable: expression,
+      type: checker.typeToString(
+        checker.getTypeAtLocation(match),
+        undefined,
+        ts.TypeFormatFlags.NoTruncation,
+      ),
+      line: position.line + 1,
+      character: position.character + 1,
     });
   }
   return queries;
@@ -185,6 +197,7 @@ export function createTypeScriptRun(request: TypeScriptRunRequest): TypeScriptRu
       diagnostics: [],
       emitted: null,
       inferredTypes: {},
+      typeQueries: [],
       evidence: {
         schemaVersion: 1,
         runId,
@@ -232,7 +245,9 @@ export function createTypeScriptRun(request: TypeScriptRunRequest): TypeScriptRu
   const inferredTypes = sourceFile
     ? collectInferredTypes(program, sourceFile, request.queryVariables)
     : {};
-  const typeQueries = sourceFile ? collectTypeQueries(program, sourceFile, inferredTypes) : [];
+  const typeQueries = sourceFile
+    ? collectTypeQueries(program, sourceFile, inferredTypes, request.queryExpressions)
+    : [];
   const status = diagnostics.some(({ severity }) => severity === "error") ? "failed" : "succeeded";
   const execution: ExecutionMetadata = {
     schemaVersion: 1,
@@ -271,7 +286,7 @@ export function createTypeScriptRun(request: TypeScriptRunRequest): TypeScriptRu
       })),
     ],
   };
-  return { execution, diagnostics, emitted, inferredTypes, evidence };
+  return { execution, diagnostics, emitted, inferredTypes, typeQueries, evidence };
 }
 
 export function typeScriptCapabilities() {
