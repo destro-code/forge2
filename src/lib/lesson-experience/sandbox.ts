@@ -41,8 +41,43 @@ function escapeForScriptTag(value: string): string {
 }
 
 function buildSandboxDocument(source: string, testCases: SandboxTestCase[]): string {
-  const serializedSource = JSON.stringify(source);
-  const serializedTestCases = JSON.stringify(testCases);
+  const testRunnerLines = testCases
+    .map((testCase) => {
+      const id = JSON.stringify(testCase.id);
+      const description = JSON.stringify(testCase.description);
+      return `
+      try {
+        __testResults.push({ id: ${id}, description: ${description}, passed: !!(${testCase.expression}) });
+      } catch (evalErr) {
+        __testResults.push({
+          id: ${id},
+          description: ${description},
+          passed: false,
+          errorMessage: evalErr && evalErr.message ? evalErr.message : String(evalErr),
+        });
+      }`;
+    })
+    .join("\n");
+
+  // Composed as ONE script and executed via a single `eval()` call so the
+  // learner's top-level `let`/`const` bindings stay alive for the test-case
+  // expressions below. Indirect eval scopes `let`/`const` to that single
+  // eval invocation -- running the source and each test as separate eval
+  // calls (as before) silently dropped every non-`var` binding before the
+  // tests ran, so `let score = 10` was already gone by check time.
+  const combinedEvalSource = `
+    var __runtimeError;
+    try {
+${source}
+    } catch (err) {
+      __runtimeError = err && err.message ? err.message : String(err);
+    }
+    var __testResults = [];
+    if (!__runtimeError) {
+${testRunnerLines}
+    }
+  `;
+  const serializedCombinedEvalSource = JSON.stringify(combinedEvalSource);
 
   const runnerScript = `
     (function () {
@@ -59,43 +94,17 @@ function buildSandboxDocument(source: string, testCases: SandboxTestCase[]): str
       console.warn = function () { record("warn", Array.prototype.slice.call(arguments)); };
       console.error = function () { record("error", Array.prototype.slice.call(arguments)); };
 
-      var __source__ = ${serializedSource};
-      window.__source__ = __source__;
-      var runtimeError;
-
-      try {
-        // Runs at top level so 'let'/'const' declarations join the shared
-        // global lexical environment and remain visible to the test-case
-        // script tag injected immediately after this one.
-        window.eval(__source__);
-      } catch (err) {
-        runtimeError = err && err.message ? err.message : String(err);
-      }
-
-      var testCases = ${serializedTestCases};
-      var testResults = [];
-      if (!runtimeError) {
-        for (var i = 0; i < testCases.length; i++) {
-          var testCase = testCases[i];
-          try {
-            var passed = !!window.eval("(" + testCase.expression + ")");
-            testResults.push({ id: testCase.id, description: testCase.description, passed: passed });
-          } catch (evalErr) {
-            testResults.push({
-              id: testCase.id,
-              description: testCase.description,
-              passed: false,
-              errorMessage: evalErr && evalErr.message ? evalErr.message : String(evalErr),
-            });
-          }
-        }
-      }
+      // Indirect eval (via \`window.eval\`) always runs as non-strict global
+      // code, so the \`var __runtimeError\` / \`var __testResults\`
+      // declarations inside become real \`window\` properties we can read
+      // back immediately below.
+      window.eval(${serializedCombinedEvalSource});
 
       parent.postMessage({
         type: ${JSON.stringify(RESPONSE_MESSAGE_TYPE)},
         logs: logs,
-        runtimeError: runtimeError,
-        testResults: testResults,
+        runtimeError: window.__runtimeError,
+        testResults: window.__testResults || [],
       }, "*");
     })();
   `;
