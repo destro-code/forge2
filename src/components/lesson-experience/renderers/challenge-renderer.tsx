@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Play, Loader2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LessonCodeEditor } from "@/components/shared/lesson-editor/lesson-code-editor";
+import { SandboxPreviewFrame } from "@/components/lesson/canonical/renderers/experiences/shared/sandbox-preview-frame";
+import { useExperienceController } from "@/components/lesson/canonical/runtime/use-experience-controller";
+import type { RuntimeSourceActivity } from "@/lib/compiler/canonical-runtime-service";
 import { cn } from "@/lib/utils";
-import { runInSandbox, type SandboxTestCaseResult } from "@/lib/lesson-experience/sandbox";
 import type {
   ChallengeExperience,
   ExperienceValidationResult,
@@ -18,27 +20,36 @@ interface ChallengeRendererProps {
 export function ChallengeRenderer({ experience, isPassed, onValidated }: ChallengeRendererProps) {
   const { heading, instructions, starterSource, testCases } = experience.content;
   const [source, setSource] = useState(starterSource);
-  const [results, setResults] = useState<SandboxTestCaseResult[] | undefined>();
-  const [runtimeError, setRuntimeError] = useState<string | undefined>();
-  const [isRunning, setIsRunning] = useState(false);
+  const sourceRef = useCallback((value: string) => setSource(value), []);
+  const activity = useMemo<RuntimeSourceActivity>(
+    () => ({
+      id: experience.id,
+      type: "interactive-code",
+      content: {
+        title: heading,
+        language: "javascript",
+        starterCode: source,
+        testCases: testCases.map((test) => ({
+          id: test.id,
+          description: test.description,
+          assertion: test.expression,
+        })),
+      },
+    }),
+    [experience.id, heading, source, testCases],
+  );
+  const runtime = useExperienceController({ activity, getSource: () => source });
 
-  async function handleRun() {
-    setIsRunning(true);
-    const result = await runInSandbox(source, testCases);
-    setResults(result.testResults);
-    setRuntimeError(result.runtimeError);
-    setIsRunning(false);
-
-    if (result.runtimeError) {
-      onValidated({ isValid: false, message: result.runtimeError });
-      return;
-    }
-    const allPassed = result.testResults.length > 0 && result.testResults.every((tc) => tc.passed);
-    onValidated({
-      isValid: allPassed,
-      message: allPassed ? "All checks passed." : "Some checks did not pass yet.",
-    });
+  function handleCheck() {
+    runtime.check();
+    onValidated({ isValid: false, message: "Checking your code…" });
   }
+
+  const results = runtime.testResults;
+  const passed = runtime.technicalResult?.isValid === true;
+  useEffect(() => {
+    if (runtime.technicalResult) onValidated(runtime.technicalResult);
+  }, [runtime.technicalResult, onValidated]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -48,32 +59,36 @@ export function ChallengeRenderer({ experience, isPassed, onValidated }: Challen
         </h2>
         <p className="text-sm leading-relaxed text-lesson-text-secondary">{instructions}</p>
       </div>
-
-      <div className="rounded-lg border border-lesson-border bg-lesson-surface-elevated">
-        <LessonCodeEditor
-          value={source}
-          onChange={setSource}
-          language="javascript"
-          aria-label="Challenge code editor"
-          className="min-h-[140px] p-3"
-          readOnly={isPassed}
-        />
-      </div>
-
-      <div className="flex items-center gap-3">
-        <Button type="button" onClick={handleRun} disabled={isRunning || isPassed} size="sm">
-          {isRunning ? <Loader2 className="animate-spin" /> : <Play />}
-          Run checks
-        </Button>
-      </div>
-
-      {runtimeError ? (
+      <LessonCodeEditor
+        value={source}
+        onChange={sourceRef}
+        language="javascript"
+        aria-label="Challenge code editor"
+        className="min-h-[140px] p-3"
+        readOnly={isPassed}
+      />
+      <SandboxPreviewFrame
+        iframeRef={runtime.iframeRef}
+        title={runtime.iframeTitle}
+        sandbox={runtime.iframeSandbox}
+        ariaLabel="Challenge execution frame"
+        visuallyHidden
+      />
+      <Button
+        type="button"
+        onClick={handleCheck}
+        disabled={runtime.isRunning || isPassed}
+        size="sm"
+        className="self-start"
+      >
+        {runtime.isRunning ? <Loader2 className="animate-spin" /> : <Play />} Check
+      </Button>
+      {runtime.buildError ? (
         <div className="rounded-lg border border-lesson-error-border bg-lesson-error-bg p-3 font-mono text-xs text-lesson-error-text">
-          {runtimeError}
+          {runtime.buildError}
         </div>
       ) : null}
-
-      {results ? (
+      {results.length > 0 ? (
         <ul className="flex flex-col gap-2">
           {results.map((result) => (
             <li
