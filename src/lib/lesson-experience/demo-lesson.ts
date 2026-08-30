@@ -123,11 +123,6 @@ export const DEMO_LESSON: LessonExperienceDefinition = {
             description: "score equals 42 after your code runs",
             expression: "score === 42",
           },
-          {
-            id: "score-was-reassigned",
-            description: "score is reassigned at least once (not just declared as 42)",
-            expression: '/score\\s*=[^=]/.test(__source__.split("\\n").slice(1).join("\\n"))',
-          },
         ],
       },
     },
