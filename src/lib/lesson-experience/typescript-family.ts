@@ -14,14 +14,41 @@ export interface TypeScriptRunRequest {
   runId?: string;
   emit?: boolean;
   timeoutMs?: number;
+  queryVariables?: readonly string[];
+}
+
+export interface TypeScriptDiagnosticLocation {
+  fileName?: string;
+  line?: number;
+  character?: number;
+  length?: number;
 }
 
 export interface TypeScriptDiagnostic {
   code: number;
   message: string;
   severity: "error" | "warning";
+  location?: TypeScriptDiagnosticLocation;
+  related?: readonly TypeScriptDiagnosticLocation[];
+  relatedMessages?: readonly string[];
+}
+
+export interface TypeScriptTypeQuery {
+  variable: string;
+  type: string | null;
   line?: number;
   character?: number;
+}
+
+export type TypeScriptRunStatus =
+  "idle" | "running" | "succeeded" | "failed" | "unavailable" | "disposed";
+
+export interface TypeScriptRunController {
+  readonly revision: number;
+  readonly disposed: boolean;
+  run(request: TypeScriptRunRequest): TypeScriptRunResult | null;
+  reset(): number;
+  dispose(): void;
 }
 
 export interface TypeScriptRunResult {
@@ -58,8 +85,28 @@ function formatDiagnostic(
     code: diagnostic.code,
     message,
     severity: diagnostic.category === ts.DiagnosticCategory.Warning ? "warning" : "error",
-    line: position?.line === undefined ? undefined : position.line + 1,
-    character: position?.character === undefined ? undefined : position.character + 1,
+    location:
+      position || diagnostic.start !== undefined
+        ? {
+            fileName: sourceFile?.fileName,
+            line: position?.line === undefined ? undefined : position.line + 1,
+            character: position?.character === undefined ? undefined : position.character + 1,
+            length: diagnostic.length,
+          }
+        : undefined,
+    related: diagnostic.relatedInformation?.map((item) => ({
+      fileName: item.file?.fileName,
+      ...(item.file && item.start !== undefined
+        ? (() => {
+            const relatedPosition = item.file.getLineAndCharacterOfPosition(item.start);
+            return { line: relatedPosition.line + 1, character: relatedPosition.character + 1 };
+          })()
+        : {}),
+      length: item.length,
+    })),
+    relatedMessages: diagnostic.relatedInformation?.map((item) =>
+      ts.flattenDiagnosticMessageText(item.messageText, " "),
+    ),
   };
 }
 
@@ -71,19 +118,49 @@ function diagnosticsFor(program: ts.Program): TypeScriptDiagnostic[] {
 function collectInferredTypes(
   program: ts.Program,
   sourceFile: ts.SourceFile,
+  requested: readonly string[] = [],
 ): Record<string, string> {
   const checker = program.getTypeChecker();
   const inferred: Record<string, string> = {};
+  const names = new Set(requested);
   sourceFile.forEachChild((node) => {
     if (!ts.isVariableStatement(node)) return;
     node.declarationList.declarations.forEach((declaration) => {
       if (!ts.isIdentifier(declaration.name)) return;
+      if (names.size > 0 && !names.has(declaration.name.text)) return;
       inferred[declaration.name.text] = checker.typeToString(
         checker.getTypeAtLocation(declaration.name),
+        undefined,
+        ts.TypeFormatFlags.NoTruncation,
       );
     });
   });
   return inferred;
+}
+
+function collectTypeQueries(
+  program: ts.Program,
+  sourceFile: ts.SourceFile,
+  inferredTypes: Readonly<Record<string, string>>,
+): TypeScriptTypeQuery[] {
+  const queries: TypeScriptTypeQuery[] = [];
+  for (const [variable, type] of Object.entries(inferredTypes)) {
+    const declaration = sourceFile.statements
+      .flatMap((statement) =>
+        ts.isVariableStatement(statement) ? [...statement.declarationList.declarations] : [],
+      )
+      .find((item) => ts.isIdentifier(item.name) && item.name.text === variable);
+    const position = declaration
+      ? sourceFile.getLineAndCharacterOfPosition(declaration.getStart())
+      : undefined;
+    queries.push({
+      variable,
+      type,
+      line: position ? position.line + 1 : undefined,
+      character: position ? position.character + 1 : undefined,
+    });
+  }
+  return queries;
 }
 
 export function createTypeScriptRun(request: TypeScriptRunRequest): TypeScriptRunResult {
@@ -152,7 +229,10 @@ export function createTypeScriptRun(request: TypeScriptRunRequest): TypeScriptRu
     message: diagnostic.message,
     severity: diagnostic.severity,
   }));
-  const inferredTypes = sourceFile ? collectInferredTypes(program, sourceFile) : {};
+  const inferredTypes = sourceFile
+    ? collectInferredTypes(program, sourceFile, request.queryVariables)
+    : {};
+  const typeQueries = sourceFile ? collectTypeQueries(program, sourceFile, inferredTypes) : [];
   const status = diagnostics.some(({ severity }) => severity === "error") ? "failed" : "succeeded";
   const execution: ExecutionMetadata = {
     schemaVersion: 1,
@@ -182,7 +262,14 @@ export function createTypeScriptRun(request: TypeScriptRunRequest): TypeScriptRu
     timestamp: Date.now(),
     status: "complete",
     source: { host: "typescript-compiler-api", artifactIds: [`${runId}:source`] },
-    items: evidenceItems,
+    items: [
+      ...evidenceItems,
+      ...typeQueries.map((query) => ({
+        kind: "inferred-type" as const,
+        code: query.variable,
+        message: query.type ?? "unknown",
+      })),
+    ],
   };
   return { execution, diagnostics, emitted, inferredTypes, evidence };
 }
