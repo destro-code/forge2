@@ -159,15 +159,13 @@ export function runInSandbox(
       });
     }, timeoutMs);
 
+    // Use `srcdoc` rather than `contentDocument.write()`. With
+    // `sandbox="allow-scripts"` and no `allow-same-origin`, the iframe's
+    // origin is opaque from the moment it exists, so `contentDocument` is
+    // cross-origin and unreachable from the parent — `write()` would never
+    // work. Setting `srcdoc` loads the markup into the sandboxed context
+    // directly, without the parent ever touching the child's document.
+    iframe.srcdoc = buildSandboxDocument(source, testCases);
     document.body.appendChild(iframe);
-    const doc = iframe.contentDocument;
-    if (!doc) {
-      resolve({ logs: [], runtimeError: "Unable to create sandbox document.", testResults: [] });
-      cleanup();
-      return;
-    }
-    doc.open();
-    doc.write(buildSandboxDocument(source, testCases));
-    doc.close();
   });
 }

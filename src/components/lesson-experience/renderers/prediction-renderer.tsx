@@ -13,6 +13,11 @@ export function PredictionRenderer({ experience, runtime, onSelect }: Prediction
     experience.content;
   const selected = typeof runtime.response === "string" ? runtime.response : undefined;
   const isJudged = runtime.status === "passed" || runtime.status === "failed";
+  // Only lock the radio group once the learner has landed on the correct
+  // answer. A wrong answer must stay interactive — otherwise a single
+  // incorrect guess permanently strands the learner on this step, since
+  // "correct-response" is the only way to satisfy completion.
+  const isLocked = runtime.status === "passed";
 
   return (
     <div className="flex flex-col gap-6">
@@ -32,7 +37,7 @@ export function PredictionRenderer({ experience, runtime, onSelect }: Prediction
           value={selected}
           onValueChange={onSelect}
           className="gap-2"
-          aria-disabled={isJudged}
+          aria-disabled={isLocked}
         >
           {options.map((option) => {
             const isCorrectOption = option.id === correctOptionId;
@@ -51,13 +56,13 @@ export function PredictionRenderer({ experience, runtime, onSelect }: Prediction
                     !isCorrectOption &&
                     option.id === selected &&
                     "border-lesson-error-border bg-lesson-error-bg text-lesson-error-text",
-                  isJudged && "cursor-default",
+                  isLocked && "cursor-default",
                 )}
               >
                 <RadioGroupItem
                   id={`prediction-${experience.id}-${option.id}`}
                   value={option.id}
-                  disabled={isJudged}
+                  disabled={isLocked}
                 />
                 <span className="font-mono">{option.label}</span>
               </label>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { VisualExperience } from "@/lib/lesson-experience/types";
 
@@ -16,6 +16,17 @@ export function VisualRenderer({
   const { heading, description, frames } = experience.content;
   const [activeId, setActiveId] = useState(frames[0]?.id ?? "");
   const activeFrame = frames.find((frame) => frame.id === activeId) ?? frames[0];
+  const firstFrameId = frames[0]?.id;
+
+  // The first frame is visible immediately without a click, so it must be
+  // marked interacted on mount — otherwise an "interact-all" completion rule
+  // can never be satisfied because the user never explicitly selects it.
+  useEffect(() => {
+    if (firstFrameId) {
+      onInteract(firstFrameId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstFrameId]);
 
   function selectFrame(id: string) {
     setActiveId(id);
