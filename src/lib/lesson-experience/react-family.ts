@@ -32,9 +32,11 @@ export function runReactComponent(request: ReactRunRequest): Promise<ReactRunRes
     iframe.src = runtimeUrl(nonce, runId, runRevision);
     let settled = false;
     let ready = false;
+    let timeoutId = 0;
     const finish = (response: RuntimeResultMessage | null, status: "succeeded" | "failed" | "timeout") => {
       if (settled) return;
       settled = true;
+      window.clearTimeout(timeoutId);
       const dispose = { type: "runtime:dispose", protocolVersion: REACT_RUNTIME_PROTOCOL_VERSION, runId, revision: runRevision, nonce } as const;
       iframe.contentWindow?.postMessage(dispose, "*");
       window.removeEventListener("message", onMessage);
@@ -46,9 +48,9 @@ export function runReactComponent(request: ReactRunRequest): Promise<ReactRunRes
     };
     const execute = { type: "runtime:execute", protocolVersion: REACT_RUNTIME_PROTOCOL_VERSION, runId, revision: runRevision, nonce, requestId, source: transformed, props } as const;
     const sendExecute = () => { if (ready && iframe.contentWindow && !settled) iframe.contentWindow.postMessage(execute, "*"); };
-    function onMessage(event: MessageEvent<RuntimeMessage>) { const message = event.data; if (!message || message.protocolVersion !== REACT_RUNTIME_PROTOCOL_VERSION || message.runId !== runId || message.revision !== runRevision || message.nonce !== nonce) return; if (message.type === "runtime:ready") { ready = true; sendExecute(); } else if (message.type === "runtime:result" && message.requestId === requestId && ready) finish(message, message.runtimeError ? "failed" : "succeeded"); }
+    function onMessage(event: MessageEvent<RuntimeMessage>) { const message = event.data; if (!message || event.source !== iframe.contentWindow || message.protocolVersion !== REACT_RUNTIME_PROTOCOL_VERSION || message.runId !== runId || message.revision !== runRevision || message.nonce !== nonce) return; if (message.type === "runtime:ready") { ready = true; sendExecute(); } else if (message.type === "runtime:result" && message.requestId === requestId && ready) finish(message, message.runtimeError ? "failed" : "succeeded"); }
     window.addEventListener("message", onMessage);
     document.body.appendChild(iframe);
-    window.setTimeout(() => finish(null, "timeout"), Math.min(request.timeoutMs ?? RUNTIME_LIMITS.timeoutMs, RUNTIME_LIMITS.timeoutMs));
+    timeoutId = window.setTimeout(() => finish(null, "timeout"), Math.min(Math.max(request.timeoutMs ?? RUNTIME_LIMITS.timeoutMs, 1), RUNTIME_LIMITS.timeoutMs));
   });
 }

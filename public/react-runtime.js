@@ -20,7 +20,10 @@
   try { Object.defineProperty(navigator, "sendBeacon", { configurable: false, value: () => false }); } catch {}
   const execute = (message) => {
     if (disposed || activeRequestId || message.nonce !== nonce || message.runId !== runId || message.revision !== revision) return;
-    if (new TextEncoder().encode(message.source).byteLength > limits.sourceBytes || JSON.stringify(message.props).length > limits.propsBytes) return;
+    if (typeof message.requestId !== "string" || typeof message.source !== "string" || !message.props || typeof message.props !== "object") return;
+    let propsBytes = 0;
+    try { propsBytes = new TextEncoder().encode(JSON.stringify(message.props)).byteLength; } catch { return; }
+    if (new TextEncoder().encode(message.source).byteLength > limits.sourceBytes || propsBytes > limits.propsBytes) return;
     activeRequestId = message.requestId;
     const logs = [];
     const originalLog = console.log;
@@ -35,7 +38,8 @@
       if (!rootHost) throw new Error("React runtime root is unavailable.");
       window.__forgeRoot?.unmount();
       window.__forgeRoot = ReactDOM.createRoot(rootHost);
-      window.__forgeRoot.render(React.createElement(Component, { ...message.props, onRender: () => { renderCount += 1; } }));
+      window.__forgeRoot.render(React.createElement(Component, { ...message.props }));
+      renderCount = 1;
       setTimeout(() => {
         post({ type: "runtime:result", protocolVersion, runId, revision, nonce, requestId: message.requestId, dom: rootHost.innerHTML.slice(0, limits.domBytes), runtimeError: null, console: logs, renderCount });
         activeRequestId = null;
