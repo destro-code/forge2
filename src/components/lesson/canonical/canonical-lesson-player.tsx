@@ -100,7 +100,10 @@ export function CanonicalLessonPlayer({
       }
     }
 
-    const valResult = evaluateActivityValidation(currentActivity, responseToEvaluate);
+    const valResult = evaluateActivityValidation(
+      currentActivity,
+      responseToEvaluate as Parameters<typeof evaluateActivityValidation>[1],
+    );
     resolveEvaluation(valResult, currentActivity.id);
   }, [
     currentActivity,
@@ -120,7 +123,7 @@ export function CanonicalLessonPlayer({
   }, [currentActivity, revealHint]);
 
   const handleActivityContinue = useCallback(
-    (_event?: ActivityCompletionEvent<unknown>) => {
+    (_event?: ActivityCompletionEvent<unknown> | React.MouseEvent<HTMLButtonElement>) => {
       if (!currentActivity) return;
       completeActivity(currentActivity.id);
       if (currentActivityIndex < totalActivities - 1) goNext();
@@ -192,12 +195,9 @@ export function CanonicalLessonPlayer({
     return state?.status || "idle";
   }, [currentActivity, getActivityState, currentActivityState]);
 
-  const isCorrect =
-    effectiveStatus === "passed" ||
-    effectiveStatus === "correct" ||
-    effectiveStatus === "completed";
-  const isIncorrect = effectiveStatus === "failed" || effectiveStatus === "incorrect";
-  const isSubmitted = effectiveStatus === "evaluating" || effectiveStatus === "submitted";
+  const isCorrect = effectiveStatus === "passed" || effectiveStatus === "completed";
+  const isIncorrect = effectiveStatus === "failed";
+  const isSubmitted = effectiveStatus === "evaluating";
 
   const isLastActivity = currentActivityIndex === totalActivities - 1;
 
@@ -205,7 +205,11 @@ export function CanonicalLessonPlayer({
     totalActivities > 0 ? ((currentActivityIndex + 1) / totalActivities) * 100 : 0;
 
   const movement = movementForActivityType(currentActivity?.type ?? "explanation");
-  const railNodes = activities.map((a) => ({ id: a.id, type: a.type, title: a.title }));
+  const railNodes = activities.map((a) => ({
+    id: a.id,
+    type: a.type,
+    title: "title" in a.content ? a.content.title : a.type,
+  }));
 
   return (
     <div
@@ -299,7 +303,9 @@ export function CanonicalLessonPlayer({
           </Button>
 
           <span className="hidden max-w-[45%] truncate text-xs font-medium text-lesson-text-muted sm:block">
-            {currentActivity?.title || `Activity ${currentActivityIndex + 1}`}
+            {(currentActivity && "title" in currentActivity.content
+              ? currentActivity.content.title
+              : undefined) || `Activity ${currentActivityIndex + 1}`}
           </span>
 
           <div className="flex items-center gap-2">

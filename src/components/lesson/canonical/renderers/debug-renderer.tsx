@@ -50,8 +50,7 @@ export function DebugRenderer({
     Array<{ description: string; passed: boolean; error?: string }>
   >([]);
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
-  const isCorrect =
-    state.status === "correct" || state.status === "completed" || state.status === "passed";
+  const isCorrect = state.status === "completed" || state.status === "passed";
 
   const hints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (hints?.length || 0) - state.hintsRevealed;

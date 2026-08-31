@@ -35,7 +35,7 @@ export function ActivityHeader({
   const label =
     activity.type === "interactive-code"
       ? "Interactive Code Challenge"
-      : INTENT_LABELS[activity.intent] || "Learning activity";
+      : INTENT_LABELS[activity.intent ?? ""] || "Learning activity";
 
   return (
     <div

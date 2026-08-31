@@ -60,7 +60,7 @@ export function RecommendedTopicsCard({ topics }: RecommendedTopicsCardProps) {
       <div className="grid gap-3 sm:grid-cols-3">
         {recommendedList.map((topic) => {
           const topicLessons = lessons.filter(
-            (l) => l.topicId === topic.id || (topic.topicId && l.topicId === topic.topicId),
+            (l) => l.topicId === topic.id,
           );
           const firstLesson = topicLessons[0];
 
