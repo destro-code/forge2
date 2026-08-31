@@ -142,8 +142,8 @@ export function OrderingRenderer({
                   transition={{ type: "spring", stiffness: 500, damping: 38 }}
                   role="listitem"
                   draggable={!readOnly && (!isSubmitted || isIncorrect)}
-                  onDragStart={(e) => handleDragStart(e, index)}
-                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragStart={(e) => handleDragStart(e as unknown as React.DragEvent, index)}
+                  onDragOver={(e) => handleDragOver(e as React.DragEvent, index)}
                   onDragEnd={handleDragEnd}
                   className={cn(
                     "flex items-center justify-between gap-4 p-4 rounded-2xl border text-left transition-all relative overflow-hidden group select-none shadow-xs min-h-[56px] focus-within:ring-2 focus-within:ring-primary",

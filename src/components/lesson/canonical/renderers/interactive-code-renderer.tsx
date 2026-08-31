@@ -420,7 +420,7 @@ export function InteractiveCodeRenderer({
                     <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-900 dark:text-amber-200">
                       <p className="font-semibold text-amber-800 dark:text-amber-300">Guidance</p>
                       <p className="mt-1 text-lesson-text-secondary">
-                        {activity.feedback?.incorrect || resolvedHints?.[0]}
+                        {activity.feedback?.incorrect || (typeof resolvedHints?.[0] === "string" ? resolvedHints[0] : resolvedHints?.[0]?.content)}
                       </p>
                     </div>
                   )}

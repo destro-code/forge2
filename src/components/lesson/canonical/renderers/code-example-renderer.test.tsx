@@ -11,7 +11,6 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
     id: "act-code-example-test",
     type: "code-example",
     intent: "understanding",
-    order: 1,
     objectiveIds: ["obj-test"],
     content: {
       title: "HTML Fundamentals Study",
@@ -27,10 +26,11 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
   };
 
   const mockState: ActivityInteractionState = {
-    status: "unanswered",
-    attemptsCount: 0,
-    startTime: Date.now(),
-    response: null,
+    status: "idle",
+    attempts: 0,
+    startedAt: Date.now(),
+    response: undefined,
+    hintsRevealed: 0,
   };
 
   it("renders stacked CODE -> BROWSER OUTPUT -> HOW IT WORKS for HTML examples", () => {
@@ -41,7 +41,7 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
     act(() => {
       root = createRoot(container);
       root.render(
-        <CodeExampleRenderer activity={mockActivity} state={mockState} onContinue={vi.fn()} />,
+        <CodeExampleRenderer activity={mockActivity} state={mockState} onResponse={vi.fn()} onContinue={vi.fn()} />,
       );
     });
 
@@ -65,8 +65,7 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
       id: "act-js-example",
       type: "code-example",
       intent: "understanding",
-      order: 1,
-      objectiveIds: ["obj-js"],
+        objectiveIds: ["obj-js"],
       content: {
         title: "JS Variables Study",
         description: "Examine JS variable declarations.",
@@ -83,7 +82,7 @@ describe("CodeExampleRenderer Pedagogical UX & Preview", () => {
     act(() => {
       root = createRoot(container);
       root.render(
-        <CodeExampleRenderer activity={jsActivity} state={mockState} onContinue={vi.fn()} />,
+        <CodeExampleRenderer activity={jsActivity} state={mockState} onResponse={vi.fn()} onContinue={vi.fn()} />,
       );
     });
 

@@ -49,7 +49,6 @@ export function FillBlankRenderer({
 
   // Determine presentation mode (Code vs Conceptual)
   const isCodeBlank = Boolean(
-    activity.content.language ||
     template.includes("const ") ||
     template.includes("let ") ||
     template.includes("<") ||

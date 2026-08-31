@@ -74,7 +74,7 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
         id: "act-mc-1",
         type: "multiple-choice",
         intent: "retrieval",
-        order: 1,
+        objectiveIds: ["obj-test"],
         content: {
           question: "What is HTML?",
           options: [
@@ -106,7 +106,7 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
         id: "act-one-of",
         type: "multiple-choice",
         intent: "retrieval",
-        order: 1,
+        objectiveIds: ["obj-test"],
         content: { question: "Pick a valid truthy value", options: [] },
         validation: {
           type: "one-of",
@@ -125,7 +125,7 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
         id: "act-ms-1",
         type: "multi-select",
         intent: "recognition",
-        order: 1,
+        objectiveIds: ["obj-test"],
         content: {
           question: "Select all semantic elements",
           options: [
@@ -156,7 +156,7 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
         id: "act-ord-1",
         type: "ordering",
         intent: "application",
-        order: 1,
+        objectiveIds: ["obj-test"],
         content: {
           prompt: "Arrange the box model from innermost to outermost",
           items: [
@@ -184,10 +184,11 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
         id: "act-pred-1",
         type: "output-prediction",
         intent: "prediction",
-        order: 1,
+        objectiveIds: ["obj-test"],
         content: {
           code: "console.log(typeof null);",
           prompt: "What is output?",
+          language: "javascript",
         },
         validation: {
           type: "code-output",
@@ -205,7 +206,7 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
         id: "act-intro-1",
         type: "intro",
         intent: "orientation",
-        order: 1,
+        objectiveIds: ["obj-test"],
         content: {
           title: "Introduction to HTML",
           hook: "Let's build the web.",

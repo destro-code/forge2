@@ -10,15 +10,15 @@ import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 const mockHtmlActivity: InteractiveCodeActivity = {
   id: "act-test-html",
   type: "interactive-code",
-  intent: "construction",
-  order: 1,
-  title: "HTML Card Exercise",
+  intent: "application",
+  objectiveIds: ["obj-test"],
   content: {
     language: "html",
     title: "HTML Card Exercise",
+    prompt: "Build the card.",
     instructions: "Build a card with an id of profile-card and a span badge.",
     starterCode: '<div class="card">\n  <h2>Alex Rivers</h2>\n</div>',
-    solution:
+    solutionCode:
       '<div id="profile-card" class="card">\n  <h2>Alex Rivers</h2>\n  <span class="badge">Pro</span>\n</div>',
     testCases: [
       {
@@ -96,7 +96,7 @@ describe("Interactive Code Flow & Validation UI", () => {
           activity={mockHtmlActivity}
           state={{
             status: "correct",
-            response: mockHtmlActivity.content.solution,
+            response: mockHtmlActivity.content.solutionCode ?? mockHtmlActivity.content.starterCode,
             hintsRevealed: 0,
             attempts: 1,
             startedAt: Date.now(),
