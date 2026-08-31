@@ -10,6 +10,30 @@
   try { Object.defineProperty(window, "fetch", { configurable: false, writable: false, value: () => blocked("fetch") }); } catch {}
   for (const key of ["XMLHttpRequest", "WebSocket", "EventSource"]) try { Object.defineProperty(window, key, { configurable: false, writable: false, value: function () { record(networkAttempts, key); throw new Error("Network access is disabled in the React sandbox."); } }); } catch {}
   try { Object.defineProperty(navigator, "sendBeacon", { configurable: false, writable: false, value: () => { record(networkAttempts, "sendBeacon"); return false; } }); } catch {}
+  const isExternalResource = (node, value) => node instanceof Element && /^(IMG|LINK|SCRIPT|IFRAME|AUDIO|VIDEO|SOURCE|OBJECT|EMBED)$/.test(node.tagName) && /^(https?:|\\/\\/)/i.test(String(value));
+  try {
+    const originalSetAttribute = Element.prototype.setAttribute;
+    Element.prototype.setAttribute = function (name, value) {
+      if (/^(src|href|action|data)$/i.test(name) && isExternalResource(this, value)) {
+        record(networkAttempts, `resource:${this.tagName.toLowerCase()}`);
+        return;
+      }
+      return originalSetAttribute.call(this, name, value);
+    };
+    const originalAppendChild = Node.prototype.appendChild;
+    Node.prototype.appendChild = function (node) {
+      if (isExternalResource(node, node.getAttribute?.("src") || node.getAttribute?.("href") || node.getAttribute?.("data"))) {
+        record(networkAttempts, `resource:${node.tagName.toLowerCase()}`);
+        return node;
+      }
+      return originalAppendChild.call(this, node);
+    };
+    for (const [prototype, property] of [[HTMLImageElement.prototype, "src"], [HTMLLinkElement.prototype, "href"], [HTMLIFrameElement.prototype, "src"], [HTMLScriptElement.prototype, "src"], [HTMLMediaElement.prototype, "src"], [HTMLSourceElement.prototype, "src"]]) {
+      const descriptor = Object.getOwnPropertyDescriptor(prototype, property);
+      if (!descriptor?.set || !descriptor.get) continue;
+      Object.defineProperty(prototype, property, { configurable: false, get: descriptor.get, set(value) { if (isExternalResource(this, value)) { record(networkAttempts, `resource:${this.tagName.toLowerCase()}`); return; } descriptor.set.call(this, value); } });
+    }
+  } catch {}
   const identity = { protocolVersion, runId, revision, nonce };
   const result = (requestId, runtimeError = null) => { post({ type: "runtime:result", ...identity, requestId, dom: runtimeError ? "" : (rootHost?.innerHTML || "").slice(0, limits.domBytes), runtimeError, console: window.__forgeLogs || [], renderCount, networkAttempts, parentAccess }); activeRequestId = null; };
   const execute = (message) => { if (disposed || activeRequestId || message.nonce !== nonce || message.runId !== runId || message.revision !== revision) return; activeRequestId = message.requestId; window.__forgeLogs = []; try { const factory = new Function("props", message.source + "\n;return typeof App !== 'undefined' ? App : (typeof Component !== 'undefined' ? Component : null);"); const Component = factory(message.props); if (typeof Component !== "function") throw new Error("React lesson must define an App or Component function."); if (!rootHost) throw new Error("React runtime root is unavailable."); root?.unmount(); root = ReactDOM.createRoot(rootHost); root.render(React.createElement(Component, { ...message.props })); renderCount += 1; setTimeout(() => result(message.requestId), 0); } catch (error) { result(message.requestId, error instanceof Error ? error.message : String(error)); } };
