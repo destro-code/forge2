@@ -213,7 +213,7 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
         },
       };
 
-      const result = evaluateActivityValidation(introAct, null);
+      const result = evaluateActivityValidation(introAct, undefined);
       expect(result.isValid).toBe(true);
     });
   });
@@ -258,7 +258,7 @@ describe("Phase 2A: Native Canonical Activity Renderer System", () => {
           ) {
             expect(activity.validation).toBeDefined();
             // Validation evaluator must handle it without error
-            const dummyResult = evaluateActivityValidation(activity, null);
+            const dummyResult = evaluateActivityValidation(activity, "");
             expect(dummyResult).toHaveProperty("isValid");
           }
         }

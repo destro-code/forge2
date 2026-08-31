@@ -47,8 +47,9 @@ describe("InteractiveCodeRenderer with CodeMirror Integration", () => {
     id: "act-interactive-test",
     type: "interactive-code",
     intent: "application",
-    order: 1,
     content: {
+      title: "Interactive answer",
+      prompt: "Assign the value 42 to the variable answer.",
       instructions: "Assign the value 42 to the variable answer.",
       starterCode: "let answer = 0;",
       language: "javascript",
@@ -59,7 +60,6 @@ describe("InteractiveCodeRenderer with CodeMirror Integration", () => {
         },
       ],
     },
-    hints: ["Try answering 42."],
   };
 
   const mockState: ActivityInteractionState<string> = {
@@ -188,8 +188,9 @@ describe("DebugRenderer with CodeMirror Integration", () => {
     id: "act-debug-test",
     type: "debug",
     intent: "debugging",
-    order: 1,
     content: {
+      title: "Debug return statement",
+      prompt: "Fix the missing return statement.",
       bugDescription: "The function is missing a return statement.",
       buggyCode: "function add(a, b) { a + b; }",
       language: "javascript",
@@ -201,7 +202,6 @@ describe("DebugRenderer with CodeMirror Integration", () => {
         },
       ],
     },
-    hints: ["Add the word 'return'."],
   };
 
   const mockState: ActivityInteractionState<string> = {
