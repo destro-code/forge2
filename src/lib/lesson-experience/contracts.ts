@@ -40,6 +40,7 @@ export type CapabilityName =
   | "inspect.route"
   | "inspect.middleware-trace"
   | "execute.server"
+  | "validate.http"
   | "visualize.layout"
   | "visualize.state-transition"
   | "visualize.request-lifecycle";
@@ -103,7 +104,10 @@ export type EvidenceItem =
   | { kind: "http-request"; method: string; url: string }
   | { kind: "http-response"; status: number; headers: Record<string, string>; body: string }
   | { kind: "server-log"; level: "info" | "warn" | "error"; message: string }
-  | { kind: "route"; path: string; matched: boolean };
+  | { kind: "route"; path: string; matched: boolean }
+  | { kind: "http-error"; code: string; message: string }
+  | { kind: "http-sequence"; sequenceId: string; index: number; status: string }
+  | { kind: "http-timing"; durationMs: number };
 
 export interface EvidenceEnvelope {
   schemaVersion: SchemaVersion;
@@ -185,10 +189,13 @@ export const RUNTIME_FAMILY_DESCRIPTORS: readonly RuntimeFamilyDescriptor[] = [
   {
     family: "http-api",
     version: 1,
-    security: "not-yet-available",
+    security: "compiler-isolation",
     capabilities: [
       { name: "inspect.http-request", version: 1 },
       { name: "inspect.http-response", version: 1 },
+      { name: "inspect.server-log", version: 1 },
+      { name: "validate.http", version: 1 },
+      { name: "visualize.request-lifecycle", version: 1 },
     ],
   },
 ];
