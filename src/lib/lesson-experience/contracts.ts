@@ -44,6 +44,15 @@ export type CapabilityName =
   | "validate.http"
   | "inspect.cache"
   | "inspect.server-client-boundary"
+  | "execute.react-native"
+  | "render.native"
+  | "inspect.native-tree"
+  | "inspect.native-layout"
+  | "inspect.native-events"
+  | "inspect.native-state"
+  | "inspect.native-accessibility"
+  | "inspect.native-platform"
+  | "inspect.native-navigation"
   | "visualize.layout"
   | "visualize.state-transition"
   | "visualize.request-lifecycle";
@@ -139,7 +148,44 @@ export type EvidenceItem =
       clientAvailable: boolean;
     }
   | { kind: "next-cache"; state: "hit" | "miss" | "revalidate"; logicalRevision: number }
-  | { kind: "next-error"; code: string; message: string };
+  | { kind: "next-error"; code: string; message: string }
+  | {
+      kind: "native-platform";
+      platform: "ios" | "android";
+      profile: string;
+      screen: { width: number; height: number; scale: number };
+    }
+  | {
+      kind: "native-tree";
+      id: string;
+      type: string;
+      props: Record<string, string | number | boolean>;
+      children: string[];
+      parentId?: string;
+    }
+  | { kind: "native-layout"; id: string; x: number; y: number; width: number; height: number }
+  | {
+      kind: "native-event";
+      type: "press" | "text-change" | "focus" | "blur" | "scroll";
+      targetId: string;
+      order: number;
+    }
+  | {
+      kind: "native-state";
+      key: string;
+      value: string | number | boolean;
+      previous?: string | number | boolean;
+    }
+  | {
+      kind: "native-accessibility";
+      id: string;
+      role: string;
+      label: string;
+      enabled: boolean;
+      focusable: boolean;
+    }
+  | { kind: "native-navigation"; from: string; to: string }
+  | { kind: "native-unavailable"; code: string; message: string };
 
 export interface EvidenceEnvelope {
   schemaVersion: SchemaVersion;
@@ -200,8 +246,25 @@ export const BROWSER_DOCUMENT_DESCRIPTOR: RuntimeFamilyDescriptor = {
   ],
 };
 
+export const REACT_NATIVE_DESCRIPTOR: RuntimeFamilyDescriptor = {
+  family: "mobile-native",
+  version: 1,
+  security: "compiler-isolation",
+  capabilities: [
+    { name: "execute.react-native", version: 1 },
+    { name: "render.native", version: 1 },
+    { name: "inspect.native-tree", version: 1 },
+    { name: "inspect.native-layout", version: 1 },
+    { name: "inspect.native-events", version: 1 },
+    { name: "inspect.native-state", version: 1 },
+    { name: "inspect.native-accessibility", version: 1 },
+    { name: "inspect.native-platform", version: 1 },
+  ],
+};
+
 export const RUNTIME_FAMILY_DESCRIPTORS: readonly RuntimeFamilyDescriptor[] = [
   BROWSER_DOCUMENT_DESCRIPTOR,
+  REACT_NATIVE_DESCRIPTOR,
   {
     family: "type-compiler",
     version: 1,
