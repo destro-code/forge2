@@ -1,231 +1,54 @@
 import Babel from "@babel/standalone";
-import reactBundle from "../compiler/vendor/react.development.js?raw";
-import reactDomBundle from "../compiler/vendor/react-dom.development.js?raw";
 import type { EvidenceEnvelope, ExecutionMetadata, RuntimeFamilyDescriptor } from "./contracts";
-export interface ReactRunRequest {
-  source: string;
-  revision?: number;
-  runId?: string;
-  props?: Record<string, unknown>;
-  timeoutMs?: number;
-}
-export interface ReactTreeNode {
-  name: string;
-  props: Record<string, unknown>;
-  children: ReactTreeNode[];
-}
-export interface ReactRunResult {
-  execution: ExecutionMetadata;
-  root: ReactTreeNode | null;
-  dom: string;
-  runtimeError: string | null;
-  console: readonly string[];
-  renderCount: number;
-  evidence: EvidenceEnvelope;
-}
-export const REACT_COMPONENT_BROWSER_DESCRIPTOR: RuntimeFamilyDescriptor = {
-  family: "component-browser",
-  version: 1,
-  security: "browser-sandbox",
-  capabilities: [
-    { name: "execute.react", version: 1 },
-    { name: "render.dom", version: 1 },
-    { name: "inspect.dom", version: 1 },
-    { name: "inspect.component-tree", version: 1 },
-    { name: "inspect.render-trace", version: 1 },
-    { name: "inspect.console", version: 1 },
-  ],
-};
-export const REACT_RUNTIME_PROTOCOL_VERSION = 1 as const;
-export const REACT_RUNTIME_LIMITS = {
-  sourceBytes: 100_000,
-  propsBytes: 32_000,
-  domBytes: 12_000,
-  consoleBytes: 4_000,
-  consoleEntries: 50,
-  timeoutMs: 3_000,
-} as const;
+import { REACT_RUNTIME_PROTOCOL_VERSION, RUNTIME_LIMITS, encodedBytes, type RuntimeMessage, type RuntimeResultMessage } from "./react-sandbox/protocol";
+
+export interface ReactRunRequest { source: string; revision?: number; runId?: string; props?: Record<string, unknown>; timeoutMs?: number; }
+export interface ReactTreeNode { name: string; props: Record<string, unknown>; children: ReactTreeNode[]; }
+export interface ReactRunResult { execution: ExecutionMetadata; root: ReactTreeNode | null; dom: string; runtimeError: string | null; console: readonly string[]; renderCount: number; evidence: EvidenceEnvelope; }
+export const REACT_COMPONENT_BROWSER_DESCRIPTOR: RuntimeFamilyDescriptor = { family: "component-browser", version: 1, security: "browser-sandbox", capabilities: [{ name: "execute.react", version: 1 }, { name: "render.dom", version: 1 }, { name: "inspect.dom", version: 1 }, { name: "inspect.component-tree", version: 1 }, { name: "inspect.render-trace", version: 1 }, { name: "inspect.console", version: 1 }] };
+export { REACT_RUNTIME_PROTOCOL_VERSION, RUNTIME_LIMITS };
 let revision = 0;
-export function resetReactRevision() {
-  revision += 1;
-  return revision;
-}
-export function isCurrentReactRun(runRevision: number) {
-  return runRevision === revision;
-}
-function boundedProps(value: Record<string, unknown>) {
-  try {
-    const serialized = JSON.stringify(value, (_key, item) =>
-      typeof item === "function" ? "[function]" : item,
-    );
-    if (
-      !serialized ||
-      new TextEncoder().encode(serialized).byteLength > REACT_RUNTIME_LIMITS.propsBytes
-    )
-      return null;
-    return JSON.parse(serialized) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-}
-function makeEvidence(
-  runId: string,
-  runRevision: number,
-  result: Pick<ReactRunResult, "dom" | "runtimeError" | "console" | "renderCount">,
-): EvidenceEnvelope {
-  return {
-    schemaVersion: 1,
-    runId,
-    revision: runRevision,
-    family: "component-browser",
-    phase: "observe",
-    timestamp: Date.now(),
-    status: result.runtimeError ? "partial" : "complete",
-    source: { host: "isolated-iframe", artifactIds: [] },
-    items: [
-      { kind: "dom-snapshot", html: result.dom.slice(0, REACT_RUNTIME_LIMITS.domBytes) },
-      {
-        kind: "console",
-        level: "log",
-        message: result.console.join("\n").slice(0, REACT_RUNTIME_LIMITS.consoleBytes),
-      },
-      ...(result.runtimeError
-        ? [{ kind: "runtime-error" as const, message: result.runtimeError.slice(0, 1000) }]
-        : []),
-      { kind: "js-value", expression: "renderCount", value: result.renderCount },
-    ],
-  };
-}
-interface RuntimeReady {
-  type: "runtime:ready";
-  protocolVersion: 1;
-  runId: string;
-  revision: number;
-  nonce: string;
-}
-interface RuntimeResponse {
-  type: "runtime:result";
-  protocolVersion: 1;
-  runId: string;
-  revision: number;
-  nonce: string;
-  dom: string;
-  runtimeError: string | null;
-  console: string[];
-  renderCount: number;
-}
-function iframeDocument(nonce: string, runId: string, runRevision: number) {
-  const toBase64 = (source: string) => {
-    const bytes = new TextEncoder().encode(source);
-    let binary = "";
-    for (let index = 0; index < bytes.length; index += 0x8000) {
-      binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
-    }
-    return btoa(binary);
-  };
-  const react = toBase64(reactBundle);
-  const dom = toBase64(reactDomBundle);
-  return `<!doctype html><html><head></head><body><div id="root"></div><script>window.fetch=undefined;window.XMLHttpRequest=undefined;window.WebSocket=undefined;window.EventSource=undefined;window.sendBeacon=undefined;function loadBundle(encoded){var binary=atob(encoded),bytes=new Uint8Array(binary.length);for(var index=0;index<binary.length;index++)bytes[index]=binary.charCodeAt(index);var script=document.createElement("script");script.text=new TextDecoder().decode(bytes);document.head.appendChild(script)};try{loadBundle("${react}");loadBundle("${dom}")}catch(error){parent.postMessage({type:"runtime:error",protocolVersion:1,runId:"${runId}",revision:${runRevision},nonce:"${nonce}",message:String(error).slice(0,200)},"*");throw error}window.__FORGE_REACT_RUNTIME_READY__=true;parent.postMessage({type:"runtime:ready",protocolVersion:1,runId:"${runId}",nonce:"${nonce}",revision:${runRevision}},"*");window.addEventListener("message",async(event)=>{const m=event.data;if(!m||m.protocolVersion!==1||m.type!=="runtime:execute"||m.nonce!=="${nonce}"||typeof m.source!=="string")return;const logs=[];const oldLog=console.log,oldError=console.error;console.log=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};console.error=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};let dom="",runtimeError=null,renderCount=0;try{const factory=new Function("props","onRender",m.source+"\\n;return typeof App!=="undefined"?App:(typeof Component!=="undefined"?Component:null);");const C=factory(m.props||{},()=>renderCount++);if(typeof C!=="function")throw new Error("React lesson must define an App or Component function.");const host=document.getElementById("root");host.replaceChildren();window.ReactDOM.createRoot(host).render(window.React.createElement(C,Object.assign({},m.props||{},{onRender:()=>renderCount++})));await new Promise(r=>setTimeout(r,0));dom=host.innerHTML.slice(0,12000)}catch(error){runtimeError=error instanceof Error?error.message:String(error)}finally{console.log=oldLog;console.error=oldError}parent.postMessage({type:"runtime:result",protocolVersion:1,runId:m.runId,revision:m.revision,nonce:m.nonce,dom,runtimeError,console:logs,renderCount},"*")});</script></body></html>`;
-}
+export function resetReactRevision() { revision += 1; return revision; }
+export function isCurrentReactRun(runRevision: number) { return runRevision === revision; }
+function boundedProps(value: Record<string, unknown>) { try { const serialized = JSON.stringify(value, (_key, item) => typeof item === "function" ? "[function]" : item); if (!serialized || encodedBytes(value) > RUNTIME_LIMITS.propsBytes) return null; return JSON.parse(serialized) as Record<string, unknown>; } catch { return null; } }
+function makeEvidence(runId: string, runRevision: number, result: Pick<ReactRunResult, "dom" | "runtimeError" | "console" | "renderCount">): EvidenceEnvelope { return { schemaVersion: 1, runId, revision: runRevision, family: "component-browser", phase: "observe", timestamp: Date.now(), status: result.runtimeError ? "partial" : "complete", source: { host: "isolated-iframe", artifactIds: [] }, items: [{ kind: "dom-snapshot", html: result.dom.slice(0, RUNTIME_LIMITS.domBytes) }, { kind: "console", level: "log", message: result.console.join("\n").slice(0, RUNTIME_LIMITS.consoleBytes) }, ...(result.runtimeError ? [{ kind: "runtime-error" as const, message: result.runtimeError.slice(0, 1000) }] : []), { kind: "js-value", expression: "renderCount", value: result.renderCount }] }; }
+function runtimeUrl(nonce: string, runId: string, runRevision: number) { const query = new URLSearchParams({ nonce, runId, revision: String(runRevision) }); return `/dev/react-runtime?${query.toString()}`; }
+
 export function runReactComponent(request: ReactRunRequest): Promise<ReactRunResult | null> {
   const runRevision = request.revision ?? resetReactRevision();
-  if (!isCurrentReactRun(runRevision)) return Promise.resolve(null);
+  if (!isCurrentReactRun(runRevision) || encodedBytes(request.source) > RUNTIME_LIMITS.sourceBytes) return Promise.resolve(null);
   const runId = request.runId ?? `react-${runRevision}`;
   const nonce = crypto.randomUUID();
+  const requestId = crypto.randomUUID();
   const props = boundedProps(request.props ?? {});
-  if (
-    new TextEncoder().encode(request.source).byteLength > REACT_RUNTIME_LIMITS.sourceBytes ||
-    !props
-  )
-    return Promise.resolve(null);
-  const timeout = Math.min(
-    request.timeoutMs ?? REACT_RUNTIME_LIMITS.timeoutMs,
-    REACT_RUNTIME_LIMITS.timeoutMs,
-  );
+  if (!props) return Promise.resolve(null);
   let transformed: string;
-  try {
-    transformed = Babel.transform(request.source, {
-      presets: [["react", { runtime: "classic" }], "typescript"],
-      filename: "lesson.tsx",
-    }).code;
-  } catch {
-    return Promise.resolve(null);
-  }
+  try { transformed = Babel.transform(request.source, { presets: [["react", { runtime: "classic" }], "typescript"], filename: "lesson.tsx" }).code ?? ""; } catch { return Promise.resolve(null); }
   return new Promise((resolve) => {
     const startedAt = Date.now();
     const iframe = document.createElement("iframe");
     iframe.setAttribute("sandbox", "allow-scripts");
-    iframe.srcdoc = iframeDocument(nonce, runId, runRevision);
+    iframe.title = "Isolated React lesson runtime";
+    iframe.src = runtimeUrl(nonce, runId, runRevision);
     let settled = false;
-    const finish = (
-      response: RuntimeResponse | null,
-      status: "succeeded" | "failed" | "timeout",
-    ) => {
+    let ready = false;
+    const finish = (response: RuntimeResultMessage | null, status: "succeeded" | "failed" | "timeout") => {
       if (settled) return;
       settled = true;
+      const dispose = { type: "runtime:dispose", protocolVersion: REACT_RUNTIME_PROTOCOL_VERSION, runId, revision: runRevision, nonce } as const;
+      iframe.contentWindow?.postMessage(dispose, "*");
       window.removeEventListener("message", onMessage);
       iframe.remove();
-      const runtimeError =
-        response?.runtimeError ?? (status === "timeout" ? "React execution timed out." : null);
-      const result = {
-        execution: {
-          schemaVersion: 1,
-          runId,
-          revision: runRevision,
-          family: "component-browser" as const,
-          phase: "run" as const,
-          status,
-          startedAt,
-          completedAt: Date.now(),
-          artifacts: [],
-          ...(runtimeError ? { error: runtimeError } : {}),
-        },
-        root: null,
-        dom: response?.dom ?? "",
-        runtimeError,
-        console: response?.console ?? [],
-        renderCount: response?.renderCount ?? 0,
-        evidence: {} as EvidenceEnvelope,
-      };
+      const runtimeError = response?.runtimeError ?? (status === "timeout" ? "React execution timed out." : null);
+      const result: ReactRunResult = { execution: { schemaVersion: 1, runId, revision: runRevision, family: "component-browser" as const, phase: "run" as const, status, startedAt, completedAt: Date.now(), artifacts: [], ...(runtimeError ? { error: runtimeError } : {}) }, root: null, dom: response?.dom ?? "", runtimeError, console: response?.console ?? [], renderCount: response?.renderCount ?? 0, evidence: {} as EvidenceEnvelope };
       result.evidence = makeEvidence(runId, runRevision, result);
       resolve(result);
     };
-    const executeMessage = {
-      type: "runtime:execute" as const,
-      protocolVersion: 1 as const,
-      runId,
-      revision: runRevision,
-      nonce,
-      source: transformed,
-      props,
-    };
-    let executeSent = false;
-    function sendExecute() {
-      if (executeSent || settled || !iframe.contentWindow) return;
-      executeSent = true;
-      iframe.contentWindow.postMessage(executeMessage, "*");
-    }
-    let ready = false;
-    const onMessage = (event: MessageEvent<RuntimeReady | RuntimeResponse>) => {
-      const m = event.data;
-      if (
-        !m ||
-        m.protocolVersion !== REACT_RUNTIME_PROTOCOL_VERSION ||
-        m.runId !== runId ||
-        m.revision !== runRevision ||
-        m.nonce !== nonce
-      )
-        return;
-      if (m.type === "runtime:ready") {
-        ready = true;
-        sendExecute();
-        return;
-      }
-      if (m.type !== "runtime:result" || !ready) return;
-      finish(m, m.runtimeError ? "failed" : "succeeded");
-    };
+    const execute = { type: "runtime:execute", protocolVersion: REACT_RUNTIME_PROTOCOL_VERSION, runId, revision: runRevision, nonce, requestId, source: transformed, props } as const;
+    const sendExecute = () => { if (ready && iframe.contentWindow && !settled) iframe.contentWindow.postMessage(execute, "*"); };
+    function onMessage(event: MessageEvent<RuntimeMessage>) { const message = event.data; if (!message || message.protocolVersion !== REACT_RUNTIME_PROTOCOL_VERSION || message.runId !== runId || message.revision !== runRevision || message.nonce !== nonce) return; if (message.type === "runtime:ready") { ready = true; sendExecute(); } else if (message.type === "runtime:result" && message.requestId === requestId && ready) finish(message, message.runtimeError ? "failed" : "succeeded"); }
     window.addEventListener("message", onMessage);
     document.body.appendChild(iframe);
-    window.setTimeout(() => finish(null, "timeout"), timeout);
+    window.setTimeout(() => finish(null, "timeout"), Math.min(request.timeoutMs ?? RUNTIME_LIMITS.timeoutMs, RUNTIME_LIMITS.timeoutMs));
   });
 }

@@ -46,6 +46,7 @@ import { Route as DevLessonExperienceNextRouteImport } from './routes/dev.lesson
 import { Route as DevLessonExperienceReactRouteImport } from './routes/dev.lesson-experience-react'
 import { Route as DevLessonExperienceReactNativeRouteImport } from './routes/dev.lesson-experience-react-native'
 import { Route as DevLessonExperienceTypescriptRouteImport } from './routes/dev.lesson-experience-typescript'
+import { Route as DevReactRuntimeRouteImport } from './routes/dev.react-runtime'
 import { Route as InterviewSessionRouteImport } from './routes/interview.session'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnLessonsRouteImport } from './routes/learn.lessons'
@@ -249,6 +250,11 @@ const DevLessonExperienceTypescriptRoute =
     path: '/dev/lesson-experience-typescript',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DevReactRuntimeRoute = DevReactRuntimeRouteImport.update({
+  id: '/dev/react-runtime',
+  path: '/dev/react-runtime',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InterviewSessionRoute = InterviewSessionRouteImport.update({
   id: '/session',
   path: '/session',
@@ -352,6 +358,7 @@ export interface FileRoutesByFullPath {
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
   '/dev/lesson-experience-react-native': typeof DevLessonExperienceReactNativeRoute
   '/dev/lesson-experience-typescript': typeof DevLessonExperienceTypescriptRoute
+  '/dev/react-runtime': typeof DevReactRuntimeRoute
   '/interview/session': typeof InterviewSessionRoute
   '/learn/lessons': typeof LearnLessonsRoute
   '/learn/paths': typeof LearnPathsRoute
@@ -400,6 +407,7 @@ export interface FileRoutesByTo {
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
   '/dev/lesson-experience-react-native': typeof DevLessonExperienceReactNativeRoute
   '/dev/lesson-experience-typescript': typeof DevLessonExperienceTypescriptRoute
+  '/dev/react-runtime': typeof DevReactRuntimeRoute
   '/interview/session': typeof InterviewSessionRoute
   '/learn/lessons': typeof LearnLessonsRoute
   '/learn/paths': typeof LearnPathsRoute
@@ -453,6 +461,7 @@ export interface FileRoutesById {
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
   '/dev/lesson-experience-react-native': typeof DevLessonExperienceReactNativeRoute
   '/dev/lesson-experience-typescript': typeof DevLessonExperienceTypescriptRoute
+  '/dev/react-runtime': typeof DevReactRuntimeRoute
   '/interview/session': typeof InterviewSessionRoute
   '/learn/lessons': typeof LearnLessonsRoute
   '/learn/paths': typeof LearnPathsRoute
@@ -507,6 +516,7 @@ export interface FileRouteTypes {
     | '/dev/lesson-experience-react'
     | '/dev/lesson-experience-react-native'
     | '/dev/lesson-experience-typescript'
+    | '/dev/react-runtime'
     | '/interview/session'
     | '/learn/lessons'
     | '/learn/paths'
@@ -555,6 +565,7 @@ export interface FileRouteTypes {
     | '/dev/lesson-experience-react'
     | '/dev/lesson-experience-react-native'
     | '/dev/lesson-experience-typescript'
+    | '/dev/react-runtime'
     | '/interview/session'
     | '/learn/lessons'
     | '/learn/paths'
@@ -607,6 +618,7 @@ export interface FileRouteTypes {
     | '/dev/lesson-experience-react'
     | '/dev/lesson-experience-react-native'
     | '/dev/lesson-experience-typescript'
+    | '/dev/react-runtime'
     | '/interview/session'
     | '/learn/lessons'
     | '/learn/paths'
@@ -659,6 +671,7 @@ export interface RootRouteChildren {
   DevLessonExperienceReactRoute: typeof DevLessonExperienceReactRoute
   DevLessonExperienceReactNativeRoute: typeof DevLessonExperienceReactNativeRoute
   DevLessonExperienceTypescriptRoute: typeof DevLessonExperienceTypescriptRoute
+  DevReactRuntimeRoute: typeof DevReactRuntimeRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
 }
 
@@ -923,6 +936,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevLessonExperienceTypescriptRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dev/react-runtime': {
+      id: '/dev/react-runtime'
+      path: '/dev/react-runtime'
+      fullPath: '/dev/react-runtime'
+      preLoaderRoute: typeof DevReactRuntimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/interview/session': {
       id: '/interview/session'
       path: '/session'
@@ -1128,6 +1148,7 @@ const rootRouteChildren: RootRouteChildren = {
   DevLessonExperienceReactRoute: DevLessonExperienceReactRoute,
   DevLessonExperienceReactNativeRoute: DevLessonExperienceReactNativeRoute,
   DevLessonExperienceTypescriptRoute: DevLessonExperienceTypescriptRoute,
+  DevReactRuntimeRoute: DevReactRuntimeRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
 }
 export const routeTree = rootRouteImport
