@@ -3,7 +3,7 @@ import type { EvidenceEnvelope, ExecutionMetadata, RuntimeFamilyDescriptor } fro
 import { REACT_RUNTIME_PROTOCOL_VERSION, RUNTIME_LIMITS, encodedBytes, isProtocolMessage, type RuntimeResultMessage } from "./react-sandbox/protocol";
 export interface ReactRunRequest { source: string; revision?: number; runId?: string; props?: Record<string, unknown>; timeoutMs?: number; }
 export interface ReactRunResult { execution: ExecutionMetadata; root: null; dom: string; runtimeError: string | null; console: readonly string[]; renderCount: number; networkAttempts: readonly string[]; parentAccess: readonly string[]; evidence: EvidenceEnvelope; }
-export const REACT_COMPONENT_BROWSER_DESCRIPTOR: RuntimeFamilyDescriptor = { family: "component-browser", version: 1, security: "browser-sandbox", capabilities: [{ name: "execute.react", version: 1 }, { name: "render.dom", version: 1 }, { name: "inspect.dom", version: 1 }, { name: "inspect.console", version: 1 }, { name: "interact.allowlisted", version: 1 }, { name: "reset.run", version: 1 }] };
+export const REACT_COMPONENT_BROWSER_DESCRIPTOR: RuntimeFamilyDescriptor = { family: "component-browser", version: 1, security: "browser-sandbox", capabilities: [{ name: "execute.react", version: 1 }, { name: "render.dom", version: 1 }, { name: "inspect.dom", version: 1 }, { name: "inspect.console", version: 1 }] };
 export { REACT_RUNTIME_PROTOCOL_VERSION, RUNTIME_LIMITS };
 let revision = 0;
 export function resetReactRevision() { revision += 1; return revision; }
