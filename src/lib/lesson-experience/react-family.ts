@@ -96,6 +96,13 @@ function makeEvidence(
     ],
   };
 }
+interface RuntimeReady {
+  type: "runtime:ready";
+  protocolVersion: 1;
+  runId: string;
+  revision: number;
+  nonce: string;
+}
 interface RuntimeResponse {
   type: "runtime:result";
   protocolVersion: 1;
@@ -107,10 +114,10 @@ interface RuntimeResponse {
   console: string[];
   renderCount: number;
 }
-function iframeDocument(nonce: string) {
+function iframeDocument(nonce: string, runId: string, runRevision: number) {
   const react = reactBundle.replace(/<\/script/gi, "<\\/script");
   const dom = reactDomBundle.replace(/<\/script/gi, "<\\/script");
-  return `<!doctype html><html><body><div id="root"></div><script>${react}</script><script>${dom}</script><script>window.fetch=undefined;window.XMLHttpRequest=undefined;window.WebSocket=undefined;window.EventSource=undefined;window.sendBeacon=undefined;window.addEventListener("message",async(event)=>{const m=event.data;if(!m||m.protocolVersion!==1||m.type!=="runtime:execute"||m.nonce!=="${nonce}"||typeof m.source!=="string")return;const logs=[];const oldLog=console.log,oldError=console.error;console.log=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};console.error=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};let dom="",runtimeError=null,renderCount=0;try{const factory=new Function("props","onRender",m.source+"\\n;return typeof App!=="undefined"?App:(typeof Component!=="undefined"?Component:null);");const C=factory(m.props||{},()=>renderCount++);if(typeof C!=="function")throw new Error("React lesson must define an App or Component function.");const host=document.getElementById("root");host.replaceChildren();window.ReactDOM.createRoot(host).render(window.React.createElement(C,Object.assign({},m.props||{},{onRender:()=>renderCount++})));await new Promise(r=>setTimeout(r,0));dom=host.innerHTML.slice(0,12000)}catch(error){runtimeError=error instanceof Error?error.message:String(error)}finally{console.log=oldLog;console.error=oldError}parent.postMessage({type:"runtime:result",protocolVersion:1,runId:m.runId,revision:m.revision,nonce:m.nonce,dom,runtimeError,console:logs,renderCount},"*")});</script></body></html>`;
+  return `<!doctype html><html><body><div id="root"></div><script>${react}</script><script>${dom}</script><script>window.fetch=undefined;window.XMLHttpRequest=undefined;window.WebSocket=undefined;window.EventSource=undefined;window.sendBeacon=undefined;window.__FORGE_REACT_RUNTIME_READY__=true;parent.postMessage({type:"runtime:ready",protocolVersion:1,runId:"${runId}",nonce:"${nonce}",revision:${runRevision}},"*");window.addEventListener("message",async(event)=>{const m=event.data;if(!m||m.protocolVersion!==1||m.type!=="runtime:execute"||m.nonce!=="${nonce}"||typeof m.source!=="string")return;const logs=[];const oldLog=console.log,oldError=console.error;console.log=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};console.error=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};let dom="",runtimeError=null,renderCount=0;try{const factory=new Function("props","onRender",m.source+"\\n;return typeof App!=="undefined"?App:(typeof Component!=="undefined"?Component:null);");const C=factory(m.props||{},()=>renderCount++);if(typeof C!=="function")throw new Error("React lesson must define an App or Component function.");const host=document.getElementById("root");host.replaceChildren();window.ReactDOM.createRoot(host).render(window.React.createElement(C,Object.assign({},m.props||{},{onRender:()=>renderCount++})));await new Promise(r=>setTimeout(r,0));dom=host.innerHTML.slice(0,12000)}catch(error){runtimeError=error instanceof Error?error.message:String(error)}finally{console.log=oldLog;console.error=oldError}parent.postMessage({type:"runtime:result",protocolVersion:1,runId:m.runId,revision:m.revision,nonce:m.nonce,dom,runtimeError,console:logs,renderCount},"*")});</script></body></html>`;
 }
 export function runReactComponent(request: ReactRunRequest): Promise<ReactRunResult | null> {
   const runRevision = request.revision ?? resetReactRevision();
@@ -140,7 +147,7 @@ export function runReactComponent(request: ReactRunRequest): Promise<ReactRunRes
     const startedAt = Date.now();
     const iframe = document.createElement("iframe");
     iframe.setAttribute("sandbox", "allow-scripts");
-    iframe.srcdoc = iframeDocument(nonce);
+    iframe.srcdoc = iframeDocument(nonce, runId, runRevision);
     let settled = false;
     const finish = (
       response: RuntimeResponse | null,
@@ -175,22 +182,6 @@ export function runReactComponent(request: ReactRunRequest): Promise<ReactRunRes
       result.evidence = makeEvidence(runId, runRevision, result);
       resolve(result);
     };
-    const onMessage = (event: MessageEvent<RuntimeResponse>) => {
-      const m = event.data;
-      if (
-        // Sandboxed srcdoc documents have opaque origins and may expose a
-        // different WindowProxy wrapper; the per-run nonce authenticates the
-        // response without weakening run/revision validation.
-        m?.type !== "runtime:result" ||
-        m.protocolVersion !== 1 ||
-        m.runId !== runId ||
-        m.revision !== runRevision ||
-        m.nonce !== nonce
-      )
-        return;
-      finish(m, m.runtimeError ? "failed" : "succeeded");
-    };
-    window.addEventListener("message", onMessage);
     const executeMessage = {
       type: "runtime:execute" as const,
       protocolVersion: 1 as const,
@@ -201,14 +192,32 @@ export function runReactComponent(request: ReactRunRequest): Promise<ReactRunRes
       props,
     };
     let executeSent = false;
-    const sendExecute = () => {
+    function sendExecute() {
       if (executeSent || settled || !iframe.contentWindow) return;
       executeSent = true;
       iframe.contentWindow.postMessage(executeMessage, "*");
+    }
+    let ready = false;
+    const onMessage = (event: MessageEvent<RuntimeReady | RuntimeResponse>) => {
+      const m = event.data;
+      if (
+        !m ||
+        m.protocolVersion !== REACT_RUNTIME_PROTOCOL_VERSION ||
+        m.runId !== runId ||
+        m.revision !== runRevision ||
+        m.nonce !== nonce
+      )
+        return;
+      if (m.type === "runtime:ready") {
+        ready = true;
+        sendExecute();
+        return;
+      }
+      if (m.type !== "runtime:result" || !ready) return;
+      finish(m, m.runtimeError ? "failed" : "succeeded");
     };
-    iframe.addEventListener("load", sendExecute);
+    window.addEventListener("message", onMessage);
     document.body.appendChild(iframe);
-    window.setTimeout(sendExecute, 250);
     window.setTimeout(() => finish(null, "timeout"), timeout);
   });
 }
