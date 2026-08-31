@@ -7,7 +7,7 @@ import { useLessonLayout } from "./lesson-layout-context";
 export interface ActivityFeedbackProps {
   status: ActivityInteractionStatus;
   validationResult?: ActivityValidationResult;
-  hints?: ActivityHint[];
+  hints?: ActivityHint[] | string[];
   hintsRevealed?: number;
   explanation?: string;
   className?: string;

@@ -50,7 +50,7 @@ export function DebugRenderer({
     Array<{ description: string; passed: boolean; error?: string }>
   >([]);
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
-  const isCorrect = state.status === "completed" || state.status === "passed";
+  const isCorrect = state.status === "completed" || state.status === "correct";
 
   const hints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (hints?.length || 0) - state.hintsRevealed;
@@ -111,11 +111,9 @@ export function DebugRenderer({
 
   useEffect(() => {
     if (
-      state.status === "evaluating" ||
+      state.status === "submitted" ||
       state.status === "correct" ||
       state.status === "incorrect" ||
-      state.status === "failed" ||
-      state.status === "passed" ||
       state.status === "completed"
     ) {
       handleRunTest();
