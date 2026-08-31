@@ -14,7 +14,7 @@ const starter = `function App({ label = "React works" }) {
 }`;
 export function ReactFamilyLab() {
   const [source, setSource] = useState(starter);
-  const [result, setResult] = useState<ReturnType<typeof runReactComponent>>(null);
+  const [result, setResult] = useState<Awaited<ReturnType<typeof runReactComponent>>>(null);
   const validation = useMemo(
     () =>
       result
@@ -50,8 +50,8 @@ export function ReactFamilyLab() {
               aria-label="React source"
             />
             <Button
-              onClick={() =>
-                setResult(runReactComponent({ source, props: { label: "React works" } }))
+              onClick={async () =>
+                setResult(await runReactComponent({ source, props: { label: "React works" } }))
               }
             >
               Run component

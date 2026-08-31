@@ -21,6 +21,14 @@ export default defineConfig({
     nitro(),
     viteReact(),
   ],
+  test: {
+    setupFiles: ["./src/test/setup.ts"],
+    server: {
+      deps: {
+        inline: ["p-retry"],
+      },
+    },
+  },
   optimizeDeps: {
     include: ["monaco-editor"],
   },

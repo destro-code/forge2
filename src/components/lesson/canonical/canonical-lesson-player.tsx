@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CanonicalLesson } from "@/lib/curriculum/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
+import { mapSessionStatus } from "./runtime/use-activity-runtime";
 import { evaluateActivityValidation } from "./validation";
-import type { ActivityCompletionEvent } from "./types";
+import type { ActivityCompletionEvent, ActivityInteractionStatus } from "./types";
 import {
   ActivityFeedback,
   hasActivityFeedback,
@@ -100,7 +101,10 @@ export function CanonicalLessonPlayer({
       }
     }
 
-    const valResult = evaluateActivityValidation(currentActivity, responseToEvaluate);
+    const valResult = evaluateActivityValidation(
+      currentActivity,
+      responseToEvaluate as Parameters<typeof evaluateActivityValidation>[1],
+    );
     resolveEvaluation(valResult, currentActivity.id);
   }, [
     currentActivity,
@@ -120,7 +124,7 @@ export function CanonicalLessonPlayer({
   }, [currentActivity, revealHint]);
 
   const handleActivityContinue = useCallback(
-    (_event?: ActivityCompletionEvent<unknown>) => {
+    (_event?: ActivityCompletionEvent<unknown> | React.MouseEvent<HTMLButtonElement>) => {
       if (!currentActivity) return;
       completeActivity(currentActivity.id);
       if (currentActivityIndex < totalActivities - 1) goNext();
@@ -186,18 +190,18 @@ export function CanonicalLessonPlayer({
     }
   }, [currentActivity, isInteractive, activeResponse]);
 
-  const effectiveStatus = useMemo(() => {
+  const effectiveStatus = useMemo<ActivityInteractionStatus>(() => {
     if (!currentActivity) return "idle";
     const state = getActivityState(currentActivity.id) || currentActivityState;
-    return state?.status || "idle";
+    return state ? mapSessionStatus(state.status) : "idle";
   }, [currentActivity, getActivityState, currentActivityState]);
 
-  const isCorrect =
-    effectiveStatus === "passed" ||
-    effectiveStatus === "correct" ||
-    effectiveStatus === "completed";
-  const isIncorrect = effectiveStatus === "failed" || effectiveStatus === "incorrect";
-  const isSubmitted = effectiveStatus === "evaluating" || effectiveStatus === "submitted";
+  // `effectiveStatus` is the renderer-facing interaction state, not the
+  // learning-engine lifecycle state. The runtime adapter maps passed/failed/
+  // evaluating to correct/incorrect/submitted before renderers see it.
+  const isCorrect = effectiveStatus === "correct" || effectiveStatus === "completed";
+  const isIncorrect = effectiveStatus === "incorrect";
+  const isSubmitted = effectiveStatus === "submitted";
 
   const isLastActivity = currentActivityIndex === totalActivities - 1;
 
@@ -205,7 +209,11 @@ export function CanonicalLessonPlayer({
     totalActivities > 0 ? ((currentActivityIndex + 1) / totalActivities) * 100 : 0;
 
   const movement = movementForActivityType(currentActivity?.type ?? "explanation");
-  const railNodes = activities.map((a) => ({ id: a.id, type: a.type, title: a.title }));
+  const railNodes = activities.map((a) => ({
+    id: a.id,
+    type: a.type,
+    title: "title" in a.content ? a.content.title : a.type,
+  }));
 
   return (
     <div
@@ -299,7 +307,9 @@ export function CanonicalLessonPlayer({
           </Button>
 
           <span className="hidden max-w-[45%] truncate text-xs font-medium text-lesson-text-muted sm:block">
-            {currentActivity?.title || `Activity ${currentActivityIndex + 1}`}
+            {(currentActivity && "title" in currentActivity.content
+              ? currentActivity.content.title
+              : undefined) || `Activity ${currentActivityIndex + 1}`}
           </span>
 
           <div className="flex items-center gap-2">

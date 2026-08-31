@@ -9,7 +9,7 @@ import {
   UseActivityRuntimeOptions,
   ActivityRuntime,
 } from "./use-activity-runtime";
-import type { MultipleChoiceActivity } from "@/lib/curriculum/types";
+import type { MultipleChoiceActivity, CanonicalActivity } from "@/lib/curriculum/types";
 import type { ActivitySessionState } from "@/lib/learning-engine/types";
 
 // Provide a mock act function that just runs synchronously for testing
@@ -19,7 +19,7 @@ const mockActivity: MultipleChoiceActivity = {
   id: "act-test-1",
   type: "multiple-choice",
   intent: "retrieval",
-  order: 1,
+  objectiveIds: ["obj-test"],
   content: {
     question: "Test question",
     options: [
@@ -33,14 +33,14 @@ const mockActivity: MultipleChoiceActivity = {
   },
 };
 
-const TestComponent = forwardRef((props: UseActivityRuntimeOptions, ref) => {
+const TestComponent = forwardRef<any, UseActivityRuntimeOptions<CanonicalActivity>>((props, ref) => {
   const runtime = useActivityRuntime(props);
   useImperativeHandle(ref, () => runtime);
   return null;
 });
 
-function renderRuntimeHook(options: UseActivityRuntimeOptions) {
-  let runtimeRef: ActivityRuntime | null = null;
+function renderRuntimeHook(options: UseActivityRuntimeOptions<CanonicalActivity>) {
+  let runtimeRef: any = null;
   const rootElement = document.createElement("div");
   const root = createRoot(rootElement);
 
@@ -48,7 +48,7 @@ function renderRuntimeHook(options: UseActivityRuntimeOptions) {
     root.render(
       <TestComponent
         {...options}
-        ref={(val) => {
+        ref={(val: ActivityRuntime | null) => {
           runtimeRef = val;
         }}
       />,

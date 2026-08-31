@@ -1,9 +1,7 @@
-import * as React from "react";
-import { createRoot, type Root } from "react-dom/client";
-import { act } from "react";
 import Babel from "@babel/standalone";
+import reactBundle from "../compiler/vendor/react.development.js?raw";
+import reactDomBundle from "../compiler/vendor/react-dom.development.js?raw";
 import type { EvidenceEnvelope, ExecutionMetadata, RuntimeFamilyDescriptor } from "./contracts";
-
 export interface ReactRunRequest {
   source: string;
   revision?: number;
@@ -11,7 +9,6 @@ export interface ReactRunRequest {
   props?: Record<string, unknown>;
   timeoutMs?: number;
 }
-
 export interface ReactTreeNode {
   name: string;
   props: Record<string, unknown>;
@@ -26,23 +23,28 @@ export interface ReactRunResult {
   renderCount: number;
   evidence: EvidenceEnvelope;
 }
-
 export const REACT_COMPONENT_BROWSER_DESCRIPTOR: RuntimeFamilyDescriptor = {
-  family: "react-component-browser",
-  security: "sandboxed-browser",
+  family: "component-browser",
+  version: 1,
+  security: "browser-sandbox",
   capabilities: [
-    "render.dom",
-    "inspect.dom",
-    "inspect.component-tree",
-    "inspect.props",
-    "inspect.state",
-    "inspect.render-commit",
-    "observe.runtime-error",
-    "observe.console",
+    { name: "execute.react", version: 1 },
+    { name: "render.dom", version: 1 },
+    { name: "inspect.dom", version: 1 },
+    { name: "inspect.component-tree", version: 1 },
+    { name: "inspect.render-trace", version: 1 },
+    { name: "inspect.console", version: 1 },
   ],
-  incompatibleWith: ["server-only", "native-device"],
 };
-
+export const REACT_RUNTIME_PROTOCOL_VERSION = 1 as const;
+export const REACT_RUNTIME_LIMITS = {
+  sourceBytes: 100_000,
+  propsBytes: 32_000,
+  domBytes: 12_000,
+  consoleBytes: 4_000,
+  consoleEntries: 50,
+  timeoutMs: 3_000,
+} as const;
 let revision = 0;
 export function resetReactRevision() {
   revision += 1;
@@ -51,24 +53,22 @@ export function resetReactRevision() {
 export function isCurrentReactRun(runRevision: number) {
   return runRevision === revision;
 }
-
-function safeProps(value: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(value)
-      .filter(([key]) => key !== "children")
-      .map(([key, item]) => [key, typeof item === "function" ? "[function]" : item]),
-  );
+function boundedProps(value: Record<string, unknown>) {
+  try {
+    const serialized = JSON.stringify(value, (_key, item) =>
+      typeof item === "function" ? "[function]" : item,
+    );
+    if (
+      !serialized ||
+      new TextEncoder().encode(serialized).byteLength > REACT_RUNTIME_LIMITS.propsBytes
+    )
+      return null;
+    return JSON.parse(serialized) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
 }
-function treeFromDom(element: Element): ReactTreeNode {
-  return {
-    name: element.getAttribute("data-component") || element.tagName.toLowerCase(),
-    props: safeProps({
-      ...Object.fromEntries([...element.attributes].map((a) => [a.name, a.value])),
-    }),
-    children: [...element.children].map(treeFromDom),
-  };
-}
-function evidence(
+function makeEvidence(
   runId: string,
   runRevision: number,
   result: Pick<ReactRunResult, "dom" | "runtimeError" | "console" | "renderCount">,
@@ -77,110 +77,155 @@ function evidence(
     schemaVersion: 1,
     runId,
     revision: runRevision,
-    family: "react-component-browser",
+    family: "component-browser",
     phase: "observe",
     timestamp: Date.now(),
-    status: result.runtimeError ? "failed" : "succeeded",
-    source: { host: "ReactDOM.createRoot", artifactIds: [] },
+    status: result.runtimeError ? "partial" : "complete",
+    source: { host: "isolated-iframe", artifactIds: [] },
     items: [
-      { kind: "dom-snapshot", code: "root", message: result.dom.slice(0, 12000) },
-      { kind: "console", code: "console", message: result.console.join("\n").slice(0, 4000) },
+      { kind: "dom-snapshot", html: result.dom.slice(0, REACT_RUNTIME_LIMITS.domBytes) },
+      {
+        kind: "console",
+        level: "log",
+        message: result.console.join("\n").slice(0, REACT_RUNTIME_LIMITS.consoleBytes),
+      },
       ...(result.runtimeError
-        ? [{ kind: "runtime-error" as const, code: "render", message: result.runtimeError }]
+        ? [{ kind: "runtime-error" as const, message: result.runtimeError.slice(0, 1000) }]
         : []),
-      { kind: "render-commit", code: "render-count", message: String(result.renderCount) },
+      { kind: "js-value", expression: "renderCount", value: result.renderCount },
     ],
   };
 }
-
-export function runReactComponent(request: ReactRunRequest): ReactRunResult | null {
+interface RuntimeReady {
+  type: "runtime:ready";
+  protocolVersion: 1;
+  runId: string;
+  revision: number;
+  nonce: string;
+}
+interface RuntimeResponse {
+  type: "runtime:result";
+  protocolVersion: 1;
+  runId: string;
+  revision: number;
+  nonce: string;
+  dom: string;
+  runtimeError: string | null;
+  console: string[];
+  renderCount: number;
+}
+function iframeDocument(nonce: string, runId: string, runRevision: number) {
+  const toBase64 = (source: string) => {
+    const bytes = new TextEncoder().encode(source);
+    let binary = "";
+    for (let index = 0; index < bytes.length; index += 0x8000) {
+      binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+    }
+    return btoa(binary);
+  };
+  const react = toBase64(reactBundle);
+  const dom = toBase64(reactDomBundle);
+  return `<!doctype html><html><head></head><body><div id="root"></div><script>window.fetch=undefined;window.XMLHttpRequest=undefined;window.WebSocket=undefined;window.EventSource=undefined;window.sendBeacon=undefined;function loadBundle(encoded){var binary=atob(encoded),bytes=new Uint8Array(binary.length);for(var index=0;index<binary.length;index++)bytes[index]=binary.charCodeAt(index);var script=document.createElement("script");script.text=new TextDecoder().decode(bytes);document.head.appendChild(script)};try{loadBundle("${react}");loadBundle("${dom}")}catch(error){parent.postMessage({type:"runtime:error",protocolVersion:1,runId:"${runId}",revision:${runRevision},nonce:"${nonce}",message:String(error).slice(0,200)},"*");throw error}window.__FORGE_REACT_RUNTIME_READY__=true;parent.postMessage({type:"runtime:ready",protocolVersion:1,runId:"${runId}",nonce:"${nonce}",revision:${runRevision}},"*");window.addEventListener("message",async(event)=>{const m=event.data;if(!m||m.protocolVersion!==1||m.type!=="runtime:execute"||m.nonce!=="${nonce}"||typeof m.source!=="string")return;const logs=[];const oldLog=console.log,oldError=console.error;console.log=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};console.error=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};let dom="",runtimeError=null,renderCount=0;try{const factory=new Function("props","onRender",m.source+"\\n;return typeof App!=="undefined"?App:(typeof Component!=="undefined"?Component:null);");const C=factory(m.props||{},()=>renderCount++);if(typeof C!=="function")throw new Error("React lesson must define an App or Component function.");const host=document.getElementById("root");host.replaceChildren();window.ReactDOM.createRoot(host).render(window.React.createElement(C,Object.assign({},m.props||{},{onRender:()=>renderCount++})));await new Promise(r=>setTimeout(r,0));dom=host.innerHTML.slice(0,12000)}catch(error){runtimeError=error instanceof Error?error.message:String(error)}finally{console.log=oldLog;console.error=oldError}parent.postMessage({type:"runtime:result",protocolVersion:1,runId:m.runId,revision:m.revision,nonce:m.nonce,dom,runtimeError,console:logs,renderCount},"*")});</script></body></html>`;
+}
+export function runReactComponent(request: ReactRunRequest): Promise<ReactRunResult | null> {
   const runRevision = request.revision ?? resetReactRevision();
-  if (!isCurrentReactRun(runRevision)) return null;
+  if (!isCurrentReactRun(runRevision)) return Promise.resolve(null);
   const runId = request.runId ?? `react-${runRevision}`;
-  const startedAt = Date.now();
-  const execution: ExecutionMetadata = {
-    schemaVersion: 1,
-    runId,
-    revision: runRevision,
-    family: "react-component-browser",
-    phase: "run",
-    status: "running",
-    startedAt,
-    artifacts: [],
-  };
-  const host = document.createElement("div");
-  const logs: string[] = [];
-  let runtimeError: string | null = null;
-  let renderCount = 0;
-  const originalLog = console.log;
-  const originalError = console.error;
-  console.log = (...args) => {
-    logs.push(args.map(String).join(" ").slice(0, 1000));
-  };
-  console.error = (...args) => {
-    logs.push(args.map(String).join(" ").slice(0, 1000));
-  };
+  const nonce = crypto.randomUUID();
+  const props = boundedProps(request.props ?? {});
+  if (
+    new TextEncoder().encode(request.source).byteLength > REACT_RUNTIME_LIMITS.sourceBytes ||
+    !props
+  )
+    return Promise.resolve(null);
+  const timeout = Math.min(
+    request.timeoutMs ?? REACT_RUNTIME_LIMITS.timeoutMs,
+    REACT_RUNTIME_LIMITS.timeoutMs,
+  );
+  let transformed: string;
   try {
-    const transformed = Babel.transform(request.source, {
+    transformed = Babel.transform(request.source, {
       presets: [["react", { runtime: "classic" }], "typescript"],
       filename: "lesson.tsx",
     }).code;
-    const factory = new Function(
-      "React",
-      "props",
-      "onRender",
-      `${transformed}\n;return typeof App !== "undefined" ? App : (typeof Component !== "undefined" ? Component : null);`,
-    );
-    const Component = factory(React, request.props ?? {}, () => {
-      renderCount += 1;
-    });
-    if (typeof Component !== "function")
-      throw new Error("React lesson must define an App or Component function.");
-    const root: Root = createRoot(host);
-    act(() => {
-      root.render(
-        React.createElement(Component, {
-          ...(request.props ?? {}),
-          onRender: () => {
-            renderCount += 1;
-          },
-        }),
-      );
-    });
-    const dom = host.innerHTML.slice(0, 12000);
-    const tree = host.firstElementChild ? treeFromDom(host.firstElementChild) : null;
-    root.unmount();
-    const result = {
-      execution: { ...execution, status: "succeeded" as const, completedAt: Date.now() },
-      root: tree,
-      dom,
-      runtimeError: null,
-      console: logs.slice(0, 50),
-      renderCount,
-      evidence: {} as EvidenceEnvelope,
-    };
-    result.evidence = evidence(runId, runRevision, result);
-    return result;
-  } catch (error) {
-    runtimeError = error instanceof Error ? error.message : String(error);
-    const result = {
-      execution: {
-        ...execution,
-        status: "failed" as const,
-        completedAt: Date.now(),
-        error: runtimeError,
-      },
-      root: null,
-      dom: host.innerHTML,
-      runtimeError,
-      console: logs.slice(0, 50),
-      renderCount,
-      evidence: {} as EvidenceEnvelope,
-    };
-    result.evidence = evidence(runId, runRevision, result);
-    return result;
-  } finally {
-    console.log = originalLog;
-    console.error = originalError;
+  } catch {
+    return Promise.resolve(null);
   }
+  return new Promise((resolve) => {
+    const startedAt = Date.now();
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("sandbox", "allow-scripts");
+    iframe.srcdoc = iframeDocument(nonce, runId, runRevision);
+    let settled = false;
+    const finish = (
+      response: RuntimeResponse | null,
+      status: "succeeded" | "failed" | "timeout",
+    ) => {
+      if (settled) return;
+      settled = true;
+      window.removeEventListener("message", onMessage);
+      iframe.remove();
+      const runtimeError =
+        response?.runtimeError ?? (status === "timeout" ? "React execution timed out." : null);
+      const result = {
+        execution: {
+          schemaVersion: 1,
+          runId,
+          revision: runRevision,
+          family: "component-browser" as const,
+          phase: "run" as const,
+          status,
+          startedAt,
+          completedAt: Date.now(),
+          artifacts: [],
+          ...(runtimeError ? { error: runtimeError } : {}),
+        },
+        root: null,
+        dom: response?.dom ?? "",
+        runtimeError,
+        console: response?.console ?? [],
+        renderCount: response?.renderCount ?? 0,
+        evidence: {} as EvidenceEnvelope,
+      };
+      result.evidence = makeEvidence(runId, runRevision, result);
+      resolve(result);
+    };
+    const executeMessage = {
+      type: "runtime:execute" as const,
+      protocolVersion: 1 as const,
+      runId,
+      revision: runRevision,
+      nonce,
+      source: transformed,
+      props,
+    };
+    let executeSent = false;
+    function sendExecute() {
+      if (executeSent || settled || !iframe.contentWindow) return;
+      executeSent = true;
+      iframe.contentWindow.postMessage(executeMessage, "*");
+    }
+    let ready = false;
+    const onMessage = (event: MessageEvent<RuntimeReady | RuntimeResponse>) => {
+      const m = event.data;
+      if (
+        !m ||
+        m.protocolVersion !== REACT_RUNTIME_PROTOCOL_VERSION ||
+        m.runId !== runId ||
+        m.revision !== runRevision ||
+        m.nonce !== nonce
+      )
+        return;
+      if (m.type === "runtime:ready") {
+        ready = true;
+        sendExecute();
+        return;
+      }
+      if (m.type !== "runtime:result" || !ready) return;
+      finish(m, m.runtimeError ? "failed" : "succeeded");
+    };
+    window.addEventListener("message", onMessage);
+    document.body.appendChild(iframe);
+    window.setTimeout(() => finish(null, "timeout"), timeout);
+  });
 }

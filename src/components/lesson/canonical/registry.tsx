@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import type { CanonicalActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps, JudgmentStep, CanonicalStep } from "./types";
 import { ActivityContainer } from "./primitives/activity-container";
@@ -125,7 +126,7 @@ export type BaseRendererProps = Omit<ActivityRendererProps<CanonicalActivity, an
 export function renderActivity(
   activity: CanonicalActivity | JudgmentStep | CanonicalStep,
   props: BaseRendererProps,
-): JSX.Element {
+): ReactElement {
   switch (activity.type) {
     case "intro":
       return <IntroRenderer activity={activity} {...props} />;
