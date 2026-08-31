@@ -38,9 +38,12 @@ export type CapabilityName =
   | "inspect.http-response"
   | "inspect.server-log"
   | "inspect.route"
+  | "inspect.render"
   | "inspect.middleware-trace"
   | "execute.server"
   | "validate.http"
+  | "inspect.cache"
+  | "inspect.server-client-boundary"
   | "visualize.layout"
   | "visualize.state-transition"
   | "visualize.request-lifecycle";
@@ -107,7 +110,36 @@ export type EvidenceItem =
   | { kind: "route"; path: string; matched: boolean }
   | { kind: "http-error"; code: string; message: string }
   | { kind: "http-sequence"; sequenceId: string; index: number; status: string }
-  | { kind: "http-timing"; durationMs: number };
+  | { kind: "http-timing"; durationMs: number }
+  | { kind: "next-request"; method: string; path: string }
+  | {
+      kind: "next-route";
+      routeId: string;
+      path: string;
+      matched: boolean;
+      routeKind: "static" | "dynamic" | "unmatched";
+      params?: Record<string, string>;
+    }
+  | {
+      kind: "next-render";
+      mode: "server-rendered" | "client-rendered" | "static" | "dynamic";
+      routeId: string;
+    }
+  | {
+      kind: "next-middleware";
+      middlewareId: string;
+      order: number;
+      action: "continue" | "rewrite" | "redirect" | "reject";
+      routeId: string;
+    }
+  | {
+      kind: "next-boundary";
+      boundary: "server" | "client";
+      serverAvailable: boolean;
+      clientAvailable: boolean;
+    }
+  | { kind: "next-cache"; state: "hit" | "miss" | "revalidate"; logicalRevision: number }
+  | { kind: "next-error"; code: string; message: string };
 
 export interface EvidenceEnvelope {
   schemaVersion: SchemaVersion;
@@ -185,6 +217,22 @@ export const RUNTIME_FAMILY_DESCRIPTORS: readonly RuntimeFamilyDescriptor[] = [
     version: 1,
     security: "not-yet-available",
     capabilities: [{ name: "execute.react", version: 1 }],
+  },
+  {
+    family: "framework-server",
+    version: 1,
+    security: "compiler-isolation",
+    capabilities: [
+      { name: "execute.server", version: 1 },
+      { name: "inspect.route", version: 1 },
+      { name: "inspect.render", version: 1 },
+      { name: "inspect.middleware-trace", version: 1 },
+      { name: "inspect.http-response", version: 1 },
+      { name: "inspect.http-request", version: 1 },
+      { name: "inspect.server-log", version: 1 },
+      { name: "inspect.cache", version: 1 },
+      { name: "inspect.server-client-boundary", version: 1 },
+    ],
   },
   {
     family: "http-api",
