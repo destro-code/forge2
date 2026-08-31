@@ -3,6 +3,8 @@ import { ChevronDown, FlaskConical, RotateCcw } from "lucide-react";
 import { LessonExperiencePlayer } from "./lesson-experience-player";
 import { LAB_LESSONS } from "@/lib/lesson-experience/lab-lessons";
 import type { LessonExperienceState } from "@/lib/lesson-experience/types";
+import { BROWSER_DOCUMENT_DESCRIPTOR } from "@/lib/lesson-experience/contracts";
+import { browserCapabilities } from "@/lib/lesson-experience/browser-family";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -102,6 +104,27 @@ export function LessonExperienceLab() {
                     </span>
                   </Button>
                 ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Browser family</CardTitle>
+                <p className="text-sm text-muted-foreground">Phase B capability contract</p>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3 text-xs">
+                <InspectorRow label="Family" value={BROWSER_DOCUMENT_DESCRIPTOR.family} />
+                <InspectorRow label="Security" value={BROWSER_DOCUMENT_DESCRIPTOR.security} />
+                <InspectorRow label="Host" value="SandboxRuntimeHost" />
+                <Separator />
+                <div className="flex flex-col gap-2" aria-label="Browser capabilities">
+                  {browserCapabilities().map((capability) => (
+                    <div key={capability.name} className="flex items-center justify-between gap-3">
+                      <code className="font-mono text-muted-foreground">{capability.name}</code>
+                      <Badge variant="secondary">available</Badge>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 

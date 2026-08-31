@@ -1,0 +1,258 @@
+export const LESSON_EXPERIENCE_SCHEMA_VERSION = 1 as const;
+
+export type SchemaVersion = typeof LESSON_EXPERIENCE_SCHEMA_VERSION;
+export type RuntimeFamily =
+  | "browser-document"
+  | "type-compiler"
+  | "component-browser"
+  | "mobile-native"
+  | "http-api"
+  | "server"
+  | "framework-server";
+export type InstructionalKind =
+  | "hook"
+  | "visual"
+  | "prediction"
+  | "workspace"
+  | "challenge"
+  | "explanation"
+  | "debugging"
+  | "mastery-check"
+  | "sandbox-experiment";
+
+export type CapabilityName =
+  | "execute.javascript"
+  | "render.dom"
+  | "inspect.dom"
+  | "inspect.console"
+  | "inspect.computed-style"
+  | "inspect.geometry"
+  | "compile.typescript"
+  | "inspect.type-diagnostics"
+  | "inspect.inferred-type"
+  | "execute.react"
+  | "inspect.component-tree"
+  | "inspect.component-state"
+  | "inspect.render-trace"
+  | "inspect.http-request"
+  | "inspect.http-response"
+  | "inspect.server-log"
+  | "inspect.route"
+  | "inspect.middleware-trace"
+  | "execute.server"
+  | "visualize.layout"
+  | "visualize.state-transition"
+  | "visualize.request-lifecycle";
+
+export interface CapabilityRequirement {
+  name: CapabilityName;
+  version: 1;
+}
+export interface RuntimeFamilyDescriptor {
+  family: RuntimeFamily;
+  version: 1;
+  capabilities: readonly CapabilityRequirement[];
+  security: "browser-sandbox" | "compiler-isolation" | "not-yet-available";
+}
+
+export interface RuntimeRequest {
+  family?: RuntimeFamily;
+  deterministic: boolean;
+  network: "deny" | "mocked" | "controlled";
+  timeoutMs: number;
+}
+export interface CompletionRequirement {
+  id: string;
+  requires: "validation.pass" | `evidence.${EvidenceItem["kind"]}`;
+}
+export interface ExperienceContract {
+  schemaVersion: SchemaVersion;
+  id: string;
+  kind: InstructionalKind;
+  capabilities: readonly CapabilityRequirement[];
+  runtime: RuntimeRequest;
+  completionRequirements: readonly CompletionRequirement[];
+}
+
+export type ArtifactMetadata =
+  | { kind: "source"; id: string; name: string; language: string; bytes: number }
+  | { kind: "document"; id: string; mimeType: string; bytes: number }
+  | { kind: "trace"; id: string; eventCount: number };
+
+export interface ExecutionMetadata {
+  schemaVersion: SchemaVersion;
+  runId: string;
+  revision: number;
+  family: RuntimeFamily;
+  phase: "create" | "run" | "observe" | "validate" | "reset";
+  status: "idle" | "running" | "succeeded" | "failed" | "timeout" | "unavailable";
+  startedAt: number;
+  completedAt?: number;
+  artifacts: readonly ArtifactMetadata[];
+}
+
+export type EvidenceItem =
+  | { kind: "console"; level: "log" | "info" | "warn" | "error"; message: string }
+  | { kind: "runtime-error"; message: string }
+  | { kind: "dom-snapshot"; html: string }
+  | { kind: "computed-style"; target: string; property: string; value: string }
+  | { kind: "geometry"; target: string; x: number; y: number; width: number; height: number }
+  | { kind: "js-value"; expression: string; value: string | number | boolean | null }
+  | { kind: "type-diagnostic"; code: string; message: string; severity: "error" | "warning" }
+  | { kind: "inferred-type"; expression: string; type: string }
+  | { kind: "http-request"; method: string; url: string }
+  | { kind: "http-response"; status: number; headers: Record<string, string>; body: string }
+  | { kind: "server-log"; level: "info" | "warn" | "error"; message: string }
+  | { kind: "route"; path: string; matched: boolean };
+
+export interface EvidenceEnvelope {
+  schemaVersion: SchemaVersion;
+  runId: string;
+  revision: number;
+  family: RuntimeFamily;
+  phase: ExecutionMetadata["phase"];
+  timestamp: number;
+  status: "partial" | "complete" | "unavailable";
+  source: { host: string; artifactIds: readonly string[] };
+  items: readonly EvidenceItem[];
+}
+
+export type ValidationReportStatus =
+  "pass" | "fail" | "runtime-error" | "compile-error" | "timeout" | "unavailable";
+export interface ValidationAssertionResult {
+  id: string;
+  status: "passed" | "failed" | "skipped";
+  message: string;
+  evidenceKinds: readonly EvidenceItem["kind"][];
+}
+export interface ValidationReport {
+  schemaVersion: SchemaVersion;
+  runId: string;
+  family: RuntimeFamily;
+  revision: number;
+  status: ValidationReportStatus;
+  assertions: readonly ValidationAssertionResult[];
+  evidence: EvidenceEnvelope;
+  diagnostics: readonly string[];
+}
+
+export interface ResolutionSuccess {
+  ok: true;
+  family: RuntimeFamilyDescriptor;
+  capabilities: readonly CapabilityRequirement[];
+}
+export interface ResolutionFailure {
+  ok: false;
+  code: "UNSUPPORTED_CAPABILITY_COMBINATION";
+  missing: readonly CapabilityRequirement[];
+  eligibleFamilies: readonly RuntimeFamily[];
+  message: string;
+}
+export type CapabilityResolution = ResolutionSuccess | ResolutionFailure;
+
+export const BROWSER_DOCUMENT_DESCRIPTOR: RuntimeFamilyDescriptor = {
+  family: "browser-document",
+  version: 1,
+  security: "browser-sandbox",
+  capabilities: [
+    { name: "execute.javascript", version: 1 },
+    { name: "render.dom", version: 1 },
+    { name: "inspect.dom", version: 1 },
+    { name: "inspect.console", version: 1 },
+    { name: "inspect.computed-style", version: 1 },
+    { name: "inspect.geometry", version: 1 },
+  ],
+};
+
+export const RUNTIME_FAMILY_DESCRIPTORS: readonly RuntimeFamilyDescriptor[] = [
+  BROWSER_DOCUMENT_DESCRIPTOR,
+  {
+    family: "type-compiler",
+    version: 1,
+    security: "compiler-isolation",
+    capabilities: [
+      { name: "compile.typescript", version: 1 },
+      { name: "inspect.type-diagnostics", version: 1 },
+      { name: "inspect.inferred-type", version: 1 },
+    ],
+  },
+  {
+    family: "component-browser",
+    version: 1,
+    security: "not-yet-available",
+    capabilities: [{ name: "execute.react", version: 1 }],
+  },
+  {
+    family: "http-api",
+    version: 1,
+    security: "not-yet-available",
+    capabilities: [
+      { name: "inspect.http-request", version: 1 },
+      { name: "inspect.http-response", version: 1 },
+    ],
+  },
+];
+
+export function resolveCapabilities(
+  required: readonly CapabilityRequirement[],
+  descriptors = RUNTIME_FAMILY_DESCRIPTORS,
+): CapabilityResolution {
+  const family = descriptors.find((descriptor) =>
+    required.every((capability) =>
+      descriptor.capabilities.some(
+        (supported) =>
+          supported.name === capability.name && supported.version >= capability.version,
+      ),
+    ),
+  );
+  if (family) return { ok: true, family, capabilities: required };
+  const eligibleFamilies = descriptors
+    .filter((descriptor) =>
+      required.some((capability) =>
+        descriptor.capabilities.some((supported) => supported.name === capability.name),
+      ),
+    )
+    .map((descriptor) => descriptor.family);
+  const missing = required.filter(
+    (capability) =>
+      !descriptors.some((descriptor) =>
+        descriptor.capabilities.some(
+          (supported) =>
+            supported.name === capability.name && supported.version >= capability.version,
+        ),
+      ),
+  );
+  return {
+    ok: false,
+    code: "UNSUPPORTED_CAPABILITY_COMBINATION",
+    missing,
+    eligibleFamilies,
+    message: `No runtime family supports: ${required.map(({ name }) => name).join(", ")}.`,
+  };
+}
+
+export function createBrowserCompatibilityContract(
+  capabilities: readonly CapabilityRequirement[] = BROWSER_DOCUMENT_DESCRIPTOR.capabilities,
+): ExperienceContract {
+  const resolution = resolveCapabilities(capabilities, [BROWSER_DOCUMENT_DESCRIPTOR]);
+  if (!resolution.ok) throw new Error(resolution.message);
+  return {
+    schemaVersion: LESSON_EXPERIENCE_SCHEMA_VERSION,
+    id: "browser-compatibility",
+    kind: "workspace",
+    capabilities,
+    runtime: { family: "browser-document", deterministic: true, network: "deny", timeoutMs: 10000 },
+    completionRequirements: [{ id: "validated", requires: "validation.pass" }],
+  };
+}
+
+export function createValidationReport(
+  input: Omit<ValidationReport, "schemaVersion">,
+): ValidationReport {
+  return { schemaVersion: LESSON_EXPERIENCE_SCHEMA_VERSION, ...input };
+}
+export function createEvidenceEnvelope(
+  input: Omit<EvidenceEnvelope, "schemaVersion">,
+): EvidenceEnvelope {
+  return { schemaVersion: LESSON_EXPERIENCE_SCHEMA_VERSION, ...input };
+}
