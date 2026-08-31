@@ -101,20 +101,22 @@ interface RuntimeResponse {
   protocolVersion: 1;
   runId: string;
   revision: number;
+  nonce: string;
   dom: string;
   runtimeError: string | null;
   console: string[];
   renderCount: number;
 }
-function iframeDocument() {
+function iframeDocument(nonce: string) {
   const react = reactBundle.replace(/<\/script/gi, "<\\/script");
   const dom = reactDomBundle.replace(/<\/script/gi, "<\\/script");
-  return `<!doctype html><html><body><div id="root"></div><script>${react}</script><script>${dom}</script><script>window.fetch=undefined;window.XMLHttpRequest=undefined;window.WebSocket=undefined;window.EventSource=undefined;window.sendBeacon=undefined;window.addEventListener("message",async(event)=>{const m=event.data;if(!m||m.protocolVersion!==1||m.type!=="runtime:execute"||typeof m.source!=="string")return;const logs=[];const oldLog=console.log,oldError=console.error;console.log=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};console.error=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};let dom="",runtimeError=null,renderCount=0;try{const factory=new Function("props","onRender",m.source+"\\n;return typeof App!=="undefined"?App:(typeof Component!=="undefined"?Component:null);");const C=factory(m.props||{},()=>renderCount++);if(typeof C!=="function")throw new Error("React lesson must define an App or Component function.");const host=document.getElementById("root");host.replaceChildren();window.ReactDOM.createRoot(host).render(window.React.createElement(C,Object.assign({},m.props||{},{onRender:()=>renderCount++})));await new Promise(r=>setTimeout(r,0));dom=host.innerHTML.slice(0,12000)}catch(error){runtimeError=error instanceof Error?error.message:String(error)}finally{console.log=oldLog;console.error=oldError}parent.postMessage({type:"runtime:result",protocolVersion:1,runId:m.runId,revision:m.revision,dom,runtimeError,console:logs,renderCount},"*")});</script></body></html>`;
+  return `<!doctype html><html><body><div id="root"></div><script>${react}</script><script>${dom}</script><script>window.fetch=undefined;window.XMLHttpRequest=undefined;window.WebSocket=undefined;window.EventSource=undefined;window.sendBeacon=undefined;window.addEventListener("message",async(event)=>{const m=event.data;if(!m||m.protocolVersion!==1||m.type!=="runtime:execute"||m.nonce!=="${nonce}"||typeof m.source!=="string")return;const logs=[];const oldLog=console.log,oldError=console.error;console.log=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};console.error=(...a)=>{if(logs.length<50)logs.push(a.map(String).join(" ").slice(0,1000))};let dom="",runtimeError=null,renderCount=0;try{const factory=new Function("props","onRender",m.source+"\\n;return typeof App!=="undefined"?App:(typeof Component!=="undefined"?Component:null);");const C=factory(m.props||{},()=>renderCount++);if(typeof C!=="function")throw new Error("React lesson must define an App or Component function.");const host=document.getElementById("root");host.replaceChildren();window.ReactDOM.createRoot(host).render(window.React.createElement(C,Object.assign({},m.props||{},{onRender:()=>renderCount++})));await new Promise(r=>setTimeout(r,0));dom=host.innerHTML.slice(0,12000)}catch(error){runtimeError=error instanceof Error?error.message:String(error)}finally{console.log=oldLog;console.error=oldError}parent.postMessage({type:"runtime:result",protocolVersion:1,runId:m.runId,revision:m.revision,nonce:m.nonce,dom,runtimeError,console:logs,renderCount},"*")});</script></body></html>`;
 }
 export function runReactComponent(request: ReactRunRequest): Promise<ReactRunResult | null> {
   const runRevision = request.revision ?? resetReactRevision();
   if (!isCurrentReactRun(runRevision)) return Promise.resolve(null);
   const runId = request.runId ?? `react-${runRevision}`;
+  const nonce = crypto.randomUUID();
   const props = boundedProps(request.props ?? {});
   if (
     new TextEncoder().encode(request.source).byteLength > REACT_RUNTIME_LIMITS.sourceBytes ||
@@ -138,7 +140,7 @@ export function runReactComponent(request: ReactRunRequest): Promise<ReactRunRes
     const startedAt = Date.now();
     const iframe = document.createElement("iframe");
     iframe.setAttribute("sandbox", "allow-scripts");
-    iframe.srcdoc = iframeDocument();
+    iframe.srcdoc = iframeDocument(nonce);
     let settled = false;
     const finish = (
       response: RuntimeResponse | null,
@@ -176,30 +178,37 @@ export function runReactComponent(request: ReactRunRequest): Promise<ReactRunRes
     const onMessage = (event: MessageEvent<RuntimeResponse>) => {
       const m = event.data;
       if (
-        event.source !== iframe.contentWindow ||
+        // Sandboxed srcdoc documents have opaque origins and may expose a
+        // different WindowProxy wrapper; the per-run nonce authenticates the
+        // response without weakening run/revision validation.
         m?.type !== "runtime:result" ||
         m.protocolVersion !== 1 ||
         m.runId !== runId ||
-        m.revision !== runRevision
+        m.revision !== runRevision ||
+        m.nonce !== nonce
       )
         return;
       finish(m, m.runtimeError ? "failed" : "succeeded");
     };
     window.addEventListener("message", onMessage);
-    iframe.addEventListener("load", () =>
-      iframe.contentWindow?.postMessage(
-        {
-          type: "runtime:execute",
-          protocolVersion: 1,
-          runId,
-          revision: runRevision,
-          source: transformed,
-          props,
-        },
-        "*",
-      ),
-    );
+    const executeMessage = {
+      type: "runtime:execute" as const,
+      protocolVersion: 1 as const,
+      runId,
+      revision: runRevision,
+      nonce,
+      source: transformed,
+      props,
+    };
+    let executeSent = false;
+    const sendExecute = () => {
+      if (executeSent || settled || !iframe.contentWindow) return;
+      executeSent = true;
+      iframe.contentWindow.postMessage(executeMessage, "*");
+    };
+    iframe.addEventListener("load", sendExecute);
     document.body.appendChild(iframe);
+    window.setTimeout(sendExecute, 250);
     window.setTimeout(() => finish(null, "timeout"), timeout);
   });
 }
