@@ -39,6 +39,7 @@ import { Route as AssessmentPathIdRouteImport } from './routes/assessment.$pathI
 import { Route as CertificateCertificateIdRouteImport } from './routes/certificate.$certificateId'
 import { Route as DebugLabIndexRouteImport } from './routes/debug-lab.index'
 import { Route as DebugLabBugIdRouteImport } from './routes/debug-lab.$bugId'
+import { Route as DevLessonExperienceApiRouteImport } from './routes/dev.lesson-experience-api'
 import { Route as DevLessonExperienceDemoRouteImport } from './routes/dev.lesson-experience-demo'
 import { Route as DevLessonExperienceLabRouteImport } from './routes/dev.lesson-experience-lab'
 import { Route as DevLessonExperienceReactRouteImport } from './routes/dev.lesson-experience-react'
@@ -208,6 +209,11 @@ const DebugLabBugIdRoute = DebugLabBugIdRouteImport.update({
   path: '/$bugId',
   getParentRoute: () => DebugLabRoute,
 } as any)
+const DevLessonExperienceApiRoute = DevLessonExperienceApiRouteImport.update({
+  id: '/dev/lesson-experience-api',
+  path: '/dev/lesson-experience-api',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DevLessonExperienceDemoRoute = DevLessonExperienceDemoRouteImport.update({
   id: '/dev/lesson-experience-demo',
   path: '/dev/lesson-experience-demo',
@@ -326,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/assessment/$pathId': typeof AssessmentPathIdRoute
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/dev/lesson-experience-api': typeof DevLessonExperienceApiRoute
   '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
   '/dev/lesson-experience-lab': typeof DevLessonExperienceLabRoute
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
@@ -371,6 +378,7 @@ export interface FileRoutesByTo {
   '/assessment/$pathId': typeof AssessmentPathIdRoute
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/dev/lesson-experience-api': typeof DevLessonExperienceApiRoute
   '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
   '/dev/lesson-experience-lab': typeof DevLessonExperienceLabRoute
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/assessment/$pathId': typeof AssessmentPathIdRoute
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
+  '/dev/lesson-experience-api': typeof DevLessonExperienceApiRoute
   '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
   '/dev/lesson-experience-lab': typeof DevLessonExperienceLabRoute
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/assessment/$pathId'
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
+    | '/dev/lesson-experience-api'
     | '/dev/lesson-experience-demo'
     | '/dev/lesson-experience-lab'
     | '/dev/lesson-experience-react'
@@ -517,6 +527,7 @@ export interface FileRouteTypes {
     | '/assessment/$pathId'
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
+    | '/dev/lesson-experience-api'
     | '/dev/lesson-experience-demo'
     | '/dev/lesson-experience-lab'
     | '/dev/lesson-experience-react'
@@ -566,6 +577,7 @@ export interface FileRouteTypes {
     | '/assessment/$pathId'
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
+    | '/dev/lesson-experience-api'
     | '/dev/lesson-experience-demo'
     | '/dev/lesson-experience-lab'
     | '/dev/lesson-experience-react'
@@ -615,6 +627,7 @@ export interface RootRouteChildren {
   WhiteboardRoute: typeof WhiteboardRoute
   AssessmentPathIdRoute: typeof AssessmentPathIdRoute
   CertificateCertificateIdRoute: typeof CertificateCertificateIdRoute
+  DevLessonExperienceApiRoute: typeof DevLessonExperienceApiRoute
   DevLessonExperienceDemoRoute: typeof DevLessonExperienceDemoRoute
   DevLessonExperienceLabRoute: typeof DevLessonExperienceLabRoute
   DevLessonExperienceReactRoute: typeof DevLessonExperienceReactRoute
@@ -833,6 +846,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/debug-lab/$bugId'
       preLoaderRoute: typeof DebugLabBugIdRouteImport
       parentRoute: typeof DebugLabRoute
+    }
+    '/dev/lesson-experience-api': {
+      id: '/dev/lesson-experience-api'
+      path: '/dev/lesson-experience-api'
+      fullPath: '/dev/lesson-experience-api'
+      preLoaderRoute: typeof DevLessonExperienceApiRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dev/lesson-experience-demo': {
       id: '/dev/lesson-experience-demo'
@@ -1060,6 +1080,7 @@ const rootRouteChildren: RootRouteChildren = {
   WhiteboardRoute: WhiteboardRoute,
   AssessmentPathIdRoute: AssessmentPathIdRoute,
   CertificateCertificateIdRoute: CertificateCertificateIdRoute,
+  DevLessonExperienceApiRoute: DevLessonExperienceApiRoute,
   DevLessonExperienceDemoRoute: DevLessonExperienceDemoRoute,
   DevLessonExperienceLabRoute: DevLessonExperienceLabRoute,
   DevLessonExperienceReactRoute: DevLessonExperienceReactRoute,
