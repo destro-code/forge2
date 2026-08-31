@@ -47,6 +47,7 @@ describe("InteractiveCodeRenderer with CodeMirror Integration", () => {
     id: "act-interactive-test",
     type: "interactive-code",
     intent: "application",
+    objectiveIds: ["obj-test"],
     content: {
       title: "Interactive answer",
       prompt: "Assign the value 42 to the variable answer.",
@@ -188,6 +189,7 @@ describe("DebugRenderer with CodeMirror Integration", () => {
     id: "act-debug-test",
     type: "debug",
     intent: "debugging",
+    objectiveIds: ["obj-test"],
     content: {
       title: "Debug return statement",
       prompt: "Fix the missing return statement.",
