@@ -1,17 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  compileCanonicalRuntime,
-  createCanonicalValidationRequest,
-  mapCanonicalValidation,
-  CANONICAL_IFRAME_TITLE,
-} from "@/lib/compiler/canonical-runtime-service";
-import { SandboxRuntimeHost } from "@/lib/compiler/sandbox-runtime-host";
-import {
-  isPlaygroundReady,
-  isPlaygroundBuildError,
-  isPlaygroundConsoleMessage,
-  isPlaygroundValidateResponse,
-} from "@/lib/types/validation-messages";
+import { useExperienceController } from "../runtime/use-experience-controller";
 import type { ActivityValidationResult } from "../types";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
@@ -41,6 +29,8 @@ export function InteractiveCodeRenderer({
   state,
   onResponse,
   onSubmit,
+  evaluationRequest,
+  onRuntimeValidation,
   onRetry,
   onContinue,
   onRevealHint,
@@ -58,138 +48,61 @@ export function InteractiveCodeRenderer({
   const outputMode =
     language === "javascript" || language === "typescript" ? "console" : "dom-preview";
   const isConsoleOnly = outputMode === "console";
-  const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
-  const [testResults, setTestResults] = useState<
-    Array<{ description: string; passed: boolean; error?: string }>
-  >([]);
-  const [runtimeResult, setRuntimeResult] = useState<ActivityValidationResult | undefined>();
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const hostRef = useRef<SandboxRuntimeHost | null>(null);
-  const browserAdapterRef = useRef(createCanonicalBrowserAdapter());
-  const evidenceMessagesRef = useRef<BrowserRuntimeMessage[]>([]);
-  const revisionRef = useRef(0);
-  const pendingRequestRef = useRef<string | null>(null);
+  const controller = useExperienceController({
+    activity,
+    getSource: () => (typeof state.response === "string" ? state.response : starterCode),
+  });
+  const {
+    iframeRef,
+    iframeTitle,
+    iframeSandbox,
+    isRunning,
+    consoleOutput,
+    testResults,
+    technicalResult: runtimeResult,
+    hasExecuted,
+    run,
+    check,
+    reset,
+  } = controller;
   const isCorrect = state.status === "correct" || state.status === "completed";
   const resolvedHints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (resolvedHints?.length || 0) - state.hintsRevealed;
 
-  const runEvaluation = useCallback(
-    (validate = true) => {
-      const iframe = iframeRef.current;
-      if (!iframe) return;
-      hostRef.current?.dispose();
-      hostRef.current = null;
-      pendingRequestRef.current = null;
-      setIsRunning(true);
-      setConsoleOutput([]);
-      setTestResults([]);
-      setRuntimeResult(undefined);
-      const run = browserAdapterRef.current.beginRun();
-      const revision = run.revision;
-      revisionRef.current = revision;
-      evidenceMessagesRef.current = [];
-      try {
-        const report = compileCanonicalRuntime(activity, currentCode, revision);
-        const request = validate
-          ? createCanonicalValidationRequest(activity, revision, currentCode)
-          : null;
-        pendingRequestRef.current = request?.requestId ?? null;
-        const host = new SandboxRuntimeHost({
-          iframe,
-          workspaceRevision: revision,
-          onMessage: (event) => {
-            evidenceMessagesRef.current.push(event.data as BrowserRuntimeMessage);
-            if (isPlaygroundConsoleMessage(event.data)) {
-              setConsoleOutput((previous) =>
-                [...previous, `[${event.data.level}] ${event.data.message}`].slice(-50),
-              );
-              setActiveTab("results");
-              return;
-            }
-            if (isPlaygroundReady(event.data)) {
-              if (request) iframe.contentWindow?.postMessage(request, "*");
-              else {
-                setIsRunning(false);
-                host.dispose();
-              }
-            }
-            if (
-              isPlaygroundValidateResponse(event.data) &&
-              event.data.requestId === pendingRequestRef.current
-            ) {
-              const result = mapCanonicalValidation(event.data.report);
-              const evidence = browserAdapterRef.current.collect(
-                run.runId,
-                revision,
-                evidenceMessagesRef.current,
-              );
-              const translated = evidenceEnvelopeToCanonicalValidation(evidence, event.data.report);
-              setRuntimeResult({
-                ...result,
-                details: { ...result.details, ...translated.details },
-              });
-              setTestResults(
-                event.data.report.results.map((item) => ({
-                  description: item.description,
-                  passed: item.status === "passed",
-                  error: item.errorMessage,
-                })),
-              );
-              setActiveTab(result.isValid ? "code" : "results");
-              setIsRunning(false);
-              host.dispose();
-            }
-            if (isPlaygroundBuildError(event.data)) {
-              setConsoleOutput([event.data.message]);
-              setActiveTab("results");
-              setIsRunning(false);
-              host.dispose();
-            }
-          },
-        });
-        hostRef.current = host;
-        // Register the listener before assigning srcdoc so fast runtimes cannot
-        // emit PLAYGROUND_READY before the host is listening.
-        host.mount();
-        iframe.srcdoc = report.outputHtml;
-      } catch (error) {
-        setConsoleOutput([error instanceof Error ? error.message : "Runtime error"]);
-        setActiveTab("results");
-        setIsRunning(false);
-      }
+  const handleRuntimeValidation = useCallback(
+    (result: ActivityValidationResult) => {
+      onRuntimeValidation?.(result);
+      setActiveTab(result.isValid ? "code" : "results");
     },
-    [activity, currentCode],
+    [onRuntimeValidation],
   );
 
   useEffect(() => {
-    return () => {
-      revisionRef.current += 1;
-      pendingRequestRef.current = null;
-      hostRef.current?.dispose();
-      hostRef.current = null;
-    };
-  }, [activity.id]);
+    if (controller.technicalResult) handleRuntimeValidation(controller.technicalResult);
+  }, [controller.technicalResult, handleRuntimeValidation]);
 
   useEffect(() => {
-    if (
-      state.status === "submitted" ||
-      state.status === "correct" ||
-      state.status === "incorrect" ||
-      state.status === "completed"
-    )
-      runEvaluation();
-    else if (state.status === "idle") setActiveTab("code");
-  }, [state.status, state.validationResult, runEvaluation]);
+    if (state.status === "idle") setActiveTab("code");
+  }, [state.status]);
 
-  const hasExecuted =
-    consoleOutput.length > 0 ||
-    testResults.length > 0 ||
-    state.status === "incorrect" ||
-    state.status === "correct" ||
-    Boolean(state.validationResult);
+  const lastEvaluationRequestRef = useRef<string | null>(null);
+  const evaluationAttemptId = evaluationRequest?.attemptId;
+
+  useEffect(() => {
+    if (!evaluationRequest || evaluationRequest.activityId !== activity.id || !evaluationAttemptId)
+      return;
+    if (lastEvaluationRequestRef.current === evaluationAttemptId) return;
+    lastEvaluationRequestRef.current = evaluationAttemptId;
+    check();
+    // The attempt ID is the command identity; the request object is intentionally not a trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activity.id, check, evaluationAttemptId]);
+
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
+  const submitForEvaluation = useCallback(() => {
+    onSubmit?.();
+  }, [onSubmit]);
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
@@ -294,7 +207,7 @@ export function InteractiveCodeRenderer({
                     size="sm"
                     onClick={() => {
                       setActiveTab("code");
-                      runEvaluation(false);
+                      run();
                     }}
                     disabled={readOnly || isCorrect || isRunning || !currentCode}
                     className="min-h-9 gap-1.5 text-xs"
@@ -308,7 +221,7 @@ export function InteractiveCodeRenderer({
                   size="sm"
                   onClick={() => {
                     setActiveTab("results");
-                    runEvaluation();
+                    submitForEvaluation();
                   }}
                   disabled={readOnly || isCorrect || isRunning || !currentCode}
                   className="min-h-9 gap-1.5 text-xs"
@@ -320,14 +233,7 @@ export function InteractiveCodeRenderer({
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    revisionRef.current += 1;
-                    pendingRequestRef.current = null;
-                    hostRef.current?.dispose();
-                    hostRef.current = null;
-                    setIsRunning(false);
-                    setConsoleOutput([]);
-                    setTestResults([]);
-                    setRuntimeResult(undefined);
+                    reset();
                     setActiveTab("code");
                     onResponse(starterCode);
                   }}
@@ -347,8 +253,8 @@ export function InteractiveCodeRenderer({
             >
               <iframe
                 ref={iframeRef}
-                title={CANONICAL_IFRAME_TITLE}
-                sandbox="allow-scripts allow-modals"
+                title={iframeTitle}
+                sandbox={iframeSandbox}
                 className="h-48 w-full rounded-md border border-lesson-border bg-background"
                 aria-label={
                   isConsoleOnly
@@ -504,7 +410,7 @@ export function InteractiveCodeRenderer({
       />
       <ActivityActions
         status={state.status}
-        onSubmit={onSubmit}
+        onSubmit={submitForEvaluation}
         onRetry={onRetry}
         onContinue={onContinue}
         canSubmit={Boolean(currentCode)}

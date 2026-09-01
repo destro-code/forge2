@@ -10,6 +10,8 @@ export interface CanonicalActivityViewProps {
   onComplete?: (event: ActivityCompletionEvent<unknown>) => void;
   onResponseChange?: (response: unknown) => void;
   onSubmit?: () => void;
+  evaluationRequest?: import("./types").EvaluationRequest;
+  onRuntimeValidation?: (result: ActivityValidationResult) => void;
   onRetry?: () => void;
   onContinue?: () => void;
   onRevealHint?: () => void;
@@ -21,13 +23,14 @@ export interface CanonicalActivityViewProps {
 export function CanonicalActivityView(props: CanonicalActivityViewProps) {
   const { activity, readOnly, className } = props;
   const runtime = useActivityRuntime(props);
-
   return (
     <div className={className}>
       {renderActivity(activity, {
         state: runtime.state,
         onResponse: runtime.actions.respond,
-        onSubmit: runtime.actions.submit,
+        onSubmit: props.onSubmit ?? runtime.actions.submit,
+        evaluationRequest: props.evaluationRequest,
+        onRuntimeValidation: props.onRuntimeValidation,
         onRetry: runtime.actions.retry,
         onContinue: runtime.actions.continue,
         onRevealHint: runtime.actions.revealHint,

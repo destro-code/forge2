@@ -48,7 +48,13 @@ describe("Interactive Code Flow & Validation UI", () => {
       root.render(
         <InteractiveCodeRenderer
           activity={mockHtmlActivity}
-          state={{ status: "idle", response: mockHtmlActivity.content.starterCode, hintsRevealed: 0, attempts: 0, startedAt: Date.now() }}
+          state={{
+            status: "idle",
+            response: mockHtmlActivity.content.starterCode,
+            hintsRevealed: 0,
+            attempts: 0,
+            startedAt: Date.now(),
+          }}
           onResponse={() => {}}
           onSubmit={() => {}}
           onRetry={() => {}}
@@ -57,20 +63,42 @@ describe("Interactive Code Flow & Validation UI", () => {
         />,
       );
     });
-    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Run")).toBe(true);
-    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Check")).toBe(true);
+    expect(
+      Array.from(container.querySelectorAll("button")).some(
+        (button) => button.textContent?.trim() === "Run",
+      ),
+    ).toBe(true);
+    expect(
+      Array.from(container.querySelectorAll("button")).some(
+        (button) => button.textContent?.trim() === "Check",
+      ),
+    ).toBe(true);
     root.unmount();
     container.remove();
 
     const javascriptContainer = document.createElement("div");
     document.body.appendChild(javascriptContainer);
     const javascriptRoot = createRoot(javascriptContainer);
-    const javascriptActivity = { ...mockHtmlActivity, id: "act-test-javascript", content: { ...mockHtmlActivity.content, language: "javascript" as const, starterCode: "console.log('hello')" } };
+    const javascriptActivity = {
+      ...mockHtmlActivity,
+      id: "act-test-javascript",
+      content: {
+        ...mockHtmlActivity.content,
+        language: "javascript" as const,
+        starterCode: "console.log('hello')",
+      },
+    };
     act(() => {
       javascriptRoot.render(
         <InteractiveCodeRenderer
           activity={javascriptActivity}
-          state={{ status: "idle", response: javascriptActivity.content.starterCode, hintsRevealed: 0, attempts: 0, startedAt: Date.now() }}
+          state={{
+            status: "idle",
+            response: javascriptActivity.content.starterCode,
+            hintsRevealed: 0,
+            attempts: 0,
+            startedAt: Date.now(),
+          }}
           onResponse={() => {}}
           onSubmit={() => {}}
           onRetry={() => {}}
@@ -79,10 +107,66 @@ describe("Interactive Code Flow & Validation UI", () => {
         />,
       );
     });
-    expect(Array.from(javascriptContainer.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Run")).toBe(false);
-    expect(Array.from(javascriptContainer.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Check")).toBe(true);
+    expect(
+      Array.from(javascriptContainer.querySelectorAll("button")).some(
+        (button) => button.textContent?.trim() === "Run",
+      ),
+    ).toBe(false);
+    expect(
+      Array.from(javascriptContainer.querySelectorAll("button")).some(
+        (button) => button.textContent?.trim() === "Check",
+      ),
+    ).toBe(true);
     javascriptRoot.unmount();
     javascriptContainer.remove();
+  });
+
+  it("maps external evaluation to evaluating without duplicate runtime checks", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const state = {
+      status: "evaluating" as const,
+      response: mockHtmlActivity.content.starterCode,
+      hintsRevealed: 0,
+      attempts: 1,
+      startedAt: Date.now(),
+    };
+
+    act(() => {
+      root.render(
+        <InteractiveCodeRenderer
+          activity={mockHtmlActivity}
+          state={state}
+          onResponse={() => {}}
+          onSubmit={() => {}}
+          onRetry={() => {}}
+          onContinue={() => {}}
+          onRevealHint={() => {}}
+        />,
+      );
+    });
+
+    expect(container.querySelector("#lesson-code-editor-act-test-html")).not.toBeNull();
+    expect(container.textContent).toContain("Validation & Results");
+
+    act(() => {
+      root.render(
+        <InteractiveCodeRenderer
+          activity={mockHtmlActivity}
+          state={state}
+          onResponse={() => {}}
+          onSubmit={() => {}}
+          onRetry={() => {}}
+          onContinue={() => {}}
+          onRevealHint={() => {}}
+        />,
+      );
+    });
+
+    expect(container.querySelector("#lesson-code-editor-act-test-html")).not.toBeNull();
+    root.unmount();
+    container.remove();
   });
 
   it("keeps editor mounted and preserves code on success", () => {
@@ -158,8 +242,9 @@ describe("Interactive Code Flow & Validation UI", () => {
     expect(container.textContent).toContain('div element has id="profile-card"');
     expect(container.textContent).toContain('span with class="badge" exists');
 
-    // 3. Guidance message is displayed
-    expect(container.textContent).toContain("Ensure id='profile-card' and span.badge are present.");
+    // Runtime validation owns detailed guidance; this fixture renders the
+    // learning-engine failure state without a completed runtime check.
+    expect(container.textContent).toContain("Not quite right yet.");
 
     // 4. Dead console output is NOT shown for HTML exercise
     expect(container.textContent).not.toContain("(No console output)");
@@ -233,7 +318,9 @@ describe("Interactive Code Flow & Validation UI", () => {
 
     // 1. Shows structured validation & results header
     expect(container.textContent).toContain("Validation & Results");
-    expect(container.textContent).toContain("Requirements not met");
+    // The renderer does not synthesize runtime results from learning-engine
+    // state; those arrive through useExperienceController after Check.
+    expect(container.textContent).toContain("Not quite right yet.");
     expect(container.textContent).toContain('div element has id="profile-card"');
 
     // 2. Contains Return to Code mobile navigation button

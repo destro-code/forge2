@@ -40,11 +40,19 @@ export interface ActivityCompletionEvent<TResponse = unknown> {
   evidenceConfig?: ActivityEvidenceConfig;
 }
 
+export interface EvaluationRequest {
+  activityId: string;
+  attemptId: string;
+  revision: number;
+}
+
 export interface ActivityRendererProps<TActivity extends CanonicalActivity, TResponse = unknown> {
   activity: TActivity;
   state: ActivityInteractionState<TResponse>;
   onResponse: (response: TResponse) => void;
   onSubmit?: () => void;
+  evaluationRequest?: EvaluationRequest;
+  onRuntimeValidation?: (result: ActivityValidationResult) => void;
   onRetry?: () => void;
   onContinue?: () => void;
   onRevealHint?: () => void;
