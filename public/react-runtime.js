@@ -10,7 +10,7 @@
   try { Object.defineProperty(window, "fetch", { configurable: false, writable: false, value: () => blocked("fetch") }); } catch {}
   for (const key of ["XMLHttpRequest", "WebSocket", "EventSource"]) try { Object.defineProperty(window, key, { configurable: false, writable: false, value: function () { record(networkAttempts, key); throw new Error("Network access is disabled in the React sandbox."); } }); } catch {}
   try { Object.defineProperty(navigator, "sendBeacon", { configurable: false, writable: false, value: () => { record(networkAttempts, "sendBeacon"); return false; } }); } catch {}
-  const isExternalResource = (node, value) => node instanceof Element && /^(IMG|LINK|SCRIPT|IFRAME|AUDIO|VIDEO|SOURCE|OBJECT|EMBED)$/.test(node.tagName) && /^(https?:|\\/\\/)/i.test(String(value));
+  const isExternalResource = (node, value) =>     node instanceof Element && /^(IMG|LINK|SCRIPT|IFRAME|AUDIO|VIDEO|SOURCE|OBJECT|EMBED)$/.test(node.tagName) && /^(https?:|\/\/)/i.test(String(value));
   try {
     const originalSetAttribute = Element.prototype.setAttribute;
     Element.prototype.setAttribute = function (name, value) {
