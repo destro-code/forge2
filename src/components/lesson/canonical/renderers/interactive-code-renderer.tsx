@@ -49,6 +49,13 @@ export function InteractiveCodeRenderer({
     language === "javascript" || language === "typescript" ? "console" : "dom-preview";
   const isConsoleOnly = outputMode === "console";
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
+  const previousStatusRef = useRef(state.status);
+  useEffect(() => {
+    const wasRetry = previousStatusRef.current !== "idle" && state.status === "idle";
+    previousStatusRef.current = state.status;
+    if (wasRetry) onResponse(starterCode);
+  }, [onResponse, starterCode, state.status]);
+
   const controller = useExperienceController({
     activity,
     getSource: () => (typeof state.response === "string" ? state.response : starterCode),
@@ -268,6 +275,7 @@ export function InteractiveCodeRenderer({
               </div>
             )}
             <LessonCodeEditor
+              key={`${activity.id}:${state.attempts}`}
               value={currentCode}
               language={language || "javascript"}
               onChange={(value) => onResponse(value || "")}
