@@ -85,8 +85,12 @@ export function InteractiveCodeRenderer({
     [onRuntimeValidation],
   );
 
+  const authoritativeEvaluationRef = useRef(false);
   useEffect(() => {
-    if (controller.technicalResult) handleRuntimeValidation(controller.technicalResult);
+    if (controller.technicalResult && authoritativeEvaluationRef.current) {
+      authoritativeEvaluationRef.current = false;
+      handleRuntimeValidation(controller.technicalResult);
+    }
   }, [controller.technicalResult, handleRuntimeValidation]);
 
   useEffect(() => {
@@ -100,6 +104,7 @@ export function InteractiveCodeRenderer({
       return;
     if (lastEvaluationRequestRef.current === evaluationAttemptId) return;
     lastEvaluationRequestRef.current = evaluationAttemptId;
+    authoritativeEvaluationRef.current = true;
     check();
     // The attempt ID is the command identity; the request object is intentionally not a trigger.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -227,7 +232,7 @@ export function InteractiveCodeRenderer({
                   size="sm"
                   onClick={() => {
                     setActiveTab("results");
-                    submitForEvaluation();
+                    check();
                   }}
                   disabled={readOnly || isCorrect || isRunning || !currentCode}
                   className="min-h-9 gap-1.5 text-xs"
