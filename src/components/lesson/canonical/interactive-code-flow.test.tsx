@@ -148,7 +148,7 @@ describe("Interactive Code Flow & Validation UI", () => {
     });
 
     expect(container.querySelector("#lesson-code-editor-act-test-html")).not.toBeNull();
-    expect(container.textContent).toContain("Running");
+    expect(container.textContent).toContain("Validation & Results");
 
     act(() => {
       root.render(

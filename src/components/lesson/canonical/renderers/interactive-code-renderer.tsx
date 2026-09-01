@@ -29,6 +29,7 @@ export function InteractiveCodeRenderer({
   state,
   onResponse,
   onSubmit,
+  evaluationRequest,
   onRuntimeValidation,
   onRetry,
   onContinue,
@@ -85,29 +86,23 @@ export function InteractiveCodeRenderer({
     if (state.status === "idle") setActiveTab("code");
   }, [state.status]);
 
-  const checkedEvaluationRef = useRef<string | null>(null);
-  const evaluationKey = `${activity.id}:${state.attempts}`;
-  const requestEvaluation = useCallback(() => {
-    if (checkedEvaluationRef.current === evaluationKey) return;
-    checkedEvaluationRef.current = evaluationKey;
+  const lastEvaluationRequestRef = useRef<string | null>(null);
+  const evaluationAttemptId = evaluationRequest?.attemptId;
+
+  useEffect(() => {
+    if (!evaluationRequest || evaluationRequest.activityId !== activity.id || !evaluationAttemptId)
+      return;
+    if (lastEvaluationRequestRef.current === evaluationAttemptId) return;
+    lastEvaluationRequestRef.current = evaluationAttemptId;
     check();
-  }, [check, evaluationKey]);
-
-  useEffect(() => {
-    if (state.status !== "evaluating") checkedEvaluationRef.current = null;
-  }, [state.status]);
-
-  useEffect(() => {
-    if (state.status === "evaluating" && !isRunning) requestEvaluation();
-  }, [isRunning, requestEvaluation, state.status]);
+    // The attempt ID is the command identity; the request object is intentionally not a trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activity.id, check, evaluationAttemptId]);
 
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
   const submitForEvaluation = useCallback(() => {
-    // Start the sandbox before the learning-engine state transition can
-    // remount the activity view and replace the iframe ref.
-    requestEvaluation();
     onSubmit?.();
-  }, [onSubmit, requestEvaluation]);
+  }, [onSubmit]);
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">

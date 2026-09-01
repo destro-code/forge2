@@ -1,10 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CanonicalLesson } from "@/lib/curriculum/types";
 import type { ActivityEvaluationResult } from "@/lib/learning-engine/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
 import { mapSessionStatus } from "./runtime/use-activity-runtime";
 import { evaluateActivityValidation } from "./validation";
-import type { ActivityCompletionEvent, ActivityInteractionStatus } from "./types";
+import type {
+  ActivityCompletionEvent,
+  ActivityInteractionStatus,
+  EvaluationRequest,
+} from "./types";
 import { ActivityFeedback, hasActivityFeedback } from "./primitives/activity-feedback";
 import { LessonLayoutProvider } from "./primitives/lesson-layout-context";
 import { useLessonSession } from "@/lib/learning-engine/use-lesson-session";
@@ -67,6 +71,8 @@ export function CanonicalLessonPlayer({
   const totalActivities = session.totalActivities;
 
   const scrollContainerRef = useRef<HTMLElement | null>(null);
+  const evaluationRevisionRef = useRef(0);
+  const [evaluationRequest, setEvaluationRequest] = useState<EvaluationRequest>();
 
   useEffect(() => {
     scrollContainerRef.current?.scrollTo({
@@ -92,6 +98,13 @@ export function CanonicalLessonPlayer({
   const handleSubmit = useCallback(() => {
     if (!currentActivity) return;
     if (currentActivity.type === "interactive-code" || currentActivity.type === "debug") {
+      const attemptId = `${currentActivity.id}:attempt-${(currentActivityState?.attempts ?? 0) + 1}:${Date.now()}`;
+      const request = {
+        activityId: currentActivity.id,
+        attemptId,
+        revision: ++evaluationRevisionRef.current,
+      } satisfies EvaluationRequest;
+      setEvaluationRequest(request);
       startEvaluation(currentActivity.id);
       return;
     }
@@ -117,6 +130,7 @@ export function CanonicalLessonPlayer({
     getActivityState,
     session.activities,
     currentActivityState?.response,
+    currentActivityState?.attempts,
     startEvaluation,
     resolveEvaluation,
   ]);
