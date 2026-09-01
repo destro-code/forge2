@@ -94,11 +94,11 @@ export function InteractiveCodeRenderer({
   }, [check, evaluationKey]);
 
   useEffect(() => {
-    if (state.status !== "submitted") checkedEvaluationRef.current = null;
+    if (state.status !== "evaluating") checkedEvaluationRef.current = null;
   }, [state.status]);
 
   useEffect(() => {
-    if (state.status === "submitted" && !isRunning) requestEvaluation();
+    if (state.status === "evaluating" && !isRunning) requestEvaluation();
   }, [isRunning, requestEvaluation, state.status]);
 
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);

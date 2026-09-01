@@ -48,7 +48,13 @@ describe("Interactive Code Flow & Validation UI", () => {
       root.render(
         <InteractiveCodeRenderer
           activity={mockHtmlActivity}
-          state={{ status: "idle", response: mockHtmlActivity.content.starterCode, hintsRevealed: 0, attempts: 0, startedAt: Date.now() }}
+          state={{
+            status: "idle",
+            response: mockHtmlActivity.content.starterCode,
+            hintsRevealed: 0,
+            attempts: 0,
+            startedAt: Date.now(),
+          }}
           onResponse={() => {}}
           onSubmit={() => {}}
           onRetry={() => {}}
@@ -57,20 +63,42 @@ describe("Interactive Code Flow & Validation UI", () => {
         />,
       );
     });
-    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Run")).toBe(true);
-    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Check")).toBe(true);
+    expect(
+      Array.from(container.querySelectorAll("button")).some(
+        (button) => button.textContent?.trim() === "Run",
+      ),
+    ).toBe(true);
+    expect(
+      Array.from(container.querySelectorAll("button")).some(
+        (button) => button.textContent?.trim() === "Check",
+      ),
+    ).toBe(true);
     root.unmount();
     container.remove();
 
     const javascriptContainer = document.createElement("div");
     document.body.appendChild(javascriptContainer);
     const javascriptRoot = createRoot(javascriptContainer);
-    const javascriptActivity = { ...mockHtmlActivity, id: "act-test-javascript", content: { ...mockHtmlActivity.content, language: "javascript" as const, starterCode: "console.log('hello')" } };
+    const javascriptActivity = {
+      ...mockHtmlActivity,
+      id: "act-test-javascript",
+      content: {
+        ...mockHtmlActivity.content,
+        language: "javascript" as const,
+        starterCode: "console.log('hello')",
+      },
+    };
     act(() => {
       javascriptRoot.render(
         <InteractiveCodeRenderer
           activity={javascriptActivity}
-          state={{ status: "idle", response: javascriptActivity.content.starterCode, hintsRevealed: 0, attempts: 0, startedAt: Date.now() }}
+          state={{
+            status: "idle",
+            response: javascriptActivity.content.starterCode,
+            hintsRevealed: 0,
+            attempts: 0,
+            startedAt: Date.now(),
+          }}
           onResponse={() => {}}
           onSubmit={() => {}}
           onRetry={() => {}}
@@ -79,10 +107,66 @@ describe("Interactive Code Flow & Validation UI", () => {
         />,
       );
     });
-    expect(Array.from(javascriptContainer.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Run")).toBe(false);
-    expect(Array.from(javascriptContainer.querySelectorAll("button")).some((button) => button.textContent?.trim() === "Check")).toBe(true);
+    expect(
+      Array.from(javascriptContainer.querySelectorAll("button")).some(
+        (button) => button.textContent?.trim() === "Run",
+      ),
+    ).toBe(false);
+    expect(
+      Array.from(javascriptContainer.querySelectorAll("button")).some(
+        (button) => button.textContent?.trim() === "Check",
+      ),
+    ).toBe(true);
     javascriptRoot.unmount();
     javascriptContainer.remove();
+  });
+
+  it("maps external evaluation to evaluating without duplicate runtime checks", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const state = {
+      status: "evaluating" as const,
+      response: mockHtmlActivity.content.starterCode,
+      hintsRevealed: 0,
+      attempts: 1,
+      startedAt: Date.now(),
+    };
+
+    act(() => {
+      root.render(
+        <InteractiveCodeRenderer
+          activity={mockHtmlActivity}
+          state={state}
+          onResponse={() => {}}
+          onSubmit={() => {}}
+          onRetry={() => {}}
+          onContinue={() => {}}
+          onRevealHint={() => {}}
+        />,
+      );
+    });
+
+    expect(container.querySelector("#lesson-code-editor-act-test-html")).not.toBeNull();
+    expect(container.textContent).toContain("Running");
+
+    act(() => {
+      root.render(
+        <InteractiveCodeRenderer
+          activity={mockHtmlActivity}
+          state={state}
+          onResponse={() => {}}
+          onSubmit={() => {}}
+          onRetry={() => {}}
+          onContinue={() => {}}
+          onRevealHint={() => {}}
+        />,
+      );
+    });
+
+    expect(container.querySelector("#lesson-code-editor-act-test-html")).not.toBeNull();
+    root.unmount();
+    container.remove();
   });
 
   it("keeps editor mounted and preserves code on success", () => {

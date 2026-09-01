@@ -92,10 +92,6 @@ export function CanonicalLessonPlayer({
   const handleSubmit = useCallback(() => {
     if (!currentActivity) return;
     if (currentActivity.type === "interactive-code" || currentActivity.type === "debug") {
-      console.log("[v0] PLAYER_EVALUATION_START", {
-        activityId: currentActivity.id,
-        activityType: currentActivity.type,
-      });
       startEvaluation(currentActivity.id);
       return;
     }

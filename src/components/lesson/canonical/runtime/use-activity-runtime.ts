@@ -61,7 +61,7 @@ export function mapSessionStatus(
     case "engaged":
       return "active";
     case "evaluating":
-      return "submitted";
+      return "evaluating";
     case "passed":
       return "correct";
     case "failed":
