@@ -175,7 +175,13 @@ export function useExperienceController({
         // Register the listener before assigning srcdoc so a fast runtime
         // cannot emit PLAYGROUND_READY before the host is listening.
         host.mount();
-        iframe.srcdoc = report.outputHtml;
+        // Explicitly detach the previous document before assigning the next
+        // revision so retries cannot reuse a disposed document that has
+        // already consumed its one-time PLAYGROUND_READY handshake.
+        iframe.srcdoc = "";
+        window.setTimeout(() => {
+          if (hostRef.current === host && !host.isDisposed) iframe.srcdoc = report.outputHtml;
+        }, 0);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Runtime error";
         setBuildError(message);
