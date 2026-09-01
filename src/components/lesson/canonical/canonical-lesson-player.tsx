@@ -276,7 +276,7 @@ export function CanonicalLessonPlayer({
 
       <main
         ref={scrollContainerRef}
-        className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pt-8 pb-36 sm:px-6 sm:pt-10 sm:pb-40 md:pb-40 lg:px-8"
+        className="relative h-0 min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pt-8 pb-36 sm:px-6 sm:pt-10 sm:pb-40 md:pb-40 lg:px-8"
       >
         {/* Ambient movement backdrop — a meaningful signal of the current
             movement's energy, not decoration. Shifts hue and intensity as the

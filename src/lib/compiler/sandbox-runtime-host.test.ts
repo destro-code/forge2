@@ -27,8 +27,15 @@ function createFakeIframe(contentWindow: object) {
   } as unknown as HTMLIFrameElement;
 }
 
-function message(source: object, workspaceRevision: number, type = "PLAYGROUND_CONSOLE"): MessageEvent {
-  return { source, data: { type, workspaceRevision, level: "log", message: "current" } } as unknown as MessageEvent;
+function message(
+  source: object,
+  workspaceRevision: number,
+  type = "PLAYGROUND_CONSOLE",
+): MessageEvent {
+  return {
+    source,
+    data: { type, workspaceRevision, level: "log", message: "current" },
+  } as unknown as MessageEvent;
 }
 
 describe("SandboxRuntimeHost", () => {
@@ -56,6 +63,28 @@ describe("SandboxRuntimeHost", () => {
     target.dispatchEvent(message(activeWindow, 2, "PLAYGROUND_VALIDATE_RESPONSE"));
     expect(onMessage).toHaveBeenCalledTimes(2);
     host.dispose(target as unknown as Window);
+  });
+
+  it("allows a fresh retry host after Attempt A is disposed", () => {
+    const target = createFakeWindow();
+    const activeWindow = {};
+    const iframe = createFakeIframe(activeWindow);
+    const attemptA = vi.fn();
+    const attemptB = vi.fn();
+    const hostA = new SandboxRuntimeHost({ iframe, workspaceRevision: 1, onMessage: attemptA });
+    hostA.mount(target as unknown as Window);
+    target.dispatchEvent(message(activeWindow, 1, "PLAYGROUND_READY"));
+    hostA.dispose(target as unknown as Window);
+
+    const hostB = new SandboxRuntimeHost({ iframe, workspaceRevision: 2, onMessage: attemptB });
+    hostB.mount(target as unknown as Window);
+    target.dispatchEvent(message(activeWindow, 1, "PLAYGROUND_READY"));
+    target.dispatchEvent(message(activeWindow, 2, "PLAYGROUND_READY"));
+
+    expect(attemptA).toHaveBeenCalledTimes(1);
+    expect(attemptB).toHaveBeenCalledTimes(1);
+    expect(hostB.isDisposed).toBe(false);
+    hostB.dispose(target as unknown as Window);
   });
 
   it("removes listeners on cleanup and ignores later messages", () => {
