@@ -28,7 +28,7 @@ export function CanonicalActivityView(props: CanonicalActivityViewProps) {
       {renderActivity(activity, {
         state: runtime.state,
         onResponse: runtime.actions.respond,
-        onSubmit: runtime.actions.submit,
+        onSubmit: props.onSubmit ?? runtime.actions.submit,
         onRuntimeValidation: props.onRuntimeValidation,
         onRetry: runtime.actions.retry,
         onContinue: runtime.actions.continue,
