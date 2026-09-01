@@ -1,7 +1,7 @@
 import { defineConfig, type Plugin } from "vite";
 
 const runtimeCsp =
-  "default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'none'; media-src 'none'; frame-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
+  "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'unsafe-inline'; img-src 'none'; media-src 'none'; frame-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
 
 function runtimeSecurityHeaders(): Plugin {
   const apply = (response: { setHeader: (name: string, value: string) => void }, url?: string) => {
@@ -9,7 +9,6 @@ function runtimeSecurityHeaders(): Plugin {
     response.setHeader("Content-Security-Policy", runtimeCsp);
     response.setHeader("X-Content-Type-Options", "nosniff");
     response.setHeader("Referrer-Policy", "no-referrer");
-    response.setHeader("X-Frame-Options", "SAMEORIGIN");
   };
 
   return {
