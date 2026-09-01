@@ -85,6 +85,10 @@ export function InteractiveCodeRenderer({
     if (state.status === "idle") setActiveTab("code");
   }, [state.status]);
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
+  const submitForEvaluation = useCallback(() => {
+    onSubmit?.();
+    check();
+  }, [check, onSubmit]);
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
@@ -203,7 +207,7 @@ export function InteractiveCodeRenderer({
                   size="sm"
                   onClick={() => {
                     setActiveTab("results");
-                    check();
+                    submitForEvaluation();
                   }}
                   disabled={readOnly || isCorrect || isRunning || !currentCode}
                   className="min-h-9 gap-1.5 text-xs"
@@ -392,7 +396,7 @@ export function InteractiveCodeRenderer({
       />
       <ActivityActions
         status={state.status}
-        onSubmit={check}
+        onSubmit={submitForEvaluation}
         onRetry={onRetry}
         onContinue={onContinue}
         canSubmit={Boolean(currentCode)}
