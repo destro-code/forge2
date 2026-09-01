@@ -40,7 +40,9 @@ import { Route as CertificateCertificateIdRouteImport } from './routes/certifica
 import { Route as DebugLabIndexRouteImport } from './routes/debug-lab.index'
 import { Route as DebugLabBugIdRouteImport } from './routes/debug-lab.$bugId'
 import { Route as DevLessonExperienceApiRouteImport } from './routes/dev.lesson-experience-api'
+import { Route as DevLessonExperienceBrowserRouteImport } from './routes/dev.lesson-experience-browser'
 import { Route as DevLessonExperienceDemoRouteImport } from './routes/dev.lesson-experience-demo'
+import { Route as DevLessonExperienceHttpRouteImport } from './routes/dev.lesson-experience-http'
 import { Route as DevLessonExperienceLabRouteImport } from './routes/dev.lesson-experience-lab'
 import { Route as DevLessonExperienceNextRouteImport } from './routes/dev.lesson-experience-next'
 import { Route as DevLessonExperienceReactRouteImport } from './routes/dev.lesson-experience-react'
@@ -217,9 +219,20 @@ const DevLessonExperienceApiRoute = DevLessonExperienceApiRouteImport.update({
   path: '/dev/lesson-experience-api',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevLessonExperienceBrowserRoute =
+  DevLessonExperienceBrowserRouteImport.update({
+    id: '/dev/lesson-experience-browser',
+    path: '/dev/lesson-experience-browser',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DevLessonExperienceDemoRoute = DevLessonExperienceDemoRouteImport.update({
   id: '/dev/lesson-experience-demo',
   path: '/dev/lesson-experience-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevLessonExperienceHttpRoute = DevLessonExperienceHttpRouteImport.update({
+  id: '/dev/lesson-experience-http',
+  path: '/dev/lesson-experience-http',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevLessonExperienceLabRoute = DevLessonExperienceLabRouteImport.update({
@@ -352,7 +365,9 @@ export interface FileRoutesByFullPath {
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
   '/dev/lesson-experience-api': typeof DevLessonExperienceApiRoute
+  '/dev/lesson-experience-browser': typeof DevLessonExperienceBrowserRoute
   '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
+  '/dev/lesson-experience-http': typeof DevLessonExperienceHttpRoute
   '/dev/lesson-experience-lab': typeof DevLessonExperienceLabRoute
   '/dev/lesson-experience-next': typeof DevLessonExperienceNextRoute
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
@@ -401,7 +416,9 @@ export interface FileRoutesByTo {
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
   '/dev/lesson-experience-api': typeof DevLessonExperienceApiRoute
+  '/dev/lesson-experience-browser': typeof DevLessonExperienceBrowserRoute
   '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
+  '/dev/lesson-experience-http': typeof DevLessonExperienceHttpRoute
   '/dev/lesson-experience-lab': typeof DevLessonExperienceLabRoute
   '/dev/lesson-experience-next': typeof DevLessonExperienceNextRoute
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
@@ -455,7 +472,9 @@ export interface FileRoutesById {
   '/certificate/$certificateId': typeof CertificateCertificateIdRoute
   '/debug-lab/$bugId': typeof DebugLabBugIdRoute
   '/dev/lesson-experience-api': typeof DevLessonExperienceApiRoute
+  '/dev/lesson-experience-browser': typeof DevLessonExperienceBrowserRoute
   '/dev/lesson-experience-demo': typeof DevLessonExperienceDemoRoute
+  '/dev/lesson-experience-http': typeof DevLessonExperienceHttpRoute
   '/dev/lesson-experience-lab': typeof DevLessonExperienceLabRoute
   '/dev/lesson-experience-next': typeof DevLessonExperienceNextRoute
   '/dev/lesson-experience-react': typeof DevLessonExperienceReactRoute
@@ -510,7 +529,9 @@ export interface FileRouteTypes {
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
     | '/dev/lesson-experience-api'
+    | '/dev/lesson-experience-browser'
     | '/dev/lesson-experience-demo'
+    | '/dev/lesson-experience-http'
     | '/dev/lesson-experience-lab'
     | '/dev/lesson-experience-next'
     | '/dev/lesson-experience-react'
@@ -559,7 +580,9 @@ export interface FileRouteTypes {
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
     | '/dev/lesson-experience-api'
+    | '/dev/lesson-experience-browser'
     | '/dev/lesson-experience-demo'
+    | '/dev/lesson-experience-http'
     | '/dev/lesson-experience-lab'
     | '/dev/lesson-experience-next'
     | '/dev/lesson-experience-react'
@@ -612,7 +635,9 @@ export interface FileRouteTypes {
     | '/certificate/$certificateId'
     | '/debug-lab/$bugId'
     | '/dev/lesson-experience-api'
+    | '/dev/lesson-experience-browser'
     | '/dev/lesson-experience-demo'
+    | '/dev/lesson-experience-http'
     | '/dev/lesson-experience-lab'
     | '/dev/lesson-experience-next'
     | '/dev/lesson-experience-react'
@@ -665,7 +690,9 @@ export interface RootRouteChildren {
   AssessmentPathIdRoute: typeof AssessmentPathIdRoute
   CertificateCertificateIdRoute: typeof CertificateCertificateIdRoute
   DevLessonExperienceApiRoute: typeof DevLessonExperienceApiRoute
+  DevLessonExperienceBrowserRoute: typeof DevLessonExperienceBrowserRoute
   DevLessonExperienceDemoRoute: typeof DevLessonExperienceDemoRoute
+  DevLessonExperienceHttpRoute: typeof DevLessonExperienceHttpRoute
   DevLessonExperienceLabRoute: typeof DevLessonExperienceLabRoute
   DevLessonExperienceNextRoute: typeof DevLessonExperienceNextRoute
   DevLessonExperienceReactRoute: typeof DevLessonExperienceReactRoute
@@ -894,11 +921,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevLessonExperienceApiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dev/lesson-experience-browser': {
+      id: '/dev/lesson-experience-browser'
+      path: '/dev/lesson-experience-browser'
+      fullPath: '/dev/lesson-experience-browser'
+      preLoaderRoute: typeof DevLessonExperienceBrowserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dev/lesson-experience-demo': {
       id: '/dev/lesson-experience-demo'
       path: '/dev/lesson-experience-demo'
       fullPath: '/dev/lesson-experience-demo'
       preLoaderRoute: typeof DevLessonExperienceDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/lesson-experience-http': {
+      id: '/dev/lesson-experience-http'
+      path: '/dev/lesson-experience-http'
+      fullPath: '/dev/lesson-experience-http'
+      preLoaderRoute: typeof DevLessonExperienceHttpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/lesson-experience-lab': {
@@ -1142,7 +1183,9 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentPathIdRoute: AssessmentPathIdRoute,
   CertificateCertificateIdRoute: CertificateCertificateIdRoute,
   DevLessonExperienceApiRoute: DevLessonExperienceApiRoute,
+  DevLessonExperienceBrowserRoute: DevLessonExperienceBrowserRoute,
   DevLessonExperienceDemoRoute: DevLessonExperienceDemoRoute,
+  DevLessonExperienceHttpRoute: DevLessonExperienceHttpRoute,
   DevLessonExperienceLabRoute: DevLessonExperienceLabRoute,
   DevLessonExperienceNextRoute: DevLessonExperienceNextRoute,
   DevLessonExperienceReactRoute: DevLessonExperienceReactRoute,

@@ -32,7 +32,19 @@ export function HttpFamilyLab() {
   const host = useMemo(() => new HttpRuntimeHost(HTTP_SCENARIOS), []);
   const [result, setResult] = useState<ReturnType<HttpRuntimeHost["run"]>>();
   const [selected, setSelected] = useState("get-success");
-  const request = requests[selected];
+  const [method, setMethod] = useState(requests[selected].method);
+  const [path, setPath] = useState(requests[selected].path);
+  const [queryText, setQueryText] = useState("");
+  const [headersText, setHeadersText] = useState("");
+  const [body, setBody] = useState(requests[selected].body ?? "");
+  const request = {
+    ...requests[selected],
+    method,
+    path,
+    body,
+    query: parsePairs(queryText),
+    headers: parsePairs(headersText),
+  };
   function run() {
     setResult(host.run(request));
   }
@@ -66,6 +78,11 @@ export function HttpFamilyLab() {
                     className="h-auto justify-start whitespace-normal px-3 py-3 text-left"
                     onClick={() => {
                       setSelected(scenario.id);
+                      setMethod(requests[scenario.id].method);
+                      setPath(requests[scenario.id].path);
+                      setBody(requests[scenario.id].body ?? "");
+                      setQueryText("");
+                      setHeadersText("");
                       setResult(undefined);
                     }}
                   >
@@ -105,6 +122,43 @@ export function HttpFamilyLab() {
               </Button>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
+              <div className="grid gap-3 sm:grid-cols-[110px_minmax(0,1fr)]">
+                <input
+                  aria-label="HTTP method"
+                  value={method}
+                  onChange={(event) => setMethod(event.target.value)}
+                  className="rounded-md border border-border bg-background px-3 py-2 text-sm"
+                />
+                <input
+                  aria-label="Request path"
+                  value={path}
+                  onChange={(event) => setPath(event.target.value)}
+                  className="rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
+                />
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                <textarea
+                  aria-label="Query parameters"
+                  value={queryText}
+                  onChange={(event) => setQueryText(event.target.value)}
+                  placeholder="Query: key=value"
+                  className="min-h-20 rounded-md border border-border bg-background px-3 py-2 text-xs"
+                />
+                <textarea
+                  aria-label="Request headers"
+                  value={headersText}
+                  onChange={(event) => setHeadersText(event.target.value)}
+                  placeholder="Headers: key=value"
+                  className="min-h-20 rounded-md border border-border bg-background px-3 py-2 text-xs"
+                />
+                <textarea
+                  aria-label="Request body"
+                  value={body}
+                  onChange={(event) => setBody(event.target.value)}
+                  placeholder="Request body"
+                  className="min-h-20 rounded-md border border-border bg-background px-3 py-2 font-mono text-xs"
+                />
+              </div>
               {result ? (
                 <>
                   <div className="flex flex-wrap gap-2">
@@ -172,6 +226,16 @@ export function HttpFamilyLab() {
     </main>
   );
 }
+function parsePairs(value: string): Record<string, string> {
+  return Object.fromEntries(
+    value
+      .split("\\n")
+      .map((line) => line.split("="))
+      .filter(([key, item]) => key && item)
+      .map(([key, item]) => [key.trim(), item.trim()]),
+  );
+}
+
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-3">
