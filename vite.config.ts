@@ -1,4 +1,33 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
+
+const runtimeCsp =
+  "default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'none'; media-src 'none'; frame-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
+
+function runtimeSecurityHeaders(): Plugin {
+  const apply = (response: { setHeader: (name: string, value: string) => void }, url?: string) => {
+    if (url?.split("?", 1)[0] !== "/react-runtime.html") return;
+    response.setHeader("Content-Security-Policy", runtimeCsp);
+    response.setHeader("X-Content-Type-Options", "nosniff");
+    response.setHeader("Referrer-Policy", "no-referrer");
+    response.setHeader("X-Frame-Options", "SAMEORIGIN");
+  };
+
+  return {
+    name: "runtime-security-headers",
+    configureServer(server) {
+      server.middlewares.use((request, response, next) => {
+        apply(response, request.url);
+        next();
+      });
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use((request, response, next) => {
+        apply(response, request.url);
+        next();
+      });
+    },
+  };
+}
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -20,6 +49,7 @@ export default defineConfig({
     }),
     nitro(),
     viteReact(),
+    runtimeSecurityHeaders(),
   ],
   test: {
     setupFiles: ["./src/test/setup.ts"],
