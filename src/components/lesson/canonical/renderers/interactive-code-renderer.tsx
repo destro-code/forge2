@@ -88,7 +88,6 @@ export function InteractiveCodeRenderer({
 
   const lastEvaluationRequestRef = useRef<string | null>(null);
   const evaluationAttemptId = evaluationRequest?.attemptId;
-
   useEffect(() => {
     if (!evaluationRequest || evaluationRequest.activityId !== activity.id || !evaluationAttemptId)
       return;
