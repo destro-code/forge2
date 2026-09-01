@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { compileCanonicalRuntime, createCanonicalValidationRequest, mapCanonicalValidation, CANONICAL_IFRAME_TITLE } from "@/lib/compiler/canonical-runtime-service";
+import {
+  compileCanonicalRuntime,
+  createCanonicalValidationRequest,
+  mapCanonicalValidation,
+  CANONICAL_IFRAME_TITLE,
+} from "@/lib/compiler/canonical-runtime-service";
 import { SandboxRuntimeHost } from "@/lib/compiler/sandbox-runtime-host";
-import { isPlaygroundReady, isPlaygroundBuildError, isPlaygroundConsoleMessage, isPlaygroundValidateResponse } from "@/lib/types/validation-messages";
+import {
+  isPlaygroundReady,
+  isPlaygroundBuildError,
+  isPlaygroundConsoleMessage,
+  isPlaygroundValidateResponse,
+} from "@/lib/types/validation-messages";
 import type { ActivityValidationResult } from "../types";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
 import type { ActivityRendererProps } from "../types";
@@ -22,6 +32,9 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createCanonicalBrowserAdapter } from "@/lib/lesson-experience/canonical-browser-adapter";
+import { evidenceEnvelopeToCanonicalValidation } from "@/lib/lesson-experience/canonical-evidence-bridge";
+import type { BrowserRuntimeMessage } from "@/lib/lesson-experience/browser-family";
 
 export function InteractiveCodeRenderer({
   activity,
@@ -42,75 +55,113 @@ export function InteractiveCodeRenderer({
     (activity as any).description ||
     "";
   const currentCode = typeof state.response === "string" ? state.response : starterCode;
-  const outputMode = language === "javascript" || language === "typescript" ? "console" : "dom-preview";
+  const outputMode =
+    language === "javascript" || language === "typescript" ? "console" : "dom-preview";
   const isConsoleOnly = outputMode === "console";
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [testResults, setTestResults] = useState<Array<{ description: string; passed: boolean; error?: string }>>([]);
+  const [testResults, setTestResults] = useState<
+    Array<{ description: string; passed: boolean; error?: string }>
+  >([]);
   const [runtimeResult, setRuntimeResult] = useState<ActivityValidationResult | undefined>();
   const [activeTab, setActiveTab] = useState<"instructions" | "code" | "results">("instructions");
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const hostRef = useRef<SandboxRuntimeHost | null>(null);
+  const browserAdapterRef = useRef(createCanonicalBrowserAdapter());
+  const evidenceMessagesRef = useRef<BrowserRuntimeMessage[]>([]);
   const revisionRef = useRef(0);
   const pendingRequestRef = useRef<string | null>(null);
   const isCorrect = state.status === "correct" || state.status === "completed";
   const resolvedHints = activity.feedback?.hints || activity.content?.hints;
   const hintsRemaining = (resolvedHints?.length || 0) - state.hintsRevealed;
 
-  const runEvaluation = useCallback((validate = true) => {
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-    hostRef.current?.dispose();
-    hostRef.current = null;
-    pendingRequestRef.current = null;
-    setIsRunning(true);
-    setConsoleOutput([]);
-    setTestResults([]);
-    setRuntimeResult(undefined);
-    const revision = ++revisionRef.current;
-    try {
-      const report = compileCanonicalRuntime(activity, currentCode, revision);
-      const request = validate ? createCanonicalValidationRequest(activity, revision, currentCode) : null;
-      pendingRequestRef.current = request?.requestId ?? null;
-      const host = new SandboxRuntimeHost({ iframe, workspaceRevision: revision, onMessage: (event) => {
-        if (isPlaygroundConsoleMessage(event.data)) {
-          setConsoleOutput((previous) => [...previous, `[${event.data.level}] ${event.data.message}`].slice(-50));
-          setActiveTab("results");
-          return;
-        }
-        if (isPlaygroundReady(event.data)) {
-          if (request) iframe.contentWindow?.postMessage(request, "*");
-          else {
-            setIsRunning(false);
-            host.dispose();
-          }
-        }
-        if (isPlaygroundValidateResponse(event.data) && event.data.requestId === pendingRequestRef.current) {
-          const result = mapCanonicalValidation(event.data.report);
-          setRuntimeResult(result);
-          setTestResults(event.data.report.results.map((item) => ({ description: item.description, passed: item.status === "passed", error: item.errorMessage })));
-          setActiveTab(result.isValid ? "code" : "results");
-          setIsRunning(false);
-          host.dispose();
-        }
-        if (isPlaygroundBuildError(event.data)) {
-          setConsoleOutput([event.data.message]);
-          setActiveTab("results");
-          setIsRunning(false);
-          host.dispose();
-        }
-      }});
-      hostRef.current = host;
-      // Register the listener before assigning srcdoc so fast runtimes cannot
-      // emit PLAYGROUND_READY before the host is listening.
-      host.mount();
-      iframe.srcdoc = report.outputHtml;
-    } catch (error) {
-      setConsoleOutput([error instanceof Error ? error.message : "Runtime error"]);
-      setActiveTab("results");
-      setIsRunning(false);
-    }
-  }, [activity, currentCode]);
+  const runEvaluation = useCallback(
+    (validate = true) => {
+      const iframe = iframeRef.current;
+      if (!iframe) return;
+      hostRef.current?.dispose();
+      hostRef.current = null;
+      pendingRequestRef.current = null;
+      setIsRunning(true);
+      setConsoleOutput([]);
+      setTestResults([]);
+      setRuntimeResult(undefined);
+      const run = browserAdapterRef.current.beginRun();
+      const revision = run.revision;
+      revisionRef.current = revision;
+      evidenceMessagesRef.current = [];
+      try {
+        const report = compileCanonicalRuntime(activity, currentCode, revision);
+        const request = validate
+          ? createCanonicalValidationRequest(activity, revision, currentCode)
+          : null;
+        pendingRequestRef.current = request?.requestId ?? null;
+        const host = new SandboxRuntimeHost({
+          iframe,
+          workspaceRevision: revision,
+          onMessage: (event) => {
+            evidenceMessagesRef.current.push(event.data as BrowserRuntimeMessage);
+            if (isPlaygroundConsoleMessage(event.data)) {
+              setConsoleOutput((previous) =>
+                [...previous, `[${event.data.level}] ${event.data.message}`].slice(-50),
+              );
+              setActiveTab("results");
+              return;
+            }
+            if (isPlaygroundReady(event.data)) {
+              if (request) iframe.contentWindow?.postMessage(request, "*");
+              else {
+                setIsRunning(false);
+                host.dispose();
+              }
+            }
+            if (
+              isPlaygroundValidateResponse(event.data) &&
+              event.data.requestId === pendingRequestRef.current
+            ) {
+              const result = mapCanonicalValidation(event.data.report);
+              const evidence = browserAdapterRef.current.collect(
+                run.runId,
+                revision,
+                evidenceMessagesRef.current,
+              );
+              const translated = evidenceEnvelopeToCanonicalValidation(evidence, event.data.report);
+              setRuntimeResult({
+                ...result,
+                details: { ...result.details, ...translated.details },
+              });
+              setTestResults(
+                event.data.report.results.map((item) => ({
+                  description: item.description,
+                  passed: item.status === "passed",
+                  error: item.errorMessage,
+                })),
+              );
+              setActiveTab(result.isValid ? "code" : "results");
+              setIsRunning(false);
+              host.dispose();
+            }
+            if (isPlaygroundBuildError(event.data)) {
+              setConsoleOutput([event.data.message]);
+              setActiveTab("results");
+              setIsRunning(false);
+              host.dispose();
+            }
+          },
+        });
+        hostRef.current = host;
+        // Register the listener before assigning srcdoc so fast runtimes cannot
+        // emit PLAYGROUND_READY before the host is listening.
+        host.mount();
+        iframe.srcdoc = report.outputHtml;
+      } catch (error) {
+        setConsoleOutput([error instanceof Error ? error.message : "Runtime error"]);
+        setActiveTab("results");
+        setIsRunning(false);
+      }
+    },
+    [activity, currentCode],
+  );
 
   useEffect(() => {
     return () => {
@@ -122,7 +173,13 @@ export function InteractiveCodeRenderer({
   }, [activity.id]);
 
   useEffect(() => {
-    if (state.status === "submitted" || state.status === "correct" || state.status === "incorrect" || state.status === "completed") runEvaluation();
+    if (
+      state.status === "submitted" ||
+      state.status === "correct" ||
+      state.status === "incorrect" ||
+      state.status === "completed"
+    )
+      runEvaluation();
     else if (state.status === "idle") setActiveTab("code");
   }, [state.status, state.validationResult, runEvaluation]);
 
@@ -130,7 +187,7 @@ export function InteractiveCodeRenderer({
     consoleOutput.length > 0 ||
     testResults.length > 0 ||
     state.status === "incorrect" ||
-      state.status === "correct" ||
+    state.status === "correct" ||
     Boolean(state.validationResult);
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
 
@@ -282,25 +339,31 @@ export function InteractiveCodeRenderer({
               </div>
             </div>
 
-  <div className={cn(
-    "border-b border-lesson-border bg-lesson-surface-subtle/20 p-3",
-    isConsoleOnly && "sr-only",
-  )}>
-    <iframe
-      ref={iframeRef}
-      title={CANONICAL_IFRAME_TITLE}
-      sandbox="allow-scripts allow-modals"
-      className="h-48 w-full rounded-md border border-lesson-border bg-background"
-      aria-label={isConsoleOnly ? "Secure JavaScript execution sandbox" : "Sandboxed activity preview"}
-    />
-  </div>
-  {isConsoleOnly && (
-    <div className="border-b border-lesson-border bg-lesson-surface-subtle/20 px-3 py-2 text-xs text-lesson-text-muted">
-      JavaScript runs in a secure sandbox. Use Check to execute and view console output.
-    </div>
-  )}
-  <LessonCodeEditor
-  value={currentCode}
+            <div
+              className={cn(
+                "border-b border-lesson-border bg-lesson-surface-subtle/20 p-3",
+                isConsoleOnly && "sr-only",
+              )}
+            >
+              <iframe
+                ref={iframeRef}
+                title={CANONICAL_IFRAME_TITLE}
+                sandbox="allow-scripts allow-modals"
+                className="h-48 w-full rounded-md border border-lesson-border bg-background"
+                aria-label={
+                  isConsoleOnly
+                    ? "Secure JavaScript execution sandbox"
+                    : "Sandboxed activity preview"
+                }
+              />
+            </div>
+            {isConsoleOnly && (
+              <div className="border-b border-lesson-border bg-lesson-surface-subtle/20 px-3 py-2 text-xs text-lesson-text-muted">
+                JavaScript runs in a secure sandbox. Use Check to execute and view console output.
+              </div>
+            )}
+            <LessonCodeEditor
+              value={currentCode}
               language={language || "javascript"}
               onChange={(value) => onResponse(value || "")}
               readOnly={readOnly || isCorrect}
@@ -420,11 +483,13 @@ export function InteractiveCodeRenderer({
                     <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-900 dark:text-amber-200">
                       <p className="font-semibold text-amber-800 dark:text-amber-300">Guidance</p>
                       <p className="mt-1 text-lesson-text-secondary">
-                        {activity.feedback?.incorrect || (typeof resolvedHints?.[0] === "string" ? resolvedHints[0] : resolvedHints?.[0]?.content)}
+                        {activity.feedback?.incorrect ||
+                          (typeof resolvedHints?.[0] === "string"
+                            ? resolvedHints[0]
+                            : resolvedHints?.[0]?.content)}
                       </p>
                     </div>
                   )}
-
               </>
             ) : null}
           </div>
