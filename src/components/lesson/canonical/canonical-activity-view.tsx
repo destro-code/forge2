@@ -22,7 +22,6 @@ export interface CanonicalActivityViewProps {
 export function CanonicalActivityView(props: CanonicalActivityViewProps) {
   const { activity, readOnly, className } = props;
   const runtime = useActivityRuntime(props);
-
   return (
     <div className={className}>
       {renderActivity(activity, {
