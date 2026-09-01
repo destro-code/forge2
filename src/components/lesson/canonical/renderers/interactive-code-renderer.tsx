@@ -112,8 +112,21 @@ export function InteractiveCodeRenderer({
 
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
   const submitForEvaluation = useCallback(() => {
+    console.log("[v0][canonical-runtime] Check Answer evaluation-request path invoked", {
+      activityId: activity.id,
+    });
     onSubmit?.();
-  }, [onSubmit]);
+  }, [activity.id, onSubmit]);
+
+  const checkInline = useCallback(() => {
+    console.log("[v0][canonical-runtime] Inline Check invoked", { activityId: activity.id });
+    setActiveTab("results");
+    check();
+  }, [activity.id, check]);
+  const retryFromRenderer = useCallback(() => {
+    setActiveTab("code");
+    onRetry?.();
+  }, [onRetry]);
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
@@ -230,10 +243,7 @@ export function InteractiveCodeRenderer({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setActiveTab("results");
-                    check();
-                  }}
+                  onClick={checkInline}
                   disabled={readOnly || isCorrect || isRunning || !currentCode}
                   className="min-h-9 gap-1.5 text-xs"
                 >
@@ -423,7 +433,7 @@ export function InteractiveCodeRenderer({
       <ActivityActions
         status={state.status}
         onSubmit={submitForEvaluation}
-        onRetry={onRetry}
+        onRetry={retryFromRenderer}
         onContinue={onContinue}
         canSubmit={Boolean(currentCode)}
       />

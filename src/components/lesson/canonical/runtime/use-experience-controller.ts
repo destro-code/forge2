@@ -101,15 +101,29 @@ export function useExperienceController({
 
   const execute = useCallback(
     (validate: boolean) => {
+      const origin = validate ? "check" : "run";
+      const trace = (checkpoint: string, details: Record<string, unknown> = {}) =>
+        console.log("[v0][canonical-runtime]", checkpoint, {
+          origin,
+          workspaceRevision: revisionRef.current,
+          pendingRequest: pendingRequestRef.current,
+          ...details,
+        });
+      trace("execute entered");
       const iframe = iframeRef.current;
-      if (!iframe) return;
+      if (!iframe) {
+        trace("execute exited: iframe missing");
+        return;
+      }
 
       // A fresh revision + a disposed previous host means any message still
       // in flight from the old sandbox will be rejected by the new host's
       // (or nobody's) revision filter — see SandboxRuntimeHost.
       disposeHost();
+      trace("previous host disposed");
       pendingRequestRef.current = null;
       setIsRunning(true);
+      trace("isRunning set true");
       setConsoleOutput([]);
       setTestResults([]);
       setTechnicalResult(undefined);
@@ -130,14 +144,17 @@ export function useExperienceController({
           workspaceRevision: revision,
           onMessage: (event) => {
             if (isPlaygroundConsoleMessage(event.data)) {
+              trace("other terminal runtime event", { messageType: event.data.type });
               setConsoleOutput((previous) =>
                 [...previous, `[${event.data.level}] ${event.data.message}`].slice(-50),
               );
               return;
             }
             if (isPlaygroundReady(event.data)) {
+              trace("PLAYGROUND_READY received", { sourceMatches: true });
               if (request) {
                 iframe.contentWindow?.postMessage(request, "*");
+                trace("validation request posted", { requestId: request.requestId });
               } else {
                 setIsRunning(false);
                 host.dispose();
@@ -159,10 +176,15 @@ export function useExperienceController({
                 })),
               );
               setIsRunning(false);
+              trace("validation response received; isRunning set false", {
+                requestId: event.data.requestId,
+              });
               host.dispose();
+              trace("host disposed");
               return;
             }
             if (isPlaygroundBuildError(event.data)) {
+              trace("build error received", { message: event.data.message });
               setBuildError(event.data.message);
               setConsoleOutput((previous) => [...previous, event.data.message]);
               if (request) {
@@ -184,15 +206,21 @@ export function useExperienceController({
         });
 
         hostRef.current = host;
+        trace("new SandboxRuntimeHost created", { hostRevision: revision });
         // Register the listener before assigning srcdoc so a fast runtime
         // cannot emit PLAYGROUND_READY before the host is listening.
         host.mount();
+        trace("host.mount() called; message listener attached", { hostRevision: revision });
         // Explicitly detach the previous document before assigning the next
         // revision so retries cannot reuse a disposed document that has
         // already consumed its one-time PLAYGROUND_READY handshake.
         iframe.srcdoc = "";
+        trace("iframe srcdoc cleared", { hostRevision: revision });
         window.setTimeout(() => {
-          if (hostRef.current === host && !host.isDisposed) iframe.srcdoc = report.outputHtml;
+          if (hostRef.current === host && !host.isDisposed) {
+            iframe.srcdoc = report.outputHtml;
+            trace("deferred iframe srcdoc assigned", { hostRevision: revision });
+          }
         }, 0);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Runtime error";
@@ -209,7 +237,10 @@ export function useExperienceController({
   );
 
   const run = useCallback(() => execute(false), [execute]);
-  const check = useCallback(() => execute(true), [execute]);
+  const check = useCallback(() => {
+    console.log("[v0][canonical-runtime] check() entered", { activityId: activity.id });
+    execute(true);
+  }, [activity.id, execute]);
 
   const reset = useCallback(() => {
     revisionRef.current += 1;
