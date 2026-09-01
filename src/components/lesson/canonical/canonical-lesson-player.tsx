@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CanonicalLesson } from "@/lib/curriculum/types";
+import type { ActivityEvaluationResult } from "@/lib/learning-engine/types";
 import { CanonicalActivityView } from "./canonical-activity-view";
 import { mapSessionStatus } from "./runtime/use-activity-runtime";
 import { evaluateActivityValidation } from "./validation";
 import type { ActivityCompletionEvent, ActivityInteractionStatus } from "./types";
-import {
-  ActivityFeedback,
-  hasActivityFeedback,
-} from "./primitives/activity-feedback";
+import { ActivityFeedback, hasActivityFeedback } from "./primitives/activity-feedback";
 import { LessonLayoutProvider } from "./primitives/lesson-layout-context";
 import { useLessonSession } from "@/lib/learning-engine/use-lesson-session";
 import { useProgress } from "@/lib/hooks/use-progress";
@@ -84,8 +82,19 @@ export function CanonicalLessonPlayer({
     [currentActivity, updateResponse],
   );
 
+  const handleRuntimeValidation = useCallback(
+    (result: ActivityEvaluationResult) => {
+      if (currentActivity) resolveEvaluation(result, currentActivity.id);
+    },
+    [currentActivity, resolveEvaluation],
+  );
+
   const handleSubmit = useCallback(() => {
     if (!currentActivity) return;
+    if (currentActivity.type === "interactive-code" || currentActivity.type === "debug") {
+      startEvaluation(currentActivity.id);
+      return;
+    }
     const latestActState = getActivityState(currentActivity.id);
     let responseToEvaluate =
       latestActState?.response ??
@@ -101,10 +110,7 @@ export function CanonicalLessonPlayer({
       }
     }
 
-    const valResult = evaluateActivityValidation(
-      currentActivity,
-      responseToEvaluate as Parameters<typeof evaluateActivityValidation>[1],
-    );
+    const valResult = evaluateActivityValidation(currentActivity, responseToEvaluate as never);
     resolveEvaluation(valResult, currentActivity.id);
   }, [
     currentActivity,
@@ -163,8 +169,7 @@ export function CanonicalLessonPlayer({
       case "fill-blank": {
         // Every blank must actually be filled — an empty or partial response
         // must never be submittable.
-        const blanks =
-          (currentActivity.content as { blanks?: unknown[] })?.blanks ?? [];
+        const blanks = (currentActivity.content as { blanks?: unknown[] })?.blanks ?? [];
         if (!Array.isArray(activeResponse)) return false;
         if (blanks.length > 0 && activeResponse.length < blanks.length) return false;
         return (
@@ -266,8 +271,7 @@ export function CanonicalLessonPlayer({
           aria-hidden
           className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[420px] transition-opacity duration-700"
           style={{
-            background:
-              "radial-gradient(900px 380px at 50% -8%, var(--m-glow), transparent 70%)",
+            background: "radial-gradient(900px 380px at 50% -8%, var(--m-glow), transparent 70%)",
           }}
         />
         <div className="relative z-10 mx-auto flex min-h-full w-full max-w-[1200px] flex-col justify-start">
@@ -278,6 +282,7 @@ export function CanonicalLessonPlayer({
               activityState={currentActivityState}
               onResponseChange={handleResponseChange}
               onSubmit={handleSubmit}
+              onRuntimeValidation={handleRuntimeValidation}
               onRetry={handleRetry}
               onRevealHint={handleRevealHint}
               onComplete={handleActivityContinue}

@@ -45,6 +45,7 @@ export interface ActivityRendererProps<TActivity extends CanonicalActivity, TRes
   state: ActivityInteractionState<TResponse>;
   onResponse: (response: TResponse) => void;
   onSubmit?: () => void;
+  onRuntimeValidation?: (result: ActivityValidationResult) => void;
   onRetry?: () => void;
   onContinue?: () => void;
   onRevealHint?: () => void;

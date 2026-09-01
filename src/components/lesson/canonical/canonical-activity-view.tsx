@@ -10,6 +10,7 @@ export interface CanonicalActivityViewProps {
   onComplete?: (event: ActivityCompletionEvent<unknown>) => void;
   onResponseChange?: (response: unknown) => void;
   onSubmit?: () => void;
+  onRuntimeValidation?: (result: ActivityValidationResult) => void;
   onRetry?: () => void;
   onContinue?: () => void;
   onRevealHint?: () => void;
@@ -28,6 +29,7 @@ export function CanonicalActivityView(props: CanonicalActivityViewProps) {
         state: runtime.state,
         onResponse: runtime.actions.respond,
         onSubmit: runtime.actions.submit,
+        onRuntimeValidation: props.onRuntimeValidation,
         onRetry: runtime.actions.retry,
         onContinue: runtime.actions.continue,
         onRevealHint: runtime.actions.revealHint,
