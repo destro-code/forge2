@@ -35,13 +35,23 @@ const cleanHeaders = (headers: Record<string, string> = {}) =>
       .slice(0, 16)
       .map(([k, v]) => [k.toLowerCase(), cap(String(v), 256)]),
   );
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 function match(path: string, scenario: NextScenario) {
   if (scenario.kind === "static") return path === scenario.pathname;
-  const keys = [...scenario.pathname.matchAll(/\[([^\]]+)\]/g)].map((m) => m[1]);
-  const pattern = new RegExp(`^${scenario.pathname.replace(/\[([^\]]+)\]/g, "([^/]+)")}$`);
+  const parts = scenario.pathname.split(/\[([^\]]+)\]/g);
+  const keys = parts.filter((_, index) => index % 2 === 1);
+  const pattern = new RegExp(
+    `^${parts.map((part, index) => (index % 2 === 1 ? "([^/]+)" : escapeRegExp(part))).join("")}$`,
+  );
   const found = path.match(pattern);
   if (!found) return false;
-  return Object.fromEntries(keys.map((key, i) => [key, decodeURIComponent(found[i + 1])]));
+  try {
+    return Object.fromEntries(keys.map((key, i) => [key, decodeURIComponent(found[i + 1])]));
+  } catch {
+    return false;
+  }
 }
 export const NEXT_DESCRIPTOR = {
   family: "framework-server" as const,
@@ -80,7 +90,7 @@ export class NextRuntimeHost {
         revision,
         family: "framework-server",
         phase: "observe",
-        timestamp: 0,
+        timestamp: Date.now(),
         status: "complete",
         source: { host: "NextRuntimeHost", artifactIds: [] },
         items: [...evidence, { kind: "next-error", code, message }],
@@ -159,7 +169,7 @@ export class NextRuntimeHost {
         revision,
         family: "framework-server",
         phase: "observe",
-        timestamp: 0,
+        timestamp: Date.now(),
         status: "complete",
         source: { host: "NextRuntimeHost", artifactIds: [] },
         items: evidence,

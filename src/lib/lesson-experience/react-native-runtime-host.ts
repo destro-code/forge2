@@ -42,7 +42,10 @@ export class ReactNativeRuntimeHost {
   private revision = 0;
   private disposed = false;
   private state: Record<string, string | number | boolean> = {};
-  constructor(private readonly scenario: NativeScenario) {
+  constructor(
+    private readonly scenario: NativeScenario,
+    private readonly platform: NativePlatform = "ios",
+  ) {
     this.state = { ...scenario.initialState };
   }
   run(): NativeRun {
@@ -60,7 +63,7 @@ export class ReactNativeRuntimeHost {
     const items = [
       {
         kind: "native-platform" as const,
-        platform: "ios" as const,
+        platform: this.platform,
         profile: "deterministic-device",
         screen: this.scenario.screen,
       },
@@ -158,7 +161,7 @@ export class ReactNativeRuntimeHost {
       revision: this.revision,
       family: "mobile-native",
       phase: "observe",
-      timestamp: 0,
+      timestamp: Date.now(),
       status: "complete",
       source: { host: REACT_NATIVE_HOST_ID, artifactIds: [] },
       items,

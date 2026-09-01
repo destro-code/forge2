@@ -38,7 +38,10 @@ const scenario: NativeScenario = {
 export function ReactNativeFamilyLab() {
   const [profile, setProfile] = useState("ios");
   const [result, setResult] = useState<ReturnType<ReactNativeRuntimeHost["run"]> | null>(null);
-  const host = useMemo(() => new ReactNativeRuntimeHost(scenario), []);
+  const host = useMemo(
+    () => new ReactNativeRuntimeHost(scenario, profile as "ios" | "android"),
+    [profile],
+  );
   const run = () => setResult(host.run());
   const act = () => setResult(host.act({ type: "press", targetId: "increment" }));
   const report =
