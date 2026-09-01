@@ -15,15 +15,13 @@ function runtimeSecurityHeaders(): Plugin {
   return {
     name: "runtime-security-headers",
     configureServer(server) {
-      server.middlewares.use((request, response, next) => {
+      server.httpServer?.prependListener("request", (request, response) => {
         apply(response, request.url);
-        next();
       });
     },
     configurePreviewServer(server) {
-      server.middlewares.use((request, response, next) => {
+      server.httpServer?.prependListener("request", (request, response) => {
         apply(response, request.url);
-        next();
       });
     },
   };
