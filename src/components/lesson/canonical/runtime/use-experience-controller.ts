@@ -165,6 +165,18 @@ export function useExperienceController({
             if (isPlaygroundBuildError(event.data)) {
               setBuildError(event.data.message);
               setConsoleOutput((previous) => [...previous, event.data.message]);
+              if (request) {
+                const { result } = canonicalRuntimeError(activity.id, event.data.message);
+                setTechnicalResult(result);
+                setTestResults([
+                  {
+                    id: "runtime-error",
+                    description: "The submitted code must execute without a runtime error.",
+                    passed: false,
+                    error: event.data.message,
+                  },
+                ]);
+              }
               setIsRunning(false);
               host.dispose();
             }
