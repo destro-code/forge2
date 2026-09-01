@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useExperienceController } from "../runtime/use-experience-controller";
 import type { ActivityValidationResult } from "../types";
 import type { InteractiveCodeActivity } from "@/lib/curriculum/types";
@@ -85,17 +85,29 @@ export function InteractiveCodeRenderer({
     if (state.status === "idle") setActiveTab("code");
   }, [state.status]);
 
+  const checkedEvaluationRef = useRef<string | null>(null);
+  const evaluationKey = `${activity.id}:${state.attempts}`;
+  const requestEvaluation = useCallback(() => {
+    if (checkedEvaluationRef.current === evaluationKey) return;
+    checkedEvaluationRef.current = evaluationKey;
+    check();
+  }, [check, evaluationKey]);
+
   useEffect(() => {
-    if (state.status === "submitted" && !isRunning) check();
-  }, [check, isRunning, state.status]);
+    if (state.status !== "submitted") checkedEvaluationRef.current = null;
+  }, [state.status]);
+
+  useEffect(() => {
+    if (state.status === "submitted" && !isRunning) requestEvaluation();
+  }, [isRunning, requestEvaluation, state.status]);
 
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
   const submitForEvaluation = useCallback(() => {
     // Start the sandbox before the learning-engine state transition can
     // remount the activity view and replace the iframe ref.
-    check();
+    requestEvaluation();
     onSubmit?.();
-  }, [check, onSubmit]);
+  }, [onSubmit, requestEvaluation]);
 
   return (
     <ActivityContainer id={`activity-${activity.id}`} variant="workspace">
