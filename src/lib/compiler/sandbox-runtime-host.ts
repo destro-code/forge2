@@ -18,8 +18,19 @@ export class SandboxRuntimeHost {
     this.iframe = options.iframe;
     this.revision = options.workspaceRevision;
     this.listener = (event) => {
-      if (this.disposed || event.source !== this.iframe.contentWindow) return;
-      const messageRevision = (event.data as { workspaceRevision?: unknown } | null)?.workspaceRevision;
+      const data = event.data as { type?: unknown; workspaceRevision?: unknown } | null;
+      const sourceMatches = event.source === this.iframe.contentWindow;
+      const revisionMatches = data?.workspaceRevision === this.revision;
+      console.log("[v0][sandbox-runtime] message", {
+        type: data?.type,
+        hostRevision: this.revision,
+        messageRevision: data?.workspaceRevision,
+        sourceMatches,
+        revisionMatches,
+        accepted: !this.disposed && sourceMatches && revisionMatches,
+      });
+      if (this.disposed || !sourceMatches) return;
+      const messageRevision = data?.workspaceRevision;
       // Every protocol message must carry the revision owned by this host. Messages
       // without an identity are not trusted because they may be delayed stale events.
       if (messageRevision !== this.revision) return;
