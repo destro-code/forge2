@@ -296,6 +296,7 @@ export function CanonicalLessonPlayer({
               activityState={currentActivityState}
               onResponseChange={handleResponseChange}
               onSubmit={handleSubmit}
+              evaluationRequest={evaluationRequest}
               onRuntimeValidation={handleRuntimeValidation}
               onRetry={handleRetry}
               onRevealHint={handleRevealHint}
