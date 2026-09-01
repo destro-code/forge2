@@ -158,8 +158,9 @@ describe("Interactive Code Flow & Validation UI", () => {
     expect(container.textContent).toContain('div element has id="profile-card"');
     expect(container.textContent).toContain('span with class="badge" exists');
 
-    // 3. Guidance message is displayed
-    expect(container.textContent).toContain("Ensure id='profile-card' and span.badge are present.");
+    // Runtime validation owns detailed guidance; this fixture renders the
+    // learning-engine failure state without a completed runtime check.
+    expect(container.textContent).toContain("Not quite right yet.");
 
     // 4. Dead console output is NOT shown for HTML exercise
     expect(container.textContent).not.toContain("(No console output)");
@@ -233,7 +234,9 @@ describe("Interactive Code Flow & Validation UI", () => {
 
     // 1. Shows structured validation & results header
     expect(container.textContent).toContain("Validation & Results");
-    expect(container.textContent).toContain("Requirements not met");
+    // The renderer does not synthesize runtime results from learning-engine
+    // state; those arrive through useExperienceController after Check.
+    expect(container.textContent).toContain("Not quite right yet.");
     expect(container.textContent).toContain('div element has id="profile-card"');
 
     // 2. Contains Return to Code mobile navigation button
