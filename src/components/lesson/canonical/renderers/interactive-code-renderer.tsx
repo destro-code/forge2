@@ -85,10 +85,6 @@ export function InteractiveCodeRenderer({
     if (state.status === "idle") setActiveTab("code");
   }, [state.status]);
 
-  useEffect(() => {
-    if (state.status === "evaluating") check();
-  }, [check, state.status]);
-
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
   const submitForEvaluation = useCallback(() => {
     // Start the sandbox before the learning-engine state transition can
