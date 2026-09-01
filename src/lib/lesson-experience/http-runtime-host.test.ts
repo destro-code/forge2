@@ -25,6 +25,27 @@ describe("HttpRuntimeHost", () => {
       ]).status,
     ).toBe("pass");
   });
+  it("matches query order and headers without leaking sensitive evidence", () => {
+    const host = new HttpRuntimeHost([
+      {
+        id: "secure",
+        method: "GET",
+        path: "/secure",
+        query: { a: "1", b: "2" },
+        headers: { Authorization: "secret" },
+        response: { status: 200, headers: { "x-token": "secret" }, body: "ok" },
+      },
+    ]);
+    const result = host.run({
+      method: "GET",
+      path: "/secure",
+      query: { b: "2", a: "1" },
+      headers: { authorization: "secret" },
+    });
+    expect(result.ok).toBe(true);
+    expect(JSON.stringify(result.evidence.items)).not.toContain("secret");
+  });
+
   it("keeps controlled failures distinct from mismatches", () => {
     const host = new HttpRuntimeHost(HTTP_SCENARIOS);
     expect(host.run({ method: "GET", path: "/api/unknown" }).error?.code).toBe("SCENARIO_MISMATCH");

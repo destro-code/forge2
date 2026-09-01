@@ -18,6 +18,7 @@ export type HttpScenario = {
   bodyIncludes?: string;
   sequenceId?: string;
   sequenceIndex?: number;
+  headers?: Record<string, string>;
   error?: { code: string; message: string };
 };
 export type HttpRunResult = {
@@ -63,7 +64,11 @@ function normalize(input: HttpRequestInput): HttpRequestInput {
     method,
     path,
     query: Object.fromEntries(Object.entries(input.query ?? {}).sort()),
-    headers: safeHeaders(input.headers),
+    headers: Object.fromEntries(
+      Object.entries(input.headers ?? {})
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, value]) => [key.toLowerCase(), String(value).slice(0, 512)]),
+    ),
     body: input.body ?? "",
     sequenceId: input.sequenceId,
     sequenceIndex: input.sequenceIndex,
@@ -83,12 +88,16 @@ export class HttpRuntimeHost {
       const request = normalize(input);
       const key = JSON.stringify(request);
       if (this.completed.has(key)) throw new Error("DUPLICATE_COMPLETION");
-      this.completed.add(key);
       const scenario = this.scenarios.find(
         (candidate) =>
           candidate.method === request.method &&
           candidate.path === request.path &&
-          JSON.stringify(candidate.query ?? {}) === JSON.stringify(request.query ?? {}) &&
+          JSON.stringify(Object.fromEntries(Object.entries(candidate.query ?? {}).sort())) ===
+            JSON.stringify(request.query ?? {}) &&
+          (!candidate.headers ||
+            Object.entries(candidate.headers).every(
+              ([key, value]) => request.headers?.[key.toLowerCase()] === String(value),
+            )) &&
           (!candidate.bodyIncludes || request.body?.includes(candidate.bodyIncludes)) &&
           candidate.sequenceId === request.sequenceId &&
           candidate.sequenceIndex === request.sequenceIndex,
@@ -98,6 +107,7 @@ export class HttpRuntimeHost {
       ];
       if (!scenario)
         throw Object.assign(new Error("SCENARIO_MISMATCH"), { code: "SCENARIO_MISMATCH" });
+      this.completed.add(key);
       if (scenario.error)
         throw Object.assign(new Error(scenario.error.message), { code: scenario.error.code });
       const response = {

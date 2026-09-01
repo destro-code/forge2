@@ -32,6 +32,35 @@ describe("NextRuntimeHost", () => {
       ]),
     );
   });
+  it("enforces methods, headers, and literal route characters", () => {
+    const host = new NextRuntimeHost([
+      {
+        id: "literal",
+        version: 1,
+        pathname: "/docs/a+b?.[id]",
+        routeId: "literal",
+        method: "POST",
+        kind: "dynamic",
+        renderMode: "dynamic",
+        boundary: "server",
+        requestHeaders: { "x-mode": "secure" },
+        response: { status: 201, body: "created" },
+      },
+    ]);
+    expect(
+      host.run({ path: "/docs/a+b?.42", method: "GET", headers: { "x-mode": "secure" } }).error
+        ?.code,
+    ).toBe("ROUTE_NOT_FOUND");
+    expect(
+      host.run({ path: "/docs/a+b?.42", method: "POST", headers: { "x-mode": "wrong" } }).error
+        ?.code,
+    ).toBe("ROUTE_NOT_FOUND");
+    expect(
+      host.run({ path: "/docs/a+b?.42", method: "POST", headers: { "x-mode": "secure" } }).response
+        ?.status,
+    ).toBe(201);
+  });
+
   it("returns deterministic unmatched errors", () => {
     const a = new NextRuntimeHost(scenarios).run({ path: "/missing" });
     const b = new NextRuntimeHost(scenarios).run({ path: "/missing" });
