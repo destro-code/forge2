@@ -1,4 +1,9 @@
-import { createEvidenceEnvelope, type EvidenceEnvelope, type RuntimeFamily } from "./contracts";
+import {
+  createEvidenceEnvelope,
+  type EvidenceEnvelope,
+  type EvidenceItem,
+  type RuntimeFamily,
+} from "./contracts";
 
 export type NativePlatform = "ios" | "android";
 export type NativeAction = {
@@ -30,8 +35,11 @@ export type NativeRun = {
   evidence: EvidenceEnvelope;
 };
 
-function flatten(node: NativeNode, parentId?: string): NativeNode[] {
-  return [node, ...(node.children ?? []).flatMap((child) => flatten(child, node.id))];
+function flatten(node: NativeNode, parentId?: string): Array<NativeNode & { parentId?: string }> {
+  return [
+    { ...node, ...(parentId ? { parentId } : {}) },
+    ...(node.children ?? []).flatMap((child) => flatten(child, node.id)),
+  ];
 }
 function idFor(scenario: string, revision: number) {
   return `${scenario}-run-${revision}`;
@@ -42,7 +50,10 @@ export class ReactNativeRuntimeHost {
   private revision = 0;
   private disposed = false;
   private state: Record<string, string | number | boolean> = {};
-  constructor(private readonly scenario: NativeScenario) {
+  constructor(
+    private readonly scenario: NativeScenario,
+    private readonly platform: NativePlatform = "ios",
+  ) {
     this.state = { ...scenario.initialState };
   }
   run(): NativeRun {
@@ -60,7 +71,7 @@ export class ReactNativeRuntimeHost {
     const items = [
       {
         kind: "native-platform" as const,
-        platform: "ios" as const,
+        platform: this.platform,
         profile: "deterministic-device",
         screen: this.scenario.screen,
       },
@@ -71,6 +82,7 @@ export class ReactNativeRuntimeHost {
           type: node.type,
           props: node.props,
           children: (node.children ?? []).map((c) => c.id),
+          ...(node.parentId ? { parentId: node.parentId } : {}),
         },
         { kind: "native-layout" as const, id: node.id, ...node.layout },
         ...(node.accessibility
@@ -152,19 +164,19 @@ export class ReactNativeRuntimeHost {
     this.disposed = true;
     this.revision += 1;
   }
-  private envelope(runId: string, items: any[]): EvidenceEnvelope {
+  private envelope(runId: string, items: EvidenceItem[]): EvidenceEnvelope {
     return createEvidenceEnvelope({
       runId,
       revision: this.revision,
       family: "mobile-native",
       phase: "observe",
-      timestamp: 0,
+      timestamp: Date.now(),
       status: "complete",
       source: { host: REACT_NATIVE_HOST_ID, artifactIds: [] },
       items,
     });
   }
-  private result(status: NativeRun["status"], items: any[]): NativeRun {
+  private result(status: NativeRun["status"], items: EvidenceItem[]): NativeRun {
     const runId = idFor(this.scenario.id, this.revision);
     return { runId, revision: this.revision, status, evidence: this.envelope(runId, items) };
   }

@@ -10,11 +10,13 @@ export type NextScenario = {
   version: 1;
   pathname: string;
   routeId: string;
+  method?: string;
   kind: NextRouteKind;
   renderMode: NextRenderMode;
   boundary: NextBoundary;
   middleware?: readonly { id: string; action: NextMiddlewareAction; target?: string }[];
   response: { status: number; headers?: Record<string, string>; body: string };
+  requestHeaders?: Record<string, string>;
   params?: Record<string, string>;
   cache?: "hit" | "miss" | "revalidate";
 };
@@ -35,13 +37,23 @@ const cleanHeaders = (headers: Record<string, string> = {}) =>
       .slice(0, 16)
       .map(([k, v]) => [k.toLowerCase(), cap(String(v), 256)]),
   );
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 function match(path: string, scenario: NextScenario) {
   if (scenario.kind === "static") return path === scenario.pathname;
-  const keys = [...scenario.pathname.matchAll(/\[([^\]]+)\]/g)].map((m) => m[1]);
-  const pattern = new RegExp(`^${scenario.pathname.replace(/\[([^\]]+)\]/g, "([^/]+)")}$`);
+  const parts = scenario.pathname.split(/\[([^\]]+)\]/g);
+  const keys = parts.filter((_, index) => index % 2 === 1);
+  const pattern = new RegExp(
+    `^${parts.map((part, index) => (index % 2 === 1 ? "([^/]+)" : escapeRegExp(part))).join("")}$`,
+  );
   const found = path.match(pattern);
   if (!found) return false;
-  return Object.fromEntries(keys.map((key, i) => [key, decodeURIComponent(found[i + 1])]));
+  try {
+    return Object.fromEntries(keys.map((key, i) => [key, decodeURIComponent(found[i + 1])]));
+  } catch {
+    return false;
+  }
 }
 export const NEXT_DESCRIPTOR = {
   family: "framework-server" as const,
@@ -80,7 +92,7 @@ export class NextRuntimeHost {
         revision,
         family: "framework-server",
         phase: "observe",
-        timestamp: 0,
+        timestamp: Date.now(),
         status: "complete",
         source: { host: "NextRuntimeHost", artifactIds: [] },
         items: [...evidence, { kind: "next-error", code, message }],
@@ -90,8 +102,15 @@ export class NextRuntimeHost {
     const key = `${method}:${request.path}`;
     if (this.completed.has(key))
       return unavailable("DUPLICATE_COMPLETION", "This request has already completed.");
-    this.completed.add(key);
-    const candidate = this.scenarios.find((scenario) => match(request.path, scenario));
+    const candidate = this.scenarios.find(
+      (scenario) =>
+        match(request.path, scenario) &&
+        (!scenario.method || scenario.method.toUpperCase() === method) &&
+        (!scenario.requestHeaders ||
+          Object.entries(scenario.requestHeaders).every(
+            ([key, value]) => request.headers?.[key.toLowerCase()] === value,
+          )),
+    );
     if (!candidate) {
       evidence.push({
         kind: "next-route",
@@ -102,6 +121,7 @@ export class NextRuntimeHost {
       });
       return unavailable("ROUTE_NOT_FOUND", "No declared Next.js route matched this request.");
     }
+    this.completed.add(key);
     const resolved = match(request.path, candidate);
     const params = typeof resolved === "object" ? resolved : (candidate.params ?? {});
     evidence.push({
@@ -132,16 +152,28 @@ export class NextRuntimeHost {
     const blocked = (candidate.middleware ?? []).find(
       (m) => m.action === "reject" || m.action === "redirect",
     );
+    const rewrite = (candidate.middleware ?? []).find((m) => m.action === "rewrite");
     const response =
       blocked?.action === "redirect"
         ? {
             ...candidate.response,
             status: 307,
-            headers: { ...candidate.response.headers, location: blocked.target ?? "/login" },
+            headers: cleanHeaders({
+              ...candidate.response.headers,
+              location: blocked.target ?? "/login",
+            }),
           }
         : blocked?.action === "reject"
           ? { ...candidate.response, status: 403 }
-          : { ...candidate.response, headers: cleanHeaders(candidate.response.headers) };
+          : rewrite
+            ? {
+                ...candidate.response,
+                headers: cleanHeaders({
+                  ...candidate.response.headers,
+                  "x-middleware-rewrite": rewrite.target ?? candidate.pathname,
+                }),
+              }
+            : { ...candidate.response, headers: cleanHeaders(candidate.response.headers) };
     evidence.push({
       kind: "http-response",
       status: response.status,
@@ -159,7 +191,7 @@ export class NextRuntimeHost {
         revision,
         family: "framework-server",
         phase: "observe",
-        timestamp: 0,
+        timestamp: Date.now(),
         status: "complete",
         source: { host: "NextRuntimeHost", artifactIds: [] },
         items: evidence,
