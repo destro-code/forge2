@@ -113,9 +113,20 @@ export function useExperienceController({
 
   const execute = useCallback(
     (validate: boolean) => {
+      emitRuntimeDebugEvent(
+        validate ? "CHECK" : "EXECUTE",
+        `controller execute entry activityId=${activity.id} validate=${validate} revision=${revisionRef.current + 1}`,
+      );
       const revision = ++revisionRef.current;
+      emitRuntimeDebugEvent(
+        "LIFECYCLE",
+        `controller revision created activityId=${activity.id} revision=${revision}`,
+      );
       const iframe = iframeRef.current;
-      if (!iframe) return;
+      if (!iframe) {
+        emitRuntimeDebugEvent("ERROR", `controller iframe missing activityId=${activity.id} revision=${revision}`);
+        return;
+      }
 
       // A fresh revision + a disposed previous host means any message still
       // in flight from the old sandbox will be rejected by the new host's
@@ -130,7 +141,12 @@ export function useExperienceController({
       const source = getSource();
 
       try {
+        emitRuntimeDebugEvent("LIFECYCLE", `controller compile start activityId=${activity.id} revision=${revision}`);
         const report = compileCanonicalRuntime(activity, source, revision);
+        emitRuntimeDebugEvent(
+          "LIFECYCLE",
+          `controller compile complete activityId=${activity.id} revision=${revision} srcdocLength=${report.outputHtml.length}`,
+        );
 
         const request = validate
           ? createCanonicalValidationRequest(activity, revision, source)
@@ -148,7 +164,15 @@ export function useExperienceController({
               return;
             }
             if (isPlaygroundReady(event.data)) {
+              emitRuntimeDebugEvent(
+                "IFRAME",
+                `controller PLAYGROUND_READY activityId=${activity.id} revision=${revision}`,
+              );
               if (request) {
+                emitRuntimeDebugEvent(
+                  "EXECUTE",
+                  `controller validation command dispatch activityId=${activity.id} revision=${revision} requestId=${request.requestId}`,
+                );
                 iframe.contentWindow?.postMessage(request, "*");
               } else {
                 setIsRunning(false);
@@ -241,17 +265,30 @@ export function useExperienceController({
         }, CANONICAL_RUNTIME_TIMEOUT_MS);
         // Register the listener before assigning srcdoc so a fast runtime
         // cannot emit PLAYGROUND_READY before the host is listening.
+        emitRuntimeDebugEvent("LIFECYCLE", `controller host mount entry activityId=${activity.id} revision=${revision}`);
         host.mount();
+        emitRuntimeDebugEvent("LIFECYCLE", `controller host mount complete activityId=${activity.id} revision=${revision}`);
         // Explicitly detach the previous document before assigning the next
         // revision so retries cannot reuse a disposed document that has
         // already consumed its one-time PLAYGROUND_READY handshake.
         iframe.srcdoc = "";
+        emitRuntimeDebugEvent("IFRAME", `controller srcdoc cleared activityId=${activity.id} revision=${revision}`);
         window.setTimeout(() => {
           if (hostRef.current === host && !host.isDisposed) {
+            emitRuntimeDebugEvent(
+              "IFRAME",
+              `controller srcdoc assigned activityId=${activity.id} revision=${revision} srcdocLength=${report.outputHtml.length}`,
+            );
             iframe.srcdoc = report.outputHtml;
+          } else {
+            emitRuntimeDebugEvent("STATE", `controller srcdoc assignment skipped activityId=${activity.id} revision=${revision} hostCurrent=${hostRef.current === host} disposed=${host.isDisposed}`);
           }
         }, 0);
       } catch (error) {
+        emitRuntimeDebugEvent(
+          "ERROR",
+          `controller execution setup failed activityId=${activity.id} revision=${revision} error=${error instanceof Error ? error.message : "Runtime error"}`,
+        );
         const message = error instanceof Error ? error.message : "Runtime error";
         setBuildError(message);
         setConsoleOutput([message]);
