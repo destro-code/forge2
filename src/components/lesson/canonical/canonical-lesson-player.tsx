@@ -18,6 +18,7 @@ import { ChevronLeft, ChevronRight, CheckCircle2, Check, RotateCcw } from "lucid
 import { cn } from "@/lib/utils";
 import { movementForActivityType, movementVars } from "./lesson-movements";
 import { MovementRail, MovementBadge } from "./movement-rail";
+import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
 
 export interface CanonicalLessonPlayerProps {
   lesson: CanonicalLesson;
@@ -90,12 +91,20 @@ export function CanonicalLessonPlayer({
 
   const handleRuntimeValidation = useCallback(
     (result: ActivityEvaluationResult) => {
+      emitRuntimeDebugEvent(
+        "STATE",
+        `canonical validation callback activityId=${currentActivity?.id ?? "none"} isValid=${result.isValid} feedback=${result.feedbackMessage ?? "none"}`,
+      );
       if (currentActivity) resolveEvaluation(result, currentActivity.id);
     },
     [currentActivity, resolveEvaluation],
   );
 
   const handleSubmit = useCallback(() => {
+    emitRuntimeDebugEvent(
+      "CHECK",
+      `CanonicalLessonPlayer.handleSubmit invoked activityId=${currentActivity?.id ?? "none"} type=${currentActivity?.type ?? "none"} status=${currentActivityState?.status ?? "none"} origin=footer`,
+    );
     if (!currentActivity) return;
     if (currentActivity.type === "interactive-code" || currentActivity.type === "debug") {
       const attemptId = `${currentActivity.id}:attempt-${(currentActivityState?.attempts ?? 0) + 1}:${Date.now()}`;
@@ -131,6 +140,7 @@ export function CanonicalLessonPlayer({
     session.activities,
     currentActivityState?.response,
     currentActivityState?.attempts,
+    currentActivityState?.status,
     startEvaluation,
     resolveEvaluation,
   ]);
