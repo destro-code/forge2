@@ -20,6 +20,7 @@ import { CommandPalette } from "@/components/layout/command-palette";
 import { KeyboardShortcutsModal } from "@/components/layout/keyboard-shortcuts-modal";
 import { Toaster } from "@/components/ui/sonner";
 import { useTheme } from "@/lib/hooks/use-theme";
+import { RuntimeDebugConsole } from "@/components/debug/runtime-debug-console";
 
 function NotFoundComponent() {
   return (
@@ -159,6 +160,7 @@ function AppLayout() {
         </div>
         <CommandPalette />
         <KeyboardShortcutsModal />
+        {import.meta.env.DEV && <RuntimeDebugConsole />}
         <Toaster />
       </div>
     </SidebarProvider>

@@ -15,6 +15,7 @@ import {
   isPlaygroundValidateResponse,
 } from "@/lib/types/validation-messages";
 import type { ActivityValidationResult } from "../types";
+import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
 
 export const CANONICAL_RUNTIME_TIMEOUT_MS = 15_000;
 
@@ -112,8 +113,16 @@ export function useExperienceController({
 
   const execute = useCallback(
     (validate: boolean) => {
+      const origin = validate ? "check" : "run";
+      emitRuntimeDebugEvent(
+        "EXECUTE",
+        `execute entered origin=${origin} activityId=${activity.id} revision=${revisionRef.current}`,
+      );
       const iframe = iframeRef.current;
-      if (!iframe) return;
+      if (!iframe) {
+        emitRuntimeDebugEvent("ERROR", "execute exited: iframe missing");
+        return;
+      }
 
       // A fresh revision + a disposed previous host means any message still
       // in flight from the old sandbox will be rejected by the new host's
@@ -121,6 +130,7 @@ export function useExperienceController({
       disposeHost();
       pendingRequestRef.current = null;
       setIsRunning(true);
+      emitRuntimeDebugEvent("STATE", `isRunning=true origin=${origin} revision=${revision}`);
       setConsoleOutput([]);
       setTestResults([]);
       setTechnicalResult(undefined);

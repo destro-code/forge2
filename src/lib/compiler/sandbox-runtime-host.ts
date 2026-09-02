@@ -1,6 +1,8 @@
 export const CANONICAL_IFRAME_SANDBOX = "allow-scripts allow-modals" as const;
 export const PLAYGROUND_PREVIEW_TITLE = "Forge Playground Live Preview" as const;
 
+import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
+
 export interface SandboxRuntimeHostOptions {
   iframe: HTMLIFrameElement;
   workspaceRevision: number;
@@ -18,9 +20,15 @@ export class SandboxRuntimeHost {
     this.iframe = options.iframe;
     this.revision = options.workspaceRevision;
     this.listener = (event) => {
-      if (this.disposed || event.source !== this.iframe.contentWindow) return;
-      const messageRevision = (event.data as { workspaceRevision?: unknown } | null)
-        ?.workspaceRevision;
+      const data = event.data as { type?: unknown; workspaceRevision?: unknown } | null;
+      const sourceMatches = event.source === this.iframe.contentWindow;
+      const revisionMatches = data?.workspaceRevision === this.revision;
+      emitRuntimeDebugEvent(
+        "MESSAGE",
+        `${String(data?.type ?? "unknown")} hostRevision=${this.revision} messageRevision=${String(data?.workspaceRevision ?? "missing")} sourceMatches=${sourceMatches} revisionMatches=${revisionMatches} accepted=${!this.disposed && sourceMatches && revisionMatches}`,
+      );
+      if (this.disposed || !sourceMatches) return;
+      const messageRevision = data?.workspaceRevision;
       // Every protocol message must carry the revision owned by this host. Messages
       // without an identity are not trusted because they may be delayed stale events.
       if (messageRevision !== this.revision) return;
