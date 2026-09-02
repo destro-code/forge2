@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CANONICAL_IFRAME_SANDBOX, SandboxRuntimeHost } from "./sandbox-runtime-host";
-import { clearRuntimeDebugEvents, getRuntimeDebugEvents } from "@/lib/debug/runtime-debug-sink";
 
 interface FakeWindow {
   addEventListener: (type: string, listener: (event: MessageEvent) => void) => void;
@@ -40,8 +39,6 @@ function message(
 }
 
 describe("SandboxRuntimeHost", () => {
-  beforeEach(() => clearRuntimeDebugEvents());
-
   it("preserves the restricted sandbox contract", () => {
     const target = createFakeWindow();
     const iframe = createFakeIframe({});
@@ -65,44 +62,6 @@ describe("SandboxRuntimeHost", () => {
     target.dispatchEvent(message(activeWindow, 2));
     target.dispatchEvent(message(activeWindow, 2, "PLAYGROUND_VALIDATE_RESPONSE"));
     expect(onMessage).toHaveBeenCalledTimes(2);
-    host.dispose(target as unknown as Window);
-  });
-
-  it("diagnoses unknown messages without forwarding them", () => {
-    const target = createFakeWindow();
-    const activeWindow = {};
-    const iframe = createFakeIframe(activeWindow);
-    const onMessage = vi.fn();
-    const host = new SandboxRuntimeHost({ iframe, workspaceRevision: 3, onMessage });
-    host.mount(target as unknown as Window);
-    clearRuntimeDebugEvents();
-
-    target.dispatchEvent({
-      source: activeWindow,
-      data: {
-        command: "registerAsChildFrameAck",
-        remoteFrameId: "9b0d9f852464bfa30f22c85630ecc056",
-      },
-    } as unknown as MessageEvent);
-
-    expect(onMessage).not.toHaveBeenCalled();
-    expect(getRuntimeDebugEvents()).toHaveLength(1);
-    expect(getRuntimeDebugEvents()[0]?.message).toContain("unknown message");
-    host.dispose(target as unknown as Window);
-  });
-
-  it("diagnoses stale revisions without forwarding them", () => {
-    const target = createFakeWindow();
-    const activeWindow = {};
-    const iframe = createFakeIframe(activeWindow);
-    const onMessage = vi.fn();
-    const host = new SandboxRuntimeHost({ iframe, workspaceRevision: 3, onMessage });
-    host.mount(target as unknown as Window);
-
-    target.dispatchEvent(message(activeWindow, 2));
-
-    expect(onMessage).not.toHaveBeenCalled();
-    expect(getRuntimeDebugEvents().at(-1)?.message).toContain("data={");
     host.dispose(target as unknown as Window);
   });
 

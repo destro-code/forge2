@@ -1,8 +1,6 @@
 export const CANONICAL_IFRAME_SANDBOX = "allow-scripts allow-modals" as const;
 export const PLAYGROUND_PREVIEW_TITLE = "Forge Playground Live Preview" as const;
 
-import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
-
 const FORGE_RUNTIME_MESSAGE_TYPES = new Set([
   "PLAYGROUND_READY",
   "PLAYGROUND_CONSOLE",
@@ -10,27 +8,8 @@ const FORGE_RUNTIME_MESSAGE_TYPES = new Set([
   "PLAYGROUND_VALIDATE_RESPONSE",
 ]);
 
-function serializeMessageData(data: unknown): string {
-  try {
-    return JSON.stringify(data, (_key, value) => {
-      if (typeof value === "bigint") return `${value}n`;
-      if (typeof value === "function") return `[Function${value.name ? ` ${value.name}` : ""}]`;
-      if (typeof value === "symbol") return value.toString();
-      return value;
-    });
-  } catch {
-    try {
-      return String(data);
-    } catch {
-      return "[Unserializable message data]";
-    }
-  }
-}
-
 export interface SandboxRuntimeHostOptions {
-  /** The activity backing the sandboxed runtime (interactive-code or debug). */
   iframe: HTMLIFrameElement;
-  activityId?: string;
   workspaceRevision: number;
   onMessage: (event: MessageEvent) => void;
 }
@@ -40,44 +19,18 @@ export class SandboxRuntimeHost {
   private readonly iframe: HTMLIFrameElement;
   private readonly revision: number;
   private readonly listener: (event: MessageEvent) => void;
-  private readonly activityId: string;
-  private readonly onLoad: () => void;
-  private readonly onError: () => void;
   private disposed = false;
 
   constructor(options: SandboxRuntimeHostOptions) {
     this.iframe = options.iframe;
-    this.activityId = options.activityId ?? "unknown";
     this.revision = options.workspaceRevision;
-    this.onLoad = () => emitRuntimeDebugEvent("IFRAME", `load event fired activityId=${this.activityId} revision=${this.revision}`);
-    this.onError = () => emitRuntimeDebugEvent("IFRAME", `error event fired activityId=${this.activityId} revision=${this.revision}`);
     this.listener = (event) => {
       const data = event.data as { type?: unknown; workspaceRevision?: unknown } | null;
       const messageType = typeof data?.type === "string" ? data.type : null;
-      const sourceMatches = event.source === this.iframe.contentWindow;
-      if (sourceMatches && messageType?.startsWith("PLAYGROUND_RUNTIME_")) {
-        emitRuntimeDebugEvent(
-          "IFRAME",
-          `runtime boundary message type=${messageType} revision=${String(data?.workspaceRevision ?? "missing")} sourceMatches=true`,
-        );
-      }
-      if (!messageType || !FORGE_RUNTIME_MESSAGE_TYPES.has(messageType)) {
-        if (sourceMatches) {
-          emitRuntimeDebugEvent("MESSAGE", `unknown message sourceMatches=true data=${serializeMessageData(event.data)}`);
-        }
-        return;
-      }
+      if (!messageType || !FORGE_RUNTIME_MESSAGE_TYPES.has(messageType)) return;
 
+      const sourceMatches = event.source === this.iframe.contentWindow;
       const revisionMatches = data?.workspaceRevision === this.revision;
-      const accepted = !this.disposed && sourceMatches && revisionMatches;
-      const protocolData =
-        messageType === "unknown" || !revisionMatches
-          ? ` data=${serializeMessageData(event.data)}`
-          : "";
-      emitRuntimeDebugEvent(
-        "MESSAGE",
-        `${messageType} hostRevision=${this.revision} messageRevision=${String(data?.workspaceRevision ?? "missing")} sourceMatches=${sourceMatches} revisionMatches=${revisionMatches} accepted=${accepted}${protocolData}`,
-      );
       if (this.disposed || !sourceMatches) return;
       const messageRevision = data?.workspaceRevision;
       // Every protocol message must carry the revision owned by this host. Messages
@@ -89,25 +42,14 @@ export class SandboxRuntimeHost {
 
   mount(target: Window = window): void {
     if (this.disposed) return;
-    emitRuntimeDebugEvent(
-      "LIFECYCLE",
-      `host mount start revision=${this.revision} sandbox=${CANONICAL_IFRAME_SANDBOX}`,
-    );
     this.iframe.setAttribute("sandbox", CANONICAL_IFRAME_SANDBOX);
-    this.iframe.addEventListener?.("load", this.onLoad);
-    this.iframe.addEventListener?.("error", this.onError);
     target.addEventListener("message", this.listener);
-    emitRuntimeDebugEvent("LIFECYCLE", `host message listener registered revision=${this.revision}`);
   }
 
   dispose(target: Window = window): void {
     if (this.disposed) return;
-    emitRuntimeDebugEvent("LIFECYCLE", `host dispose start revision=${this.revision}`);
     this.disposed = true;
-    this.iframe.removeEventListener?.("load", this.onLoad);
-    this.iframe.removeEventListener?.("error", this.onError);
     target.removeEventListener("message", this.listener);
-    emitRuntimeDebugEvent("LIFECYCLE", `host disposed revision=${this.revision}`);
   }
 
   get isDisposed(): boolean {

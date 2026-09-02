@@ -159,10 +159,6 @@ export function generateOutput(
 
   <script>
     (function() {
-      document.documentElement.setAttribute('data-forge-runtime-trace', 'console-bridge-start');
-      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_DOCUMENT_STARTUP', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_ENVIRONMENT', userAgent: navigator.userAgent, hasParent: !!window.parent, hasWindow: !!window, hasDocument: !!document, workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_CONSOLE_BRIDGE_STARTING', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
       const origLog = console.log;
       const origWarn = console.warn;
       const origError = console.error;
@@ -228,33 +224,22 @@ export function generateOutput(
       };
 
       window.onerror = function(msg, url, line, col, error) {
-        window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_UNCAUGHT_ERROR', name: error && error.name || 'Error', message: String(msg), source: url || '', line: line, column: col, workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.showErrorOverlay('Runtime Error', msg, '', line, col, error ? error.stack : '');
         return true;
       };
 
-      window.addEventListener('error', function(event) {
-        window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_TRACE_ERROR', name: event.error && event.error.name || 'Error', message: String(event.message || 'Script error'), source: event.filename || '', line: event.lineno, column: event.colno, workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-      });
       window.addEventListener('unhandledrejection', function(event) {
         const reason = event.reason;
-        window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_UNHANDLED_REJECTION', name: reason && reason.name || 'Error', message: reason ? (reason.message || String(reason)) : 'Unhandled Promise Rejection', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         const msg = reason ? (reason.message || String(reason)) : 'Unhandled Promise Rejection';
         const stack = reason ? reason.stack : '';
         window.showErrorOverlay('Async Runtime Error', msg, '', undefined, undefined, stack);
       });
-      document.documentElement.setAttribute('data-forge-runtime-trace', 'console-bridge-end');
-      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_TRACE_SCRIPT_END', script: 'console-bridge', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
     })();
   </script>
 
   <script>
-    document.documentElement.setAttribute('data-forge-runtime-trace', 'bootstrap-start');
-    window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_TRACE_SCRIPT_START', script: 'bootstrap', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
     window.__WORKSPACE_REVISION__ = ${typeof workspaceRevision === "number" ? workspaceRevision : "undefined"};
-      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_START', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_BOOTSTRAP_ENTERED', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-      window.__hasInitError = false;
+    window.__hasInitError = false;
     let FILES = ${safeFilesJson};
     const RUNTIME = "${parsed.runtime}";
     const DEFAULT_ENTRY_NAME = "${parsed.entryModule?.name || ""}";
@@ -270,9 +255,7 @@ export function generateOutput(
       // Atomically tear down the previous app before compiling the new revision.
       // This prevents old React effects, DOM listeners, and module state from leaking.
       if (window.__reactRoot && typeof window.__reactRoot.unmount === 'function') {
-        window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_CLEANUP_STARTING', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.__reactRoot.unmount();
-        window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_CLEANUP_COMPLETED', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
       }
       window.__reactRoot = null;
       const previousRoot = document.getElementById('root');
@@ -507,11 +490,9 @@ export function generateOutput(
             }
           }
 
-  if (!window.__hasInitError) {
-  window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_READY_SENDING', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-  window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_READY_SEND', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-  window.parent.postMessage({
-  type: 'PLAYGROUND_READY',
+          if (!window.__hasInitError) {
+            window.parent.postMessage({
+              type: 'PLAYGROUND_READY',
               workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
             }, '*');
           }
@@ -558,11 +539,9 @@ export function generateOutput(
             }
           }
 
-  if (!window.__hasInitError) {
-  window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_READY_SENDING', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-  window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_READY_SEND', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-  window.parent.postMessage({
-  type: 'PLAYGROUND_READY',
+          if (!window.__hasInitError) {
+            window.parent.postMessage({
+              type: 'PLAYGROUND_READY',
               workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
             }, '*');
           }
@@ -619,42 +598,26 @@ export function generateOutput(
           }
         }
       } catch (err) {
-        window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_STARTUP_ERROR', name: err && err.name || 'Error', message: err && err.message ? err.message : String(err), workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
         window.showErrorOverlay('Runtime Execution Error', err.message, '', undefined, undefined, err.stack);
       }
     }
 
 
-  window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_CONSOLE_BRIDGE_INITIALIZED', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-
-  window.addEventListener('message', function(event) {
-  window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_MESSAGE_RECEIVED', command: event.data && event.data.type, revision: event.data && event.data.workspaceRevision, workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-  if (event.data && event.data.type === 'PLAYGROUND_UPDATE_FILES') {
-    window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_EXECUTION_COMMAND_RECEIVED', command: event.data.type, revision: event.data.workspaceRevision, workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-  }
-  if (event.data && event.data.type === 'PLAYGROUND_UPDATE_FILES' && Array.isArray(event.data.files)) {
-      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_EXECUTION_COMMAND_RECEIVED', command: event.data.type, workspaceRevision: event.data.workspaceRevision }, '*');
-      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_COMMAND_RECEIVED', command: event.data.type, workspaceRevision: event.data.workspaceRevision }, '*');
-      runCompilerAndExecute(event.data.files, undefined, event.data.workspaceRevision);
-  }
-  });
-  window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_LISTENER_REGISTERED', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'PLAYGROUND_UPDATE_FILES' && Array.isArray(event.data.files)) {
+        runCompilerAndExecute(event.data.files, undefined, event.data.workspaceRevision);
+      }
+    });
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() { runCompilerAndExecute(); });
     } else {
-  runCompilerAndExecute();
-    document.documentElement.setAttribute('data-forge-runtime-trace', 'bootstrap-end');
-    window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_TRACE_SCRIPT_END', script: 'bootstrap', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-  }
+      runCompilerAndExecute();
+    }
   </script>
 
   <script id="forge-validation-runner">
-    document.documentElement.setAttribute('data-forge-runtime-trace', 'validation-start');
-    window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_TRACE_SCRIPT_START', script: 'validation-runner', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
- ${VALIDATION_RUNNER_SCRIPT}
-    document.documentElement.setAttribute('data-forge-runtime-trace', 'validation-end');
-    window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_TRACE_SCRIPT_END', script: 'validation-runner', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
+    ${VALIDATION_RUNNER_SCRIPT}
   </script>
 </body>
 </html>`;

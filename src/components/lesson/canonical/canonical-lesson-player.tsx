@@ -100,6 +100,22 @@ export function CanonicalLessonPlayer({
     [currentActivity, resolveEvaluation],
   );
 
+  const requestInteractiveEvaluation = useCallback(
+    (options?: { authoritative?: boolean }) => {
+      if (!currentActivity || (currentActivity.type !== "interactive-code" && currentActivity.type !== "debug")) return;
+      const attemptId = `${currentActivity.id}:attempt-${(currentActivityState?.attempts ?? 0) + 1}:${Date.now()}`;
+      const request = {
+        activityId: currentActivity.id,
+        attemptId,
+        revision: ++evaluationRevisionRef.current,
+        authoritative: options?.authoritative ?? true,
+      } satisfies EvaluationRequest;
+      setEvaluationRequest(request);
+      startEvaluation(currentActivity.id);
+    },
+    [currentActivity, currentActivityState?.attempts, startEvaluation],
+  );
+
   const handleSubmit = useCallback(() => {
     emitRuntimeDebugEvent(
       "CHECK",
@@ -107,14 +123,7 @@ export function CanonicalLessonPlayer({
     );
     if (!currentActivity) return;
     if (currentActivity.type === "interactive-code" || currentActivity.type === "debug") {
-      const attemptId = `${currentActivity.id}:attempt-${(currentActivityState?.attempts ?? 0) + 1}:${Date.now()}`;
-      const request = {
-        activityId: currentActivity.id,
-        attemptId,
-        revision: ++evaluationRevisionRef.current,
-      } satisfies EvaluationRequest;
-      setEvaluationRequest(request);
-      startEvaluation(currentActivity.id);
+      requestInteractiveEvaluation({ authoritative: true });
       return;
     }
     const latestActState = getActivityState(currentActivity.id);
@@ -142,6 +151,7 @@ export function CanonicalLessonPlayer({
     currentActivityState?.attempts,
     currentActivityState?.status,
     startEvaluation,
+    requestInteractiveEvaluation,
     resolveEvaluation,
   ]);
 
@@ -306,6 +316,7 @@ export function CanonicalLessonPlayer({
               activityState={currentActivityState}
               onResponseChange={handleResponseChange}
               onSubmit={handleSubmit}
+              onRequestEvaluation={requestInteractiveEvaluation}
               evaluationRequest={evaluationRequest}
               onRuntimeValidation={handleRuntimeValidation}
               onRetry={handleRetry}
