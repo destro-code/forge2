@@ -204,16 +204,27 @@ export function useExperienceController({
         });
 
         hostRef.current = host;
+        const timeoutRevision = revision;
+        const timeoutHost = host;
         executionTimeoutRef.current = window.setTimeout(() => {
-          if (hostRef.current !== host || revisionRef.current !== revision) return;
+          const isCurrentExecution =
+            revisionRef.current === timeoutRevision && hostRef.current === timeoutHost;
+          if (!isCurrentExecution) {
+            emitRuntimeDebugEvent(
+              "STATE",
+              `controller stale timeout ignored activityId=${activity.id} timeoutRevision=${timeoutRevision} currentRevision=${revisionRef.current} hostMatches=${hostRef.current === timeoutHost}`,
+            );
+            return;
+          }
+
+          emitRuntimeDebugEvent(
+            "ERROR",
+            `controller timeout transition activityId=${activity.id} revision=${timeoutRevision} hostMatches=true currentRevision=${revisionRef.current}`,
+          );
           revisionRef.current += 1;
           pendingRequestRef.current = null;
           disposeHost();
           const message = "The sandbox did not finish running. Try Check again.";
-          emitRuntimeDebugEvent(
-            "ERROR",
-            `controller timeout transition activityId=${activity.id} revision=${revision} hostMatches=${hostRef.current === host} currentRevision=${revisionRef.current}`,
-          );
           const { result } = canonicalRuntimeError(activity.id, message);
           setBuildError(message);
           setConsoleOutput([message]);
