@@ -112,17 +112,13 @@ export function InteractiveCodeRenderer({
 
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
   const submitForEvaluation = useCallback(() => {
-    console.log("[v0][canonical-runtime] Check Answer evaluation-request path invoked", {
-      activityId: activity.id,
-    });
     onSubmit?.();
-  }, [activity.id, onSubmit]);
+  }, [onSubmit]);
 
   const checkInline = useCallback(() => {
-    console.log("[v0][canonical-runtime] Inline Check invoked", { activityId: activity.id });
     setActiveTab("results");
     check();
-  }, [activity.id, check]);
+  }, [check]);
   const retryFromRenderer = useCallback(() => {
     setActiveTab("code");
     onRetry?.();
