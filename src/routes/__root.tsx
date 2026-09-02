@@ -130,6 +130,8 @@ function AppLayout() {
   useTheme(); // hydrate theme
   const location = useLocation();
   const isLessonRoute = location.pathname.startsWith("/lesson");
+  const isRuntimeDebugEnabled =
+    (location.search as Record<string, unknown> | undefined)?.debugRuntime === "1";
 
   return (
     <SidebarProvider>
@@ -160,7 +162,7 @@ function AppLayout() {
         </div>
         <CommandPalette />
         <KeyboardShortcutsModal />
-        {import.meta.env.DEV && <RuntimeDebugConsole />}
+        {isRuntimeDebugEnabled && <RuntimeDebugConsole />}
         <Toaster />
       </div>
     </SidebarProvider>
