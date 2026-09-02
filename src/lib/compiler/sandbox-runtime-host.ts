@@ -3,6 +3,13 @@ export const PLAYGROUND_PREVIEW_TITLE = "Forge Playground Live Preview" as const
 
 import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
 
+const FORGE_RUNTIME_MESSAGE_TYPES = new Set([
+  "PLAYGROUND_READY",
+  "PLAYGROUND_CONSOLE",
+  "PLAYGROUND_BUILD_ERROR",
+  "PLAYGROUND_VALIDATE_RESPONSE",
+]);
+
 function serializeMessageData(data: unknown): string {
   try {
     return JSON.stringify(data, (_key, value) => {
@@ -38,10 +45,12 @@ export class SandboxRuntimeHost {
     this.revision = options.workspaceRevision;
     this.listener = (event) => {
       const data = event.data as { type?: unknown; workspaceRevision?: unknown } | null;
+      const messageType = typeof data?.type === "string" ? data.type : null;
+      if (!messageType || !FORGE_RUNTIME_MESSAGE_TYPES.has(messageType)) return;
+
       const sourceMatches = event.source === this.iframe.contentWindow;
       const revisionMatches = data?.workspaceRevision === this.revision;
       const accepted = !this.disposed && sourceMatches && revisionMatches;
-      const messageType = String(data?.type ?? "unknown");
       const protocolData =
         messageType === "unknown" || !revisionMatches
           ? ` data=${serializeMessageData(event.data)}`

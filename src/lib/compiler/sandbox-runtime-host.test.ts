@@ -78,13 +78,14 @@ describe("SandboxRuntimeHost", () => {
 
     target.dispatchEvent({
       source: activeWindow,
-      data: { requestId: "req-1", exerciseId: "ex-1", validation: { ok: false } },
+      data: {
+        command: "registerAsChildFrameAck",
+        remoteFrameId: "9b0d9f852464bfa30f22c85630ecc056",
+      },
     } as unknown as MessageEvent);
 
     expect(onMessage).not.toHaveBeenCalled();
-    expect(getRuntimeDebugEvents().at(-1)?.message).toContain(
-      'data={"requestId":"req-1","exerciseId":"ex-1","validation":{"ok":false}}',
-    );
+    expect(getRuntimeDebugEvents()).toHaveLength(0);
     host.dispose(target as unknown as Window);
   });
 
