@@ -15,7 +15,6 @@ import {
   isPlaygroundValidateResponse,
 } from "@/lib/types/validation-messages";
 import type { ActivityValidationResult } from "../types";
-import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
 
 export const CANONICAL_RUNTIME_TIMEOUT_MS = 15_000;
 
@@ -113,63 +112,30 @@ export function useExperienceController({
 
   const execute = useCallback(
     (validate: boolean) => {
-      const origin = validate ? "check" : "run";
-      emitRuntimeDebugEvent(
-        "EXECUTE",
-        `execute entered origin=${origin} activityId=${activity.id} revision=${revisionRef.current}`,
-      );
+      const revision = ++revisionRef.current;
       const iframe = iframeRef.current;
-      if (!iframe) {
-        emitRuntimeDebugEvent("ERROR", "execute exited: iframe missing");
-        return;
-      }
+      if (!iframe) return;
 
       // A fresh revision + a disposed previous host means any message still
       // in flight from the old sandbox will be rejected by the new host's
       // (or nobody's) revision filter — see SandboxRuntimeHost.
       disposeHost();
       pendingRequestRef.current = null;
-      emitRuntimeDebugEvent("EXECUTE", "before setIsRunning(true)");
       setIsRunning(true);
-      emitRuntimeDebugEvent("EXECUTE", "after setIsRunning(true), before STATE diagnostic");
-      try {
-        emitRuntimeDebugEvent("STATE", `isRunning=true origin=${origin} revision=${revision}`);
-      } catch (error) {
-        const diagnosticError = error instanceof Error ? error : new Error(String(error));
-        emitRuntimeDebugEvent(
-          "ERROR",
-          `STATE diagnostic threw ${diagnosticError.name}: ${diagnosticError.message}\n${diagnosticError.stack ?? ""}`,
-        );
-        throw error;
-      }
-      emitRuntimeDebugEvent("EXECUTE", "after STATE diagnostic");
-      emitRuntimeDebugEvent("EXECUTE", "before clearing execution state");
       setConsoleOutput([]);
       setTestResults([]);
       setTechnicalResult(undefined);
       setBuildError(undefined);
-      emitRuntimeDebugEvent("EXECUTE", "after clearing execution state");
-
-      emitRuntimeDebugEvent("EXECUTE", "before revision increment");
-      const revision = ++revisionRef.current;
-      emitRuntimeDebugEvent("EXECUTE", `after revision increment revision=${revision}`);
-      emitRuntimeDebugEvent("EXECUTE", "before getSource");
       const source = getSource();
-      emitRuntimeDebugEvent("EXECUTE", "after getSource");
 
       try {
-        emitRuntimeDebugEvent("EXECUTE", "before compileCanonicalRuntime");
         const report = compileCanonicalRuntime(activity, source, revision);
-        emitRuntimeDebugEvent("EXECUTE", "after compileCanonicalRuntime");
-        emitRuntimeDebugEvent("EXECUTE", "before validation request creation");
+
         const request = validate
           ? createCanonicalValidationRequest(activity, revision, source)
           : null;
-        emitRuntimeDebugEvent("EXECUTE", "after validation request creation");
         pendingRequestRef.current = request?.requestId ?? null;
-        emitRuntimeDebugEvent("EXECUTE", "after pending request assignment");
 
-        emitRuntimeDebugEvent("EXECUTE", "before SandboxRuntimeHost construction");
         const host = new SandboxRuntimeHost({
           iframe,
           workspaceRevision: revision,
@@ -227,7 +193,6 @@ export function useExperienceController({
             }
           },
         });
-        emitRuntimeDebugEvent("EXECUTE", "after SandboxRuntimeHost construction");
 
         hostRef.current = host;
         executionTimeoutRef.current = window.setTimeout(() => {
@@ -252,26 +217,16 @@ export function useExperienceController({
         }, CANONICAL_RUNTIME_TIMEOUT_MS);
         // Register the listener before assigning srcdoc so a fast runtime
         // cannot emit PLAYGROUND_READY before the host is listening.
-        emitRuntimeDebugEvent("EXECUTE", "before host.mount");
         host.mount();
-        emitRuntimeDebugEvent("EXECUTE", "after host.mount");
-        emitRuntimeDebugEvent("EXECUTE", "before iframe srcdoc clear");
         // Explicitly detach the previous document before assigning the next
         // revision so retries cannot reuse a disposed document that has
         // already consumed its one-time PLAYGROUND_READY handshake.
         iframe.srcdoc = "";
-        emitRuntimeDebugEvent("EXECUTE", "after iframe srcdoc clear");
-        emitRuntimeDebugEvent("EXECUTE", "before deferred iframe srcdoc assignment");
         window.setTimeout(() => {
-          emitRuntimeDebugEvent("EXECUTE", "inside deferred iframe srcdoc callback");
           if (hostRef.current === host && !host.isDisposed) {
             iframe.srcdoc = report.outputHtml;
-            emitRuntimeDebugEvent("EXECUTE", "after iframe srcdoc assignment");
-          } else {
-            emitRuntimeDebugEvent("EXECUTE", "deferred iframe srcdoc assignment skipped");
           }
         }, 0);
-        emitRuntimeDebugEvent("EXECUTE", "after scheduling deferred iframe srcdoc assignment");
       } catch (error) {
         const message = error instanceof Error ? error.message : "Runtime error";
         setBuildError(message);
