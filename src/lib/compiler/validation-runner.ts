@@ -451,6 +451,7 @@ export const VALIDATION_RUNNER_SCRIPT = `
     };
 
     if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_VALIDATE_RESPONSE_SENDING', workspaceRevision: workspaceRevision }, '*');
       window.parent.postMessage({
         type: 'PLAYGROUND_VALIDATE_RESPONSE',
         requestId: requestId,
@@ -462,6 +463,9 @@ export const VALIDATION_RUNNER_SCRIPT = `
   }
 
   window.addEventListener('message', function(event) {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_VALIDATION_MESSAGE_RECEIVED', command: event.data && event.data.type, workspaceRevision: event.data && event.data.workspaceRevision }, '*');
+    }
     if (!event.data || typeof event.data !== 'object') return;
     if (event.data.type !== 'PLAYGROUND_VALIDATE_REQUEST') return;
 

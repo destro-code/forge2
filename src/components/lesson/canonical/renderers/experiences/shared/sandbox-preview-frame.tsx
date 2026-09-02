@@ -1,4 +1,5 @@
 import type { RefObject } from "react";
+import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
 import { cn } from "@/lib/utils";
 
 export interface SandboxPreviewFrameProps {
@@ -34,6 +35,8 @@ export function SandboxPreviewFrame({
         ref={iframeRef}
         title={title}
         sandbox={sandbox}
+        onLoad={() => emitRuntimeDebugEvent("IFRAME", "load event fired")}
+        onError={() => emitRuntimeDebugEvent("IFRAME", "error event fired")}
         className="sr-only"
         aria-hidden="true"
       />
@@ -52,6 +55,8 @@ export function SandboxPreviewFrame({
           ref={iframeRef}
           title={title}
           sandbox={sandbox}
+          onLoad={() => emitRuntimeDebugEvent("IFRAME", "load event fired")}
+          onError={() => emitRuntimeDebugEvent("IFRAME", "error event fired")}
           className="h-full min-h-56 w-full"
           aria-label={ariaLabel}
         />
