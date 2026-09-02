@@ -80,12 +80,12 @@ export function InteractiveCodeRenderer({
   const hintsRemaining = (resolvedHints?.length || 0) - state.hintsRevealed;
 
   const handleRuntimeValidation = useCallback(
-    (result: ActivityValidationResult) => {
+    (result: ActivityValidationResult, authoritative: boolean) => {
       emitRuntimeDebugEvent(
         "STATE",
-        `renderer validation callback activityId=${activity.id} isValid=${result.isValid} status=${state.status} runtimeResult=${Boolean(runtimeResult)}`,
+        `renderer validation result activityId=${activity.id} isValid=${result.isValid} authoritative=${authoritative} status=${state.status} runtimeResult=${Boolean(runtimeResult)}`,
       );
-      onRuntimeValidation?.(result);
+      if (authoritative) onRuntimeValidation?.(result);
       setActiveTab(result.isValid ? "code" : "results");
     },
     [activity.id, onRuntimeValidation, runtimeResult, state.status],
@@ -93,9 +93,10 @@ export function InteractiveCodeRenderer({
 
   const authoritativeEvaluationRef = useRef(false);
   useEffect(() => {
-    if (controller.technicalResult && authoritativeEvaluationRef.current) {
+    if (controller.technicalResult) {
+      const authoritative = authoritativeEvaluationRef.current;
       authoritativeEvaluationRef.current = false;
-      handleRuntimeValidation(controller.technicalResult);
+      handleRuntimeValidation(controller.technicalResult, authoritative);
     }
   }, [controller.technicalResult, handleRuntimeValidation]);
 
@@ -113,7 +114,7 @@ export function InteractiveCodeRenderer({
     authoritativeEvaluationRef.current = evaluationRequest.authoritative !== false;
     emitRuntimeDebugEvent(
       "CHECK",
-      `evaluationRequest effect invoking check activityId=${activity.id} attemptId=${evaluationAttemptId} origin=CanonicalLessonPlayer.handleSubmit`,
+      `evaluationRequest effect invoking check activityId=${activity.id} attemptId=${evaluationAttemptId} authoritative=${evaluationRequest.authoritative !== false} origin=CanonicalLessonPlayer.requestInteractiveEvaluation`,
     );
     check();
     // The attempt ID is the command identity; the request object is intentionally not a trigger.
