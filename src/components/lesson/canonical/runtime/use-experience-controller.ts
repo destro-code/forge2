@@ -16,6 +16,8 @@ import {
 } from "@/lib/types/validation-messages";
 import type { ActivityValidationResult } from "../types";
 
+export const CANONICAL_RUNTIME_TIMEOUT_MS = 15_000;
+
 export interface ExperienceTestResult {
   id: string;
   description: string;
@@ -85,6 +87,7 @@ export function useExperienceController({
   const hostRef = useRef<SandboxRuntimeHost | null>(null);
   const revisionRef = useRef(0);
   const pendingRequestRef = useRef<string | null>(null);
+  const executionTimeoutRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
 
   const [isRunning, setIsRunning] = useState(false);
   const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
@@ -94,36 +97,30 @@ export function useExperienceController({
   );
   const [buildError, setBuildError] = useState<string | undefined>(undefined);
 
+  const clearExecutionTimeout = useCallback(() => {
+    if (executionTimeoutRef.current !== null) {
+      window.clearTimeout(executionTimeoutRef.current);
+      executionTimeoutRef.current = null;
+    }
+  }, []);
+
   const disposeHost = useCallback(() => {
+    clearExecutionTimeout();
     hostRef.current?.dispose();
     hostRef.current = null;
-  }, []);
+  }, [clearExecutionTimeout]);
 
   const execute = useCallback(
     (validate: boolean) => {
-      const origin = validate ? "check" : "run";
-      const trace = (checkpoint: string, details: Record<string, unknown> = {}) =>
-        console.log("[v0][canonical-runtime]", checkpoint, {
-          origin,
-          workspaceRevision: revisionRef.current,
-          pendingRequest: pendingRequestRef.current,
-          ...details,
-        });
-      trace("execute entered");
       const iframe = iframeRef.current;
-      if (!iframe) {
-        trace("execute exited: iframe missing");
-        return;
-      }
+      if (!iframe) return;
 
       // A fresh revision + a disposed previous host means any message still
       // in flight from the old sandbox will be rejected by the new host's
       // (or nobody's) revision filter — see SandboxRuntimeHost.
       disposeHost();
-      trace("previous host disposed");
       pendingRequestRef.current = null;
       setIsRunning(true);
-      trace("isRunning set true");
       setConsoleOutput([]);
       setTestResults([]);
       setTechnicalResult(undefined);
@@ -144,20 +141,17 @@ export function useExperienceController({
           workspaceRevision: revision,
           onMessage: (event) => {
             if (isPlaygroundConsoleMessage(event.data)) {
-              trace("other terminal runtime event", { messageType: event.data.type });
               setConsoleOutput((previous) =>
                 [...previous, `[${event.data.level}] ${event.data.message}`].slice(-50),
               );
               return;
             }
             if (isPlaygroundReady(event.data)) {
-              trace("PLAYGROUND_READY received", { sourceMatches: true });
               if (request) {
                 iframe.contentWindow?.postMessage(request, "*");
-                trace("validation request posted", { requestId: request.requestId });
               } else {
                 setIsRunning(false);
-                host.dispose();
+                disposeHost();
               }
               return;
             }
@@ -176,15 +170,10 @@ export function useExperienceController({
                 })),
               );
               setIsRunning(false);
-              trace("validation response received; isRunning set false", {
-                requestId: event.data.requestId,
-              });
-              host.dispose();
-              trace("host disposed");
+              disposeHost();
               return;
             }
             if (isPlaygroundBuildError(event.data)) {
-              trace("build error received", { message: event.data.message });
               setBuildError(event.data.message);
               setConsoleOutput((previous) => [...previous, event.data.message]);
               if (request) {
@@ -200,26 +189,42 @@ export function useExperienceController({
                 ]);
               }
               setIsRunning(false);
-              host.dispose();
+              disposeHost();
             }
           },
         });
 
         hostRef.current = host;
-        trace("new SandboxRuntimeHost created", { hostRevision: revision });
+        executionTimeoutRef.current = window.setTimeout(() => {
+          if (hostRef.current !== host || revisionRef.current !== revision) return;
+          revisionRef.current += 1;
+          pendingRequestRef.current = null;
+          disposeHost();
+          const message = "The sandbox did not finish running. Try Check again.";
+          const { result } = canonicalRuntimeError(activity.id, message);
+          setBuildError(message);
+          setConsoleOutput([message]);
+          setTechnicalResult(result);
+          setTestResults([
+            {
+              id: "runtime-timeout",
+              description: "The submitted code must finish executing without a runtime timeout.",
+              passed: false,
+              error: message,
+            },
+          ]);
+          setIsRunning(false);
+        }, CANONICAL_RUNTIME_TIMEOUT_MS);
         // Register the listener before assigning srcdoc so a fast runtime
         // cannot emit PLAYGROUND_READY before the host is listening.
         host.mount();
-        trace("host.mount() called; message listener attached", { hostRevision: revision });
         // Explicitly detach the previous document before assigning the next
         // revision so retries cannot reuse a disposed document that has
         // already consumed its one-time PLAYGROUND_READY handshake.
         iframe.srcdoc = "";
-        trace("iframe srcdoc cleared", { hostRevision: revision });
         window.setTimeout(() => {
           if (hostRef.current === host && !host.isDisposed) {
             iframe.srcdoc = report.outputHtml;
-            trace("deferred iframe srcdoc assigned", { hostRevision: revision });
           }
         }, 0);
       } catch (error) {
@@ -230,17 +235,17 @@ export function useExperienceController({
           const { result } = canonicalRuntimeError(activity.id, error);
           setTechnicalResult(result);
         }
+        clearExecutionTimeout();
         setIsRunning(false);
       }
     },
-    [activity, getSource, disposeHost],
+    [activity, getSource, disposeHost, clearExecutionTimeout],
   );
 
   const run = useCallback(() => execute(false), [execute]);
   const check = useCallback(() => {
-    console.log("[v0][canonical-runtime] check() entered", { activityId: activity.id });
     execute(true);
-  }, [activity.id, execute]);
+  }, [execute]);
 
   const reset = useCallback(() => {
     revisionRef.current += 1;
