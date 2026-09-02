@@ -75,6 +75,7 @@ describe("SandboxRuntimeHost", () => {
     const onMessage = vi.fn();
     const host = new SandboxRuntimeHost({ iframe, workspaceRevision: 3, onMessage });
     host.mount(target as unknown as Window);
+    clearRuntimeDebugEvents();
 
     target.dispatchEvent({
       source: activeWindow,
@@ -85,7 +86,8 @@ describe("SandboxRuntimeHost", () => {
     } as unknown as MessageEvent);
 
     expect(onMessage).not.toHaveBeenCalled();
-    expect(getRuntimeDebugEvents()).toHaveLength(0);
+    expect(getRuntimeDebugEvents()).toHaveLength(1);
+    expect(getRuntimeDebugEvents()[0]?.message).toContain("unknown message");
     host.dispose(target as unknown as Window);
   });
 

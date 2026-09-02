@@ -46,9 +46,20 @@ export class SandboxRuntimeHost {
     this.listener = (event) => {
       const data = event.data as { type?: unknown; workspaceRevision?: unknown } | null;
       const messageType = typeof data?.type === "string" ? data.type : null;
-      if (!messageType || !FORGE_RUNTIME_MESSAGE_TYPES.has(messageType)) return;
-
       const sourceMatches = event.source === this.iframe.contentWindow;
+      if (sourceMatches && messageType?.startsWith("PLAYGROUND_RUNTIME_")) {
+        emitRuntimeDebugEvent(
+          "IFRAME",
+          `runtime boundary message type=${messageType} revision=${String(data?.workspaceRevision ?? "missing")} sourceMatches=true`,
+        );
+      }
+      if (!messageType || !FORGE_RUNTIME_MESSAGE_TYPES.has(messageType)) {
+        if (sourceMatches) {
+          emitRuntimeDebugEvent("MESSAGE", `unknown message sourceMatches=true data=${serializeMessageData(event.data)}`);
+        }
+        return;
+      }
+
       const revisionMatches = data?.workspaceRevision === this.revision;
       const accepted = !this.disposed && sourceMatches && revisionMatches;
       const protocolData =
@@ -70,14 +81,21 @@ export class SandboxRuntimeHost {
 
   mount(target: Window = window): void {
     if (this.disposed) return;
+    emitRuntimeDebugEvent(
+      "LIFECYCLE",
+      `host mount start revision=${this.revision} sandbox=${CANONICAL_IFRAME_SANDBOX}`,
+    );
     this.iframe.setAttribute("sandbox", CANONICAL_IFRAME_SANDBOX);
     target.addEventListener("message", this.listener);
+    emitRuntimeDebugEvent("LIFECYCLE", `host message listener registered revision=${this.revision}`);
   }
 
   dispose(target: Window = window): void {
     if (this.disposed) return;
+    emitRuntimeDebugEvent("LIFECYCLE", `host dispose start revision=${this.revision}`);
     this.disposed = true;
     target.removeEventListener("message", this.listener);
+    emitRuntimeDebugEvent("LIFECYCLE", `host disposed revision=${this.revision}`);
   }
 
   get isDisposed(): boolean {
