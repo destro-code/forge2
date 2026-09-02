@@ -31,6 +31,7 @@ export function InteractiveCodeRenderer({
   onResponse,
   onSubmit,
   evaluationRequest,
+  onRequestEvaluation,
   onRuntimeValidation,
   onRetry,
   onContinue,
@@ -109,7 +110,7 @@ export function InteractiveCodeRenderer({
       return;
     if (lastEvaluationRequestRef.current === evaluationAttemptId) return;
     lastEvaluationRequestRef.current = evaluationAttemptId;
-    authoritativeEvaluationRef.current = true;
+    authoritativeEvaluationRef.current = evaluationRequest.authoritative !== false;
     emitRuntimeDebugEvent(
       "CHECK",
       `evaluationRequest effect invoking check activityId=${activity.id} attemptId=${evaluationAttemptId} origin=CanonicalLessonPlayer.handleSubmit`,
@@ -134,11 +135,11 @@ export function InteractiveCodeRenderer({
   const checkInline = useCallback(() => {
     emitRuntimeDebugEvent(
       "CHECK",
-      `Inline Check invoked activityId=${activity.id} revision=${state.status}`,
+      `Inline Check invoked activityId=${activity.id} origin=display-only`,
     );
     setActiveTab("results");
-    check();
-  }, [activity.id, check, state.status]);
+    onRequestEvaluation?.({ authoritative: false });
+  }, [activity.id, onRequestEvaluation, state.status]);
   const retryFromRenderer = useCallback(() => {
     setActiveTab("code");
     onRetry?.();

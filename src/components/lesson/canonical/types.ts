@@ -44,6 +44,7 @@ export interface EvaluationRequest {
   activityId: string;
   attemptId: string;
   revision: number;
+  authoritative?: boolean;
 }
 
 export interface ActivityRendererProps<TActivity extends CanonicalActivity, TResponse = unknown> {
@@ -52,6 +53,7 @@ export interface ActivityRendererProps<TActivity extends CanonicalActivity, TRes
   onResponse: (response: TResponse) => void;
   onSubmit?: () => void;
   evaluationRequest?: EvaluationRequest;
+  onRequestEvaluation?: (options?: { authoritative?: boolean }) => void;
   onRuntimeValidation?: (result: ActivityValidationResult) => void;
   onRetry?: () => void;
   onContinue?: () => void;
