@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
 import {
   compileCanonicalRuntime,
   createCanonicalValidationRequest,
@@ -159,7 +160,15 @@ export function useExperienceController({
               isPlaygroundValidateResponse(event.data) &&
               event.data.requestId === pendingRequestRef.current
             ) {
+              emitRuntimeDebugEvent(
+                "STATE",
+                `PLAYGROUND_VALIDATE_RESPONSE received activityId=${activity.id} requestId=${event.data.requestId} reportStatus=${event.data.report.status} results=${event.data.report.results.length}`,
+              );
               const result = mapCanonicalValidation(event.data.report);
+              emitRuntimeDebugEvent(
+                "STATE",
+                `controller technical result activityId=${activity.id} isValid=${result.isValid} score=${String(result.score ?? "missing")}`,
+              );
               setTechnicalResult(result);
               setTestResults(
                 event.data.report.results.map((item, index) => ({
@@ -201,6 +210,10 @@ export function useExperienceController({
           pendingRequestRef.current = null;
           disposeHost();
           const message = "The sandbox did not finish running. Try Check again.";
+          emitRuntimeDebugEvent(
+            "ERROR",
+            `controller timeout transition activityId=${activity.id} revision=${revision} hostMatches=${hostRef.current === host} currentRevision=${revisionRef.current}`,
+          );
           const { result } = canonicalRuntimeError(activity.id, message);
           setBuildError(message);
           setConsoleOutput([message]);

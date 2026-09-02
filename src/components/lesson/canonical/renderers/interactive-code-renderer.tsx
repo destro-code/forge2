@@ -80,10 +80,14 @@ export function InteractiveCodeRenderer({
 
   const handleRuntimeValidation = useCallback(
     (result: ActivityValidationResult) => {
+      emitRuntimeDebugEvent(
+        "STATE",
+        `renderer validation callback activityId=${activity.id} isValid=${result.isValid} status=${state.status} runtimeResult=${Boolean(runtimeResult)}`,
+      );
       onRuntimeValidation?.(result);
       setActiveTab(result.isValid ? "code" : "results");
     },
-    [onRuntimeValidation],
+    [activity.id, onRuntimeValidation, runtimeResult, state.status],
   );
 
   const authoritativeEvaluationRef = useRef(false);
@@ -106,10 +110,21 @@ export function InteractiveCodeRenderer({
     if (lastEvaluationRequestRef.current === evaluationAttemptId) return;
     lastEvaluationRequestRef.current = evaluationAttemptId;
     authoritativeEvaluationRef.current = true;
+    emitRuntimeDebugEvent(
+      "CHECK",
+      `evaluationRequest effect invoking check activityId=${activity.id} attemptId=${evaluationAttemptId} origin=CanonicalLessonPlayer.handleSubmit`,
+    );
     check();
     // The attempt ID is the command identity; the request object is intentionally not a trigger.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activity.id, check, evaluationAttemptId]);
+
+  useEffect(() => {
+    emitRuntimeDebugEvent(
+      "STATE",
+      `renderer state activityId=${activity.id} status=${state.status} runtimeResult=${runtimeResult?.isValid ?? "none"} tests=${testResults.length} hasExecuted=${hasExecuted}`,
+    );
+  }, [activity.id, hasExecuted, runtimeResult?.isValid, state.status, testResults.length]);
 
   const allTestsPassed = testResults.length > 0 && testResults.every((test) => test.passed);
   const submitForEvaluation = useCallback(() => {
