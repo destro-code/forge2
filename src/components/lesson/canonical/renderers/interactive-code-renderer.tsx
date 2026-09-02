@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { createCanonicalBrowserAdapter } from "@/lib/lesson-experience/canonical-browser-adapter";
 import { evidenceEnvelopeToCanonicalValidation } from "@/lib/lesson-experience/canonical-evidence-bridge";
 import type { BrowserRuntimeMessage } from "@/lib/lesson-experience/browser-family";
+import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
 
 export function InteractiveCodeRenderer({
   activity,
@@ -116,9 +117,13 @@ export function InteractiveCodeRenderer({
   }, [onSubmit]);
 
   const checkInline = useCallback(() => {
+    emitRuntimeDebugEvent(
+      "CHECK",
+      `Inline Check invoked activityId=${activity.id} revision=${state.status}`,
+    );
     setActiveTab("results");
     check();
-  }, [check]);
+  }, [activity.id, check, state.status]);
   const retryFromRenderer = useCallback(() => {
     setActiveTab("code");
     onRetry?.();
