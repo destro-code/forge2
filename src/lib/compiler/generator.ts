@@ -159,7 +159,6 @@ export function generateOutput(
 
   <script>
     (function() {
-
       const origLog = console.log;
       const origWarn = console.warn;
       const origError = console.error;
@@ -240,7 +239,7 @@ export function generateOutput(
 
   <script>
     window.__WORKSPACE_REVISION__ = ${typeof workspaceRevision === "number" ? workspaceRevision : "undefined"};
-      window.__hasInitError = false;
+    window.__hasInitError = false;
     let FILES = ${safeFilesJson};
     const RUNTIME = "${parsed.runtime}";
     const DEFAULT_ENTRY_NAME = "${parsed.entryModule?.name || ""}";
@@ -491,9 +490,9 @@ export function generateOutput(
             }
           }
 
-  if (!window.__hasInitError) {
-  window.parent.postMessage({
-  type: 'PLAYGROUND_READY',
+          if (!window.__hasInitError) {
+            window.parent.postMessage({
+              type: 'PLAYGROUND_READY',
               workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
             }, '*');
           }
@@ -540,9 +539,9 @@ export function generateOutput(
             }
           }
 
-  if (!window.__hasInitError) {
-  window.parent.postMessage({
-  type: 'PLAYGROUND_READY',
+          if (!window.__hasInitError) {
+            window.parent.postMessage({
+              type: 'PLAYGROUND_READY',
               workspaceRevision: typeof window.__WORKSPACE_REVISION__ === 'number' ? window.__WORKSPACE_REVISION__ : undefined
             }, '*');
           }
@@ -604,27 +603,21 @@ export function generateOutput(
     }
 
 
-
-  window.addEventListener('message', function(event) {
-  if (event.data && event.data.type === 'PLAYGROUND_UPDATE_FILES') {
-    window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_EXECUTION_COMMAND_RECEIVED', command: event.data.type, revision: event.data.workspaceRevision, workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
-  }
-  if (event.data && event.data.type === 'PLAYGROUND_UPDATE_FILES' && Array.isArray(event.data.files)) {
-        window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_COMMAND_RECEIVED', command: event.data.type, workspaceRevision: event.data.workspaceRevision }, '*');
-      runCompilerAndExecute(event.data.files, undefined, event.data.workspaceRevision);
-  }
-  });
-  window.parent.postMessage({ type: 'PLAYGROUND_RUNTIME_LISTENER_REGISTERED', workspaceRevision: window.__WORKSPACE_REVISION__ }, '*');
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'PLAYGROUND_UPDATE_FILES' && Array.isArray(event.data.files)) {
+        runCompilerAndExecute(event.data.files, undefined, event.data.workspaceRevision);
+      }
+    });
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() { runCompilerAndExecute(); });
     } else {
-  runCompilerAndExecute();
-  }
+      runCompilerAndExecute();
+    }
   </script>
 
   <script id="forge-validation-runner">
- ${VALIDATION_RUNNER_SCRIPT}
+    ${VALIDATION_RUNNER_SCRIPT}
   </script>
 </body>
 </html>`;
