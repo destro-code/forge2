@@ -31,7 +31,6 @@ export function InteractiveCodeRenderer({
   onResponse,
   onSubmit,
   evaluationRequest,
-  onRequestEvaluation,
   onRuntimeValidation,
   onRetry,
   onContinue,
@@ -92,12 +91,12 @@ export function InteractiveCodeRenderer({
   );
 
   const authoritativeEvaluationRef = useRef(false);
+  const localCheckPendingRef = useRef(false);
   useEffect(() => {
-    if (controller.technicalResult) {
-      const authoritative = authoritativeEvaluationRef.current;
-      authoritativeEvaluationRef.current = false;
-      handleRuntimeValidation(controller.technicalResult, authoritative);
-    }
+    if (!controller.technicalResult || !localCheckPendingRef.current) return;
+    localCheckPendingRef.current = false;
+    handleRuntimeValidation(controller.technicalResult, authoritativeEvaluationRef.current);
+    authoritativeEvaluationRef.current = false;
   }, [controller.technicalResult, handleRuntimeValidation]);
 
   useEffect(() => {
@@ -134,13 +133,12 @@ export function InteractiveCodeRenderer({
   }, [onSubmit]);
 
   const checkInline = useCallback(() => {
-    emitRuntimeDebugEvent(
-      "CHECK",
-      `Inline Check invoked activityId=${activity.id} origin=display-only`,
-    );
+    emitRuntimeDebugEvent("CHECK", `Inline Check invoked activityId=${activity.id} origin=direct-controller`);
+    authoritativeEvaluationRef.current = false;
+    localCheckPendingRef.current = true;
     setActiveTab("results");
-    onRequestEvaluation?.({ authoritative: false });
-  }, [activity.id, onRequestEvaluation, state.status]);
+    check();
+  }, [activity.id, check]);
   const retryFromRenderer = useCallback(() => {
     setActiveTab("code");
     onRetry?.();
