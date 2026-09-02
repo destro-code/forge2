@@ -3,6 +3,23 @@ export const PLAYGROUND_PREVIEW_TITLE = "Forge Playground Live Preview" as const
 
 import { emitRuntimeDebugEvent } from "@/lib/debug/runtime-debug-sink";
 
+function serializeMessageData(data: unknown): string {
+  try {
+    return JSON.stringify(data, (_key, value) => {
+      if (typeof value === "bigint") return `${value}n`;
+      if (typeof value === "function") return `[Function${value.name ? ` ${value.name}` : ""}]`;
+      if (typeof value === "symbol") return value.toString();
+      return value;
+    });
+  } catch {
+    try {
+      return String(data);
+    } catch {
+      return "[Unserializable message data]";
+    }
+  }
+}
+
 export interface SandboxRuntimeHostOptions {
   iframe: HTMLIFrameElement;
   workspaceRevision: number;
@@ -23,9 +40,15 @@ export class SandboxRuntimeHost {
       const data = event.data as { type?: unknown; workspaceRevision?: unknown } | null;
       const sourceMatches = event.source === this.iframe.contentWindow;
       const revisionMatches = data?.workspaceRevision === this.revision;
+      const accepted = !this.disposed && sourceMatches && revisionMatches;
+      const messageType = String(data?.type ?? "unknown");
+      const protocolData =
+        messageType === "unknown" || !revisionMatches
+          ? ` data=${serializeMessageData(event.data)}`
+          : "";
       emitRuntimeDebugEvent(
         "MESSAGE",
-        `${String(data?.type ?? "unknown")} hostRevision=${this.revision} messageRevision=${String(data?.workspaceRevision ?? "missing")} sourceMatches=${sourceMatches} revisionMatches=${revisionMatches} accepted=${!this.disposed && sourceMatches && revisionMatches}`,
+        `${messageType} hostRevision=${this.revision} messageRevision=${String(data?.workspaceRevision ?? "missing")} sourceMatches=${sourceMatches} revisionMatches=${revisionMatches} accepted=${accepted}${protocolData}`,
       );
       if (this.disposed || !sourceMatches) return;
       const messageRevision = data?.workspaceRevision;
