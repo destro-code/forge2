@@ -28,7 +28,9 @@ function serializeMessageData(data: unknown): string {
 }
 
 export interface SandboxRuntimeHostOptions {
+  /** The activity backing the sandboxed runtime (interactive-code or debug). */
   iframe: HTMLIFrameElement;
+  activityId?: string;
   workspaceRevision: number;
   onMessage: (event: MessageEvent) => void;
 }
@@ -38,11 +40,17 @@ export class SandboxRuntimeHost {
   private readonly iframe: HTMLIFrameElement;
   private readonly revision: number;
   private readonly listener: (event: MessageEvent) => void;
+  private readonly activityId: string;
+  private readonly onLoad: () => void;
+  private readonly onError: () => void;
   private disposed = false;
 
   constructor(options: SandboxRuntimeHostOptions) {
     this.iframe = options.iframe;
+    this.activityId = options.activityId ?? "unknown";
     this.revision = options.workspaceRevision;
+    this.onLoad = () => emitRuntimeDebugEvent("IFRAME", `load event fired activityId=${this.activityId} revision=${this.revision}`);
+    this.onError = () => emitRuntimeDebugEvent("IFRAME", `error event fired activityId=${this.activityId} revision=${this.revision}`);
     this.listener = (event) => {
       const data = event.data as { type?: unknown; workspaceRevision?: unknown } | null;
       const messageType = typeof data?.type === "string" ? data.type : null;
@@ -86,6 +94,8 @@ export class SandboxRuntimeHost {
       `host mount start revision=${this.revision} sandbox=${CANONICAL_IFRAME_SANDBOX}`,
     );
     this.iframe.setAttribute("sandbox", CANONICAL_IFRAME_SANDBOX);
+    this.iframe.addEventListener?.("load", this.onLoad);
+    this.iframe.addEventListener?.("error", this.onError);
     target.addEventListener("message", this.listener);
     emitRuntimeDebugEvent("LIFECYCLE", `host message listener registered revision=${this.revision}`);
   }
@@ -94,6 +104,8 @@ export class SandboxRuntimeHost {
     if (this.disposed) return;
     emitRuntimeDebugEvent("LIFECYCLE", `host dispose start revision=${this.revision}`);
     this.disposed = true;
+    this.iframe.removeEventListener?.("load", this.onLoad);
+    this.iframe.removeEventListener?.("error", this.onError);
     target.removeEventListener("message", this.listener);
     emitRuntimeDebugEvent("LIFECYCLE", `host disposed revision=${this.revision}`);
   }

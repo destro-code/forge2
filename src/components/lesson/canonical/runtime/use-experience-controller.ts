@@ -155,6 +155,7 @@ export function useExperienceController({
 
         const host = new SandboxRuntimeHost({
           iframe,
+          activityId: activity.id,
           workspaceRevision: revision,
           onMessage: (event) => {
             if (isPlaygroundConsoleMessage(event.data)) {
