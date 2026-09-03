@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CANONICAL_IFRAME_SANDBOX, SandboxRuntimeHost } from "./sandbox-runtime-host";
 
 interface FakeWindow {
@@ -18,12 +18,19 @@ function createFakeWindow(): FakeWindow {
 
 function createFakeIframe(contentWindow: object) {
   let sandbox = "";
+  let src = "";
   return {
     contentWindow,
     setAttribute: (_name: string, value: string) => {
       sandbox = value;
     },
     getAttribute: (_name: string) => sandbox,
+    get src() {
+      return src;
+    },
+    set src(value: string) {
+      src = value;
+    },
   } as unknown as HTMLIFrameElement;
 }
 
@@ -39,6 +46,36 @@ function message(
 }
 
 describe("SandboxRuntimeHost", () => {
+  const createObjectUrl = vi.fn()
+    .mockReturnValueOnce("blob:test-first")
+    .mockReturnValueOnce("blob:test-second");
+  const revokeObjectUrl = vi.fn();
+
+  beforeEach(() => {
+    vi.stubGlobal("URL", { ...URL, createObjectURL: createObjectUrl, revokeObjectURL: revokeObjectUrl });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    createObjectUrl.mockClear();
+    revokeObjectUrl.mockClear();
+  });
+
+  it("navigates with a Blob URL and revokes it on replacement and disposal", () => {
+    const target = createFakeWindow();
+    const iframe = createFakeIframe({});
+    const host = new SandboxRuntimeHost({ iframe, workspaceRevision: 2, onMessage: vi.fn() });
+    host.mount(target as unknown as Window);
+
+    host.loadDocument("<html>first</html>");
+    expect(iframe.src).toBe("blob:test-first");
+    host.loadDocument("<html>second</html>");
+    expect(revokeObjectUrl).toHaveBeenCalledWith("blob:test-first");
+    expect(iframe.src).toBe("blob:test-second");
+    host.dispose(target as unknown as Window);
+    expect(revokeObjectUrl).toHaveBeenCalledWith("blob:test-second");
+  });
+
   it("preserves the restricted sandbox contract", () => {
     const target = createFakeWindow();
     const iframe = createFakeIframe({});

@@ -245,10 +245,10 @@ export function useExperienceController({
         // Explicitly detach the previous document before assigning the next
         // revision so retries cannot reuse a disposed document that has
         // already consumed its one-time PLAYGROUND_READY handshake.
-        iframe.srcdoc = "";
+        iframe.src = "about:blank";
         window.setTimeout(() => {
           if (hostRef.current === host && !host.isDisposed) {
-            iframe.srcdoc = report.outputHtml;
+            host.loadDocument(report.outputHtml);
           }
         }, 0);
       } catch (error) {
